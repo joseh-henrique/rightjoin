@@ -165,7 +165,7 @@ module ApplicationHelper
     return "Any unsaved content will be lost."
   end
      
-  def verified_flash_sw
+  def verified_flash_s
     "Your account is now verified. For maximum security, we recommend you change your password, above."
   end  
   
