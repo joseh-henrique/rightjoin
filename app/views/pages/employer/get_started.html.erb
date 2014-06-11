@@ -1,0 +1,17 @@
+<div id="about-box" class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+	
+	<p class="headline jumbo">
+		Bring in top developers
+	</p>
+	<p class="normal-par">
+		No credit card need. All plans include a 14-day free trial. 
+		We don’t want your money until you’re amazingly happy!
+	</p>
+ 
+	<%= render :partial => 'employers/edit_form'%>
+</div>
+
+
+<%= render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => true} %>
+ 

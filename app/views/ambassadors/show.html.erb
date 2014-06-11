@@ -1,0 +1,176 @@
+<div id="dashboard">
+	<%= render :partial => 'layouts/flash_box' %>
+
+	<div class="header-strip">
+		<div class="content">
+			<div class="logo"></div>
+			
+			<div class="avatar-box">
+				<%=link_to("#{@ambassador.first_name} #{@ambassador.last_name}", edit_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil))%>
+				<%=image_tag(@ambassador.avatar_path)%>
+			</div>
+		</div>
+	</div>
+	
+	<div class="content counters-box">
+		<div class="see-whats-happening">See what's happening with your shares</div>
+						
+		<% stat = @ambassador.shares_statistics.first %>
+		<% stat ||= {:leads_count => 0, :clicks_count => 0} %>
+		
+		<div class="counter">
+			<% if stat[:clicks_count].to_i == 0 %>
+				<div class="counter-val no-val">&hellip;</div>
+			<% else %>
+				<div class="counter-val"><%=stat[:clicks_count].to_i%></div>
+			<% end %>
+		<div class="counter-title">Clickbacks</div></div>
+		
+		<div class="counter">
+			<% if stat[:leads_count].to_i == 0 %>
+				<div class="counter-val no-val">&hellip;</div>
+			<% else %>
+				<div class="counter-val"><%=stat[:leads_count].to_i%></div>
+			<% end %>
+		<div class="counter-title">Leads</div></div>
+	</div>
+	
+	<div class="recent-leads">
+		Recent leads
+		<div>
+			<%max_leads_to_show = 6%>
+			<% leads = @ambassador.infointerviews.where({ status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD]}).limit(max_leads_to_show).order("created_at DESC") %>
+			<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
+				<% if leads.count >= i + 1%>
+					<%= image_tag(lead_avatar_path(leads[i].reference_num, :timestamp => leads[i].updated_at.to_i.to_s(16)), title: "#{leads[i].first_name} #{leads[i].last_name}", class: "lead-avatar") %>
+				<% else %>
+					<div class="lead-avatar"></div>
+				<% end %>
+			<% end %>
+		</div>
+	</div>
+	
+	<div class="invite-box">
+		<div class="content">
+			<% if @job.nil? %>
+				<div class="invite-friends">No open positions found for you to share.</div>
+			<% else %>
+				<script  type="text/javascript">
+					var networks_js = {};
+					<% networks = {} 
+					Constants::SHARE_CHANNELS.each_with_index do |network, i|
+						networks[network] = "#{i}.#{@ambassador.id.to_s(16)}.#{((Time.now - Constants::FYI_EPOCH) / 1.hours).to_i.to_s(16)}.#{@job.id.to_s(16)}"
+					%>
+						networks_js["<%=network%>"] = "<%=networks[network]%>";
+					<% end %>
+				</script>
+			
+				<div class="invite-friends">Get yourself some colleagues you want to work with.</div>
+				
+				<div class="position-chooser">
+					<% ative_jobs = @ambassador.employer.active_jobs %>
+					<% if ative_jobs.size > 1 %>
+						<% options = ative_jobs.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id]} %>
+						<%= label_tag(nil, "Choose position") %>&nbsp;
+						<%=select 'select', 'job', options, {:include_blank => false, :selected => @job.id}, {:class => "half-row-width"}%>
+					<% else %>
+						<%= label_tag(nil, "Position: #{@job.position_name} - #{@job.location_name}") %>
+					<% end %>
+				</div>
+				
+				<div class="all-buttons-box">
+					<%networks.each do |network, setid| %>
+						<div class="share-button-box">
+							
+  							<% title = Ambassador::share_title(@job) %> 
+							<% description = Ambassador::share_description(@job)  %> 
+							
+							<%case network%>
+							<%when Constants::SOCIAL_NETWORK_LINKEDIN%>
+								<div class="share-button linkedin addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+											addthis:title="<%=title%>"
+											addthis:description="<%=description%>">
+											<%# LI in fact uses title and desc as title and desc of posting%>
+									<a class="addthis_button_linkedin">
+										<%= image_tag "team/share/linkedin-small.png", size: "82x82", alt: "Share" %>
+									</a>
+								</div>
+							<%when Constants::SOCIAL_NETWORK_FACEBOOK%>
+								<div class="share-button facebook addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+											addthis:title="<%=title%>"
+											addthis:description="<%=description%>">		
+											<%# Facebook does not use this title and desc, but rather uses meta tags%>			
+									<a class="addthis_button_facebook" fb:like:href="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>">
+										<%= image_tag "team/share/facebook-small.png", size: "82x82", alt: "Share" %>
+									</a>
+								</div>
+							<%when Constants::SOCIAL_NETWORK_TWITTER%>
+								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+											addthis:title="<%=description%>" <%#The addthis:title is the only thing that is long enough%>
+											addthis:description="<%=title%>">
+												<%# Twitter in fact uses title and desc as title and desc of posting%>
+									<a class="addthis_button_twitter">
+										<%= image_tag "team/share/twitter-small.png", size: "82x82", alt: "Share" %>
+									</a>
+								</div>
+							<%when Constants::SOCIAL_NETWORK_GOOGLE%>
+								<div class="share-button google-plus addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+											addthis:title="<%=title%>"
+											addthis:description="<%=description%>">
+											<%#Google does not use this title and desc, but rather uses meta tags%>	
+									<a class="addthis_button_google_plusone_share">
+										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
+									</a>
+								</div>
+							<%when Constants::SOCIAL_NETWORK_EMAIL%>
+								<div class="share-button email" title="Email">
+									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: "#{description}: #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}", :id => "invite_team_member_btn", :target => "_fyi_email")%>
+								</div>
+							<%end%>
+						</div>
+					<% end %>
+				</div>
+				
+				<a href="<%=we_are_hiring_employer_path(@ambassador.employer.reference_num, job: @job.id)%>" class="preview-link" 
+						onclick="return openDialogWindow(this.href, 1000, 650);">
+					See your posting ...
+				</a>
+			
+				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f26afde78345d26&async=1"></script>
+				<script type="text/javascript">
+					function onShare(evt) {
+						setTimeout( function() {
+							$.post("<%=share_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>", { job_id: "<%=@job.id%>", network: evt.data.service, setid: networks_js[evt.data.service] } );
+						}, 0 );
+					}
+					
+					var addthis_share = addthis_share || {}
+					var addthis_config = {
+					     data_track_clickback: false 
+					}
+				
+					$(document).ready(function() {
+						addthis.init();
+						addthis.addEventListener('addthis.menu.share', onShare);
+					});
+					
+					$("#invite_team_member_btn").click(function(){
+						var evt = { "data": { "service": "<%=Constants::SOCIAL_NETWORK_EMAIL%>" }};
+						onShare(evt);
+					});
+					
+					$("#select_job").change(function(evt){
+						window.location.href = "<%=employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>" + "?job=" + $( this ).val();
+					});
+					
+					function blinker() {
+					    $('.no-val').fadeOut(300);
+					    $('.no-val').fadeIn(300);
+					}
+					
+					setInterval(blinker, 2000);	
+				</script>				
+			<% end %>
+		</div>
+	</div>
+</div>

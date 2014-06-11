@@ -1,0 +1,16 @@
+<div id="employer-<%=employer_details.id%>" class="employer-details">
+	<div class="clearfix user-attr-row">
+		<div class="left-col">
+			<%= label_tag(:company, "Company" ) %> 
+			<div class="user-attr-ro-box">
+				<%=employer_details.company_name %>
+			</div>
+		</div>
+		<div class="right-col">
+			<%= label_tag(:plan, "Current plan") %>
+			<div class="user-attr-ro-box">
+				<%=employer_details.current_plan.name%>
+			</div>
+		</div>
+	</div>
+</div>

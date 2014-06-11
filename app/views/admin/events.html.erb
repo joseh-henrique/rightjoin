@@ -1,0 +1,68 @@
+<% require 'rinku' %>
+
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Review events
+</p>
+
+<p>
+	<%=link_to "<", admin_events_path(:days_ago => @days_ago + 1), :class => "blue-inline-button" %>&nbsp;&nbsp;
+	<%=(Date.today - @days_ago.days).strftime("%d %b, %Y")%>&nbsp;&nbsp;
+	<% if @days_ago > 0 %>
+		<%=link_to ">", admin_events_path(:days_ago => @days_ago - 1), :class => "blue-inline-button" %>&nbsp;&nbsp;
+		<%=link_to ">>", admin_events_path(:days_ago => 0), :class => "blue-inline-button" %>
+	<% end %>
+</p>
+
+<div class="fyi-accordion">
+	<% unless @new_candidates.blank? %>
+	<h3 class="accordion-header expanded clearfix"><span>New candidates</span></h3>
+	<div class="accordion-panel">
+		<% @new_candidates.each_with_index do |candidate, i| %>
+			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
+				<%=html_inspect(candidate)%>
+				<%unless candidate.deleted?%>
+					<br><%=link_to "inactivate", admin_inactivate_candidate_path(:id => candidate.id, :days_ago => @days_ago), :class => "red-inline-button" %>
+				<%end%>
+			</p>
+		<% end %>
+	</div>
+	<%end%>
+	
+	<% unless @new_employers.blank? %>
+	<h3 class="accordion-header expanded clearfix"><span>New employers</span></h3>
+	<div class="accordion-panel">
+		<% @new_employers.each_with_index do |employer, i| %>
+			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
+				<%=html_inspect(employer)%>
+			</p>
+		<% end %>
+	</div>
+	<%end%>
+	
+	<% unless @created_jobs.blank? %>
+	<h3 class="accordion-header expanded clearfix"><span>Created jobs</span></h3>
+	<div class="accordion-panel">
+		<% @created_jobs.each_with_index do |job, i| %>
+			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
+				<%=Rinku.auto_link(html_inspect(job), :all, 'target="_ad_window"').html_safe%>
+				<% if job.status == Job::LIVE %>
+					<br><%=link_to "Recommend candidates", admin_recommend_candidates_path(:id => job.id), :class => "blue-inline-button" %>
+					&nbsp;&nbsp;<%=link_to "Close", admin_close_job_path(:id => job.id, :days_ago => @days_ago), :class => "red-inline-button" %>
+				<% end %>
+			</p>
+		<% end %>
+	</div>
+	<%end%>	
+	
+	<% unless @companies_rated.blank? %>
+	<h3 class="accordion-header expanded clearfix"><span>Company ratings</span></h3>
+	<div class="accordion-panel">
+		<% @companies_rated.each_with_index do |rating, i| %>
+			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
+				<%=html_inspect(rating)%>
+			</p>
+		<% end %>
+	</div>
+	<%end%>		
+</div>

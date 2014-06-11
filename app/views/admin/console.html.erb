@@ -1,0 +1,50 @@
+<p class="headline">
+	Admin console
+</p>
+
+<div class="fyi-accordion">
+	<h3 class="accordion-header expanded clearfix"><span>Maintenance</span></h3>
+	<div class="accordion-panel"> 
+		<% #TODO Change the button color for any item that needs  admin input %>
+		<%=link_to "Events", admin_events_path, :class => "green-inline-button" %>&nbsp;
+		<%=link_to "Approve invitations", admin_invites_to_approve_path, :class => "green-inline-button" %>&nbsp;
+		<%=link_to "Positions", admin_positions_path, :class => "green-inline-button" %>&nbsp;
+		<%=link_to "Skills", admin_skills_path, :class => "green-inline-button" %>&nbsp;
+	</div>
+	
+	<h3 class="accordion-header expanded clearfix"><span>Locations</span></h3>
+	<div class="accordion-panel">
+	  <% Constants::COUNTRIES.each_key do |country_code|#us,uk,ca,au
+	     locale = Constants::COUNTRIES[country_code]# locale_ like en-GB %>
+	     <%=link_to "Locations [#{locale}]", admin_locations_path(:locale => locale), :class => "green-inline-button"%>&nbsp;&nbsp;
+	  <% end %>	
+	</div>
+	
+	<h3 class="accordion-header collapsed clearfix"><span>Import jobs</span></h3>
+	<div class="accordion-panel">
+		<%= form_tag admin_import_jobs_path do %>  
+		
+			<div class="user-attr-row">
+				<%= label_tag(nil, "URL to CSV file with jobs", :class=>"mandatory") %>
+				<%= text_field_tag(:csv_url, "", :autocomplete => "on", :class => "full-row-width", :spellcheck => false) %>
+			</div>
+			
+			<%= submit_tag("Import", :class => "blue-inline-button", :name => nil) %>
+		<% end %>
+	</div>	
+	
+	<h3 class="accordion-header collapsed clearfix"><span>Diagnostics</span></h3>
+	<div class="accordion-panel">
+		<%unless Rails.env.production?%>
+			<%=link_to "Send welcome email to engineers", admin_welcome_engineers_path, :class => "green-inline-button" %>&nbsp;
+			<%=link_to "Send welcome email to employers", admin_welcome_employers_path, :class => "green-inline-button" %>&nbsp;<br><br>
+			<%=link_to "Send update email to engineers", admin_update_engineers_path, :class => "green-inline-button" %>&nbsp;
+			<%=link_to "Send update email to employers", admin_update_employers_path, :class => "green-inline-button" %>&nbsp;<br><br>
+			<%=link_to "Send admin update", admin_update_admin_path, :class => "green-inline-button" %>&nbsp;
+			<%=link_to "Update employers about new contacts", admin_update_employers_about_new_contacts_path, :class => "green-inline-button" %>&nbsp;
+			<br><br>
+		<%end%>
+		<%=link_to "Inspect", admin_report_statistics_path, :class => "green-inline-button" %>&nbsp;
+	</div>
+</div>
+

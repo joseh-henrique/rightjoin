@@ -1,0 +1,6 @@
+$('#searching-wait-indicator').css("visibility", "hidden");
+$("#wantedposition").val("<%=@search_position.nil? ? '' : @search_position.name.html_safe%>");
+$("#location").val("<%=@search_location.nil? ? '' : @search_location.name.html_safe%>");
+$("#flash-ajax-box").html("<%= escape_javascript(render(:partial => 'layouts/flash_content')) %>");
+$("#search-results-ajax-box").html("<%= escape_javascript(render("search_results")) %>");
+$("#search-results-box").fading_highlight();

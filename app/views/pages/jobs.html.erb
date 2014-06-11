@@ -1,0 +1,131 @@
+<div class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+
+	<div id="search-form-box">
+		<div class="standard-section-header">Search positions</div>
+		<div class="section-box">
+			<%= form_tag(search_jobs_path, :method => "get", :remote => true, :id => "search-form", ) do %>
+				<div class="form-row clearfix">
+					<div class="form-column">
+						<div class="form-cell">
+							<%= label_tag(:wantedposition, "The job position that will scratch your itch") %><br>
+							<a class="field-tooltip" title="To find jobs more effectively, please use standard job titles, provided automatically."></a>
+							<%= text_field_tag(:wantedposition, @search_position.nil? ? '' : @search_position.name.html_safe, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"half-row-width", :spellcheck => true) %>	
+						</div>
+					</div>
+					<div class="form-column">
+						<div class="form-cell">
+							<%= label_tag(:location, "Where?") %><br>
+							<a class="field-tooltip" title='The city where you want to work. You can start typing a city name or a zip code and use autocomplete.<br><br>You can also choose a predefined tag from the dropdown list.<br><br>The search returns jobs in this and nearby cities.'></a>
+							<%= text_field_tag(:location, @search_location.nil? ? '' : @search_location.name.html_safe, :autocomplete => "off", :placeholder => "san francisco, california", :maxlength => 60,  :spellcheck => false, :class=>"half-row-width") %>
+							<%= hidden_field_tag(:lat) %>
+							<%= hidden_field_tag(:lng) %>
+						</div>
+					</div>
+					<div class="form-column">
+						<div class="form-cell">
+							<%= label_tag(nil, "") %><br>
+							<%= submit_tag "Search", :class => "standard-button", :id => "search-btn", :name => nil %>
+							<div title="Searching..." class="loading-icon" id="searching-wait-indicator"></div>
+						</div>
+					</div>
+					
+					<%= hidden_field_tag(:lat) %>
+					<%= hidden_field_tag(:lng) %>
+					<%= hidden_field_tag(:board, params[:board]) %>	
+				</div>
+			<%end%>
+		</div>
+	</div>
+	 
+	<div id="search-results-ajax-box">
+		<%= render 'jobs/search_results' %>
+	</div>
+</div>
+
+<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>
+
+<script>
+   	$("#search-form").submit(function(){
+   		$('#searching-wait-indicator').css("visibility", "visible");
+   		
+		var suggested = $("#location").locationcomplete("selected");
+		if(suggested != null){
+			$("#lat").val(suggested.lat);
+			$("#lng").val(suggested.lng);
+		} else {
+			$("#lat").val("");
+			$("#lng").val("");			
+		}
+	});
+	
+	$(".board-link").live("click", function () {
+   		$('#board').val($(this).attr("board"));
+   		$("#search-form").submit();
+   		return false;
+	});	
+    
+	$("#release-board-constraint a").live("click", function () {
+   		$('#board').val("");
+   		$("#search-form").submit();
+   		return false;
+	});
+	
+	$("#release-position-constraint a").live("click", function () {
+   		$('#wantedposition').val("");
+   		$("#search-form").submit();
+   		return false;
+	});	
+	
+	$("#release-location-constraint a").live("click", function () {
+   		$('#location').val("");
+   		$("#search-form").submit();
+   		return false;
+	});
+    
+	$( "#location" ).locationcomplete({
+		defaultOpts: <%=ActiveSupport::JSON.encode(LocationTag.user_default_options).html_safe%>,
+		country_code: "<%=I18n.t :country_code%>",
+		placeholder: "<%=I18n.t :location_placeholder%>",
+		use_province: "<%=I18n.t :use_province%>"
+	}).keydown(function(e){
+		if (e.keyCode === 13){
+			$("#search-btn").focus();
+			$("#search-form").trigger('submit');
+		}
+	});
+	
+	$( "#wantedposition" ).cachedautocomplete({
+		url: "/autocomplete/positions",
+		sequentialMatching: false,
+		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
+	}).keydown(function(e){
+		if (e.keyCode === 13){
+			$("#search-btn").focus();
+			$("#search-form").trigger('submit');
+		}
+	});
+	
+	$(function () {
+	  $('.fyi_pagination a').live("click", function () {  
+	    $('.fyi_pagination').html('Page loading...');  
+	    $.get("<%=search_jobs_url%>?" + this.href.split("?")[1], null, null, 'script');  
+	    return false;  
+	  });
+	});
+	
+	$( ".direct-ping-form" ).live("submit", function( event ) {
+		$(this).children(".ping-button").attr("disabled", true);
+		return true;
+	});	
+	
+   	$('.direct-ping-form').live('ajax:success',function(data, status, xhr){
+      $(this).closest(".buttons-box").html("<span class='success'>Thanks. We've pinged the company for you.</span>");
+    }).on('ajax:error',function(xhr, status, error){
+      if(status.status == 500) {
+      	$(this).closest(".buttons-box").html("<span class='error'>Ooops, it didn't work. Please check that your <%=Constants::SHORT_SITENAME%> profile is complete.</span>");<%#[TODO]%>
+      } else {
+      	$(this).closest(".buttons-box").html("<span class='error'><%=Constants::ERROR_FLASH%></span>");
+      }
+    });		
+</script>

@@ -1,0 +1,57 @@
+location,position_now,position_wanted,wanted_salary,skill_a,skill_a_yrs,skill_b,skill_b_yrs,skill_c,skill_c_yrs,qualifier_a,qualifier_b,qualifier_c,country_code
+"melbourne, victoria","software engineer","senior software engineer",100,java,5,c++,10,rails,1,"learning opportunities","cool technologies",,au
+"melbourne, victoria","software engineer","senior software engineer",110,python,1,java,5,,,"work from home","work-life balance",stability,au
+telecommute,"software engineer","software engineer",100,java,5,"data mining",1,c#,5,stability,"ace colleagues",,au
+"melbourne, victoria","software engineer","mobile app developer",120,objective-c,5,iphone,1,ios,10,"career advancement","ace colleagues","workplace perks",au
+"melbourne, victoria","software engineer","senior software engineer",115,android,1,iphone,1,c,10,"work from home","< 5 day workweek",,au
+"perth, western australia","development manager","development manager",95,,,,,,,,,,au
+"melbourne, victoria","team lead","dev lead",110,c#,5,"web development",5,,,,,,au
+"melbourne, victoria","software engineer","software engineer",110,java,1,"delphi/object pascal",5,c++,5,"cool technologies","workplace perks",,au
+relocation,"software engineer","software engineer",115,python,5,java,5,php,5,"ace colleagues",,,au
+"melbourne, victoria","software engineer","software engineer",115,java,10,c++,5,rails,1,"cool technologies",,,au
+"sidney, new south wales","software engineer","team lead",100,python,5,java,1,,,stability,"career advancement",,au
+"sidney, new south wales","software engineer","senior software engineer",110,java,1,"data mining",5,c#,5,"work from home","< 5 day workweek",,au
+telecommute,"software engineer","senior software engineer",115,objective-c,1,iphone,5,c#,10,"cool technologies","workplace perks",stability,au
+"sidney, new south wales","software engineer","software engineer",110,android,1,iphone,1,c,10,"work from home",stability,,au
+"sidney, new south wales","software engineer","software engineer",110,java,5,"delphi/object pascal",1,c++,5,"work from home","< 5 day workweek","work-life balance",au
+"sidney, new south wales","software engineer","software engineer",115,python,5,java,5,php,5,"startup environment","workplace perks",,au
+"canberra, canberra","software engineer","team lead",100,"delphi/object pascal",5,java,1,matlab,5,"career advancement","cool technologies","learning opportunities",au
+"canberra, canberra","software engineer","principal software engineer",100,"web development",10,java,10,c,10,"career advancement","ace colleagues",,au
+telecommute,"software engineer","dev lead",85,"web development",10,javascript,10,node.js,1,"ace colleagues","startup environment",,au
+"canberra, canberra","software engineer","software engineer",110,ios,5,rails,1,python,5,,stability,,au
+"perth, western australia","software engineer","dev lead",110,accessibility,1,java,5,javascript,5,,,,au
+"perth, western australia","software engineer","senior software engineer",100,"database management",1,php,5,perl,5,,,,au
+"brisbane, queensland","software engineer","dev lead",110,c,10,,,,,,,,au
+"brisbane, queensland","software engineer","team lead",110,"object-oriented design",5,java,10,c++,5,"career advancement","ace colleagues",,au
+"melbourne, victoria","software engineer","senior software engineer",110,perl,5,c#,5,java,5,"ace colleagues",,,au
+"sidney, new south wales","software engineer","senior software engineer",85,java,10,c,5,,,"learning opportunities","cool technologies",,au
+"sidney, new south wales","software engineer","software architect",100,matlab,5,mathematica,5,"data mining",1,"work from home","work-life balance",,au
+relocation,dba,dba,110,"database management",10,perl,10,,,"startup environment","ace colleagues",,au
+"melbourne, victoria","qa engineer","qa team lead",95,"software testing",5,,,,,"career advancement","ace colleagues",,au
+telecommute,"ux architect","ux architect",100,"ux architecture",5,accessibility,1,,,"work from home","< 5 day workweek",,au
+"melbourne, victoria","build engineer","qa engineer",115,"process management",5,"software testing",5,,,"cool technologies","workplace perks",,au
+"perth, western australia","software architect","software architect",110,,,,,,,,,,au
+"melbourne, victoria","qa engineer","qa engineer",100,"software testing",5,,,,,"ace colleagues",,,au
+"melbourne, victoria","hardware engineer","hardware engineer",100,"embedded systems",5,c,5,,,"cool technologies",,,au
+telecommute,"mobile app developer","senior software engineer",100,iphone,1,android,1,ios,5,stability,"career advancement",,au
+"melbourne, victoria",dba,dba,110,"database management",10,,,,,"work from home","< 5 day workweek",,au
+"melbourne, victoria","field engineer","software architect",115,c++,5,java,5,,,"cool technologies","workplace perks",,au
+"sidney, new south wales",dba,"field engineer",95,"database management",10,,,,,"work from home",stability,,au
+"sidney, new south wales","qa engineer","field engineer",100,"process management",5,c,1,"software testing",10,"work from home","< 5 day workweek",,au
+relocation,"ux architect","software engineer",115,"ux architecture",5,c,10,accessibility,1,"startup environment","workplace perks",,au
+"sidney, new south wales","build engineer","project manager",100,"process management",5,"project management",1,,,"career advancement","cool technologies",,au
+"sidney, new south wales","qa engineer","software engineer",100,"software testing",5,perl,5,java,1,"career advancement","ace colleagues",,au
+"canberra, canberra","hardware engineer","hardware engineer",110,"embedded systems",5,c,1,,,"ace colleagues","startup environment",,au
+telecommute,"mobile app developer","mobile app developer",95,ios,1,objective-c,5,android,1,"< 5 day workweek",stability,,au
+"canberra, canberra",dba,dba,95,"database management",10,c,5,,,"ace colleagues",,,au
+"canberra, canberra","field engineer","field engineer",80,c++,5,"process management",5,,,"career advancement",,,au
+"canberra, canberra",dba,dba,100,"database management",5,perl,5,,,stability,,,au
+"canberra, canberra","product manager","product manager",105,"product management",10,java,5,,,,"ace colleagues",,au
+"canberra, canberra","project manager","development manager",80,"project management",5,,,,,"work-life balance",,,au
+relocation,"qa engineer","qa manager",100,"software testing",5,perl,5,,,"ace colleagues",,,au
+"canberra, canberra",dba,dba,100,"database management",5,"technical writing",1,,,"career advancement",,,au
+telecommute,"field engineer","pre-sales field engineer",100,"database management",10,perl,1,,,stability,,,au
+"melbourne, victoria","mobile app developer","principal software engineer",80,objective-c,5,iphone,5,c,10,"career advancement","ace colleagues",,au
+"melbourne, victoria","team lead","development manager",105,"web development",10,java,10,matlab,1,"career advancement","work-life balance",,au
+"melbourne, victoria","team lead","dev lead",95,c,10,c#,5,node.js,1,"career advancement",,,au
+telecommute,"dev lead","team lead",110,perl,10,python,5,"web development",5,"workplace perks","ace colleagues",,au

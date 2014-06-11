@@ -1,0 +1,57 @@
+location,position_now,position_wanted,wanted_salary,skill_a,skill_a_yrs,skill_b,skill_b_yrs,skill_c,skill_c_yrs,qualifier_a,qualifier_b,qualifier_c,country_code
+"toronto, ontario","software engineer","software architect",105,java,10,c++,10,rails,1,"learning opportunities","cool technologies",,ca
+"toronto, ontario","software engineer","senior software engineer",110,python,5,java,5,,,"work from home","work-life balance",stability,ca
+telecommute,"software engineer","software engineer",110,java,5,"data mining",1,c#,5,"startup environment","ace colleagues",,ca
+"toronto, ontario","software engineer","mobile app developer",115,objective-c,5,iphone,1,ios,10,"career advancement","ace colleagues","workplace perks",ca
+"toronto, ontario","software engineer","senior software engineer",120,android,1,iphone,1,c,10,"work from home","< 5 day workweek",,ca
+"toronto, ontario","software engineer","software engineer",95,java,5,"delphi/object pascal",5,c++,5,"cool technologies","workplace perks",,ca
+relocation,"software engineer","software engineer",95,python,5,java,5,php,5,"ace colleagues",,,ca
+"toronto, ontario","software engineer","software engineer",100,java,10,c++,5,rails,5,"cool technologies",,,ca
+"vancouver, british columbia","software engineer","team lead",95,python,5,java,1,,,stability,"career advancement",,ca
+"winnipeg, manitoba","team lead","team lead",95,c#,5,"web development",5,,,,,,ca
+"vancouver, british columbia","software engineer","senior software engineer",100,java,1,"data mining",5,c#,5,"work from home","< 5 day workweek",,ca
+telecommute,"software engineer","senior software engineer",105,objective-c,1,iphone,5,c#,1,"cool technologies","workplace perks",stability,ca
+"vancouver, british columbia","software engineer","software engineer",115,android,1,iphone,1,c,10,"work from home",stability,,ca
+"vancouver, british columbia","software engineer","software engineer",110,java,5,"delphi/object pascal",1,c++,5,"work from home","< 5 day workweek","work-life balance",ca
+"vancouver, british columbia","software engineer","software engineer",110,python,5,java,5,php,5,"startup environment","workplace perks",,ca
+"calgary, alberta","software engineer","team lead",115,"delphi/object pascal",5,java,1,matlab,5,"career advancement","cool technologies","learning opportunities",ca
+"calgary, alberta","software engineer","principal software engineer",100,"web development",10,java,10,c,10,"career advancement","ace colleagues",,ca
+telecommute,"software engineer","dev lead",100,"web development",10,javascript,10,node.js,1,"ace colleagues","startup environment",,ca
+"calgary, alberta","software engineer","software engineer",85,ios,5,rails,1,python,5,"< 5 day workweek",stability,,ca
+"halifax, nova scotia","software engineer","dev lead",110,accessibility,1,"visual basic",5,javascript,5,"ace colleagues",,,ca
+"halifax, nova scotia","software engineer","senior software engineer",110,"database management",1,php,5,perl,5,"career advancement",,,ca
+"toronto, ontario","software engineer","dev lead",85,c,10,,,,,stability,,,ca
+"toronto, ontario","software engineer","team lead",110,"object-oriented design",5,java,10,c++,5,"career advancement","ace colleagues",,ca
+"winnipeg, manitoba","software engineer","senior software engineer",95,perl,5,c#,5,java,5,"ace colleagues",,,ca
+"edmonton, alberta","software engineer","software architect",105,java,10,c,5,,,"learning opportunities","cool technologies",,ca
+"edmonton, alberta","software engineer","software engineer",100,matlab,5,mathematica,5,"data mining",1,"work from home","work-life balance",,ca
+relocation,dba,dba,90,"database management",10,perl,10,,,stability,"ace colleagues",,ca
+"ottawa, ontario","qa engineer","qa team lead",100,"software testing",5,,,,,"career advancement","ace colleagues",,ca
+telecommute,"ux architect","ux architect",80,"ux architecture",5,accessibility,1,,,"work from home","< 5 day workweek",,ca
+"ottawa, ontario","build engineer","qa engineer",105,"process management",1,"software testing",5,,,"cool technologies","workplace perks",,ca
+"halifax, nova scotia","development manager","development manager",85,,,,,,,,,,ca
+"ottawa, ontario","qa engineer","qa engineer",115,"software testing",5,,,,,"ace colleagues",,,ca
+"ottawa, ontario","hardware engineer","hardware engineer",100,"embedded systems",5,c,5,,,"cool technologies",,,ca
+telecommute,"mobile app developer","senior software engineer",100,iphone,5,android,1,ios,5,stability,"career advancement",,ca
+"ottawa, ontario",dba,dba,100,"database management",5,,,,,"work from home","< 5 day workweek",,ca
+"ottawa, ontario","field engineer","software architect",110,c++,5,java,5,,,"cool technologies","workplace perks",,ca
+"halifax, nova scotia","software architect","software architect",115,,,,,,,,,,ca
+"vancouver, british columbia",dba,"field engineer",95,"database management",10,,,,,"work from home",stability,,ca
+"vancouver, british columbia","qa engineer","field engineer",100,"process management",5,c,1,"software testing",10,"work from home","< 5 day workweek",,ca
+relocation,"ux architect","software engineer",115,"ux architecture",5,c,10,accessibility,1,"startup environment","workplace perks",,ca
+"vancouver, british columbia","build engineer","project manager",100,"process management",5,"project management",1,,,"career advancement","cool technologies",,ca
+"vancouver, british columbia","qa engineer","software engineer",100,"software testing",5,perl,5,java,1,"career advancement","ace colleagues",,ca
+"calgary, alberta","hardware engineer","hardware engineer",110,"embedded systems",5,c,1,,,"ace colleagues","startup environment",,ca
+telecommute,"mobile app developer","mobile app developer",95,iphone,1,objective-c,5,android,1,"< 5 day workweek",stability,,ca
+"calgary, alberta",dba,dba,95,"database management",10,c,5,,,"ace colleagues",,,ca
+"calgary, alberta","field engineer","field engineer",80,c++,5,"process management",5,,,"career advancement",,,ca
+"calgary, alberta",dba,dba,105,"database management",5,perl,5,,,stability,,,ca
+"calgary, alberta","product manager","product manager",100,"product management",10,java,5,,,"career advancement","ace colleagues",,ca
+"calgary, alberta","project manager","development manager",80,"project management",5,,,,,"work-life balance",,,ca
+relocation,"qa engineer","qa team lead",100,"software testing",5,perl,5,,,"ace colleagues",,,ca
+"calgary, alberta",dba,dba,100,"database management",5,"technical writing",1,,,"career advancement",,,ca
+telecommute,"field engineer","pre-sales field engineer",100,"database management",10,perl,1,,,stability,,,ca
+"winnipeg, manitoba","mobile app developer","principal software engineer",80,objective-c,5,iphone,5,c,10,"career advancement","ace colleagues",,ca
+"winnipeg, manitoba","team lead","development manager",140,"web development",10,java,10,matlab,1,"career advancement","work-life balance",,ca
+"winnipeg, manitoba","team lead","dev lead",120,c,10,c#,5,node.js,1,"career advancement",,,ca
+telecommute,"dev lead","team lead",115,perl,10,python,5,"web development",10,"workplace perks","ace colleagues",,ca

@@ -1,0 +1,92 @@
+<div id="company-rating-box">
+	 
+	<p>Tell us what you think about the place you work now.
+		We use these ratings to make our job-matching even better.
+		Your vote is always anonymous.</p>
+	
+	<%
+	company_rating = CompanyRating.new
+	%>
+	
+	<%= form_for(company_rating) do |f| %>  
+		<div id="rating-table">
+			<div class="rating-line"><%= label_tag(nil, "Work-life balance", :class => "rating-label") %><div id="worklife-balance-rating" class="rating"></div><span class="rating-target" id="worklife-balance-rating-target"></span></div>
+			<div class="rating-line odd"><%= label_tag(nil, "Learning opportunitites", :class => "rating-label") %><div id="learning-opportunitites-rating" class="rating"></div><span class="rating-target" id="learning-opportunitites-rating-target"></span></div>
+			<div class="rating-line"><%= label_tag(nil, "Career advancement", :class => "rating-label") %><div id="career-opportunitites-rating" class="rating"></div><span class="rating-target" id="career-opportunitites-rating-target"></span></div>
+			<div class="rating-line odd"><%= label_tag(nil, "Workplace perks", :class => "rating-label") %><div id="workplace-perks-rating" class="rating"></div><span class="rating-target" id="workplace-perks-rating-target"></span></div>
+			<div class="rating-line"><%= label_tag(nil, "Relaxed culture", :class => "rating-label") %><div id="relaxed-culture-rating" class="rating"></div><span class="rating-target" id="relaxed-culture-rating-target"></span></div>
+			<div class="rating-line odd"><%= label_tag(nil, "Ability to make impact", :class => "rating-label") %><div id="impact-rating" class="rating"></div><span class="rating-target" id="impact-rating-target"></span></div>
+			<div class="rating-line"><%= label_tag(nil, "Ace colleagues", :class => "rating-label") %><div id="ace-colleagues-rating" class="rating"></div><span class="rating-target" id="ace-colleagues-rating-target"></span></div>
+		</div>
+		
+		<div id="company-name-box">
+			<%= label_tag(:company_name, "Company name", :class=>"mandatory") %>		
+			<div>
+				<%= text_field_tag :company_name, nil, :maxlength=>250, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width" %>
+				<%= hidden_field_tag(:user_id, current_user.id) %>
+				&nbsp;<%= button_tag "Submit rating", :class=>"blue-inline-button", :id => "submit-rating-btn", :name => nil %>
+			</div>
+		</div>
+	<% end %>
+</div>
+
+<script type="text/javascript">
+	$.fn.raty.defaults.starOff = '<%= asset_path("fyi/asterisk-off.png") %>';
+	$.fn.raty.defaults.starOn = '<%= asset_path("fyi/asterisk-on.png") %>';
+	$.fn.raty.defaults.size = 20;
+	$.fn.raty.defaults.space = false;
+  	$.fn.raty.defaults.targetKeep = true;
+	
+	$('#impact-rating').raty({
+	  scoreName: 'impact',
+	  target    : '#impact-rating-target',
+	  hints: ['Cog in the machine', 'The cogs squeak a little', 'I occasionally get noticed', 'I move and shake', 'I move the business and shake it too']
+	});
+	
+	$('#learning-opportunitites-rating').raty({
+	  scoreName: 'learning_opportunitites',
+	  target    : '#learning-opportunitites-rating-target',
+	  hints: ['I\'m yearnin\' for some learning\'', 'Every few months', 'Some things old, some things new', 'Keep on learnin\'', 'Something new every day']
+	});
+	
+	$('#career-opportunitites-rating').raty({
+	  scoreName: 'career_opportunitites',
+	  target    : '#career-opportunitites-rating-target',
+	  hints: ['Stagnation station', 'Careers crawl along', 'Promotion, eventually', 'Sky\'s the limit', 'Sky\'s no limit']
+	});
+	
+	$('#workplace-perks-rating').raty({
+	  scoreName: 'workplace_perks',
+	  target    : '#workplace-perks-rating-target',
+	  hints: ['We have to buy our own coffee here.', 'Free coffee', 'Snacks', 'They\'ll feed you so long as you stay at the office.', 'Kegerator, foosball, massages...']
+	});
+	
+	$('#relaxed-culture-rating').raty({
+	  scoreName: 'relaxed_culture',
+	  target    : '#relaxed-culture-rating-target',
+	  hints: ['Boss thinks he\'s our sergeant', 'Uptight', 'PHB leaves me alone', 'Relaxation', 'Chill out, dude']
+	});
+	
+	$('#worklife-balance-rating').raty({
+	  scoreName: 'worklife_balance',
+	  target    : '#worklife-balance-rating-target',
+	  hints: ['Life? What\'s that?', 'They let us go home sometimes.', 'I can deal with it.', 'They give you some space.', 'Enjoying work and life in perfect harmony.']
+	});
+		
+	$('#ace-colleagues-rating').raty({
+	  scoreName: 'ace_colleagues',
+	  target    : '#ace-colleagues-rating-target',
+	  hints: ['There are some advantages to being the smartest one around.', 'A few sharp arrows in the quiver', 'Pretty solid', 'A few wizards to learn from', 'Intimidatingly brilliant colleagues']
+	});
+	
+    $('#submit-rating-btn').click(function() {
+    	$("#new_company_rating").validationEngine('hideAll');
+		var res = $("#new_company_rating").validationEngine('validate');
+		if (res) {
+			$("#new_company_rating").submit();
+        	$(this).attr('disabled',true);
+		}
+		
+		return false;
+    });	
+</script>

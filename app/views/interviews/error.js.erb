@@ -1,0 +1,3 @@
+$("#send-message-box-<%=@user_id%>").find(".wait-indicator").css("visibility", "hidden");
+$("#send-message-box-<%=@user_id%>").find(".send-msg-btn").attr('disabled', false);
+$("#send-message-box-<%=@user_id%>").find(".send-message-result").html("<div class='send-error'><%=@display_error%></div>");

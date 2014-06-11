@@ -1,0 +1,25 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en-IN:
+  country_code: "in"
+  country_name: "India"
+  short_country_name: "India"
+  full_country_name: "India"
+  country_adjective: "Indian"
+  location_placeholder: "bangalore"
+  latitude : 20.593684 
+  longitude : 78.96288000000004
+  use_province: "false"
+  max_salary: "2000000"
+  salary_step: "200000" 
+  salary_period: "annual"
+  
+  monthly_tier_1_price: "0"
+  monthly_tier_2_price: "11999"
+  monthly_tier_3_price: "29999"
+  currency_unit: "&#8360;" 
+  thousands_delimiter: ","
+  intl_phone_pfx: "+1-"
+  google_keep_location_components: "['administrative_area_level_3', 'locality']"
+  default_bounds: "[12.7342888, 77.37919809999994, 13.173706, 77.88268089999997]"

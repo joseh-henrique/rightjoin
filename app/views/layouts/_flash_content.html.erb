@@ -1,0 +1,17 @@
+<% unless flash.blank? %>
+	<div id="flash-container">
+		<% flash.each do |type, messages| %>
+			<% if messages.respond_to?("each") %>
+				<% messages.each do |m| %>
+					<% unless m.blank? %>
+			    		<div class="flash-box closable <%= type %>"><span class="flash-msg"><%= m.html_safe %></span><a class="flash-x link-x" href="#"></a></div>
+					<% end %>
+			   <% end %>
+		   <% else %>
+			   <% if messages and messages.respond_to?("html_safe")%>
+					<div class="flash-box closable <%= type %>"><span class="flash-msg"><%= messages.html_safe %></span><a class="flash-x link-x" href="#"></a></div>
+			   <% end %>
+		   <% end %>
+		<% end %>
+	</div>
+<% end %>

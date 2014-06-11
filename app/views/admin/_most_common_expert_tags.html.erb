@@ -1,0 +1,9 @@
+<h1>Most common 'expert' tags among all users</h1> 
+<ul>
+	<% @most_common_expert_tags.each do |tag_and_count|%>
+		<li>
+			<span class="tag-name data-job-qualifier1"><%=tag_and_count[0]%></span>
+			<span class="tag-count"><%=tag_and_count[1]%></span>
+		</li>
+	<% end %>
+</ul>

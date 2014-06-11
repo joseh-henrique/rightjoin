@@ -1,0 +1,15 @@
+ 
+<%#Might not be in use%>
+<p class="headline jumbo">
+	Questions?
+</p>
+
+<p class="normal-par">
+	 
+	Check out the <%= link_to "FAQ", @current_page_info[:intended_for] == :employee ? faq_path : employer_faq_path, :class => "top-level" %>.
+	Or call us at <%=Utils::phone_with_pfx%>,
+ 
+	send a question through <%=uservoice_contact_line("our support form")%>,
+	or just <%=email_contact_link("drop us a line")%>, 
+	and we'll get right back to you.  
+</p>

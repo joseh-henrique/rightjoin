@@ -1,0 +1,42 @@
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Approve skills
+</p>
+
+<div class="white-box">
+	<% if @skills.blank? %>
+		Nothing to approve.
+	<% else %>
+		<%= form_tag admin_approve_skill_path, :id => "approve_skill_form" do %>  
+			<table>
+				<tr>
+					<th></th>
+					<th>Skill tag</th>
+					<th>###</th>
+				</tr>
+				<%@skills.each do |skill| %>
+					<tr>
+						<td>
+							<%= check_box_tag "skill[#{skill.id}]", '1', true%>
+						</td>
+						<td>
+							 <%= label_tag("skill[#{skill.id}]", skill.name) %>
+						</td>
+						<td>
+							<%=skill.total%>
+						</td>
+					</tr>
+				<%end%>
+			</table>
+			<br><br>
+			<%=link_to "Submit", "#", :id => "approve", :class => "blue-inline-button" %>&nbsp;
+		<% end %>
+		
+		<script type="text/javascript">
+			$("#approve").click(function(event){
+				$("#approve_skill_form").submit();
+				return false;
+			});
+		</script>
+	<%end%>
+</div>

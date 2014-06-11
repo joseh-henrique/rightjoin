@@ -1,0 +1,123 @@
+<div class="inner">
+	<%= render :partial => 'layouts/flash_box' %>
+</div>
+
+<div class="content">
+	<p class="headline jumbo">
+		Your own employees are the best reason to work for you.
+	</p>
+	<p class="normal-par">
+		The best sign of a good company is the people who work there.  
+		  Add a <em>&ldquo;Come Work With Us&rdquo;</em>  widget to your site and show software developers 
+		  why they want to come join your team.  
+		  
+	</p>
+	
+	<br>
+
+	<div id="hire-now-btn-box" class="clearfix employer-content-box">
+		<div class="float-left" style="width:230px;">
+			<%= link_to "Start Free Trial", employer_get_started_path, :class=>"hire-now-button" %>
+		</div>
+		<p class="normal-par">
+			Try it for free. No credit card needed.
+			Or <%= email_contact_link("contact us")%> for a live demo.
+ 
+		</p>
+	</div>
+
+	<br>
+	
+	<div id="how-it-works-box">
+		<p class="headline jumbo">
+			How it works
+		</p>
+
+		<p class="normal-par">
+			<%= Constants::SHORT_SITENAME%> expands the reach of your company's site and employees
+			to attract  top developers.
+		</p>
+
+		<ul id="how-it-works-list">
+			<li>
+				<div class="employer-content-box">
+					<p class="headline step-title">
+						Boost social recruiting  with a &ldquo;Come Work With Us&rdquo; widget on your site. 
+					</p>
+					<div class="float-right" id="widget-screenshot"></div>
+		 
+					<p class="normal-par">
+						When developers visit your site, catch their interest with an ad designed to appeal to them.
+					 
+					</p>
+				 
+					<p class="normal-par">
+					 Give them the chance to  contact your chosen <em>developers</em> and find out from their peers what your company is really like.
+					 (All incoming contacts are  screened.)
+	
+					</p>
+					<p class="normal-par">
+					In addition, we make it easy for your employees to share this same ad, inviting their professional colleagues to contact them. 
+					</p>
+					
+					 <p class="normal-par">
+					 	
+						It's <em>employee-centered recruiting</em>, with your own developers as the main attraction. 
+					</p>
+					<p class="normal-par">
+					
+					</p>
+				</div>
+			</li>
+
+			<li>
+				<div class="employer-content-box">
+					<div class="float-left" id="board-screenshot"></div>
+								
+					<p class="headline step-title">
+						Show why your job position is exceptional
+					</p>
+								
+					<p class="normal-par">
+						We've figured out the extras that attract strong developers to a job.
+						
+					</p>
+					<p class="normal-par">
+						It's not just compensation: That's table stakes.
+						Developers want meaning in their work, cutting-edge technologies, an enjoyable workspace,
+						the chance to contribute to open-source, and more. 
+					</p>
+					 
+				</div>
+			</li>
+
+			<li>
+				<div class="employer-content-box">
+					<div class="float-right" id="candidates-screenshot"></div>										
+					
+					<p class="headline step-title">
+						Invite <%= Constants::SHORT_SITENAME%> members to apply
+					</p>
+										
+					<p class="normal-par">
+						Software developers at <%= Constants::SHORT_SITENAME%> are exactly
+						the <em>&ldquo;Active-Passives&rdquo;</em> you're looking for.
+
+						They are comfortable, not looking, but when they join <%= Constants::SHORT_SITENAME%>, they're letting you know  that they're open to opportunities
+						that offer something exceptional.
+					</p>
+					<p class="normal-par">
+						You see their <em>expectations</em> upfront, so you can know whether you're likely to close a deal.
+					</p>
+					<p class="normal-par">
+						 Click a member profile to invite them to talk to your employees, or apply to your jobs.
+					</p>
+				</div>
+			</li>
+		</ul>
+	</div>
+
+	<%= render :partial => "layouts/contact" %>
+</div>
+
+<%= render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => true} %>

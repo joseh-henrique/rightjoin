@@ -1,0 +1,141 @@
+<%
+  raise "unexpected intended_for \"@intended_for\"" unless [:employee, :employer].include?(@intended_for)
+	
+  fnt_sz_lrg ="font-size:14px"
+  fnt_sz_med = "font-size:13px"
+
+  fnt_sz_sml="font-size:11px"
+  fnt_sz1 ="font-size:1px"
+
+  font_fam_sans = "font-family: Arial,sans-serif"
+  
+  ln_ht_short = "line-height:10px"  
+  ln_ht_med = "line-height:18px"
+  ln_ht_tall= "line-height:20px"
+
+  tbl_conf = raw('cellpadding="0" cellspacing="0" border="0";align="center"')
+  blk_txt = "black"# That's Gmail. Yahoo uses "#45454"
+  ltblu_brdr ="#dbdbdb" 
+  bright_brbd="#fefefe"
+  
+  gry1_brdr  = "#f8f8f8"
+  gry2_bkgd = "#f9f9f9"
+
+  gry3_brdr = "#eaeaea"
+  gry4_ftr_txt ="#a1a1a1"
+  gry5_brdr  = "#eeeeee"
+  gry_quo = "#dddddd"
+  drk_gry_company_name = "#666666"
+
+  wht_bkgd = "#ffffff"
+  
+  blu_lnk = "#0082dd"
+
+  m0p0= "margin:0;padding:0"
+  
+  wd_650 =raw('width="650px"')
+  wd_10 =raw('width="10px"')
+  hght_10 =raw('height="10px"')
+  wd_10px ='width:10px'
+
+%><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<body>
+		<table bgcolor="<%= gry5_brdr%>">
+			<tbody>
+				<tr>
+					<td colspan="3" valign="top" align="left" <%=hght_10%> bgcolor="<%= gry5_brdr%>" style="<%= font_fam_sans%>;background:<%= gry5_brdr%>;<%= fnt_sz1%>;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td id="emptynarrowtd" <%=wd_10%> valign="top" align="left" bgcolor="<%= gry5_brdr%>" style="<%= font_fam_sans%>;background:<%= gry5_brdr%>;<%= fnt_sz1%>;">&nbsp;</td>
+					<td>
+						<table  id="table1wrappingcontent" <%= tbl_conf%> align="center" <%=wd_650%>>
+							<tbody>
+								<tr>
+								  <td align="center" style="<%= m0p0%>" valign="top" id="td1">
+									<table  id="table2" <%= tbl_conf%> align="center" <%=wd_650%> style="<%= font_fam_sans%>;background:<%= wht_bkgd%>; " bgcolor="<%= wht_bkgd%>">
+										<tbody>
+											<tr>
+											  <td <%=wd_650%> bgcolor="<%= wht_bkgd%>" style="<%= font_fam_sans%>;background:<%= wht_bkgd%>;" valign="top" id="table2tr1td2">
+									 			<table id="table3" <%= tbl_conf%> <%=wd_650%> style="<%= font_fam_sans%>;background:<%= gry1_brdr%>; border-bottom:1px solid <%=gry3_brdr%>; border-right:1px solid <%=ltblu_brdr %>;border-left:1px solid <%=bright_brbd%>" bgcolor="<%= gry1_brdr%>">
+													<tbody>
+														<tr>
+															<td style="width:598px;padding:20px 25px;text-align:left;border-top:1px solid <%=bright_brbd%>" valign="top">
+																<p style="<%= ln_ht_med%>;<%= fnt_sz_lrg%>;<%= font_fam_sans%>;<%= m0p0%>;">
+<%# *************TEXT************** %>
+<%= raw(@msg1_h)%>
+																</p>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+												<table id="table4" <%= tbl_conf%> <%=wd_650%> style="<%= font_fam_sans%>;background:<%= wht_bkgd%> ;border-bottom:1px solid <%=gry3_brdr%>; border-right:1px solid <%=ltblu_brdr %>;border-left:1px solid <%=bright_brbd%>" bgcolor="<%= wht_bkgd%>" >
+													<tbody>
+			 												<tr>
+																<td style="padding:20px 25px;text-align:left;border-top:1px solid <%=bright_brbd%>" valign="top">
+																	<div style="<%= ln_ht_med%>;<%= fnt_sz_lrg%>;<%= font_fam_sans%>;<%= m0p0%>;">
+<%# *************TEXT************** %>
+<%= raw(@msg2_h) %>
+																	</div>
+																</td>
+															</tr>
+													</tbody>
+												</table>
+												<table id="table5" <%= tbl_conf%> <%=wd_650%> style="<%= font_fam_sans%>;background:<%=gry2_bkgd %>; border-bottom:1px solid <%=ltblu_brdr %>;border-right:1px solid <%=ltblu_brdr %>;border-left:1px solid <%=bright_brbd%>" bgcolor="<%=gry2_bkgd%>">
+													<tbody>
+														<tr>
+															<td style="width:598px;padding:20px 25px 20px;text-align:left;" valign="top">
+																<p style="<%=ln_ht_med%>;<%= fnt_sz_lrg%>;<%= font_fam_sans%>;<%= m0p0%>;" >
+<%# *************TEXT************** %>
+<%= raw(@msg3_h) %>
+																</p>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											  </td>
+											</tr>
+										</tbody>
+									</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>							
+					</td>
+					<td id="emptynarrowtd" <%=wd_10%> valign="top" align="left" bgcolor="<%= gry5_brdr%>" style="<%= font_fam_sans%>;background:<%= gry5_brdr%>;<%= fnt_sz1%>;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center" bgcolor="<%= gry5_brdr%>" style="padding:15px 0 15px; color:<%=gry4_ftr_txt%>;background:<%=gry5_brdr%>;margin:0;<%=ln_ht_tall%>;<%= font_fam_sans%>;" valign="top">
+						<p style="padding:0;<%=fnt_sz_lrg%>;color:<%=gry4_ftr_txt%>;margin:0;<%= font_fam_sans%>;line-height:16px;">
+							<%# *************TEXT************** %>
+								<% if @intended_for==:employer %>
+									<%=Constants::EMPLOYER_TAGLINE%>
+								<% else %>
+									<%=Constants::CANDIDATE_TAGLINE%>.
+								<% end %>
+							<br/>
+							<span style="color:<%=gry4_ftr_txt%>;<%=font_fam_sans%>;<%=fnt_sz_sml%>;">&copy;&nbsp;<%=Time.now.year%>
+<%# *************TEXT************** %> 
+<a target="_blank" style="text-decoration: none;" href="http://www.<%=Constants::SITENAME_LC%>/<%=I18n.t(:country_code)%><% if @intended_for==:employer%>/employers<%end%>"><%=Constants::SITENAME%></a>
+							</span>
+						</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<% unless @msg_footer_h.nil? %>
+			<table <%= tbl_conf%> <%=wd_650%> style="<%= font_fam_sans%>;">
+				<tbody>
+					<tr>
+						<td style="text-align:left;" valign="top">
+							<p style="<%=ln_ht_med%>;<%= fnt_sz_sml%>;<%= font_fam_sans%>;<%= m0p0%>;" >
+								<%=raw @msg_footer_h%>
+							</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		<% end %>
+	</body>
+</html>

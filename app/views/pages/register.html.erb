@@ -1,0 +1,17 @@
+<a name="form" style="visibility: hidden"></a>
+
+<div class="inner">
+	<%= render :partial => 'layouts/flash_box' %>
+</div>
+
+<div class="content">
+	<p class="headline">
+		Tell us what turns you on. Employers will invite you to specific jobs that meet your requirements.
+	</p>
+	<p class="subtitle">
+		No resum&eacute; needed, just enough info to make the connection.
+	</p>
+	<%= render :partial => 'users/edit_form' %>
+</div>
+
+<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => true} %>

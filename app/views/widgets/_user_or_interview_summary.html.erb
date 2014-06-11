@@ -1,0 +1,15 @@
+<li>		    
+	<%	
+	 # Note the truncation should properly be done with the CSS text-overflow attribute, but it did not show when tried.
+	 # A relatively short line length of ~85  is needed to accomodate the extreme case, which occurs when the user has a
+	 # large number of single-char requirements (very unlikely).  
+	 # Most users/interviews will not need such a short line length, and we set the max to somewhat longer to 
+	 # avoid excess blank space.
+	 
+	 # If a line does goes over the line length, it will NOT mess  up the formatting. 
+	 # Rather, the line will just get truncated here it runs out of space, with no ellipsis at the end,
+	 # which is mildly ugly. This will happen rarely. 
+	 %>
+   
+   	<%=raw summary_line(user_or_interview_summary, 105) %> 
+</li>		

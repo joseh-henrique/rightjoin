@@ -1,0 +1,39 @@
+<%
+#Note: We only display invitations about which an email has been sent. 
+active_interviews = current_user.interviews.select {|interview| interview.status_one_of?([Interview::CONTACTED_BY_EMPLOYER])}
+%>
+
+<% if active_interviews.blank? %>
+	<div id="no-contacts-box">
+		No invitations yet? <%= link_to "Take a look", jobs_path%> at opportunities in some escape-worthy areas,
+		and talk to colleagues at companies that you might want to work at.
+	</div>
+<% else %>
+	<p id="invitations-header">
+		<% 
+		have_amb = Interview.have_active_ambassadors?(active_interviews) 		
+		%>
+		Employers are inviting you to apply to these job ads<%if have_amb %>, and to contact insiders at their organization<%end%>. 
+	</p> 
+	<% active_interviews.each do |interview| %>
+		<div id="interview-<%=interview.id%>" class="user-interviews-box">
+			<div class="message candidate-facing-ad">
+				<div class="status-text time-distance">
+			    	<%=distance_of_time_in_words(interview.created_at, Time.now)%> ago
+			    </div>
+			    <div class="job-ad-frame">
+					<%= render :partial => 'jobs/ad', :locals => {:job => interview.job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL} %>
+				</div>
+			</div>
+			<span class="message-arrow"></span>
+			<div class="li-link-box">
+				<% if interview.employer.li_url.blank? %>
+					<%=interview.employer.first_name %>&nbsp;<%=interview.employer.last_name%>
+				<% else %>
+					<%=link_to "#{interview.employer.first_name} #{interview.employer.last_name}", interview.employer.li_url, :class => "li-link", :target => "_fyi_popup"%>
+				<% end %>
+				@ <%=interview.job.company_name%>
+			</div>
+		</div>
+	<% end %>
+<% end %>

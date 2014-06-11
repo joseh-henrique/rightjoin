@@ -1,0 +1,38 @@
+<ul id="header-menu" class="<%= css_class_for_current_page%>">
+	<% if @current_page_info[:intended_for] == :employee %>
+		<li class="n_jobs">		
+			<%= link_to("Jobs", jobs_path)  %>
+		</li>
+		<% if current_user %>
+			<li class="n_dashboard">		
+				<%= link_to("Dashboard", user_path(current_user, :locale => current_user.country_code))  %>
+			</li>
+		<% else %>
+			<li class="n_register">		
+				<%= link_to("Register", register_path)  %>
+			</li>
+		<% end %>
+		<li class="n_faq">
+			<%= link_to "FAQ", faq_path %>
+		</li>		
+	<% elsif @current_page_info[:intended_for] == :employer %>
+		<% if current_user %>
+			<li class="n_dashboard">		
+				<%= link_to("Dashboard", employer_welcome_path)  %>
+			</li>
+		<%else%>
+			<li class="n_welcome">		
+				<%= link_to("Welcome", employer_welcome_path)  %>
+			</li>
+			<li class="n_get_started">
+				<%= link_to "Get Started", employer_get_started_path  %>
+			</li>			
+		<%end%>	
+		<li class="n_search">		
+			<%= link_to "Candidates", employer_search_path  %>
+		</li>
+		<li class="n_faq">
+			<%= link_to "FAQ", employer_faq_path %>
+		</li>
+	<% end %>
+</ul>

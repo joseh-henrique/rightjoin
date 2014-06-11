@@ -1,0 +1,19 @@
+---
+development:
+  cloud_name: dmuokov3v
+  api_key: '669622646658361'
+  api_secret: 5DJkCwzfBRuRm-5pW-IIqjv-DNU
+  enhance_image_tag: true
+  static_image_support: false
+production:
+  cloud_name: dmuokov3v
+  api_key: '669622646658361'
+  api_secret: 5DJkCwzfBRuRm-5pW-IIqjv-DNU
+  enhance_image_tag: true
+  static_image_support: true
+test:
+  cloud_name: dmuokov3v
+  api_key: '669622646658361'
+  api_secret: 5DJkCwzfBRuRm-5pW-IIqjv-DNU
+  enhance_image_tag: true
+  static_image_support: false

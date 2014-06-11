@@ -1,0 +1,385 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+ *= require reset
+ *= require unreset
+ *= require jquery-ui-1.9.2.custom
+ *= require validationEngine.jquery 
+ *= require_self
+*/ 
+
+@import "common";
+
+$default-font-color: #FFF;
+$default-font-size: 18px; 
+$width: 940px;
+
+html {
+  height: 100%;
+  background: #C08895 image-url("team/bg.jpg") no-repeat center center fixed; 
+  @include background-size (cover);
+  font-size: $default-font-size;  
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: 100%;
+  font-family: 'Ubuntu', sans-serif;
+  color: $default-font-color;
+  line-height: 1.35em;
+  text-align: center;  
+}
+
+#container {
+   min-height:100%;
+   position:relative;  
+}
+
+.em {
+  font-weight: bold;
+}
+
+.content {
+  width: $width;
+  margin: 0 auto;
+}
+
+input[type=text], input[type=password], textarea, select {
+  font-size: $default-font-size !important;
+  font-family: 'Ubuntu', sans-serif !important;
+  height: 2em !important;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  color: #7a5e60;
+  width: 20em;
+  background: white;
+  
+  &:focus {
+    outline: #ff754d auto 5px;
+  }
+}
+
+select {
+  line-height: 2em !important;
+}
+
+label {
+  line-height: 1.6em;
+  &.mandatory {
+    background: transparent image-url("team/asterisk.png") no-repeat top right;
+    padding-right: 10px;
+  }
+}
+
+#body {
+  padding-bottom: 36px;
+}
+
+#footer {
+  background: #300E0E image-url("shared/semi-transparent.png") repeat;
+  color: #7a5e60;
+  font-size: $default-font-size - 4;
+  line-height: 36px;
+  position:absolute;
+  bottom:0;
+  width:100%;
+}
+
+#team-signin {
+  positon: relative;
+  
+  .rightjoin {
+      width: 603px;
+      height: 73px;
+      background: transparent image-url("team/logo-large.png") no-repeat center; 
+      margin: 0 auto;
+      margin-top: 80px;
+      margin-bottom: 70px;
+  }
+  
+  .tell-your-friends {
+    font-size: 34px;
+    line-height: 1.35em;
+  }
+  
+  #signin-box {
+    .signin-with{
+      font-size: 36px;
+      line-height: 1em;
+      margin-bottom: 15px;
+    }
+    
+    background: transparent image-url("shared/semi-transparent.png") repeat;
+    padding-top: 26px;
+    padding-bottom: 36px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    
+    .signin {
+      width: 106px;
+      height: 106px;
+      display: inline-block;
+      text-indent: -9999px;
+      @include border-radius(6px);
+      
+      &.signin-github {
+        background: #1e1f20 image-url("team/github.png") no-repeat center;
+      }
+      
+      &.signin-twitter {
+        background: #2ec4ff image-url("team/twitter.png") no-repeat center;
+      }    
+      
+      &.signin-linkedin {
+        background: #0069a6 image-url("team/linkedin.png") no-repeat center;
+      }
+      
+      &.signin-googleplus {
+        background: #d43036 image-url("team/google-plus.png") no-repeat center;
+      }
+      
+      &:hover {
+        background-color: #e8643e;
+      }               
+    } 
+  }
+  
+  #blurbs-box {
+    width: 700px;
+    margin: 0 auto;
+    font-size: $default-font-size - 2;
+    
+    .blurb {
+      width: 160px;
+      padding-top: 180px;
+      margin-bottom: 100px;
+      
+       &.left {
+         background: transparent image-url("team/share.png") no-repeat top left;
+        float: left;
+      }
+      
+      &.center {
+        background: transparent image-url("team/123.png") no-repeat top left;
+        margin: 0 auto;
+      }
+      
+      &.right {
+        background: transparent image-url("team/time.png") no-repeat top left;
+        float: right;
+      }
+    }
+  }
+}
+
+#profile-edit { 
+  #center-box {
+    padding-top: 40px;
+    padding-bottom: 100px;
+       
+    .update-profile {
+      font-size: 34px;
+      line-height: 1.35em;
+      padding: 60px 0 60px;
+    }
+    
+    .form-panel {
+      width: 22em;
+      text-align: left;
+      margin: 0 auto;
+      
+      .button-box {
+        margin-top: 50px;
+        text-align: center;
+      }
+    }
+  }
+  
+  .attr-row {
+    padding-bottom: 12px;
+  }
+  
+  .submit-button {
+    @include inline-button(#FF754D, $default-font-size, $default-font-size * 2.3, $default-font-size * 2.3, $default-font-color, normal);
+  }
+  
+  .cancel-button {
+    @include inline-button(#b3bec5, $default-font-size, $default-font-size * 2.3, $default-font-size * 2.3, $default-font-color, normal);
+  }
+}
+
+.header-strip {
+  background: transparent image-url("shared/semi-transparent.png") repeat;
+  height: 90px;
+  position: relative;
+  
+  .logo {
+    width: 217px;
+    height: 25px;
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+    
+    background: transparent image-url("team/logo.png") no-repeat center; 
+  }
+}
+
+#dashboard {
+  .header-strip {
+    .avatar-box {
+      text-align: right;
+
+      a {
+        vertical-align: top;
+        height: 90px;
+        line-height: 90px;
+        color: $default-font-color;
+        font-weight: bold;
+        font-size: 16px;
+        
+        &:hover {
+          @include opacity(90);
+        }
+      }
+      
+      img {
+        width: 50px;
+        height: 50px;
+        margin-top: 17px;
+        margin-left: 6px;
+        @include border-radius(50%);
+        border: 3px solid white;
+      }
+    }
+  }
+  
+  .counters-box {
+    margin-top: 70px;
+    margin-bottom: 70px;
+    
+    .counter {
+      position: relative;
+      display: inline-block;
+      margin-top: 60px;
+      margin-left: 40px;
+      margin-right: 40px;
+      width: 220px;
+      height: 220px;
+      border: solid 3px white;
+      @include border-radius(50%);
+      
+      .counter-val {
+        width: 220px;
+        height: 220px;
+        line-height: 220px;
+        font-size: 64px;
+      }
+      
+      .counter-title {
+        position: relative;
+        top: -40px;
+      }
+    }
+  }
+  
+  .see-whats-happening {
+    font-size: 46px;
+    line-height: 1.35em;
+  }
+  
+  .recent-leads {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    background: transparent image-url("shared/semi-transparent.png") repeat;
+    font-size: 24px;
+    
+    .lead-avatar {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-top: 20px;
+      @include border-radius(50%);
+    }
+    
+    div.lead-avatar {
+      background: transparent image-url("shared/no-avatar-semi-transparent-56x56.png") repeat;
+    }
+  }  
+  
+  .invite-box {
+    background: white;
+    color: #555555;
+    padding-top: 70px;
+    padding-bottom: 30px;
+    
+    .invite-friends {
+      font-size: 36px;
+      line-height: 1.35em;
+      overflow:hidden;
+    }
+    
+    .position-chooser {
+      padding-top: 40px;
+      padding-bottom: 50px;
+    }
+    
+    .all-buttons-box {
+      margin-bottom: 40px;
+      
+      .share-button-box {
+        display: inline-block;
+        margin-left: 40px;
+        margin-right: 40px;
+        
+        .share-button {
+          @include border-radius(20%);
+          
+          a {
+            display: block;
+            height: 82px;
+          }
+          
+          &:hover {
+            background: #e8643e;
+          }
+        }
+        
+        .linkedin {
+          background: #0069a6;
+        }
+        
+        .facebook {
+          background: #3C599B;
+        }
+        
+        .google-plus {
+          background: #d43036;
+        }
+        
+        .twitter {
+          background: #2ec4ff;
+        }
+        
+        .email {
+          background: #8677a3;
+        }   
+      }
+    }
+    
+    .preview-link {
+      color: #555555;
+      font-size: 24px;
+      
+      &:hover {
+        color: #e8643e;
+      }
+    }
+  }
+}
+
+

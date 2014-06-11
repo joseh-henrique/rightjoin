@@ -1,0 +1,255 @@
+<%
+tab_element_id = "fyi-tab-box"
+border_radius = "6px"
+activeJobsCount = @employer.active_jobs.count
+border_color = @employer.join_us_widget_params_map["tab_border_color"]
+label_text = escape_javascript raw @employer.join_us_widget_params_map["label_text"];
+
+border_bottom_tab = <<-FIN
+	border: 1px solid #{border_color};
+	border-bottom: 0;
+	-webkit-border-top-left-radius: #{border_radius};
+	-webkit-border-top-right-radius: #{border_radius};
+	-moz-border-radius-topleft: #{border_radius};
+	-moz-border-radius-topright: #{border_radius};
+	border-top-left-radius: #{border_radius};
+	border-top-right-radius: #{border_radius};
+	padding: 0.4em 0.7em 0.4em;
+FIN
+
+border_left_tab = <<-FIN
+	border: 1px solid #{border_color};
+	border-left: 0;
+	-webkit-border-top-right-radius: #{border_radius};
+	-webkit-border-bottom-right-radius: #{border_radius};
+	-moz-border-radius-topright: #{border_radius};
+	-moz-border-radius-bottomright: #{border_radius};
+	border-top-right-radius: #{border_radius};
+	border-bottom-right-radius: #{border_radius};
+	padding: 0.6em;
+FIN
+
+border_top_tab = <<-FIN
+	border: 1px solid #{border_color};
+	border-top: 0;
+	-webkit-border-bottom-right-radius: #{border_radius};
+	-webkit-border-bottom-left-radius: #{border_radius};
+	-moz-border-radius-bottomright: #{border_radius};
+	-moz-border-radius-bottomleft: #{border_radius};
+	border-bottom-right-radius: #{border_radius};
+	border-bottom-left-radius: #{border_radius};
+	padding: 0.4em 0.7em 0.4em;
+FIN
+
+border_right_tab = <<-FIN
+	border: 1px solid #{border_color};
+	border-right: 0;
+	-webkit-border-top-left-radius: #{border_radius};
+	-webkit-border-bottom-left-radius: #{border_radius};
+	-moz-border-radius-topleft: #{border_radius};
+	-moz-border-radius-bottomleft: #{border_radius};
+	border-top-left-radius: #{border_radius};
+	border-bottom-left-radius: #{border_radius};
+	padding: 0.6em;
+FIN
+%>
+
+(function() {
+	var global = this;
+
+	// helper functions
+	var addEvent = (function( window, document ) { 
+	    if ( document.addEventListener ) { 
+	        return function( elem, type, cb ) { 
+	            if ( (elem && !elem.length) || elem === window ) { 
+	                elem.addEventListener(type, cb, false ); 
+	            } 
+	            else if ( elem && elem.length ) { 
+	                var len = elem.length; 
+	                for ( var i = 0; i < len; i++ ) { 
+	                    addEvent( elem[i], type, cb ); 
+	                } 
+	            } 
+	        }; 
+	    } 
+	    else if ( document.attachEvent ) { 
+	        return function ( elem, type, cb ) { 
+	            if ( (elem && !elem.length) || elem === window ) { 
+	                elem.attachEvent( 'on' + type, function() { return cb.call(elem, window.event) } ); 
+	            } 
+	            else if ( elem.length ) { 
+	                var len = elem.length; 
+	                for ( var i = 0; i < len; i++ ) { 
+	                    addEvent( elem[i], type, cb ); 
+	                } 
+	            } 
+	        }; 
+	    } 
+	})( this, document );
+	
+	// insert element
+	var insertLast = function (elem, parent) {
+		parent.insertBefore(elem, null);
+	}
+	
+	// open dialog
+	function openDialogWindow(href,  width_, height_, name_) {
+	    if (!name_)  name_ = '_fyi_infointerview';
+	    if (!width_) width_ = 1000;
+	    if (!height_) height_ = screen.height - 280;
+	 
+	    var defaultParams = { };
+	
+	    var features_dict = {
+	        toolbar: '1',
+	        location: '0',
+	        directories: '0',
+	        left: (screen.width - width_) / 2,
+	        top: (screen.height - height_) / 2,
+	        status: '0',
+	        menubar: '0',
+	        scrollbars: '1',
+	        resizable: '1',
+	        width: width_,
+	        height: height_
+	    };
+	    features_arr = [];
+	    for(var k in features_dict) {
+	        features_arr.push(k+'='+features_dict[k]);
+	    }
+	    features_str = features_arr.join(',');
+	
+	
+	    var win = window.open(href, name_, features_str);
+	    win.focus();
+	    return false;
+	}	
+
+	// widget constructor function
+	global.FYI_workWithUs = function() {
+		var _positionsCount = <%=activeJobsCount%>;
+		
+		var buildTabContent = function() {
+			var res = "";
+			
+			var letterElems = new Array();
+			var label_text = "<%=label_text%>";
+
+			for (var i=0; i < label_text.length; i++) {
+				if (label_text.charAt(i) == " ") {
+					letterElems.push("<span class='fyi-gap'>&nbsp;</span>");
+				} else {
+					letterElems.push("<span class='fyi-letter'>" + label_text.charAt(i) + "</span>");
+				}
+			}
+			res = "<div class='fyi-label-box'>" + letterElems.join("") + "</div>";
+			
+			return res;
+		}
+		
+		var createStyle = function() {
+			<%
+				shift = "80px"
+				css = <<-FIN
+					##{tab_element_id} {
+						background: #{@employer.join_us_widget_params_map['tab_background_color']};
+						color: #{@employer.join_us_widget_params_map['tab_text_color']};
+				      	font-size: 12px;
+				      	font-weight: bold;
+				      	font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
+				      	position: fixed;
+				      	cursor: pointer;
+				      	letter-spacing: 1px;
+				      	z-index: 99999;
+					}
+					##{tab_element_id} .fyi-letter{
+					  text-align: center;
+					  line-height: 1em;
+					} 
+					##{tab_element_id} .fyi-gap {
+					  width: 0.5em;
+					  height: 0.5em;
+					  display: inline-block;
+					}
+				FIN
+				
+				case @employer.join_us_widget_params_map['tab_position']
+				when "top-left"
+					css << "##{tab_element_id} {top: 0; left: #{shift}; #{border_top_tab}}"
+				when "top-right"
+					css << "##{tab_element_id} {top: 0; right: #{shift}; #{border_top_tab}}"
+				when "left-top"	
+					css << "##{tab_element_id} {left: 0; top: #{shift}; #{border_left_tab}}"
+					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"
+				when "left-middle"
+					css << "##{tab_element_id} {left: 0; top: 50%; margin-top: -#{label_text.length / 2}em; #{border_left_tab}}"
+					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"
+				when "left-bottom"
+					css << "##{tab_element_id} {left: 0; bottom: #{shift}; #{border_left_tab}}"
+					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"					
+				when "bottom-left"
+					css << "##{tab_element_id} {bottom: 0; left: #{shift}; #{border_bottom_tab}}"
+				when "bottom-right"
+					css << "##{tab_element_id} {bottom: 0; right: #{shift}; #{border_bottom_tab}}"
+				when "right-top"
+					css << "##{tab_element_id} {top: #{shift}; right: 0; #{border_right_tab}}"
+					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"					
+				when "right-middle"
+					css << "##{tab_element_id} {top: 50%; right: 0; margin-top: -#{label_text.length / 2}em; #{border_right_tab}}"
+					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"						
+				when "right-bottom"
+					css << "##{tab_element_id} {bottom: #{shift}; right: 0; #{border_right_tab}}"
+					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"
+				end
+				
+				css.squish!
+			%>
+			
+		    var head = document.head || document.getElementsByTagName('head')[0];
+		    var style = document.createElement('style');
+		    var jscss = "<%=css.html_safe%>";
+
+			style.type = 'text/css';
+			if (style.styleSheet){
+			  style.styleSheet.cssText = jscss;
+			} else {
+			  style.appendChild(document.createTextNode(jscss));
+			}
+			
+			head.appendChild(style);
+		};		
+		
+		var createTab = function(customClassName) {
+		    <% if activeJobsCount > 0 %>
+		    	createStyle();
+		    	
+		    	var tabRoot = document.createElement("div");
+		    	tabRoot.setAttribute("id", "<%=tab_element_id%>");
+		    	tabRoot.setAttribute("class", customClassName);
+		    	tabRoot.innerHTML = buildTabContent();
+		    	var body = document.getElementsByTagName('body')[0];
+		    	insertLast(tabRoot, body);
+		    	return tabRoot;
+		    <% end %>
+		};
+		
+		var setLauncher = function(launcherElem) {
+			addEvent(launcherElem, "click", popupWidget);
+		};
+		
+		var popupWidget = function() {
+			return openDialogWindow("<%=we_are_hiring_employer_path(@employer.reference_num, :job => nil)%>", 1000, 650);
+		};	
+	
+	    // public instance methods
+	    return {
+	      positionsCount: 	function() {return _positionsCount;},
+	      createTab: 		function(customClassName) {return createTab(customClassName);},
+	      setLauncher:		function(launcherElem) {setLauncher(launcherElem);},
+	      popupWidget: 		function() {popupWidget();}
+	    };
+	};
+})();
+
+
+

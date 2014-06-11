@@ -1,0 +1,63 @@
+<% active_jobs = current_user.active_jobs_with_share_statistics.order("created_at DESC").to_a %>
+
+<% unless active_jobs.empty? %>
+	<% active_jobs.each do |job| %>
+		<div class="job-ad-box closable">
+			<div class="above-buttons">
+				<%=link_to("Close", employer_job_path(current_user, job, :locale => job.country_code), :method => :delete, :class => "close", :title => "Close position",
+												:confirm => "Are you sure you want to close this job posting?")%>
+				
+				<%= render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_COMPACT} %>
+				
+				<% 
+				all_interviews = job.interviews
+				recommended = all_interviews.select {|interview| interview.status_one_of?([Interview::RECOMMENDED])}	
+				all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
+				boards = job.ads.map {|ad|ad.board.title}
+				%>
+				
+				<div class="job-counters clearfix">
+					<div class="job-counter">
+						<div class="counter-value"><%=job.shares_counter.to_i%></div>
+						<div class="counter-title">Shared</div>
+					</div>
+					<div class="job-counter">
+						<div class="counter-value"><%=job.clickback_counter.to_i%></div>
+						<div class="counter-title">Clickbacks</div>
+					</div>
+					<div class="job-counter">
+						<!-- need to count infointerviews as not all leads come from shares-->
+						<div class="counter-value"><%=all_infointerviews_for_this_job.count%></div>
+						<div class="counter-title">Leads</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="job-control-panel clearfix">
+				<div class="float-left">
+					<% if recommended.blank? %>
+						<%=link_to("Find candidates", employer_search_path(:locale => job.country_code, :for => job.id))%>
+					<% else %>
+						<%=link_to(recommended_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
+							Recommended candidates<span class="counter animation-common bounce"><%=recommended.length%></span>
+						<%end%>
+					<% end %>
+					&nbsp;
+					<%=link_to(leads_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
+						Review leads
+						<% new_infointerviews_count = all_infointerviews_for_this_job.to_a.count { |x| x.status == Infointerview::NEW } %>
+						<% if new_infointerviews_count > 0 %>
+							<span class="counter animation-common bounce"><%=new_infointerviews_count%></span>
+						<% end %>
+					<%end%>
+					&nbsp;
+				</div>
+				<div class="float-right">
+					<%=link_to("Edit", edit_employer_job_path(current_user, job, :locale => job.country_code))%>
+					<a href="<%=we_are_hiring_employer_path(current_user.reference_num, :job => job.id)%>" 
+						onclick="return openDialogWindow(this.href, 1000, 650);">Preview</a>
+				</div>	
+			</div>			
+		</div>
+	<% end %>
+<% end %>

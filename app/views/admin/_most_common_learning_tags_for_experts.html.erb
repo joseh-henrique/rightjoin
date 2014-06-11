@@ -1,0 +1,10 @@
+<h1>Most common 'learning' tags among <%=skill_name%> experts</h1> 
+<ul>
+	<%  @most_common_learning_tags_for_experts_in[skill_name].each do |tag_and_count|%>
+		<li>
+			<span class="tag-name data-job-qualifier1"><%=tag_and_count[0]%></span>
+			<span class="tag-count"><%=tag_and_count[1]%></span>
+		</li>
+	<% end %>
+</ul>
+  

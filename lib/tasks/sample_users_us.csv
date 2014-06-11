@@ -1,0 +1,57 @@
+location,position_now,position_wanted,wanted_salary,skill_a,skill_a_yrs,skill_b,skill_b_yrs,skill_c,skill_c_yrs,qualifier_a,qualifier_b,qualifier_c,country_code
+"san francisco, california","software engineer","software architect",115,java,5,c++,10,rails,1,"learning opportunities","cool technologies",,us
+"san francisco, california","software engineer","senior software engineer",125,python,1,java,5,,,"work from home","work-life balance",stability,us
+telecommute,"software engineer","software engineer",110,java,5,"data mining",1,c#,5,"startup environment","ace colleagues",,us
+"denver, colorado","team lead","team lead",125,c#,5,"web development",5,,,,,,us
+"san francisco, california","software engineer","mobile app developer",115,objective-c,5,iphone,1,ios,10,"career advancement","ace colleagues","workplace perks",us
+"san francisco, california","software engineer","senior software engineer",130,android,1,iphone,1,c,10,"work from home","< 5 day workweek",,us
+"san francisco, california","software engineer","software engineer",115,java,1,"delphi/object pascal",5,c++,5,"cool technologies","workplace perks",,us
+relocation,"software engineer","software engineer",115,python,5,java,5,php,5,"ace colleagues",,,us
+"san francisco, california","software engineer","software engineer",115,java,10,c++,5,rails,1,"cool technologies",,,us
+"new york, new york","software engineer","team lead",125,python,5,java,1,,,stability,"career advancement",,us
+"new york, new york","software engineer","senior software engineer",110,java,1,"data mining",5,c#,5,"work from home","< 5 day workweek",,us
+telecommute,"software engineer","senior software engineer",115,objective-c,1,iphone,5,c#,10,"cool technologies","workplace perks",stability,us
+"new york, new york","software engineer","software engineer",130,android,1,iphone,1,c,10,"work from home",stability,,us
+"new york, new york","software engineer","software engineer",115,java,5,"delphi/object pascal",1,c++,5,"work from home","< 5 day workweek","work-life balance",us
+"new york, new york","software engineer","software engineer",115,python,5,java,5,php,5,"startup environment","workplace perks",,us
+"boston, massachusetts","software engineer","team lead",125,"delphi/object pascal",5,java,1,matlab,5,"career advancement","cool technologies","learning opportunities",us
+"boston, massachusetts","software engineer","principal software engineer",110,"web development",10,java,10,c,10,"career advancement","ace colleagues",,us
+telecommute,"software engineer","dev lead",110,"web development",10,javascript,10,node.js,1,"ace colleagues","startup environment",,us
+"boston, massachusetts","software engineer","software engineer",95,ios,5,rails,1,python,5,"< 5 day workweek",stability,,us
+"washington, washington, d.c.","software engineer","dev lead",115,accessibility,1,"visual basic",5,javascript,5,"ace colleagues",,,us
+"washington, washington, d.c.","software engineer","senior software engineer",115,"database management",1,php,5,perl,5,"career advancement",,,us
+"seattle, washington","software engineer","dev lead",95,c,10,,,,,stability,,,us
+"seattle, washington","software engineer","team lead",115,"object-oriented design",5,java,10,c++,5,"career advancement","ace colleagues",,us
+"denver, colorado","software engineer","senior software engineer",115,perl,5,c#,5,java,5,"ace colleagues",,,us
+"washington, washington, d.c.","development manager","development manager",115,,,,,,,,,,us
+"austin, texas","software engineer","software architect",115,java,10,c,5,,,"learning opportunities","cool technologies",,us
+"austin, texas","software engineer","software engineer",95,matlab,5,mathematica,5,"data mining",1,"work from home","work-life balance",,us
+relocation,dba,dba,110,"database management",10,perl,10,,,stability,"ace colleagues",,us
+"washington, washington, d.c.","software architect","software architect",125,,,,,,,,,,us
+"mountain view, california","qa engineer","qa team lead",115,"software testing",5,,,,,"career advancement","ace colleagues",,us
+telecommute,"ux architect","ux architect",100,"ux architecture",5,accessibility,1,,,"work from home","< 5 day workweek",,us
+"mountain view, california","build engineer","qa engineer",110,"process management",5,"software testing",5,,,"cool technologies","workplace perks",,us
+"mountain view, california","qa engineer","qa engineer",125,"software testing",5,,,,,"ace colleagues",,,us
+"mountain view, california","hardware engineer","hardware engineer",110,"embedded systems",5,c,5,,,"cool technologies",,,us
+telecommute,"mobile app developer","senior software engineer",110,iphone,1,android,1,ios,5,stability,"career advancement",,us
+"mountain view, california",dba,dba,110,"database management",10,,,,,"work from home","< 5 day workweek",,us
+"mountain view, california","field engineer","software architect",115,c++,5,java,5,,,"cool technologies","workplace perks",,us
+"new york, new york",dba,"field engineer",100,"database management",10,,,,,"work from home",stability,,us
+"new york, new york","qa engineer","field engineer",110,"process management",5,c,1,"software testing",10,"work from home","< 5 day workweek",,us
+relocation,"ux architect","software engineer",125,"ux architecture",5,c,10,accessibility,1,"startup environment","workplace perks",,us
+"new york, new york","build engineer","project manager",110,"process management",5,"project management",1,,,"career advancement","cool technologies",,us
+"new york, new york","qa engineer","software engineer",110,"software testing",5,perl,5,java,1,"career advancement","ace colleagues",,us
+"boston, massachusetts","hardware engineer","hardware engineer",115,"embedded systems",5,c,1,,,"ace colleagues","startup environment",,us
+telecommute,"mobile app developer","mobile app developer",100,iphone,1,objective-c,5,android,1,"< 5 day workweek",stability,,us
+"boston, massachusetts",dba,dba,100,"database management",10,c,5,,,"ace colleagues",,,us
+"boston, massachusetts","field engineer","field engineer",85,c++,5,"process management",5,,,"career advancement",,,us
+"boston, massachusetts",dba,dba,110,"database management",5,perl,5,,,stability,,,us
+"boston, massachusetts","product manager","product manager",110,"product management",10,java,5,,,"career advancement","ace colleagues",,us
+"boston, massachusetts","project manager","development manager",85,"project management",5,,,,,"work-life balance",,,us
+relocation,"qa engineer","qa team lead",110,"software testing",5,perl,5,,,"ace colleagues",,,us
+"boston, massachusetts",dba,dba,110,"database management",5,"technical writing",1,,,"career advancement",,,us
+telecommute,"field engineer","pre-sales field engineer",110,"database management",10,perl,1,,,stability,,,us
+"denver, colorado","mobile app developer","principal software engineer",85,objective-c,5,iphone,5,c,10,"career advancement","ace colleagues",,us
+"denver, colorado","team lead","development manager",145,"web development",10,java,10,matlab,1,"career advancement","work-life balance",,us
+"denver, colorado","team lead","dev lead",130,c,10,c#,5,node.js,1,"career advancement",,,us
+telecommute,"dev lead","team lead",125,perl,10,python,5,"web development",5,"workplace perks","ace colleagues",,us

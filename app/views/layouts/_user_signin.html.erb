@@ -1,0 +1,87 @@
+<div class="user-signin">
+	<div class="signin-title">
+		Sign in to your account
+	</div>
+	
+	<%= form_for(:session, url: @current_page_info[:intended_for] == :employee ? employee_signin_path : employer_signin_path, :html=>{:id=>"signin-form"} ) do |f| %>
+		<div class="form-box">
+			<%= f.text_field :email, :id=>"email-input", :maxlength=>255, :spellcheck =>false, :autocomplete => "off", :class=>"signin-input validate[required]"%>
+			&nbsp;
+			<%= f.password_field :password, :maxlength=>50, :class=>"signin-input validate[required, custom[nonEmpty]]", :autocomplete => "off", :id=>"pw-input"%>
+			&nbsp;			
+			<%= f.submit "Sign in", :id=>"submit-signin" %>
+		</div>
+	<% end %>
+	
+	<div class="links-box">
+		<div class="link-box">
+			<%= link_to("Not registered yet?", @current_page_info[:intended_for] == :employee ? register_path(:anchor => "form") : employer_get_started_path) %>
+		</div>
+		&nbsp;
+		<div class="link-box">
+			<a id="forgot-pw-header-button" href="#">Forgot password?</a>
+		</div>
+	</div>	
+</div>
+
+<div id="forgot-pw-fialog" title="Forgot password" style="display:none;">
+	<div id="forgot-pw-form-box" class="pw-form-box">
+		<%= form_tag @current_page_info[:intended_for] == :employee ? forgot_pw_users_path : forgot_pw_employers_path, :method => :post, :remote => true,:id=>"forgot-pw-form" do %>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag :email, "Registered Email Address" %><br>
+					<%= text_field_tag(:email, nil, :id=>"forgot-pw-email", :maxlength=>255, :spellcheck =>false, :autocomplete => "off", :class=>"validate[required,custom[email]]")%>
+					&nbsp;
+					<%= submit_tag "Reset password",:id=>"submit-forgot-pw", :class=>"standard-button forgot-pw-form-elem" %>
+					<img title="Sending new password" alt="Sending new password" style="visibility: hidden;" id="forgot-pw-wait-indicator" src="<%= asset_path('shared/loading.gif') %>" />
+				</div>
+			</div>
+			<div id="forgot-pw-msg">If your email is in the system, a message with a new password was sent.</div>
+		<% end %>
+	</div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+    	$("#forgot-pw-fialog").dialog({
+	      autoOpen: false,
+	      width: 560,
+	      height: 180,
+	      resizable: false,
+	      modal: true
+	  	}); 	
+    	
+	  	 $('#signin-form').submit(function() {
+		 	is_valid = $("#signin-form").validationEngine('validate');
+		 	if (is_valid){
+	  		  $('#signin-wait-indicator').css("visibility", "visible");
+	  		  trackEvent("developer", "sign in");
+	  		}
+	  		return is_valid;
+	  	 });
+ 
+		$('#forgot-pw-form').submit(function() {
+			var is_valid = true;
+			/* For forms, true means valid and false is invalid (for fields the opposite)*/
+		 	is_valid = $("#forgot-pw-form").validationEngine('validate');
+		 	if (is_valid){
+			 	$(".forgot-pw-form-elem").attr("disabled", "disabled"); 
+			 	$("#forgot-pw-email").attr("readonly","readonly");
+			 	$('#forgot-pw-wait-indicator').css("visibility", "visible");
+			 	trackEvent("developer", "forgot password");
+			 }
+		  	return is_valid;
+		});	  	
+	});
+  
+	$('#forgot-pw-header-button').click(function() {
+		$("#forgot-pw-fialog").dialog( "open" );
+		
+		$("#forgot-pw-email").val("");
+		$('#forgot-pw-msg').html("");
+		$(".forgot-pw-form-elem").removeAttr("disabled");
+		$("#forgot-pw-email").removeAttr("readonly"); 
+		$("#forgot-pw-email").focus();
+		return false;
+	});
+</script>

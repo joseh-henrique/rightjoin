@@ -1,0 +1,68 @@
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Recommend candidates
+</p>
+
+<div class="white-box">
+		<%= form_tag admin_recommend_candidates_path(:id => @job.id), :id => "filter_candidates_form" do %>  
+		
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil, "Skill") %><br>
+					<%= text_field_tag(:skill, @skill, :autocomplete => "off", :placeholder => "e.g., java", :maxlength => 60, :class => "half-row-width", :spellcheck => true) %>
+				</div>
+				<div class="right-col">
+					<%= label_tag(nil, "Alternative location") %>
+					<%= text_field_tag(:location, @location, :autocomplete => "off", :maxlength => 60,  :spellcheck => false, :class => "half-row-width") %>						
+				</div>	
+			</div>
+	
+			<%=link_to "Refine", "#", :id => "refine", :class => "blue-inline-button" %>&nbsp;
+		<% end %>
+		
+		<script type="text/javascript">
+			$("#refine").click(function(event){
+				$("#filter_candidates_form").submit();
+				return false;
+			});
+			
+			$( "#skill" ).cachedautocomplete({
+				multiValue: false,
+				sequentialMatching: false,
+				url: "/autocomplete/skills"
+			});
+						
+			$( "#location" ).locationcomplete({
+				defaultOpts: <%=ActiveSupport::JSON.encode(LocationTag.user_default_options).html_safe%>,
+				country_code: "<%=I18n.t :country_code, :locale => @job.locale%>",
+				placeholder: "<%=I18n.t :location_placeholder, :locale => @job.locale%>",
+				use_province: "<%=I18n.t :use_province, :locale => @job.locale%>"
+			});
+		</script>
+</div>
+
+<div class="fyi-accordion">
+	<h3 class="accordion-header expanded clearfix"><span>Position</span></h3>
+	<div class="accordion-panel">
+		<%if @job.blank? %>
+			Can't initialize Job object. Invalid parameters?
+		<%else%>
+			Employer: <%=@job.company_name%><br>
+			<%=html_inspect @job%>
+		<% end %>
+	</div>
+	
+	<h3 class="accordion-header expanded clearfix"><span>Candidates</span></h3>
+	<div class="accordion-panel">
+		<%if @candidates.blank?%>
+			No candidates found
+		<%else%>
+			<%@candidates.each_with_index do |candidate, i|%>
+				<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
+					<%=html_inspect candidate%><br>
+					<%=link_to "Recommend", admin_recommend_candidate_to_job_path(:id => candidate.id, :job_id => @job.id, :skill => @skill, :location => @location), :class => "blue-inline-button" %>&nbsp;
+				</p>
+			<%end%>
+		<%end%>
+	</div>	
+</div>

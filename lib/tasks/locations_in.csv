@@ -1,0 +1,21 @@
+name,priority,latitude,longitude
+bengaluru,0,12.9558,77.620979
+bangalore,0,12.9558,77.620979
+"bangalore, karnataka",0,12.9558,77.620979
+bombai,0,19.076191,72.875877
+calcutta,0,22.52667,88.34616
+chennai,0,13.05939,80.245667
+"chennai, tamil nadu",0,13.05939,80.245667
+delhi,0,28.643999,77.091003
+"delhi, nct",0,28.643999,77.091003
+hyderabad,0,17.4376,78.4706
+"hyderabad, andhra pradesh",0,17.4376,78.4706
+kolkata,0,22.52667,88.34616
+"kolkata, bengal",0,22.52667,88.34616
+mumbai,0,19.076191,72.875877
+"mumbai, maharashtra",0,19.076191,72.875877
+pune,0,18.53171,73.853844
+"pune, maharashtra",0,18.53171,73.853844
+thiruvananthapuram,0,8.50838,76.94773
+trivandrum,0,8.50838,76.94773
+"trivandrum, kerala",0,8.50838,76.94773

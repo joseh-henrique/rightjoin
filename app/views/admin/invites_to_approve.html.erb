@@ -1,0 +1,16 @@
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Approve invitation
+</p>
+
+<% unless @invites_to_approve.blank? %>
+	<% @invites_to_approve.each_with_index do |invite, i| %>
+		<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
+			<%=invite.inspect.split(/\n/).map{|line|h(line)}.join("<br>").html_safe%>
+			<br><%=link_to "Approve", admin_approve_invite_path(:approve => "true", :id => invite.id), :class => "blue-inline-button" %>
+			&nbsp;&nbsp;<%=link_to "Reject", admin_approve_invite_path(:approve => "false", :id => invite.id), :class => "red-inline-button" %>
+		</p>
+	<% end %>
+<% else %>
+	Nothing to approve.
+<%end%>	

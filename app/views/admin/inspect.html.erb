@@ -1,0 +1,38 @@
+  
+<style>
+	/*Some of the styles are copied from fyi.css.scss. This page can be put into a regular app template later.*/
+	.data-job-qualifier1, .job-extra1 {
+	  background-color: #A7E5A9;
+	  border: 1px solid #81C583;
+	}
+
+</style>
+
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Inspect
+</p>
+
+<p class="inspect-box">
+	<%= render :partial=> "admin/most_common_requirements" %>
+</p>
+
+<p class="inspect-box">
+	<%= render :partial=> "admin/most_common_skill_tags" %>
+</p>
+
+<p class="inspect-box">
+	<%= render :partial=> "admin/most_common_expert_tags" %>
+</p>	
+
+<p class="inspect-box">
+	<%= render :partial=> "admin/most_common_learning_tags" %>
+</p>	
+
+<p class="inspect-box">
+	<%= render :partial=> "admin/most_common_learning_tags_for_experts", collection: @skill_names ,:as => :skill_name%>
+</p>
+
+<h1>Percent who don't want to switch job titles</h1>
+<%= @percent_who_dont_want_to_switch_job_titles %>%
+

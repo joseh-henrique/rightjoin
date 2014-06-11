@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
+
+		
+
+	<head>
+		<title><%= title %></title>
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700|Roboto:300' rel='stylesheet' type='text/css'>
+		<%= stylesheet_link_tag 'widget', :media => "all"%>
+		<%= yield :more_style %>
+		
+		<%= javascript_include_tag :application %>
+		<%= yield :more_js %>
+		
+		<%= csrf_meta_tags %>
+		<%= favicon_link_tag '/favicon.ico?v=4' %>
+		
+		<%# for Google %>
+		<meta name="description" content="<%=Constants::META_DESC%>, <%=title%>" />
+		<meta name="keywords" content="<%=Constants::META_KEYWORDS%>, <%=title%>" />
+		
+		<%= yield :more_meta %>
+	</head>
+	<% body_class = @current_page_info[:intended_for].to_s %>
+	<body id="<%=css_class_for_current_page%>" class="<%=body_class%>">
+		<%=render :partial => "layouts/easter_egg"%>
+
+		<div class="outer">
+			<div class="middle">
+				<%= yield %>
+			</div>
+		</div>
+		<%= render :partial=> 'widgets/google_analytics' %>
+		<%#= debug(params) if Rails.env.development? %>
+	</body>
+</html>

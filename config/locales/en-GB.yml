@@ -1,0 +1,24 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en-GB:
+  country_code: "uk"
+  country_name: "the UK"
+  short_country_name: "UK"
+  full_country_name: "United Kingdom"
+  country_adjective: "British"
+  location_placeholder: "london"
+  latitude:  53.095638
+  longitude: -1.710045300000047
+  use_province: "false"
+  max_salary: "100000"
+  salary_step: "12000"
+  salary_period: ""
+  monthly_tier_1_price: "0"
+  monthly_tier_2_price: "119"
+  monthly_tier_3_price: "299"
+  currency_unit: "£"
+  thousands_delimiter: ","
+  intl_phone_pfx: "+1-"
+  google_keep_location_components: "['administrative_area_level_3', 'locality']"
+  default_bounds: "[51.38494009999999, -0.351468299999965, 51.6723432, 0.14827100000002247]"

@@ -1,0 +1,52 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  country_code: "us"
+  country_name: "the US"
+  short_country_name: "US"
+  full_country_name: "United States"
+  country_adjective: "American"
+  location_placeholder: "san francisco, california"
+  latitude : 37.09024
+  longitude: -95.71289100000001
+  use_province: "true"
+  max_salary: "200000"
+  salary_step: "20000"
+  salary_period: ""
+  monthly_tier_1_price: "0"
+  monthly_tier_2_price: "199"
+  monthly_tier_3_price: "399"
+  currency_unit: "$" 
+  thousands_delimiter: ","
+  intl_phone_pfx: ""  
+  search_radius_in_miles: "60"
+  google_keep_location_components: "['administrative_area_level_3', 'administrative_area_level_1', 'locality']"
+  default_bounds: "[40.4959961, -74.2590879, 40.91525559999999, -73.7002721]"
+  will_paginate:
+    previous_label: "&lsaquo;"
+    next_label: "&rsaquo;"
+    page_entries_info:
+      multi_page: "Displaying %{model} %{from} - %{to}"
+      multi_page_html: "Displaying %{model} %{from}&nbsp;-&nbsp;%{to}"
+  activerecord:
+    models:
+      user:
+        zero: candidates
+        one: candidate
+        few: candidates
+        other: candidates
+      job:
+        zero: jobs
+        one: job
+        few: jobs
+        other: jobs        
+    attributes:
+        location_tag:
+          name: Metropolitan area tag name        
+        position_tag:
+          name: Job tag name
+        job_qualifier_tag:
+          name: Job requirement tag name
+        skill_tag:
+          name: Skill tag name

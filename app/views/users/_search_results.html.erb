@@ -1,0 +1,53 @@
+<%if @users.blank?%>
+	<div id="search-results-box">
+		<div id="no_results">
+			No candidates match your query.
+			<br><br>
+			Suggestions:
+			<ul>
+				<li>Make sure that all words are spelled correctly.</li>
+				<li>Use the auto-complete as a guide.</li>
+				<li>Try a more general job title.</li>
+			</ul>
+			Click <%= link_to "here", employer_search_path %> to reset the form.
+		</div>
+	</div>
+<% else %>
+	<div id="voiceover">
+		<%=@voiceover.html_safe%>
+	</div>
+
+
+	<div id="search-tags-box" class="clickable-tags-box">
+	<%if !@popular_skills.empty? %>		
+		<div class="tags-box">
+			<span>Filter by skills:</span>
+			<%@popular_skills.each do |skill|%>
+				<a class="clickable-tag search-for-skill-link"><%=skill.name%></a>
+			<%end%>
+		</div>
+	<%end%>		
+	</div>
+	
+	<div class="clearfix">
+		<div class="pagination-info">
+			<%= page_entries_info @users %>
+		</div>
+		
+		<%
+			params_for_paginate = params.merge({:controller => "users", :action => "index"}); 
+		%>
+		<%= will_paginate @users, :params => params_for_paginate, :class => 'fyi_pagination', :inner_window => 2 %>
+	</div>
+	<div id="search-results-box">
+		<% @users.each do |user| %>  
+			<%=render :partial => 'users/one_search_result', :locals => {:user => user, :job => @job, :allow_ignore => false}%>
+		<% end %>
+	</div>
+	<div class="clearfix">
+		<div class="pagination-info">
+			<%= page_entries_info @users %>
+		</div>
+		<%= will_paginate @users, :params => params_for_paginate, :class => 'fyi_pagination', :inner_window => 2 %>
+	</div>
+<%end%>

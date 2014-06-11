@@ -1,0 +1,67 @@
+<div class="pin-icon"></div>
+  	<div class="white-box">
+    <%=render :partial => 'users/user_details', :object => user, :locals => {:for_view=> :searcher}%>
+    
+    <div class="contact-candidate-box">
+    	<div class="send-message-title-box">Contact</div>
+    	<% if signed_in? && current_user.employer? %>
+			<% active_jobs = current_user.jobs.where(status: Job::LIVE).includes([:location, :position]).all %>
+			<% if not current_user.verified?%>
+				<div>To invite candidates to contact you, please verify your account, above, and search again.</div>
+    		<% elsif active_jobs.empty? %>
+    			<div>Please <%=link_to("create", new_employer_job_path(current_user, :refid => user.reference_num))%> 
+    				a relevant job posting before contacting this candidate.</div>
+    		<% else %>
+    			<% active_jobs.select! {|job| job.locale == user.locale } %>
+	    		<% past_interviews = Interview.find_all_by_employer_id_and_user_id(current_user, user) %>
+	    		<% past_interviews.select! {|interview| interview.status != Interview::RECOMMENDED } %>
+	    		<% past_interviews.each do |interview| %>
+	    			<% active_jobs.select! {|job| job.id != interview.job.id } %>
+	    		<% end %>
+	    		
+				<% if active_jobs.count > 0 %>
+    				<% include_blank = active_jobs.count > 1 && (job.nil? || !active_jobs.include?(job)) %>
+	    			<% job_opts = active_jobs.map { |job| ["#{job.position.name} - #{job.location.name} - #{job.company_name}", job.id] } %>
+	    			
+	    			<div class="send-message-box" id="send-message-box-<%=user.id%>">
+	    				<%have_ambs=current_user.has_active_ambassadors? %>
+	    				<div class="message-question">Invite this candidate <%if have_ambs%>to talk to your employees, or<%end%> to apply to  one of your job positions.</div>
+
+				    	<div class="message-form-box">
+							<%= form_for(Interview.new, :remote => true, :html => {:class => "send-msg-form", :id => "message-to-#{user.id}"}) do |f| %>
+		    					<br />
+		    					<%= select(:job, :id, job_opts, {:include_blank => include_blank}, {:class=>"validate[required]"}) %>&nbsp;
+		    					<%= f.hidden_field(:user_id, :value => user.id, :id => "user-id-#{user.id}") %>
+		    					<%= hidden_field_tag(:decision, nil, :id => "decision-#{user.id}", :class => "should-pitch") %>
+		    					<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'yes');" class="send-msg-btn" value="Invite" />&nbsp;
+		    					<% if allow_ignore %>
+		    						<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'no');" class="no-msg-btn" value="Skip" />
+		    					<% end %>
+		    					<img title="Sending the invitation" alt="Sending the invitation" class="wait-indicator" src="<%= asset_path('fyi/loading.gif') %>" />
+		    					<div class="send-message-result"></div>	
+		    				<% end %>
+		    			</div>
+						<% unless past_interviews.blank? %>
+		    				<br>
+		    				<div>
+		    					You've invited this candidate to <%= pluralize(past_interviews.count, 'job position')%> so far.
+		    					You can invite them to more.  
+		    				</div>
+		    			<% end %>	
+		    		</div>
+	    		<% else %><%#No active jobs%>
+	    			<div>You've  already invited this candidate, or else decided not to invite them.
+	    			</div>
+	    		<% end %>
+    		<% end %>
+	    <% else %>
+	    	<div>Please 
+	    		<% if @current_page_info[:intended_for] == :employee %>
+	    			<%= link_to "sign in", employer_search_path %>
+	    		<% else %>
+	    			<%= link_to "sign in above", "#" %> 
+	    		<% end %>
+	    		with your employer credentials or <%= link_to "register", employer_get_started_path %>.</div>
+	    <% end %>
+    </div>
+</div>

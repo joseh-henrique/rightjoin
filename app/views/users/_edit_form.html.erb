@@ -1,0 +1,417 @@
+<% max_salary = I18n.t(:max_salary).to_i %>
+
+<div class="white-box" id="edit-user-box">
+	<%= form_for(@user) do |f| %>  
+		<div id="user-home-accordion" class="fyi-accordion">
+			<% unless @user.new_record? %>
+			<h3 class="accordion-header expanded clearfix"><span>Profile info</span></h3>
+			<div class="accordion-panel">
+			<% end %>
+				<div class="clearfix user-attr-row">
+					<div class="left-col">
+						<%= label_tag(nil,  current_job_s(:employee), :class=>"mandatory") %>
+					  	<a class="field-tooltip" 
+					      title="The job title you now have."> 
+					   	</a> 
+				 		
+				 		<% 
+				 			current_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:current_job] : @user.current_position_name
+				 		%>
+		
+						<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., software engineer", :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :spellcheck => true) %>
+					</div>
+					<div class="right-col">
+					</div>
+				</div>	
+		
+				<div class="clearfix user-attr-row">
+					<div class="left-col">
+						<%= label_tag(nil, wanted_job_s(:employee), :class=>"mandatory") %>
+						<a class="field-tooltip" title="The dream job you'd like to move to. To help employers find you, please use a standard job title."></a>
+						<% wanted_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:wanted_job] : @user.wanted_position_name %>
+						<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :spellcheck => true) %>		
+					</div>
+					<div class="right-col">
+						<%= label_tag(nil, city_s(:employee)) %>
+						<a class="field-tooltip" 
+						      title='The city where you want to work.<br><br>You can start typing a city name or a zip code and use autocomplete.<br><br>We find matches in the city you choose and nearby cities.'></a> 
+						<%= text_field_tag(:location, @user.location_name, 
+							:autocomplete => "off", :placeholder => "e.g., san francisco, california", 
+							:maxlength => 60, :class=>"half-row-width-plus input-attr ", :spellcheck => false) %>
+							
+						<div class="location-options-box">
+							<%= check_box_tag 'can_telecommute', '1', @user.can_telecommute %>&nbsp;<%= label_tag "can_telecommute", "Telecommuting OK" %>
+							<br />
+							<%= check_box_tag 'can_relocate', '1', @user.can_relocate  %>&nbsp;<%= label_tag "can_relocate", "Anywhere in #{I18n.t(:country_name )}" %>
+						</div>
+							
+						<%= hidden_field_tag(:lat, @user.latitude) %>
+						<%= hidden_field_tag(:lng, @user.longitude) %>						
+					</div>
+				</div>
+		
+				<div class="user-attr-row" id="add-skills">
+					<%= label_tag(nil,  skills_s(:employee)) %>
+					<% skill_levels= 
+						"<ul class='bullet-points'>
+					        <li>
+					           Learner: If you've been  learning or use this technology for 1-2 years
+					        </li>
+					        <li>
+					          Professional: If you've developed production systems with this technology for 3 or more years
+					        </li>
+					        <li>
+					           Expert: If you deal with the hardest challenges
+					          (the ones no one else knows how to solve) with this technology.
+					          You have a proven track record of delivering complex code relating to this technology,
+					          e.g., system internals, infrastructures, frameworks.
+					        </li>
+					 
+					      </ul>"
+		     		%>
+					<a class="user-attr-field-tooltip" title="<%=raw skill_levels%>">
+					</a>
+		
+					<div class="user-attr-edit-box">
+						<%= text_field_tag(:skilltag, nil, :name => nil, :autocomplete => "off", :placeholder => "e.g., java", :maxlength => 60, :class => "input-attr", :spellcheck => false) %>
+						   
+					    <a id="add-skill-btn-10"   class="add-skill-btn add-tag-btn"><span class="left"><%= seniority_s(UserSkill::EXPERT)%></span><span class="right"></span></a>
+						<a id="add-skill-btn-4-6"  class="add-skill-btn add-tag-btn"><span class="left"><%=seniority_s(UserSkill::PROFESSIONAL)%></span><span class="right"></span></a>
+						<a id="add-skill-btn-1"  class="add-skill-btn add-tag-btn"><span class="left"><%=seniority_s(UserSkill::LEARNER)%></span><span class="right"></span></a>	
+					 
+						<ol id="skills-tags-list" class="tags-list"></ol>
+						<%= hidden_field_tag(:skills) %>
+					</div>
+				</div>		
+				
+				<div class="clearfix user-attr-row">
+					<%= label_tag(nil, "Your main aspiration for your next job") %>
+					<a class="user-attr-field-tooltip" 
+				      title='Give us your top aspiration here. Use the "What you need" field to say what else you require from any job offer.'> 
+				   	</a> 
+					<div class="user-attr-edit-box">
+						<% User::ASPIRATIONS.each_with_index do |aspiration, index| %>
+							<div>
+								<%=radio_button_tag 'aspiration', index, @user.aspiration == index%><%= label_tag("aspiration_#{index}", aspiration[:label], class: "radio-buttton-label") %>
+							</div>
+						<% end %>
+					</div>
+				</div>						
+				
+				<div class="user-attr-row">
+					<%= label_tag(nil, wanted_salary_s(:employee)) %>
+					<a class="user-attr-field-tooltip" title="Offers must be for this <%=I18n.t(:salary_period)%> salary or higher"></a>
+					<div class="user-attr-edit-box" id="salary-box">
+						<% wanted_salary = @user.new_record? && !@defaults.nil? ? @defaults[:salary] : @user.wanted_salary %>
+						<%= hidden_field_tag(:wantedsalary, wanted_salary) %>
+						
+						<div id="salary-tag" ><span id="salarytext"></span><a id="remove-salary-tag"></a></div>				
+		
+						<div>
+							<div id="salary-slider" ></div> <div id="salary-ruller"><%=Utils::format_currency(max_salary / 2000)%>K</div>
+						</div>
+					</div>
+				</div>		
+					
+				<div class="user-attr-row" id="job-qualifier-ctrls-box">
+					<%= label_tag(nil, job_qualifier_s(:employee ) ) %>
+					<a class="user-attr-field-tooltip" title="Don't be shy. Ask for anything you want.<br><br>Employers only contact you if they can meet your requirements.">
+					</a>
+		     
+					<div class="user-attr-edit-box">
+						<%= text_field_tag(:jobqualifiertag, nil, :name => nil, :autocomplete => "off", 
+								:placeholder => "e.g., learning opportunities", :maxlength => 60, :class => "input-attr", :spellcheck => true) %>
+						<a id="add-job-qualifier-btn" class="add-tag-btn"><span></span></a>
+						<ol id="job-qualifier-tags-list" class="tags-list"></ol>
+						<%= hidden_field_tag(:jobqualifiers) %>
+					</div>
+				</div>
+				
+				<div class="user-attr-row full-row-counter-box">
+					<%= label_tag(nil, free_text_s(:employee, true)) %>
+					<div id="free-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH%></div>
+					<%= text_area_tag(:freetext, @user.free_text, :maxlength => Constants::MAX_STRING_LENGTH, :rows => 2, :id=>"free-text-area", :class=>"full-row-width", :counterId=>"free-text-counter")%>			
+				</div>
+
+			
+			<% unless @user.new_record? %>
+			</div>			
+				<h3 class="accordion-header expanded clearfix"><span>Some more info (not shown to employers)</span></h3>
+				<div class="accordion-panel">
+					<div class="clearfix user-attr-row">
+						<div class="left-col">
+							<%= label_tag(nil,  "First name") %>
+							<%= text_field_tag(:firstname, @user.first_name, :autocomplete => "on", :maxlength => 60, :class=>"half-row-width input-attr", :spellcheck => false) %>
+						</div>
+						<div class="right-col">
+							<%= label_tag(nil,  "Last name") %>
+							<%= text_field_tag(:lastname, @user.last_name, :autocomplete => "on", :maxlength => 60, :class=>"half-row-width input-attr", :spellcheck => false) %>		
+						</div>
+					</div>
+					
+					<div class="user-attr-row full-row-counter-box">
+						<%= label_tag(nil, "Your professional profiles (LinkedIn, GitHub, etc.)") %>
+						<div id="resume-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH * 2%></div>
+						<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :id=>"resume-text-area", :class=>"full-row-width input-attr", :counterId=>"resume-text-counter")%>			
+					</div>
+					
+					<div class="clearfix user-attr-row">
+						<div class="left-col">
+							<%= label_tag(nil,  raw("Email address"), :class=>"mandatory") %>
+				    		<%= text_field_tag :email, @user.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]] half-row-width input-attr" %>
+		    			</div>
+						<div class="right-col">
+						</div>
+					</div>					
+				</div>
+			<% end %>
+		</div>
+
+		<%if @user.new_record? %>
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil,  raw("Email (We keep it private, and we <em>don't</em> spam.)"), :class=>"mandatory") %>
+					<a class="field-tooltip" title="You will get a confirmation email for activating your profile.">
+					</a>
+		    		<%= text_field_tag :email, params[:email], :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]] half-row-width input-attr" %>
+    			</div>
+				<div class="right-col">
+					<%= label_tag(nil, "   ") %>
+					<div class="only-sign-up">Please sign up <em>only</em> if you have authorization to work in
+						<a href="#" id="country-info"><%=I18n.t :country_name%></a>.</div>
+				</div>
+			</div>
+			<div id="create-listing-btn-box">
+	      		<%= submit_tag "Find me offers!", :class=>"blue-btn", :id=>"submit", :name => nil %>
+			</div>
+  		<%else%>
+			<div id="update-listing-btn-box">
+				<%= submit_tag "Update", :id=>"submit", :class=>"blue-btn", :name => nil %><span>&nbsp;or&nbsp;</span><%= link_to "Cancel", user_path(@user, :locale => @user.country_code) %>
+			</div>
+  		<%end%>
+	<% end %>
+</div>
+
+<div id="country-tooltip-dialog"  title="For work in <%=I18n.t(:country_name)%>" >
+	<p>
+		This page is for software developers authorized to work in <%=I18n.t(:country_name)%>.
+		We also support <%=country_links_as_sentence(:path=>method(:register_path), :exclude=>I18n.locale) %>.
+		<br><br>
+		If you'd like us to add your country, please  
+		<%= uservoice_contact_link "make a request" %> at our online support form.
+	</p>
+</div>
+
+
+<script type="text/javascript">
+
+	$( "#location" ).googleAddressPicker({
+		country: "<%=I18n.t :country_code, locale: @locale%>",
+		placeholder: "<%=I18n.t :location_placeholder, locale: @locale%>",
+		keep_location_components: <%=(I18n.t :google_keep_location_components, locale: @locale).html_safe%>
+	}).on( "complete", function( event, data ) {
+        var suggested = $(this).googleAddressPicker("selected_info");
+        if(suggested) {
+			$("#lat").val(suggested.lat);
+			$("#lng").val(suggested.lng);
+        } else {
+        	$("#lat").val("");
+			$("#lng").val("");
+        }
+    });
+	
+	$( "#currentposition" ).cachedautocomplete({
+		url: "/autocomplete/positions",
+		sequentialMatching: false,
+		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
+	});	
+	
+	$( "#wantedposition" ).cachedautocomplete({
+		url: "/autocomplete/positions",
+		sequentialMatching: false,
+		extraParam: "#currentposition"
+	});
+
+	$( "#skilltag" ).cachedautocomplete({
+		multiValue: true,
+		sequentialMatching: false,
+		url: "/autocomplete/skills",
+		extraParam: "#wantedposition"
+	});
+	
+	$( "#jobqualifiertag" ).cachedautocomplete({
+		multiValue: true,
+		sequentialMatching: false,
+		url: "/autocomplete/jobqualifiers",
+		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(JobQualifierTag, 8)).html_safe%>
+	});	
+</script>
+
+<script type="text/javascript">
+	$(function() {
+		var add_more_skills_plchlder= "You can add more skills"
+		$( "#add-skill-btn-1" ).click(function() {
+        	createNewTag("#skilltag", "data-skill", "1", "#skills-tags-list", false, "<%="Know %s at #{seniority_s(UserSkill::LEARNER)} level"%>",add_more_skills_plchlder);
+        	return false;
+        });
+        
+        $( "#add-skill-btn-4-6" ).click(function() {
+        	createNewTag("#skilltag", "data-skill", "5", "#skills-tags-list", false,"<%="Know %s at #{seniority_s(UserSkill::PROFESSIONAL)} level"%>",add_more_skills_plchlder);
+        	return false;
+        });              
+        
+        $( "#add-skill-btn-10" ).click(function() {
+        	createNewTag("#skilltag", "data-skill", "10", "#skills-tags-list", false,"<%="Know %s at #{seniority_s(UserSkill::EXPERT)} level"%>", add_more_skills_plchlder);
+        	return false;
+        });
+        
+		$( "#add-job-qualifier-btn" ).click(function() {
+	    	createNewTag("#jobqualifiertag", "data-job-qualifier", "1", "#job-qualifier-tags-list", false,"Job offers must include %s",  "You can add more requirements");
+	    	return false;
+	    });
+    });      
+</script>
+
+<script type="text/javascript">
+	<% user_job_qualifiers = @user.new_record? && !@defaults.nil? ? @defaults[:reqirements] : @user.user_job_qualifiers.collect {|one_qualifier| one_qualifier.job_qualifier_tag.name} %>
+	<% user_job_qualifiers.each do |one_qualifier| %>
+		writeTag("<%=escape_javascript(one_qualifier).html_safe%>", "data-job-qualifier", "1", "#job-qualifier-tags-list", null, false, "<%="Job offers must include #{one_qualifier}" %>");
+	<% end %>
+
+	<% @user.user_skills.each do |one_skill| %>
+		writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, "#skills-tags-list", null, false, "<%="Know #{one_skill.skill_tag.name} at #{seniority_s(one_skill.seniority)} level"%>");
+	<% end %>
+</script>
+
+<script type="text/javascript">
+	 
+	$(function() {
+		$("#country-info").click(function(event){
+		    $( "#country-tooltip-dialog").dialog( "open" );
+		    return false;
+		});
+	}); 
+    
+	$(function() {
+	  $( "#country-tooltip-dialog" ).dialog({ 
+	  		autoOpen: false, modal:true, resizable: false, position: { my: "center", at: "center", of: window},
+	  		open: function (evt, ui) {
+            	$(':focus', this).blur();
+        	} 
+	  	});
+	});
+	  
+	/*Format number with commas or other delimiter separating thousands, millions etc. 
+	 Param nStr may be a number or
+	 a string serialization (with no delims) of a number.
+	 The number may have a decimal point or not.*/
+	function addDelimitersToNumberString(nStr, delimiter) {
+		nStr += '';  
+		x = nStr.split('.'); 
+		x1 = x[0];
+		x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + delimiter + '$2');
+		}
+		return x1 + x2;
+	}
+   
+   
+	jQuery.fn.update_salary_text = function() {
+	    var input_ctrl = $(this[0]) // It's your element
+	    var args = arguments[0] || {};
+	    var val = args.value;
+	    if (val === undefined || val == 0) {
+	    	input_ctrl.parent().removeClass("defined-salary");
+	    	input_ctrl.parent().removeClass("onetag");
+	    	input_ctrl.parent().addClass("undefined-salary");
+	    	input_ctrl.html("I'd rather leave it open for now");
+	    } else {
+		    var val_str = val.toString();
+		    var val_with_commas = addDelimitersToNumberString(val_str, "<%=I18n.t(:thousands_delimiter)%>");
+        	    var currency_unit = unescapeHTML( "<%=I18n.t(:currency_unit)%>");
+	    	input_ctrl.html("At least " + currency_unit+ val_with_commas);
+	    	input_ctrl.parent().removeClass("undefined-salary");	   
+			input_ctrl.parent().addClass("onetag");
+			input_ctrl.parent().addClass("defined-salary");
+	    }
+	};
+	
+	$(function() {
+		$( "#salary-slider" ).slider({
+			range: "min",
+			value: $("#wantedsalary").val(),
+			min: 0,
+			max: <%=max_salary%>,
+			step: 5000,
+			slide: function( event, ui ) {
+				var val = ui.value;
+				$( "#wantedsalary" ).val(val);
+				$( "#salarytext" ).update_salary_text({value: val});
+				$(this).children('div:first').animate({ opacity: val / <%=max_salary%> });
+			}
+		});
+		$( "#salarytext" ).update_salary_text({ value: $("#wantedsalary").val()});
+		$( "#salary-slider" ).children('div:first').animate({ opacity: $("#wantedsalary").val() / <%=max_salary%> });
+	});
+
+   	$('#remove-salary-tag').click(function() {
+   		$( "#wantedsalary" ).val(0);
+   		$( "#salary-slider" ).slider("value", 0);
+		$( "#salarytext" ).update_salary_text({value: 0});
+		return false;
+	});
+	
+	function checkLocationOptionsValid() {
+		var suggested = $("#location").googleAddressPicker("selected_info");
+		var can_relocate = $("#can_relocate").is(':checked');
+		var can_telecommute = $("#can_telecommute").is(':checked');
+		return suggested || can_relocate || can_telecommute;
+	}	
+
+	function doSubmitForm() {
+		var res = $("form.new_user, form.edit_user").validationEngine('validate');
+		if (res) {
+			if (!checkLocationOptionsValid()){
+				$("#location").focus();
+				$("#location").validationEngine('showPrompt', 'Please enter a metro area or check <%=Constants::TELECOMMUTE %>/<%=Constants::RELOCATION%> below.', 'error', 'topRight', true);
+				res = false;
+			} else if($.trim($("#skilltag").val()).length > 0){
+				$("#skilltag").focus();
+				$("#skilltag").validationEngine('showPrompt', 'Please click experience-level button', 'error', 'topRight', true);
+				res = false;
+			} else {
+				$("#skills").val(tagsToParams("#skills-tags-list", "data-skill"));
+				var job_qual_val =  $.trim($("#jobqualifiers").val());
+				if (job_qual_val !=""){
+					createNewTag("#jobqualifiertag", "data-job-qualifier", "1", "#job-qualifier-tags-list", true, "Job offers must include %s","");//last param not significant since we are submitting
+				}
+				$("#jobqualifiers").val(tagsToParams("#job-qualifier-tags-list", "data-job-qualifier"));
+				
+				// prevent double submit
+		 		if($('#submit').attr("disabled") != "disabled") {
+		 			$('#submit').focus();
+					$('#submit').attr('disabled','disabled');
+				}
+			}
+	    }
+	
+		return res;
+	}
+   
+	$("form.new_user").submit(function(){
+		if(doSubmitForm()) {
+			trackEvent("developer", "profile created");
+		} else {
+			trackEvent("developer", "profile creation failed");
+			return false;
+		}
+		
+		return true;
+	});
+	
+	$("form.edit_user").submit(function(){
+		return doSubmitForm();
+	});	
+</script>

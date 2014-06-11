@@ -1,0 +1,275 @@
+<div id="photo-chooser">
+	<div id="tabs">
+	  <ul>
+	    <li><a href="#upload-tab">Upload</a></li>
+	    <li><%=link_to("Already uploaded", photos_path(:locale => nil, :image_set => image_set))%></li>
+	  </ul>
+	  <div id="upload-tab">
+		<%= form_for(Photo.new, :url => photos_path, :remote=>true) do |f| %>
+			<div id="drop_box">
+				<div id="browse_box" class="browse_state">
+					<h1>Drag and drop an image file or browse.</h1><br>
+					<div style="position:relative; display: inline-block;">
+						<%= link_to("Browse", "#", :class => "standard-button", :id=>"upload_button") %>
+						<%= f.cl_image_upload(:image) %>
+					</div>
+				</div>
+				
+				<div id="upload_status_box" class="upload_state"></div>
+				
+				<div class="preview_for_cropping" id="preview_for_cropping"></div>
+			</div>
+		
+			<% %w[x y w h].each do |attribute| %>
+				<%= f.hidden_field( "crop_#{attribute}", :id=> "crop_#{attribute}")%>
+			<% end %>
+		
+			<div class="submit_state">
+				<%= f.label :title, "Title" %>
+				<div>
+					<%= f.text_field :title %>
+					&nbsp;
+					<%= f.submit "Submit", :id=>"submit_photo", :class => "standard-button"  %>
+				</div>
+			</div>
+			
+			<span class="error" id="error"></span>
+			
+			<%= f.hidden_field :bytes %>
+			<%= f.hidden_field :image_set, :value => image_set %>
+		<% end %>
+	  </div>
+	</div>
+</div>
+
+<%= cloudinary_js_config %>
+
+<script type="text/javascript">
+function getDimensions(upload){
+    var width;
+    var height;
+    $.each(upload, function(k,v){  // only one file uploaded, so could use upload[0]
+       var val = JSON.stringify(v);
+       if (k=="width" && (!width>0) ){
+       	width = val;
+       }else if (k=="height" && (!height>0)){
+       	height = val;
+       }
+	});
+	return [width, height];
+}
+
+var setCoords = function(scaling) {
+    return function(c) {
+       setCoordsInHiddenFields(c,scaling )
+    };
+}
+
+function setScaledVal(selector, orig_val, scaling) {
+	 $(selector).val(Math.round(orig_val * scaling));
+}
+
+function setCoordsInHiddenFields(c,scaling) {     
+    setScaledVal('#crop_x', c.x, scaling);
+    setScaledVal('#crop_y', c.y, scaling);
+
+    setScaledVal('#crop_w', c.w, scaling);
+    setScaledVal('#crop_h', c.h, scaling);
+};	 
+  
+function bindImgToJCrop(x2, y2, scaling){ 
+  jQuery(function($){
+    var jcrop_api;
+    
+    $('.preview_for_cropping img').Jcrop({
+      bgColor: '#eee',
+   	  aspectRatio: <%=Photo::ASPECT_RATIO_FOR_CROP_WINDOW%>,
+      onChange:   setCoords(scaling),
+      onSelect:   setCoords(scaling),
+      minSize: [40, 40],
+      setSelect: [ 0, 0, x2, y2 ]  <%#  in the form x, y, x2, y2 %>
+    },function(){
+      jcrop_api = this;
+    });
+  });
+}
+ 
+function resetForm() {
+	$(".browse_state").show();
+	$(".upload_state").hide();
+	$(".submit_state").hide();	
+	
+	$("#crop_x").val("");
+	$("#crop_y").val("");
+	$("#crop_w").val("");
+	$("#crop_h").val("");
+	$("#photo_title").val("");
+	
+    $("#photo_bytes").val("");
+    $("#upload_status_box").text("");
+    $("#error").text("");
+    
+	var JcropAPI = $('.preview_for_cropping img').data('Jcrop');
+	if(JcropAPI) {
+		JcropAPI.destroy();
+	}
+	
+	$(".preview_for_cropping").html("");
+	$(".preview_for_cropping").css('visibility', 'hidden');
+}
+
+<%#Returns an array of preview_window_w, preview_window_h, scale.
+# Destructuring Assignment is in ECMAScript 6 but not supported yet in most browsers.%>
+function calculateCropWindowScaling(data){
+    var preview_window_w =  <%=Photo::MAX_CROP_WIDTH%>;
+	var preview_window_h =  <%=Photo::MAX_CROP_HEIGHT%>;
+	 
+    $("#photo_bytes").val(data.result.bytes);
+    $("#upload_status_box").text("");
+
+	$(".browse_state").hide();
+	$(".upload_state").hide();
+	$(".submit_state").show();	
+	$(".preview_for_cropping").css('visibility', 'visible');
+	
+    $(".preview_for_cropping").html(
+      $.cloudinary.image(data.result.public_id, { cdn_subdomain: true ,
+        format: data.result.format, width:preview_window_w, height: preview_window_h, crop: "limit"
+      })
+    );
+    
+    var uploaded_dims = getDimensions(data.result);
+    var uploaded_w = uploaded_dims[0];
+    var uploaded_h = uploaded_dims[1];
+	var uploaded_aspect_ratio =uploaded_w/uploaded_h;
+	
+	<%# JQuery retrieval of width and height directly from the image do not work, so need to calculate as follows based on the "limit" in cropping. 	%>
+ 	
+ 	var actual_preview_w;
+ 	var actual_preview_h;
+ 	
+	if (uploaded_w >= uploaded_h * <%=Photo::ASPECT_RATIO_FOR_CROP_WINDOW%>) { 
+		if (preview_window_w <= uploaded_w){
+			actual_preview_w = preview_window_w;
+			actual_preview_h = actual_preview_w /uploaded_aspect_ratio;
+		}else{
+			actual_preview_w = uploaded_w;
+			actual_preview_h = uploaded_h;
+		}
+	}else{
+		if (preview_window_h <= uploaded_h){
+			actual_preview_h = preview_window_h;
+			actual_preview_w = actual_preview_h *uploaded_aspect_ratio;
+		}else{
+			actual_preview_h = uploaded_h
+		    actual_preview_w = uploaded_w;
+		}
+	}
+	
+    var scale = uploaded_w/actual_preview_w; <%#If we calculate the scale based on height, we get the same value.%>
+    return [preview_window_w, preview_window_h, scale];
+}
+  
+$.widget( "custom.imageChooser", $.ui.dialog, {
+	options: {
+	  width: 800,
+	  modal: true,
+	  resizable: false,	  
+	  autoOpen: false,
+	  title: "<%=title%>",
+	  onChoose: null
+    },
+    
+    open: function() {
+        resetForm();
+        return this._super();
+    }
+});  
+
+$(function() {
+    $( "#tabs" ).tabs({
+      beforeLoad: function( event, ui ) {
+        ui.jqXHR.error(function() {
+          ui.panel.html(
+            "Couldn't load the images.");
+        });
+      }
+    });
+    
+    $("#photo-chooser").on("click", ".image-box", function(e){
+    	var self = $(this);
+    	var url = self.data("image-url");
+    	var title = self.data("image-title") + ""; // make it a string
+    	var id = self.data("image-id") + "";
+    	
+	  	var onChoose = $( "#photo-chooser" ).imageChooser("option", "onChoose");
+	  	if (onChoose != null) {
+	  		onChoose(id, url, title);
+	  		$( "#photo-chooser" ).imageChooser("close");
+	  	}
+	  	
+		e.stopPropagation();
+        e.preventDefault();
+        event.cancelBubble = true;
+        
+        return false;	  		
+    });
+  	
+	$(".cloudinary-fileupload").bind('fileuploadprocessfail', function (e, data) {
+        $("#error").text(data.files[data.index].error);
+	});
+
+    $(".cloudinary-fileupload")
+      .fileupload({ 
+        <%#  client side image resizing and validation.%>  
+        disableImageResize: false, <%#resize in browser before upload%>
+        imageMaxWidth: <%=Photo::MAX_WIDTH%>,
+        imageMaxHeight: <%=Photo::MAX_HEIGHT%>,
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png|bmp|ico)$/i,
+        maxFileSize: 3*1000*1000,  <%#in bytes%>
+        dropZone: "#drop_box",
+        start: function (e) {
+        	$(".browse_state").hide();
+            $(".submit_state").hide();        	
+        	$(".upload_state").show();
+            $("#error").text("");
+            $("#upload_status_box").text("Starting upload...");
+        },
+        progress: function (e, data) {
+            var upload_progress = Math.round((data.loaded * 100.0) / data.total);
+            if(upload_progress < 99){
+            	$("#upload_status_box").text("Uploading... " + upload_progress + "%");
+            } else {
+            	$("#upload_status_box").text("Loading image...");
+            }
+        },
+        fail: function (e, data) {
+        	$(".browse_state").show();
+            $(".submit_state").hide();
+        	$(".upload_state").hide();
+			$("#upload_status_box").text(""); <%#No informative message is availble in data%>
+			$("#error").text("Upload failed"); 
+        }
+      }).off("cloudinarydone").on("cloudinarydone", function (e, data) {
+      	var  sz = calculateCropWindowScaling(data);
+      	var preview_window_w = sz[0];
+      	var preview_window_h = sz[1];
+      	var scale = sz[2];
+        bindImgToJCrop(preview_window_w, preview_window_h, scale );
+    });
+      
+	$('#new_photo').on('ajax:success',function(data, status, xhr){
+	  	$('#tabs').tabs('load', 1);
+	  	var onChoose = $( "#photo-chooser" ).imageChooser("option", "onChoose");
+	  	if (onChoose != null) {
+	  		onChoose(status.id, status.url, status.title);
+	  		$( "#photo-chooser" ).imageChooser("close");
+	  	}
+	  	// close the dialog
+	}).on('ajax:error',function(xhr, status, error){
+		$("#error").text("Failed to upload file");
+	});    	
+	
+	$( "#photo-chooser" ).imageChooser();
+});
+</script>

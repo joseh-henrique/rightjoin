@@ -1,0 +1,39 @@
+<div class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+	
+	<%= form_tag employer_search_path(:locale => @job.country_code), :id => "search_for_candidates_form" do %>
+		<%= hidden_field_tag(:for, @job.id) %>
+	<% end %>
+	
+	<p class="headline">
+		Candidates we've recommended for you. Invite them to apply.
+ 
+		<%unless @job.closed?%> 
+			You can also 
+			<%= link_to_function "search for", "$('#search_for_candidates_form').submit()" %> 
+			and invite more candidates. 
+		<%end%>	
+	</p>
+	
+	<div class="white-box fyi-accordion">
+		<h3 class="accordion-header clearfix expanded"><span>Job details</span></h3>
+		<div class="accordion-panel">
+			<%=render :partial => 'jobs/job_details', :object => @job, :locals => {:compact => true}%>
+		</div>
+	</div>
+	
+	<%if @interviews.empty? %>
+		<p class="headline">
+			There are no recommended candidates for you right now. We'll update you as new talent comes in, or
+			go right ahead and  <%=link_to "search", employer_search_path %> our listings.
+		</p>
+	<%else%>
+		<div id="search-results-box">
+			<% @interviews.each do |interview| %>  
+				<%=render :partial => 'users/one_search_result', :locals => {:user => interview.user, :job => @job, :allow_ignore => true}%>
+			<% end %>
+		</div>
+	<% end %>
+</div>
+
+<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>

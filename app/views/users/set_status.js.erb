@@ -1,0 +1,2 @@
+buildListingStatus(<%=@user.id%>, <%=@user.status%>);
+$("#header-show-page").html("<%=escape_javascript(show_page_s(@user.status))%>");

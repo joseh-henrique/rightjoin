@@ -1,0 +1,72 @@
+<% if  @jobs.blank?%>
+	<div class="content-box">
+		<% if params[:wantedposition].blank? and params[:location].blank? and params[:board].blank? and I18n.locale.to_s != Constants::LOCALE_EN %>
+			<h1>Our specialized job listings in <%=I18n.t :country_name %> are coming soon. </h1>	
+			<br><br>
+ 			<%if signed_in? %>
+				But hang on, employers can still invite you to jobs that meet your requirements. 
+				You might want to <%=link_to "refine", edit_user_path(current_user, :locale => current_user.country_code)%> your requirements and skills to help them do that.
+			<%else%> 
+				Go ahead and sign in or <%= link_to "register", register_path   %> now, 
+				and employers will  be able to invite you to jobs that meet your requirements. 
+			<%end%>
+		<%else # We never actually reach this point, because we always fallback and find jobs%>
+			<h1>No jobs match your query.</h1>	
+			<br><br>
+			<%if signed_in? %>
+				Please <%= link_to "reset", jobs_path %> the query and search again.	
+			<%else%> 
+				Please <%= link_to "reset", jobs_path %> the query and search again, or <%= link_to("register", register_path)  %>,
+				and give employers a chance to find you.
+			<%end%>
+			<br><br>
+			Suggestions for a new search:
+			<ul>
+				<li>Make sure that all words are spelled correctly.</li>
+				<li>Use the auto-complete as a guide.</li>
+				<li>Try a more general job title.</li>
+			</ul>
+		<%end%>
+	</div>
+<% else %>
+	<div id="voiceover">
+		<%=@voiceover.html_safe%>
+	</div>
+	
+	<div class="pagination-box standard-section-header clearfix">
+		<div class="pagination-info">
+			<%= page_entries_info @jobs %>
+		</div>
+		<%
+			params_for_paginate = params.merge({ :controller => "pages", :action => "jobs"}); 
+		%>
+		<%= will_paginate @jobs, :params => params_for_paginate, :class => 'pagination-controls', :inner_window => 2 %>
+	</div>
+	
+	<div id="search-results-box" class="clearfix">
+		<%=render :partial => 'jobs/board_side_bar'%>
+		<div id="jobs-search-list">
+			<% new_ads_counter = 0 %>
+			<% @jobs.each_with_index do |job, i| %>
+				<% is_new = job.created_at > 3.day.ago && new_ads_counter < 2 && (request.parameters[:page].nil? || request.parameters[:page] == "1") %>
+				<% if is_new %>
+					<% new_ads_counter += 1 %>
+					<div class="new-tab">New!</div>
+				<%end%>
+				<div class="job-ad-box <%=is_new ? 'new' : ''%>">
+					<%=render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL}%>
+				</div>
+			<% end %>
+		</div>
+	</div>
+	
+	<div class="pagination-box standard-section-header clearfix">
+		<div class="pagination-info">
+			<%= page_entries_info @jobs %>
+		</div>
+		<%
+			params_for_paginate = params.merge({ :controller => "pages", :action => "jobs"}); 
+		%>
+		<%= will_paginate @jobs, :params => params_for_paginate, :class => 'pagination-controls', :inner_window => 2 %>
+	</div>
+<%end%>

@@ -1,0 +1,39 @@
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Attach positions to groups
+</p>
+
+<div class="white-box">
+	<% if @positions.blank? %>
+		All positions are fine.
+	<% else %>
+		<%= form_tag admin_attach_position_path, :id => "fix_position_form" do %>  
+		
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil, "Position", :class=>"mandatory") %><br>
+					<%=select_tag 'invalid_position', options_for_select(@positions), :class => "half-row-width"%>
+				</div>
+				<div class="right-col">
+					<%= label_tag(nil, "Attach to", :class=>"mandatory") %>
+					<%= text_field_tag(:wantedposition, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false, :class => "half-row-width") %>						
+				</div>	
+			</div>
+			<%= check_box_tag :autocomplete, '1', false%> <%= label_tag(:autocomplete, "Add to autocomplete") %>
+			<br><br>
+			<%=link_to "Attach", "#", :id => "attach", :class => "blue-inline-button" %>&nbsp;
+		<% end %>
+		
+		<script type="text/javascript">
+			$("#attach").click(function(event){
+				$("#fix_position_form").submit();
+				return false;
+			});
+		
+			$( "#wantedposition" ).cachedautocomplete({
+				url: "/autocomplete/positions",
+				sequentialMatching: false
+			});
+		</script>
+	<%end%>
+</div>

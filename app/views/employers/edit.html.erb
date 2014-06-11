@@ -1,0 +1,14 @@
+<a name="form" style="visibility: hidden"></a>
+
+<div class="inner">
+	<%= render :partial => 'layouts/flash_box' %>
+</div>
+
+<div class="content">
+	<p class="headline">
+		Edit your employer profile and choose a pricing plan here
+	</p>	
+	<%= render :partial => 'employers/edit_form' %>
+</div>
+
+<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>

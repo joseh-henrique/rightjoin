@@ -1,0 +1,243 @@
+<div class="white-box" id="edit-user-box">
+	<%= form_for(@employer) do |f| %>  
+	<div id="user-home-accordion" class="fyi-accordion">
+		<h3 class="accordion-header clearfix expanded"><span>Employer profile</span></h3>
+		<div class="accordion-panel">
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil, "Contact person first name", :class=>"mandatory") %>		
+						
+					<%= text_field_tag(:first_name, @employer.first_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr") %>
+				</div>
+				<div class="right-col">
+					<%= label_tag(nil, "Contact person last name", :class=>"mandatory") %>			
+					<%= text_field_tag(:last_name, @employer.last_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr") %>
+				</div>
+			</div>
+	
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil, "Company name", :class=>"mandatory") %>		
+					<a class="field-tooltip" title="The name of your own organization (whether you are an employer or a recruiter)"></a>	
+					<%= text_field_tag :company_name, @employer.company_name, :maxlength=> 60, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr" %>
+				</div>
+				<div class="right-col">
+					<%= label_tag(nil, "Your LinkedIn profile URL") %>
+					<a class="field-tooltip" title="Personalize your communication with the candidates."></a>
+					<%= text_field_tag(:li_url, @employer.li_url, :spellcheck =>false, :maxlength => 250, :class=>"validate[custom[linkedin], custom[url]] half-row-width input-attr") %>				
+				</div>			
+			</div>
+			
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil, raw("Email"), :class=>"mandatory") %>
+					<a class="field-tooltip" title="You will get a confirmation email for activating your profile."></a>			
+					<%= text_field_tag :email, @employer.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[email]] half-row-width input-attr" %>
+				</div>
+				<div class="right-col">
+				</div>
+			</div>
+	  	</div>	
+	
+		<h3 class="accordion-header clearfix expanded" id="plans-and-pricing"><span>Plans and pricing</span></h3>
+		<div class="accordion-panel">
+			<p>
+				<%if @employer.new_record?%>
+		   			Choose a plan to meet your recruiting needs.  
+		   		<% else %>
+		   			Choose a plan that works better for your organization. You can switch plans at any time. 
+		   		<% end %>
+			</p>
+			<br>
+			
+			<table id="pricing-plans">	
+				<tr>
+					<th></th>
+					<th><%= EmployerPlan::FREE%></th>
+					<th><%= EmployerPlan::PRO%></th>
+					<th><%= EmployerPlan::ENTERPRISE%></th>				
+				</tr>
+				<tr>
+					<td class="most-left">&ldquo;Come Work With Us&rdquo; widget</td>
+					<td>&#10003;</td>
+					<td>&#10003;</td>
+					<td>&#10003;</td>				
+				</tr>
+				<tr>
+					<td class="most-left">Open job positions highlighted in an attractive ad across multiple channels</td>
+					<td>1</td>
+					<td>2-5</td>
+					<td>Unlimited</td>				
+				</tr>
+				<tr>
+					<td class="most-left">Employee-centered recruiting</td>
+					<td>Unlimited</td>
+					<td>Unlimited</td>
+					<td>Unlimited</td>				
+				</tr>
+				<tr>
+					<td class="most-left">Expert screening of all leads by <%=Constants::SHORT_SITENAME%></td>
+					<td></td>
+					<td></td>
+					<td>&#10003;</td>				
+				</tr>
+				<tr>
+					<td class="most-left">Search and ping <%=Constants::SHORT_SITENAME%> members</td>
+					<td>Unlimited</td>
+					<td>Unlimited</td>
+					<td>Unlimited</td>					
+				</tr>	
+			
+				<tr>
+					<td class="most-left">Dedicated customer success representative</td>
+					<td></td>
+					<td></td>
+					<td>&#10003;</td>				
+				</tr>
+				<tr>
+					<td class="most-left">Monthly subscription</td>
+					<td><%=Utils::monthly_price_s(Constants::TIER_FREE)%></td>
+					<td><div class="trial-text">After<br>the 14-day<br>free trial:</div><%=Utils::monthly_price_s(Constants::TIER_PRO)%></td>
+					<td><div class="trial-text">After<br>the 14-day<br>free trial:</div><%=Utils::monthly_price_s(Constants::TIER_ENTERPRISE)%></td>
+				</tr>
+				<tr class="last-row">
+					<td class="most-left"></td>
+					<% 
+					default_tier = -1 
+					unless @employer.current_plan.nil? 
+						default_tier = @employer.current_plan.tier
+					end
+					%>
+		   <%# Signature is radio_button_tag(name, value, checked , options = {})%>
+					<td><%= radio_button_tag 'tier', Constants::TIER_FREE.to_s, default_tier == Constants::TIER_FREE, :class => "validate[required]" %></td>
+					<td><%= radio_button_tag 'tier', Constants::TIER_PRO.to_s, default_tier == Constants::TIER_PRO, :class => "validate[required]" %></td>
+					<td><%= radio_button_tag 'tier', Constants::TIER_ENTERPRISE.to_s, default_tier == Constants::TIER_ENTERPRISE, :class => "validate[required]" %></td>
+				</tr>				
+			</table>
+			
+			<%if @employer.new_record? %>
+				<% board = params[:board] %>
+				<%if board%>
+					<%= hidden_field_tag(:board, board) %>
+				<%end%>		
+			
+				<div id="create-listing-btn-box">
+		      		<%= submit_tag "Get Started", :class=>"blue-btn", :id=>"submit", :name => nil %>
+				</div>
+	  		<%else%>
+				<div id="update-listing-btn-box">
+					<%= submit_tag "Update", :id=>"submit", :class=>"blue-btn", :name => nil %><span>&nbsp;or&nbsp;</span><%= link_to "Cancel", employer_path(@employer) %>
+				</div>
+	  		<%end%>				
+		</div>	
+	</div>	
+	<% end %>
+</div>
+
+<p class="headline jumbo">
+	Pricing FAQ
+</p>
+
+<div id="edit-form-faq-accordion" class="fyi-accordion faq-accordion">
+	<h3 class="accordion-header collapsed">How can I change plans or cancel after I sign up?</h3> 
+	<div class="accordion-panel">
+		<p>
+			Simply edit your employer profile, 
+			choose the radio button for your preferred plan, and click &ldquo;Update.&rdquo;
+			The change will be effective immediately, and we will refund any excess payments  beyond the level of the new plan.
+		</p>
+		<p>
+			To cancel a paid subscription, simply revert to the <%=EmployerPlan::FREE%> plan.
+		</p>
+	</div>	
+	
+	<h3 class="accordion-header collapsed">What happens when the 14-day trial ends?</h3>
+	<div class="accordion-panel">
+		<p>
+			After the 14-day free trial, if you choose not to continue, your account will revert to the <%=EmployerPlan::FREE%> plan,
+			 which allows only one  job position and one ambassador.
+		</p>
+	</div>
+ 
+	<h3 class="accordion-header collapsed">I'm not hiring right now. Can I freeze my subscription?</h3>
+	<div class="accordion-panel">
+		<p>
+			You can temporarily switch to the  <%=EmployerPlan::FREE%> plan, then  resume your premium plan when you need it again.
+		</p>
+	</div>
+	
+	<h3 class="accordion-header collapsed">What does the Customer Success Representative do for me?</h3>
+	<div class="accordion-panel">
+		<p>
+			 Customer Success Representatives can help you boost your candidate outreach program.
+			 Some services include:
+			 <ul class="bullet-points">
+			  	<li>
+			  		Styling your &ldquo;Come Work With Us&rdquo; web component to suit your company's site.
+			  	</li>  
+			  	<li>
+			  		Placing your job posting on high-traffic developer-oriented sites
+			  	</li>
+			  	<li>
+			  		Sourcing suitable candidates and screening them based on their online profiles. 
+			  	</li>
+			  	<li>
+			  		Improving the text of your job postings based on our experience with successful recruiting campaigns. 
+			  	</li>
+			  </ul>  
+		</p>
+	</div>
+	
+ 
+</div>
+
+<script type="text/javascript">
+	function doSubmitForm() {
+		addHttpToUrlIfNeeded($("#li_url"));
+		var res = $("form.new_employer, form.edit_employer").validationEngine('validate');
+		if (res) {
+			// prevent double submit
+	 		if($('#submit').attr("disabled") != "disabled") {
+	 			$('#submit').focus();
+				$('#submit').attr('disabled','disabled');	 			
+			}
+	    }
+	
+		return res;
+	}
+   
+	$("form.new_employer").submit(function(){
+		if(doSubmitForm()) {
+			trackEvent("employer", "new profile created");
+		} else {
+			trackEvent("employer", "new profile failed");
+			return false;
+		}
+		
+		return true;
+	});
+	
+	$("form.edit_employer").submit(function(){
+		if(doSubmitForm()) {
+			trackEvent("employer", "profile updated");
+		} else {
+			trackEvent("employer", "error updating profile");
+			return false;
+		}
+		
+		return true;
+	});	
+	
+	//https://bugzilla.mozilla.org/show_bug.cgi?id=443289
+	window.addEventListener('pageshow', PageShowHandler, false);
+	window.addEventListener('unload', UnloadHandler, false);
+	
+	function PageShowHandler() {
+		$('#submit').removeAttr('disabled');
+		window.addEventListener('unload', UnloadHandler, false);
+	}
+	
+	function UnloadHandler() {
+		window.removeEventListener('unload', UnloadHandler, false);
+	}
+</script>

@@ -1,0 +1,86 @@
+<div id="job-search-board-side-bar">
+	<% 
+	board_name = ""
+	board_obj = Board.find_by_name(params[:board]) if params[:board].present?
+	
+
+	if board_obj
+		board_title = board_obj.title_case  if board_obj.title 
+		board_name = board_obj.name 
+	%>
+		<div class="board-selected">
+			<div class="title">
+				<span><%= board_title%></span>
+			</div>
+			<div class="clearfix">
+				<div class="board-img <%=board_obj.name%>"></div>
+				<p>
+					<%= board_obj.developer_text.html_safe %>  
+				</p>
+			</div>
+		</div>
+	<% else %>
+		<div class="board-selector">
+			<div class="title">
+				<span>Specialized job listings</span>
+			</div>
+			<ul class="boards-list">
+				<% Board.all.map do |board| %>
+					<li class="board-item <%=board.name%>"><%= link_to(board.title, jobs_url(:board => board.name))%></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+	
+	<% employee = get_employee_user_by_session_cookie %>
+	<% employer = get_employer_user_by_session_cookie %>
+	
+	<% if employer.nil? && !employee.nil? %>
+		<% # show nothing %>
+	<% else %>
+		<% if employee.nil? && employer.nil? %>
+			<div class="sidebar-box">
+				<div class="title">
+					Chill as the offers arrive
+				</div>
+				<ul>
+					<li>
+						Get invited to escape-worthy jobs 
+					</li>
+					<li>
+						No resum&eacute; needed
+					</li>
+					<li>
+						Stay anonymous
+					</li>
+				</ul>
+				<%=link_to "Register now!", register_path, :class => "sidebar-button"%>
+			</div>
+		<% end %>
+
+		<div class="sidebar-box">
+			<div class="title">
+				Employers:
+			</div>
+			
+			<ul>
+				<li>
+					Get invited to escape-worthy jobs 
+				</li>
+				<li>
+					No resum&eacute; needed
+				</li>
+				<li>
+					Stay anonymous
+				</li>
+			</ul>
+
+			<% if employer.nil? %>
+				<%=link_to "Post a job", employer_get_started_path(:board => board_name), :class => "sidebar-button" %><br>
+			<% else %>
+				<%=link_to "Post a job", new_employer_job_path(employer, :board => board_name), :class => "sidebar-button"%><br>
+			<% end %>
+			<%=link_to "Find candidates", employer_search_path, :class => "sidebar-button" %>
+		</div>
+	<% end %>
+</div>

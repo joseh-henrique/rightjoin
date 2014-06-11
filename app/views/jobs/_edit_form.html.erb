@@ -1,0 +1,434 @@
+<%# must go before the form below%>
+<%=render :partial=>"photos/chooser_dialog", :locals => {:title => "Choose an image", :image_set => Photo.get_group_name(@job.employer, "jobs")} %>
+<script type="text/javascript">
+	var dirty_form_fields = false;
+	function load_image(field_el_name, box_el_name, photo_id, photo_url, photo_title){
+		var field = $(field_el_name);
+		field.val(photo_id);
+		dirty_form_fields = true;
+		
+		var box = $(box_el_name);
+		
+		box.empty();
+		var target_box = $('<div class="image-target-box"><div class="loading">Loading...</div></div>').appendTo(box);
+		
+		$('<img src="'+ photo_url +'">').load(function() {
+			target_box.empty();
+			
+		  	$(this).appendTo(target_box);
+		  	
+		  	if(photo_title.length > 0) {
+				$('<div class="photo-title">' + photo_title + '</div>').appendTo(target_box);
+			}
+			
+			$('<div class="photo-close" title="Remove"></div>').click(function(e) {
+				box.empty();
+				field.val("");
+				
+				dirty_form_fields = true;
+				
+				e.stopPropagation();
+	            e.preventDefault();
+	            event.cancelBubble = true;
+	            return false;
+			}).appendTo(target_box);
+		});
+	}
+	
+	function load_photo(image_index, photo_id, photo_url, photo_title){
+		var field_el_name = "#image_" + image_index + "_id";
+		var box_el_name = "#image-box-" + image_index;
+		
+		load_image(field_el_name, box_el_name, photo_id, photo_url, photo_title);
+	}
+</script>
+
+
+<%= form_for([current_user, @job]) do |f| %>  
+<div class="standard-section-header">Company details</div>
+<div class="section-box">
+	<div class="form-row clearfix">
+		<div class="form-column">
+			<div class="form-cell">
+				<%= label_tag(nil, "Hiring company", :class=>"mandatory") %><br>
+				<%= text_field_tag :company_name, @job.company_name, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[nonEmpty]] half-row-width input-attr monitor-change" %>
+			</div>
+	
+			<div class="form-cell">
+				<%= label_tag(:company_url, "Company URL") %><br>
+				<%= text_field_tag(:company_url, @job.company_url, :maxlength=>500, :class=>"validate[custom[url]] input-attr half-row-width monitor-change", :spellcheck => false) %>
+			</div>
+		</div>
+		
+		<div class="form-column">
+			<div class="form-cell">
+				<%= label_tag(:company_logo, "Company logo") %>
+				
+				<div id="company-logo-box" class="logo-image image-box"></div>
+				<%= hidden_field_tag("company_logo_image_id") %>
+				
+				<%logo = @job.logo%>
+				<% unless logo.nil? %>
+					<script type="text/javascript">
+						load_image("#company_logo_image_id", "#company-logo-box", <%=logo.id%>, "<%=escape_javascript logo.image.standard.url%>", "");
+					</script>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>	
+
+<div class="standard-section-header">Job features</div>
+<div class="section-box">
+	<div class="form-row clearfix">
+		<div class="form-column">
+			<div class="form-cell">
+				<%= label_tag(:position, "The position you need to fill", :class => "mandatory") %><br>
+				<a class="field-tooltip" title="To find candidates more effectively, please use standard job titles. The autocomplete will help.">
+				</a>
+				<%= text_field_tag(:position, @job.position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change", :spellcheck => true) %>
+			</div>
+			<div class="form-cell">
+				<%= label_tag(:location, "Where?", :class => "mandatory") %><br>
+				<a class="field-tooltip" title="The city where the employee will work. Searches for cities in the geographical area will also find this."></a>
+				<%= text_field_tag(:location, @job.location_name, :autocomplete => "off", :placeholder => "e.g., san francisco, california", :maxlength => 60,  :spellcheck => false, :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change") %>
+	
+				<%= hidden_field_tag(:address_lat, @job.address_lat) %>
+				<%= hidden_field_tag(:address_lng, @job.address_lng) %>
+				
+				<%= hidden_field_tag(:lat, @job.latitude) %>
+				<%= hidden_field_tag(:lng, @job.longitude) %>
+	
+				<div class="location-options-box">
+					<%= check_box_tag :allow_telecommuting, 'yes', @job.allow_telecommuting%> <%= label_tag(:allow_telecommuting, "Telecommuting is a possibility.") %>
+					<br>
+					<%= check_box_tag :allow_relocation, 'yes', @job.allow_relocation%> <%= label_tag(:allow_relocation, "We'll consider relocating a new hire.") %>
+				</div>		
+			</div>		
+		</div>
+	
+		<div class="form-column">
+			<div class="form-cell">
+				<%= label_tag(nil, "URL to full job description") %><br>
+				<a class="field-tooltip" title="An optional link to a job description (at your own site, an applicant tracking system, or a job board)."></a>	
+				<%= text_field_tag :ad_url, @job.ad_url.to_s, :maxlength=>500, :spellcheck =>false, :class=>"validate[custom[url]] half-row-width input-attr monitor-change" %>								
+			</div>
+		</div>
+	</div>
+	
+	<a id="listings"></a>
+	<%= label_tag(:company_logo, "Check some &ldquo;escape-worthy&rdquo; extras.".html_safe) %>
+	<div class="form-row group-box clearfix">
+		<div class="form-cell">
+			<ul class="checkbox-grid">
+				<% Board.all.each_with_index do |board, i| %>
+					<li title="<%=board.description.html_safe%>">
+						<%
+							checked = (board.name == params[:board])
+							if @job.new_record?
+								unless @base_job.nil?
+									checked = @base_job.ads.find_by_board_id(board.id)
+								end
+							else
+								checked = @job.ads.find_by_board_id(board.id)
+							end
+						%>
+						
+						<%= check_box_tag "board[#{board.name}]", '1', checked, :id => "board_#{board.id}"%>&nbsp;<%= label_tag("board_#{board.id}", board.title_case) %>
+					</li>
+				<% end %>
+			</ul>	
+		</div>
+	</div>
+	
+	<%benefit_field_len = 40%>
+	<%= label_tag(:company_logo, "More special features.") %>
+	<div class="form-row group-box clearfix">
+		<div class="form-column">
+			<div class="form-cell">
+				<div id="benefit-counter1" class="message-counter"><%=benefit_field_len%></div>
+				<%= text_field_tag :benefit1, @job.benefit1, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. our famous gourmet lunches", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter1" %>
+			</div>
+			<div class="form-cell">
+				<div id="benefit-counter2" class="message-counter"><%=benefit_field_len%></div>
+				<%= text_field_tag :benefit2, @job.benefit2, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. hackathons & programming challenges", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter2" %>	
+			</div>
+		</div>
+		<div class="form-column">
+			<div class="form-cell">
+				<div id="benefit-counter3" class="message-counter"><%=benefit_field_len%></div>
+				<%= text_field_tag :benefit3, @job.benefit3, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. our open source contribution", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter3" %>
+			</div>
+			<div class="form-cell">
+				<div id="benefit-counter4" class="message-counter"><%=benefit_field_len%></div>
+				<%= text_field_tag :benefit4, @job.benefit4, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. flexible work schedules", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter4" %>
+			</div>
+		</div>		
+	</div>
+	
+	<div class="form-row">
+		<div class="form-cell">
+			<%= label_tag(nil, "Technical stack (a comma-separated list of tags)")%><br>
+			<%= text_field_tag(:tech_stack_list, @job.tech_stack_list, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false) %>	
+		</div>
+	</div>	
+	
+	<div class="form-row clearfix">
+		<div class="form-column">
+			<div class="form-cell">
+								<%= label_tag(nil, "Why would a top developer want to take this job?", :class => "mandatory")%><br>
+				<div id="free-text-counter" class="message-counter"><%=Job::DESCRIPTION_MAX_LEN%></div>
+				<%= text_area_tag(:description, @job.description, :maxlength=>Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter")%>			
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="standard-section-header">Office location</div>
+<div class="section-box">
+	<div class="form-row">
+		<div class="form-cell">
+			<%= label_tag(nil, "Great office location? Let candidates know.")%><br>
+			<%= text_field_tag(:address, @job.address, :maxlength=>255, :class=>"monitor-change", :spellcheck => false) %>
+			<div id="map-canvas"></div>
+		</div>
+	</div>
+</div>	
+
+<div class="standard-section-header">Images</div>
+<div class="section-box">
+	<div class="form-row">
+		<div class="form-cell">
+			<%= label_tag(nil, "Images of your awesome office space, ping-pong table, kegerator, whatever.")%><br>
+				<div class="images-list clearfix">
+				<% (1..3).each do |i| %>
+					<div id="image-box-<%=i%>" class="custom-image image-box" data-index="<%=i%>"></div>
+					<%= hidden_field_tag("image_#{i}_id") %>
+					
+					<%photo = @job.get_photo(i)%>
+					<% unless photo.nil? %>
+						<script type="text/javascript">
+							load_photo(<%=i%>, <%=photo.id%>, "<%=escape_javascript photo.image.standard.url%>", "<%=escape_javascript photo.title%>");
+						</script>
+					<% end %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="buttons-box">
+	<%if @job.new_record? %>
+		<%= submit_tag "Create", :id=>"submit", :class=>"standard-button", :name => nil %>
+	<%else%>
+		<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil %>
+	<%end%>	
+	&nbsp;&nbsp;
+	<%= link_to "Cancel", employer_path(current_user), :id => "cancel-link", :class=>"cancel-button" %>
+</div>
+<% end %>
+
+<script type="text/javascript">
+	dirty_form_fields = false;
+	 $(function() {
+		$(".monitor-change").on("input", function() {
+			dirty_form_fields = true;
+		});
+		
+		$('.new_job :checkbox, .edit_job :checkbox').change(function() {
+		    dirty_form_fields = true;
+		});
+
+		$(window).bind('beforeunload', function(){
+			if (dirty_form_fields) {
+				return "<%=page_leaving_warning_s%>";
+			}
+		});
+	});
+
+	$( "#location" ).googleAddressPicker({
+		country: "<%=I18n.t :country_code, locale: @locale%>",
+		placeholder: "<%=I18n.t :location_placeholder, locale: @locale%>",
+		keep_location_components: <%=(I18n.t :google_keep_location_components, locale: @locale).html_safe%>
+	}).on( "complete", function( event, data ) {
+        var suggested = $(this).googleAddressPicker("selected_info");
+        if(suggested) {
+			$("#lat").val(suggested.lat);
+			$("#lng").val(suggested.lng);
+        } else {
+        	$("#lat").val("");
+			$("#lng").val("");
+        }
+    });
+	
+	$( "#position" ).cachedautocomplete({
+		url: "/autocomplete/positions",
+		sequentialMatching: false,
+		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
+	});
+	
+	$( "#tech_stack_list" ).cachedautocomplete({
+		multiValue: true,
+		sequentialMatching: false,
+		url: "/autocomplete/skills"
+	});	
+	
+	$(".custom-image").click(function (){
+		var image_index = $(this).data("index");
+		$('#photo-chooser').imageChooser({
+			onChoose: function(id, path, title) {
+				load_photo(image_index, id, path, title);
+			}
+		}).imageChooser( 'open' );
+	});
+	
+	$(".logo-image").click(function (){
+		$('#photo-chooser').imageChooser({
+			onChoose: function(id, path, title) {
+				load_image("#company_logo_image_id", "#company-logo-box", id, path, "");
+			}
+		}).imageChooser( 'open' );
+	});	
+
+	function doSubmitForm() {
+		addHttpToUrlIfNeeded($("#ad_url"));
+		addHttpToUrlIfNeeded($("#company_url"));
+		$("form.new_job, form.edit_job").validationEngine('hideAll');
+		
+		if($("#verify-account-form").length > 0) {
+			$("#verification-pw").validationEngine('showPrompt', 'To post jobs, please verify your account with the password we sent you, or sign out and click \u201CForgot Password.\u201D', 'error', 'topLeft', true);
+			$("#verification-pw").focus();
+			
+			return false;
+		}
+		
+		var res = $("form.new_job, form.edit_job").validationEngine('validate');
+		
+		if(!$.trim($("#location").val()) || !$.trim($("#lat").val()) || !$.trim($("#lng").val())){
+			res = res && false;
+			$("#location").validationEngine('showPrompt', "We couldn't recognize the location entered. Please use the auto-complete.", 'error', 'topRight', true);
+			$("#location").focus();
+		}
+		
+		if($.trim($("#address").val()) && (!$.trim($("#address_lat").val()) || !$.trim($("#address_lng").val()))){
+			res = res && false;
+			$("#address").validationEngine('showPrompt', "We couldn't recognize the address entered. Please use the auto-complete.", 'error', 'topRight', true);
+			$("#address").focus(); 
+		}
+		
+		if(res) {
+			// prevent double submit
+	 		if($('#submit').attr("disabled") != "disabled") {
+	 			$('#submit').focus();
+				$('#submit').attr('disabled','disabled');
+			}				
+		}
+	
+		return res;
+	}
+   
+	$("form.new_job, form.edit_job").submit(function(){
+		if(doSubmitForm()) {
+			dirty_form_fields = false;
+			trackEvent("employer", "Job posting updated");
+		} else {
+			trackEvent("employer", "Failed to update job posting");
+			return false;
+		}
+		
+		return true;
+	});
+	
+	$("#cancel-link").click(function(event) {
+		dirty_form_fields = false;
+	});
+	
+	///////// address /////////
+	function initialize_address_picker() {
+	  var country_bounds_arr = <%=I18n.t :default_bounds, locale: @locale%>;
+	  var default_country_bounds = new google.maps.LatLngBounds(
+	  	new google.maps.LatLng(country_bounds_arr[0], country_bounds_arr[1]),
+	  	new google.maps.LatLng(country_bounds_arr[2], country_bounds_arr[3])
+	  );
+	  	  
+	  var address_center = default_country_bounds.getCenter();
+	  <% if @job.address && @job.address_lat && @job.address_lng %>
+	  	address_center = new google.maps.LatLng(<%=@job.address_lat%>, <%=@job.address_lng%>);
+	  <% end %>	  
+	  
+	  var mapOptions = {
+	  	center: address_center,
+	  	zoom: 17,
+	  	scrollwheel: false
+	  };
+	  
+	  var autocomplete_options = {
+		types : ["geocode"],
+		componentRestrictions : {
+			country : "<%=I18n.t :country_code, locale: @locale%>"
+		}
+	  };	  
+	  
+	  var map = new google.maps.Map($("#map-canvas").get(0), mapOptions);
+	  var input = $("#address").get(0);
+	  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+	  var autocomplete = new google.maps.places.Autocomplete(input, autocomplete_options);
+	  autocomplete.bindTo('bounds', map);
+	  
+	  var marker = new google.maps.Marker({
+	  	map: map,
+	  	anchorPoint: new google.maps.Point(0, -29)
+	  });
+	  
+	  <% # load saved address %>
+	  <% if @job.address && @job.address_lat && @job.address_lng %>
+	  	marker.setPosition(address_center);
+	  	marker.setVisible(true);
+	  <% else %>
+	  	map.fitBounds(default_country_bounds);
+	  <% end %>	 
+	  
+	  $("#address").keypress(function(e) {
+     	if(e.keyCode == 13) {
+       		e.preventDefault();
+     	}
+	  }).on('input', function() {
+			$("#address_lat").val("");
+			$("#address_lng").val("");
+			marker.setVisible(false);
+	  });
+	
+	  google.maps.event.addListener(autocomplete, 'place_changed', function () {
+	  	marker.setVisible(false);
+	  	var place = autocomplete.getPlace();
+	  	if (place.geometry) {
+		  	// If the place has a geometry, then present it on a map.
+		  	if (place.geometry.viewport) {
+		  		map.fitBounds(place.geometry.viewport);
+		  	} else {
+		  		map.setCenter(place.geometry.location);
+		  		map.setZoom(17);
+		  	}
+		  	
+		  	marker.setPosition(place.geometry.location);
+		  	marker.setVisible(true);
+		  	
+		  	$("#office_address").validationEngine('hideAll');
+		  	
+			$("#address_lat").val(place.geometry.location.k);
+			$("#address_lng").val(place.geometry.location.A);	
+	  	} else {
+			$("#address_lat").val("");
+			$("#address_lng").val("");
+			marker.setVisible(false);
+			map.fitBounds(default_country_bounds);
+				  		
+	  		$("#address").validationEngine('showPrompt', "We couldn't recognize the address entered. Please use the auto-complete.", 'error', 'topLeft', true);
+	  	}
+	  });
+  	}
+
+  	google.maps.event.addDomListener(window, 'load', initialize_address_picker);
+	/////// address //////	
+</script>
+

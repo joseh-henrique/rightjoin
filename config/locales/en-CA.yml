@@ -1,0 +1,24 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en-CA:
+  country_code: "ca"
+  country_name: "Canada"
+  short_country_name: "Canada"
+  full_country_name: "Canada"
+  country_adjective: "Canadian" 
+  location_placeholder: "toronto, ontario"  
+  latitude : 56.130366
+  longitude : -106.34677099999999
+ 
+  use_province: "true"
+  max_salary: "180000"
+  salary_step: "20000"
+  monthly_tier_1_price: "0"
+  monthly_tier_2_price: "199"
+  monthly_tier_3_price: "399"
+  currency_unit: "C$"
+  thousands_delimiter: ","
+  intl_phone_pfx: "+1-"
+  google_keep_location_components: "['administrative_area_level_3', 'administrative_area_level_1', 'locality']"
+  default_bounds: "[43.5810846, -79.63921900000003, 43.8554579, -79.1161932]"

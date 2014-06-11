@@ -1,0 +1,34 @@
+<div class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+	
+	<div class="content-box">
+		<div class="page-heading-box">
+			<h1>
+				Create a job posting.
+			</h1>
+			<h2>
+				It will go out on multiple channels.	
+			</h2>
+			
+			<% if @job.employer.jobs.any? && @base_job.nil? %>
+				<div id="copy-job-settings">
+					<%= form_tag copy_properties_employer_jobs_path(@job.employer) do %>  
+					
+						<% options = @job.employer.jobs.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id, { :class => job.status == Job::CLOSED ? 'closed-job-select-option' : 'live-job-select-option' }]} %>
+	
+						<%= label_tag(nil, "Take job settings from") %>	
+						<div>
+							<%=select 'copy_from', 'jobid', options, {:include_blank => false}, {:class => "standard-select"}%>
+							&nbsp;
+							<%= submit_tag("Copy", :class => "standard-button copy-settings-button", :name => nil) %>
+						</div>
+					<% end %>
+				</div>
+			<% end %>
+		</div>
+		
+		<div id="job-edit">
+			<%= render :partial => 'jobs/edit_form' %>
+		</div>
+	</div>
+</div>

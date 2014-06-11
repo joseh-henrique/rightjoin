@@ -1,0 +1,119 @@
+	<p>
+		Please visit <a href="${orig_ad_url}" target="_blank">this web page</a>. It should be--but might not be--a job ad for a software developer.
+	</p>
+	
+	<p>
+		<strong>URL of the job ad</strong> (<em>not </em>an indeed.com URL):
+		<input name="job_ad_url" required="required" size="35" type="text" />
+	</p>
+	
+	<p>
+		<b>Short job title</b>&nbsp;(E.g,&nbsp;<em>Senior Web Developer</em>). If it&#39;s not an ad for a software job, write <strong>N/A</strong>&nbsp;here and submit form without continuing.&nbsp;&nbsp;&nbsp;
+		<input name="title" required="requfired" size="35" type="text" />
+		&nbsp;
+	</p>
+	
+	<p>
+		<strong>Employing company </strong>(The actual employer, unless only the&nbsp;recruiting company name is available. Do&nbsp;not use the name of a job-board site.):
+		<input name="company" required="required" size="35" type="text" />
+	</p>
+	
+	<p>
+		<strong>City</strong>
+		<input name="city" required="required" size="30" type="text" />
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<strong>State</strong>&nbsp;(2-letter abbreviation; or <strong>N/A</strong>&nbsp;if non-US/Canada)
+		<input maxlength="4" name="state" required="required" size="4" type="text" />
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Select <strong>country</strong>&nbsp;
+		<select id="country_code" name="country_code" required="required">
+			<option value="not-selected">&nbsp;</option><option value="us">US</option><option value="gb">UK</option><option id="ca" value="ca">Canada</option><option value="other">Other</option>
+		</select>
+	</p>
+	
+	<p>
+		<strong>Job description</strong>
+		<br />
+		<textarea cols="110" name="description" placeholder="The job's responsibilities. (NOT a description of the company or requirements for candidates). Please don't include headers like 'Job Requirements'. If the description is long, just the first few lines." required="required" rows="6"></textarea>
+	</p>
+	<p>
+		Please check/uncheck all&nbsp;checkboxes as relevant.
+	</p>
+	
+	 
+	
+	<p>
+		<input id="relocation" name="relocation" type="checkbox" />
+		<strong>Relocation</strong>: The ad specifies that the employer will pay for relocation.
+	</p>
+	
+	<p>
+		<em>
+		<input id="startup" name="startup" type="checkbox" />
+		</em><strong>Startup</strong>: The job is in a startup or octher fast-growing company
+	</p>
+	
+	<p>
+		<input id="kegerator" name="kegerator" type="checkbox" />
+		<strong>Fun Office</strong>: The ad offers an office kegerator, espresso machine, ping-pong table, foosball table, gym, health club, or other fun activities.
+	</p>
+	
+	<p>
+		<input id="open_source" name="open_source" type="checkbox" />
+		<strong> Open Source Contribution</strong>: The ad says that employers can contribute to open-source on the job.
+	</p>
+	
+	<p>
+		<input id="bleeding_edge_tech" name="bleeding_edge_tech" type="checkbox" />
+		<strong> Cutting-Edge Technology</strong>: The ad mentions MongoDB, Cassandra, Amazon Web Services, Big Data, Hadoop, Hbase, or other cutting-edge technology.
+	</p>
+	
+	<p>
+		<input id="work_from_home" name="work_from_home" type="checkbox" />
+		<strong> Work From Home</strong>: The ad says that the job allows <b>full-time</b> work from home (also called remote work, telecommute).
+	</p>
+	
+	<p>
+		<input id="meaningful_jobs" name="meaningful_jobs" type="checkbox" />
+		<strong>Helping Humanity:</strong> The ad talks about work with meaning or social values--medical applications, environmental protection, poverty reduction, or otherwise helping humanity.
+	</p>
+	<script>
+		function non_empty(s) {
+			if (!s) {
+				return false;
+			}
+			s = s.trim();
+			if (s == "on") {
+				return true;
+			}
+			return false;
+		}
+	
+		function check_checkbox(name, val) {
+			if (non_empty(val)) {
+				var x = document.getElementById(name);
+				if (x) {
+					x.checked = true;
+				}
+			}
+		}
+	
+		var checkboxes = ["work_from_home", "startup", "open_source", "meaningful_jobs", "bleeding_edge_tech", "kegerator"];
+		var checkbox_vals = ["${work_from_home}", "${startup}", "${open_source}", "${meaningful_jobs}", "${bleeding_edge_tech}", "${kegerator}"];
+	
+		if (checkboxes.length != checkbox_vals.length) {
+			alert("Mismatch error. Task misdefined.");
+		}
+	
+		for (var i = 0; i < checkboxes.length; i++) {
+			checkbox_name = checkboxes[i];
+			checkbox_val = checkbox_vals[i];
+	
+			check_checkbox(checkbox_name, checkbox_val);
+	
+		}
+	
+		var default_country_code = "${default_country_code}";
+		var ccode_option = document.getElementById(default_country_code);
+		if (ccode_option) {
+			ccode_option.selected = true;
+		}
+	</script>

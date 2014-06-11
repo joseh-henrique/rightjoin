@@ -1,0 +1,25 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en-IL:
+  country_code: "il"
+  country_name: "Israel"
+  short_country_name: "Israel"
+  full_country_name: "Israel"
+  country_adjective: "Israeli"
+  location_placeholder: "tel aviv"
+  latitude : 31.046051
+  longitude: 34.85161199999993
+  use_province: "false"
+  max_salary: "40000"
+  salary_step: "5000"  
+  salary_period: "monthly"
+  monthly_tier_1_price: "0"
+  monthly_tier_2_price: "699"
+  monthly_tier_3_price: "1799"
+  currency_unit: "&#8362;"
+  thousands_delimiter: ","
+  intl_phone_pfx: "+1-"
+  search_radius_in_miles: "20"
+  google_keep_location_components: "['administrative_area_level_3', 'locality']"
+  default_bounds: "[32.0292531, 34.742515899999944, 32.1465074, 34.8519761]"

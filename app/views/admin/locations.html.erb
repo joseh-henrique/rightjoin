@@ -1,0 +1,70 @@
+<p class="headline">
+	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	Non-standard locations: <%=@locale%>
+</p>
+
+<div class="white-box">
+	<% if @locations.blank? %>
+		All locations are fine.
+	<% else %>
+		<%= form_tag admin_manage_location_path(:locale => @locale), :id => "fix_location_form" do %>  
+			
+			<div class="clearfix user-attr-row">
+				<div class="left-col">
+					<%= label_tag(nil, "Invalid position", :class=>"mandatory") %><br>
+					<%=select_tag 'invalid_location', options_for_select(@locations), :class => "half-row-width"%>
+				</div>
+				<div class="right-col">
+					<%= label_tag(nil, "Replacement", :class=>"mandatory") %>
+					<%= text_field_tag(:location, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false, :class => "half-row-width") %>					
+				</div>	
+			</div>
+			
+			<%= hidden_field_tag(:what) %>
+			<%= hidden_field_tag(:lat) %>
+			<%= hidden_field_tag(:lng) %>
+
+			<%=link_to "Set coordinates", "#", :id => "set-coordinates", :class => "blue-inline-button" %>&nbsp;
+			<%=link_to "Replace with standard location", "#", :id => "swap", :class => "blue-inline-button" %>&nbsp;
+		<% end %>
+		
+		<script type="text/javascript">
+			$("#set-coordinates").click(function(event){
+				$("#what").val("set_coordinates");
+				var suggested = $("#location").locationcomplete("selected");
+				if(suggested != null){
+					$("#lat").val(suggested.lat);
+					$("#lng").val(suggested.lng);
+				} else {
+					$("#lat").val("");
+					$("#lng").val("");			
+				}
+				$("#fix_location_form").submit();
+				return false;
+			});
+			
+			$("#swap").click(function(event){
+				$("#what").val("swap");
+				var suggested = $("#location").locationcomplete("selected");
+				if(suggested != null){
+					$("#lat").val(suggested.lat);
+					$("#lng").val(suggested.lng);
+				} else {
+					$("#lat").val("");
+					$("#lng").val("");			
+				}
+				$("#fix_location_form").submit();
+				return false;
+			});		
+		
+			$( "#location" ).locationcomplete({
+				minLength: 3,
+				country_code: "<%=I18n.t :country_code, locale: @locale%>",
+				placeholder: "<%=I18n.t :location_placeholder, locale: @locale%>",
+				use_province: "<%=I18n.t :use_province, locale: @locale%>"
+			});	
+			
+			
+		</script>
+	<%end%>
+</div>

@@ -1,0 +1,608 @@
+<% content_for :more_style do %> 
+  	<style>
+	#we-are-hiring-widget-box {
+		//padding: <%=params[:padding].blank? ? "5px" : params[:padding]%>;
+	}
+	
+	<% colors = @colors.split(/\s*,\s*/) %>
+	.job-ad .description-box {
+		<%="border-left-color: #{colors[0]};" unless colors[0].blank?%>
+	}
+	
+	.talk-to-box .question {
+		<%="background-color: #{colors[0]};" unless colors[0].blank?%>
+		<%="color: #{colors[1]};" unless colors[1].blank?%>
+	}
+	
+	.talk-to-box .body-box .padding {
+		<%="background-color: #{colors[2]};" unless colors[2].blank?%>
+	}
+	
+	.talk-to-box .body-box .one-ambassador {
+		<%="background-color: #{colors[2]};" unless colors[2].blank?%>
+	}
+	
+	.fyi-accordion .accordion-header.collapsed {
+		<%="background-color: #{colors[3]};" unless colors[3].blank?%>
+	}
+	
+	.fyi-accordion .accordion-header.expanded {
+		<%="background-color: #{colors[4]};" unless colors[4].blank?%>
+	}
+	</style>
+<% end %>
+
+<% #http://moz.com/blog/meta-data-templates-123 %>
+<% content_for :more_meta do %> 
+	<% 
+	# See ambassadors/show.html.erb for similar text
+	   title_for_metas = Ambassador::share_title(@job)
+	   desc_for_metas =  Ambassador::share_description(@job)   
+	   summary_for_metas = Ambassador::share_summary(@job)
+  	   img_url_for_metas =  @job.logo.nil? ? nil : @job.logo.image.standard.url 
+    %>
+
+	<%# Google+ %>
+
+	<meta itemprop="name" content="<%=title_for_metas%>"> 
+	<meta itemprop="description" content="<%=desc_for_metas%>" > 
+	<% unless img_url_for_metas.nil? %>
+		<meta itemprop="image" content="<%=img_url_for_metas%>"> 
+ 	<% end %>
+
+	<%# Facebook: http://support.addthis.com/customer/portal/articles/381222-optimize-facebook-sharing#.U0pYjXV5064 %>
+	<meta property="og:title" content="<%=title_for_metas%>" /> 
+	<meta property="og:type" content="article" /> 
+	<% unless img_url_for_metas.nil? %>
+		<meta property="og:image" content="<%=img_url_for_metas%>" /> 
+	<% end %>
+	<meta property="og:description" content="<%=desc_for_metas%>"  /> 
+	<meta property="og:site_name" content="<%=@job.employer.company_name%> job postings powered by <%=Constants::SITENAME%>" /> 
+
+	<%# Twitter cards: https://dev.twitter.com/docs/cards/validation/validator %>
+	<meta name="twitter:card" content="<%=summary_for_metas%>">
+	<meta name="twitter:title" content="<%=title_for_metas%>">
+	<meta name="twitter:site" content="@RightJoin" ><%# @username of website	 %>
+	<meta name="twitter:site:id" content="@RightJoin" ><%#   Same as twitter:site, but the user's Twitter ID  %>
+ <%# Optional twitter:creator, @username of content creator	 %>
+ 	<%# Optional twitter:creator:id, Twitter user ID of content creator %>
+ 	<meta name="twitter:domain" content="<%=Constants::SITENAME_LC%>" > 
+ 
+	
+	<% unless img_url_for_metas.nil? %>
+			<meta name="twitter:image:src" content="<%=img_url_for_metas%>">
+			<%   # twitter:image:width	 	og:image:width
+				# twitter:image:height	 og:image:height
+			%> 
+	<% end %>
+<% end %>
+
+<div id="we-are-hiring-widget-box" class="inner animation-common fadeIn">
+	<% unless @job.nil? %>	
+		<div id="submit-success" style="display:none !important;">
+			<div class="submit-results">
+				<div class="message success">Thanks. We've pinged <%= @job.company_name %> for you.</div> 
+				<div class="submit-success-icon animation-common"></div>				
+			</div>
+		</div>
+		
+		<div id="submit-error"  style="display:none !important;">
+			<div class="submit-results">
+				<div class="message failure"><%=Constants::ERROR_FLASH%></div>
+			</div>
+		</div>
+		
+		<div id="tile-pool" style="display:none !important;">
+			<%#boards%>
+			<%@job.active_boards.each do |board| %>
+				<div id="contel-board-<%=board.id%>" class="for-blurb">
+					<%= image_tag(asset_path("widget/features/#{board.name}-56x56.png"), :class => "icon") %>	
+					<div class="title">
+						<%=board.tag%>
+					</div>
+				</div>
+			<%end%>	
+		 
+			<%fixed_texts = ["talk to your fellow developers", "click GitHub or LinkedIn buttons to send a ping"]%> 
+			<% fixed_texts.each_with_index do |label, i| %>
+				<div id="fixed-text<%=i%>" class="for-blurb">
+					<div class="title">
+						<%=label%>
+					</div>
+				</div>
+			<%end%>
+			
+			<%#ask about%>
+			<%ask_about = @job.benefits%>
+			<% ask_about.each_with_index do |label, i| %>
+				<div id="contel-ask-about-<%=i%>" class="for-blurb">
+					<div class="title">
+						<%=label%>
+					</div>
+				</div>
+			<%end%>
+			
+			<%#work with%>
+			<%#limiting to 50 insiders, yes, I'm optimistic %>
+			<% @job.employer.ambassadors.only_active.limit(WidgetsHelper::AMBASSADOR_LIMIT).each_with_index do |ambassador, i| %>
+				<div id="contel-work-with-<%=ambassador.id%>" class="for-avatar">				
+					<% resource, link = ambassador.profile_links_map.first %>
+					<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}", :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
+				</div>
+			<% end %>
+			
+			<%# photos%>
+			<% @job.get_photos.each_with_index do |photo, i| %>
+				<div id="contel-photo-<%=photo.id%>" class="for-photo">				
+					<%= image_tag(photo.image.standard.url, class: "photo-img") %>
+					<% unless photo.title.blank? %>
+						<div class="title"><%=photo.title%></div>
+					<% end %>
+				</div>
+			<% end %>
+						
+		</div>
+		
+		<%# ==== row 1 ====== %>
+		<div class="tile-row clearfix">
+			<div class="tile double-len cell-details">
+				<div id="job-details-box">
+				    <div class="position">
+				    	<%=@job.position.name%>
+				    </div>
+					<div class="location"><%=raw @job.all_location_parts.map{|loc| h(loc)}.join("<span class='separator'> or </span>")%></div>
+					
+					<div class="company-box">
+						<% unless @job.logo.nil? %>
+							<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
+						<% end %>
+						<span class="company-name"><%=@job.company_name%></span>
+					</div>
+				</div>
+			</div>
+			
+			<% if @job.employer.ambassadors.only_active.any? %>
+				<div id="work-with-box" class="tile cell-team clearfix">
+					<div id="referer-box" class="four-avatars-box clearfix">
+						<% for i in 1..4 do %>
+							<div class="swappable avatar avatar-<%=i%>">
+								<%= image_tag(asset_path('shared/no-avatar-semi-transparent-56x56.png'), class: "no-avatar-img") %>
+							</div>
+						<% end %>
+					</div>
+					
+					<div class="four-avatars-box clearfix">
+						<% for i in 5..8 do %>
+							<div class="swappable avatar avatar-<%=i%>">
+								<%= image_tag(asset_path('shared/no-avatar-semi-transparent-56x56.png'), class: "no-avatar-img") %>
+							</div>
+						<% end %>
+					</div>				
+					<div class="overlay">
+						<div class="title">Come work with us</div>
+					</div>
+				</div>
+			<% else %>
+				<div class="tile swappable blurb cell-13"></div>
+			<% end %>
+			
+			<div class="tile swappable blurb cell-14"></div>
+		</div>
+		
+		<%# ==== row 2 ====== %>
+		<div class="tile-row clearfix">
+			<div class="tile swappable blurb cell-21"></div>
+			
+			<div id="description-box" class="tile double-len cell-description">
+				<div class="description">
+					<%= Utils.truncated_plaintext(@job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
+				</div>
+				
+				<% tags = @job.tech_stack_list.split(",") %>
+				<% unless tags.blank? %>
+					<div class="tags-box">
+						<% tags.each do |tag| %>
+							<span><%=tag.strip%></span>
+						<% end %>
+					</div>
+				<%end%>				
+			</div>
+			
+			<% if @job.get_photos.any? %>
+				<div class="tile swappable photo clickable cell-24"></div>
+			<% else %>
+				<div class="tile swappable blurb cell-24"></div>
+			<% end %>			
+		</div>
+		
+		<%# ==== row 3 ====== %>
+		<div class="tile-row clearfix">
+			<div id="signin-box" class="tile double-len cell-signin">
+				<div class="title">Ping the company</div>
+				<div class="sub-title">Click a button to be in touch</div>
+				<div class="img-box">
+					<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "github" %>
+					&nbsp;&nbsp;
+					<%= link_to "Sign-in with LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "linkedin" %>
+				</div>
+			</div>
+			
+			<%if @other_jobs.any?%>
+				<div class="tile cell-otherjobs">
+					<div id="other-ads">
+						<div class="title">
+							Other opportunities:
+						</div>
+						<ul>
+							<% @other_jobs.each do |job| %>
+								<li><a class="position" href="<%=we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => params[:mode])%>" ><%=job.position_name%></a></li>
+							<% end %>
+						</ul>
+					</div>
+				</div>
+			<% else %>
+				<div class="tile swappable blurb cell-33"></div>
+			<% end %>
+			
+			<% if @job.address && @job.address_lat && @job.address_lng %>
+				<div class="tile map clickable cell-34">
+					<%= image_tag("http://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
+				</div>
+			<% else %>
+				<div class="tile swappable blurb cell-34"></div>
+			<% end %>
+		</div>
+		
+		<div id="image-viewer" class="viewer">
+			<a href="#" class="close-viewer"></a>
+			
+			<a href="#" class="arrow arrow-left"></a>
+			<div class="content-box">
+				<div class="title">Loading...</div>
+			</div>
+			<% unless @job.logo.nil? %>
+				<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
+			<% end %>
+			<a href="#" class="arrow arrow-right"></a>
+		</div>
+		
+		<% if @job.address_lat && @job.address_lng %>
+			<div id="map-viewer" class="viewer">
+				<a href="#" class="close-viewer"></a>
+				<div class="content-box">
+					<div id="map-canvas">Loading...</div>
+					<% unless @job.address.empty? %>
+						<div class="title"><%=@job.address%></div>
+					<% end %>
+				</div>
+			</div>
+		<% end %>
+		
+		<% unless @infointerview.nil? %>
+			<div id="contact-form-box" class="tile cell-form">
+				<a class="close-form" href="#"></a>
+				<div class="more-padding">
+					<div class="title">Let the folks at <%=@job.company_name%> know that you'd like to hear from them.</div>
+				
+					<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create_infointerview") do |f| %>  
+						<div class="form-row clearfix">
+							<div class="left-col column">
+								<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
+								<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]] half-row-width", :placeholder => "Charles", :spellcheck => false) %>
+							</div>
+							<div class="right-col column">
+								<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
+								<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]] half-row-width", :placeholder => "Babbage", :spellcheck => false) %>
+							</div>
+						</div>
+
+						<div class="form-row">
+							<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
+							<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>			
+						</div>						
+						
+						<div class="button-box">
+							<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
+						</div>
+					<% end %>
+					
+				</div>
+			</div>
+		<% end %>		
+	<% else %>
+		No open positions
+	<% end %>
+</div>
+
+<%= render :partial => 'layouts/flash_content' %>
+
+<script type="text/javascript">
+var hash = $(location).attr('hash');
+if(hash == "") {
+	<% unless @ambassador.nil? %>
+		$("#contel-work-with-" + <%=@ambassador.id%>).remove();
+		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" class="referer-link" rel="nofollow" target="_blank" title="<%=escape_javascript @ambassador.first_name%> <%=escape_javascript @ambassador.last_name%> - <%=escape_javascript @ambassador.title%>"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
+		$("#referer-box").html(ref_html);
+	<% end %>
+	initialLoadByTileType("avatar");
+	window.setTimeout(updateOneAvatar, 3000);
+} else {
+	setTimeout( function() {
+		$.post("<%=shares_increment_counter_path%>", { setid: hash } )
+		.done(function(data) {
+			if(data.avatar_path && data.first_name && data.last_name && data.title && data.id && data.profile_link) {
+				$("#contel-work-with-" + data.id).remove();
+				var ref_html = '<a href="' + data.profile_link + '" class="referer-link" rel="nofollow" target="_blank" title="' + data.first_name + ' ' + data.last_name + ' - ' + data.title + '"><img class="referer-img" src="' + data.avatar_path + '"></a>';
+				$("#referer-box").html(ref_html);
+			}
+		})
+		.always(function() {
+		    initialLoadByTileType("avatar");
+		    window.setTimeout(updateOneAvatar, 3000);
+		});
+	}, 0 );	
+}
+
+function swap(tile, contentElem, animate) {
+	var previousContentElemId = $(tile).data("contentElem");
+	
+	var old_elem = $(tile).children(".sliding-box"); 
+	var new_elem = $("<div class='sliding-box'>" + $(contentElem).html() + "</div>");
+	new_elem.css("background", $(tile).css("background"));
+
+	if(old_elem.length == 0) {
+		$(tile).html(new_elem);
+	} else {
+		$(tile).prepend(new_elem);
+		old_elem.addClass("slide-right");
+		window.setTimeout(function(){
+			old_elem.remove();
+		}, 1000);
+	}
+
+	$(tile).data("contentElem", contentElem.id);
+	$(contentElem).addClass("active");
+	
+	// release the previous
+	if(previousContentElemId != null && previousContentElemId != "") {
+		$("#" + previousContentElemId).removeClass("active");
+	}
+}
+
+function initialLoadByTileType(type) {
+	var tiles_of_type = $('#we-are-hiring-widget-box .swappable.' + type);
+	// shuffle
+	for(var j, x, i = tiles_of_type.length; i; j = Math.floor(Math.random() * i), x = tiles_of_type[--i], tiles_of_type[i] = tiles_of_type[j], tiles_of_type[j] = x);
+	$.each(tiles_of_type, function(index, tile) {
+		var contentList = $("#tile-pool .for-" + type).not(".active");
+		for(var j, x, i = contentList.length; i; j = Math.floor(Math.random() * i), x = contentList[--i], contentList[i] = contentList[j], contentList[j] = x);
+
+		if(contentList.length > 0) {
+			var index = Math.floor(Math.random() * contentList.length)
+			var contentElem = contentList[index];
+			swap(tile, contentElem, false);
+		}
+	});
+}
+
+function updateOneTile() {
+	var contentList = $("#tile-pool .for-blurb, #tile-pool .for-photo").not(".active");
+	
+	if (contentList.length > 0) { 
+		var cei = Math.floor(Math.random() * contentList.length)
+		var contentElem = contentList[cei];
+		
+		var tiles = [];
+		if ($(contentElem).hasClass("for-blurb")) {
+			tiles = $("#we-are-hiring-widget-box .swappable.blurb");
+		} else if ($(contentElem).hasClass("for-photo")) {
+			tiles = $("#we-are-hiring-widget-box .swappable.photo");
+		}
+		
+		var ti = Math.floor(Math.random() * tiles.length)
+		var tile = tiles[ti];
+		swap(tile, contentElem, true);
+
+		window.setTimeout(updateOneTile, 4000);
+	}
+}
+
+function updateOneAvatar() {
+	var contentList = $("#tile-pool .for-avatar").not(".active");
+	
+	if (contentList.length > 0) {
+		var cei = Math.floor(Math.random() * contentList.length)
+		var contentElem = contentList[cei];
+		
+		var tiles = $("#we-are-hiring-widget-box .swappable.avatar");
+		
+		var ti = Math.floor(Math.random() * tiles.length)
+		var tile = tiles[ti];
+		swap(tile, contentElem, true);
+
+		window.setTimeout(updateOneAvatar, 2300);
+	}
+}
+
+function doSubmitForm() {
+	var res = $("#create_infointerview").validationEngine('validate');
+	if (res) {
+		// prevent double submit
+		if($('#submit').attr("disabled") != "disabled") {
+			$('#submit').focus();
+			$('#submit').attr('disabled','disabled');
+		}
+	}
+
+	return res;
+}
+   
+$("#create_infointerview").submit(function(){
+	if(doSubmitForm()) {
+		trackEvent("developer", "request for infointerview submitted");
+	} else {
+		trackEvent("developer", "error submitting request for infointerview");
+		return false;
+	}
+	
+	return true;
+});
+
+function showSubmitResults (resultsElem) {
+	$("#contact-form-box").fadeOut("slow");
+	$("#signin-box").html($(resultsElem).html());	
+}
+
+<% unless @job.ad_url.blank? %>
+$("#description-box").addClass("clickable");
+$("#description-box").click(function(event) {
+	window.open("<%=@job.ad_url%>"); 
+    event.preventDefault(); 
+    return false;
+});
+<% end %>
+
+<% unless @job.company_url.blank? %>
+$(".logo").addClass("clickable");
+$(".logo").click(function(event) {
+	window.open("<%=@job.company_url%>"); 
+    event.preventDefault(); 
+});
+<% end %>
+
+$(".close-form").click(function(event){
+	$("#contact-form-box").fadeOut("slow");
+	event.preventDefault(); 
+	return false;
+});
+
+$(".close-viewer").click(function(event){
+	$(".viewer").fadeOut();
+	event.preventDefault(); 
+	return false;
+});
+
+$(".arrow").click(function(event){
+	var findMatchingIndex = function(contentList, currentSrc){
+		var res = -1;
+		$(contentList).each(function( index ) {
+			var oneImg = $(this).children(".photo-img")[0];
+			if((res == -1) && oneImg) {
+				if(oneImg.src == currentSrc) {
+					res = index;
+				}
+			}
+		});	
+		return res;	
+	}
+	
+	var contentList = $("#tile-pool .for-photo");
+	
+	if(contentList.length > 0) {
+		var nextElemIndex = 0;
+		
+		var currentImage = $("#image-viewer .photo-img");
+		if (currentImage.length > 0) {
+			var currentSrc = currentImage[0].src;
+			var currentIndex = findMatchingIndex(contentList, currentSrc);
+			
+			if(currentIndex >= 0) {
+				if($(this).hasClass("arrow-left")) {
+					nextElemIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : contentList.length - 1;
+				} else { // right
+					nextElemIndex = currentIndex + 1 >= contentList.length ? 0 : currentIndex + 1;
+				}
+			}
+		}
+		
+		showPhoto(contentList[nextElemIndex]);
+	} else {
+		$("#image-viewer").fadeOut();
+	}
+	
+	event.preventDefault(); 
+	return false;
+});
+
+function showPhoto(photoElem) {
+	$("#image-viewer .content-box").html($(photoElem).html());
+	$("#image-viewer").fadeIn();
+}
+
+$(".photo").click(function(event){
+	var allPhotosList = $("#tile-pool .for-photo");
+	var contentList = $("#tile-pool .for-photo.active");
+	if (contentList.length == 0) {
+		contentList = allPhotosList;
+	}
+	
+	if(contentList.length > 0) {
+		var contentElem = contentList[0];
+		showPhoto(contentElem);
+		
+		if(allPhotosList.length == 1) {
+			$(".arrow").hide();
+		} else {
+			$(".arrow").show();
+		}
+	}
+	
+	event.preventDefault(); 
+	return false;
+});
+
+<% if @job.address_lat && @job.address_lng %>
+	function initializeMap() {
+	  var latlng = new google.maps.LatLng(<%=@job.address_lat%>, <%=@job.address_lng%>);
+	  var mapOptions = {
+	    zoom: 17,
+	    center: latlng,
+		panControl:false 
+	  };
+	
+	  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	  
+	  var marker = new google.maps.Marker({
+	      position: latlng,
+	      map: map,
+	      title: '<%=@job.company_name%>'
+	  });
+	}
+	
+	var mapLoaded = false;
+	$(".map").click(function(event){
+		if(!mapLoaded) {
+			mapLoaded = true;
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=initializeMap';
+			document.body.appendChild(script);
+		}
+
+		$("#map-viewer").fadeIn();
+		
+		event.preventDefault(); 
+		return false;
+	});
+<% end %>
+
+$(document).ready(function(){
+	initialLoadByTileType("blurb");
+	initialLoadByTileType("photo");
+	
+	window.setTimeout(updateOneTile, 2000);
+	
+   	$('#create_infointerview').on('ajax:success',function(data, status, xhr){
+      showSubmitResults ("#submit-success");
+      $('.submit-success-icon').addClass("pendulum");
+    }).on('ajax:error',function(xhr, status, error){
+      showSubmitResults ("#submit-error");
+    });	
+});
+
+$(document).keyup(function(e) {
+	if (e.keyCode == 27) {
+		$(".viewer").fadeOut();
+	}
+});
+</script>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%=Constants::SHORT_SITENAME%> admin console</title>
+
+		<%#= render :partial => 'layouts/stylesheets' %>
+	 
+	 	<%# Google maps JS here is used for locale lookup%> 
+		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+		<%= javascript_include_tag :application %>
+		
+		<%= yield :more_js %>		
+		<%= csrf_meta_tags %>
+		<%= favicon_link_tag '/favicon.ico?v=4' %>
+	</head>
+
+	<body>
+		<div class="content">
+			<%= render :partial => 'layouts/flash_box' %>
+			<%= yield %>
+		</div>
+	</body>
+</html>

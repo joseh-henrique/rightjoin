@@ -1,0 +1,43 @@
+location,position_now,position_wanted,wanted_salary,skill_a,skill_a_yrs,skill_b,skill_b_yrs,skill_c,skill_c_yrs,qualifier_a,qualifier_b,qualifier_c,country_code
+bangalore,"software engineer","software engineer",800,java,5,"delphi/object pascal",5,c++,5,"career advancement","ace colleagues","workplace perks",in
+kolkata,"software engineer","team lead",750,"delphi/object pascal",5,java,1,matlab,5,"ace colleagues",,,in
+chennai,"software engineer","software engineer",800,android,1,iphone,1,c,10,"career advancement",,,in
+pune,"mobile app developer","principal software engineer",550,objective-c,5,iphone,5,c,10,"< 5 day workweek",stability,,in
+bangalore,"software engineer","dev lead",700,c,10,,,,,stability,"career advancement",,in
+trivandrum,"development manager","development manager",550,,,,,,,"work from home","< 5 day workweek","work-life balance",in
+pune,"team lead","dev lead",800,c,10,c#,5,node.js,1,,,,in
+trivandrum,"software engineer","senior software engineer",750,"database management",1,php,5,perl,5,"cool technologies","workplace perks",stability,in
+pune,"software engineer","senior software engineer",600,perl,5,c#,5,java,5,"work-life balance",,,in
+delhi,"software engineer","software architect",650,java,10,c,5,,,"work from home","< 5 day workweek",,in
+delhi,"software engineer","software engineer",750,matlab,5,mathematica,5,"data mining",1,"work from home",stability,,in
+hyderabad,"hardware engineer","hardware engineer",850,"embedded systems",5,c,5,,,"learning opportunities","cool technologies",,in
+bangalore,"software engineer","mobile app developer",700,objective-c,5,iphone,1,ios,10,"work from home","< 5 day workweek",,in
+kolkata,"field engineer","field engineer",650,c++,5,"process management",5,,,"work from home","< 5 day workweek",,in
+pune,"team lead","development manager",750,"web development",10,java,10,matlab,1,,,,in
+kolkata,"software engineer","software engineer",600,ios,5,rails,1,python,5,"ace colleagues",,,in
+chennai,"software engineer","software engineer",800,java,5,"delphi/object pascal",1,c++,5,"cool technologies","workplace perks",,in
+trivandrum,"software architect","software architect",650,,,,,,,"ace colleagues",,,in
+kolkata,"project manager","development manager",600,"project management",5,,,,,stability,"ace colleagues",,in
+bangalore,"software engineer","senior software engineer",950,android,1,iphone,1,c,10,"work from home","work-life balance",stability,in
+chennai,"software engineer","team lead",800,python,5,java,1,,,"work from home","< 5 day workweek",,in
+relocation,"software engineer","software engineer",800,python,5,java,5,php,5,"career advancement","ace colleagues",,in
+relocation,"ux architect","software engineer",850,"ux architecture",5,c,10,accessibility,1,"cool technologies",,,in
+chennai,dba,"field engineer",700,"database management",10,,,,,"career advancement","cool technologies",,in
+bangalore,"software engineer","software architect",850,java,10,c++,10,rails,1,"ace colleagues",,,in
+chennai,"qa engineer","software engineer",900,"software testing",5,perl,5,java,1,"cool technologies","workplace perks",,in
+kolkata,"product manager","product manager",1000,"product management",10,java,5,,,"career advancement","ace colleagues",,in
+bangalore,"software engineer","team lead",700,"object-oriented design",5,java,10,c++,5,stability,,,in
+hyderabad,"qa engineer","qa team lead",850,"software testing",5,,,,,"ace colleagues",,,in
+chennai,"software engineer","senior software engineer",700,java,1,"data mining",5,c#,5,"startup environment","ace colleagues",,in
+pune,"team lead","team lead",800,c#,5,"web development",5,,,"learning opportunities","cool technologies",,in
+hyderabad,"qa engineer","qa engineer",900,"software testing",5,,,,,"career advancement","ace colleagues",,in
+chennai,"software engineer","software engineer",750,python,5,java,5,php,5,"career advancement","ace colleagues",,in
+hyderabad,"field engineer","software architect",700,c++,5,java,5,,,"workplace perks","ace colleagues",,in
+telecommute,"mobile app developer","mobile app developer",750,iphone,1,objective-c,5,android,1,"ace colleagues",,,in
+bangalore,"software engineer","software engineer",850,java,10,c++,5,rails,5,"startup environment","workplace perks",,in
+bangalore,"software engineer","senior software engineer",900,python,5,java,5,,,"career advancement","cool technologies","learning opportunities",in
+chennai,"build engineer","project manager",900,"process management",5,"project management",1,,,"ace colleagues","startup environment",,in
+chennai,"qa engineer","field engineer",750,"process management",5,c,1,"software testing",10,"career advancement","ace colleagues",,in
+trivandrum,"software engineer","dev lead",750,accessibility,1,"visual basic",5,javascript,5,stability,,,in
+hyderabad,"build engineer","qa engineer",1000,"process management",1,"software testing",5,,,,,,in
+kolkata,"hardware engineer","hardware engineer",800,"embedded systems",5,c,1,,,"career advancement",,,in

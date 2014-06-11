@@ -1,0 +1,106 @@
+<div id="faq-box-wrapper" class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+
+	<div id="faq-box" class="shadow-box-text-content">
+		<p class="headline jumbo">
+			How does <%= Constants::SHORT_SITENAME%> help me?
+		</p>
+		<p class="normal-par">
+			We put you in touch with software teams. We know that you don't talk to recruiters, and you don't apply for jobs.
+			We let you learn  about  the work environment at different companies from software developers you can trust and understand.
+		</p>
+
+		<div id="faq-accordion" class="fyi-accordion faq-accordion">
+
+			<h3 class="accordion-header collapsed">How can I learn about companies worth moving to?</h3>
+			<div class="accordion-panel">
+				<ul class="bullet-points">
+
+					<li>
+						Browse ads on our site, ping the development teams, talk to them, and see if they have the culture and colleagues you want.
+					</li>
+					<li>
+						You can also sign up in less than a minute. <em>No resum&eacute;</em>, just enough info for a development team to make the initial connection.
+						You stay anonymous, and get pinged by employees who are interested in you.
+					</li>
+
+				</ul>
+			</div>
+
+			<h3 class="accordion-header collapsed">How is <%= Constants::SHORT_SITENAME%> different from other job sites?</h3>
+			<div class="accordion-panel">
+				<p>
+					Everything in <%= Constants::SHORT_SITENAME%> is optimized for developers who <em>already have</em> a job,
+					who can afford to wait.
+				</p>
+				<p>
+					Your profile is anonymous, and employers can only contact you if they promise to give you your requirements, if you do sign on.
+				</p>
+				<p>
+					When you &ldquo;contact&rdquo; companies through their <%= Constants::SHORT_SITENAME%> postings, you don't apply for a job.
+					You ping them with a click (usually two clicks, actually), and let them know that they can contact you for a chat.
+					If they want to talk,  a <em>software developer</em> from the company, not a recruiter, gets in touch.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">What does it cost?</h3>
+			<div class="accordion-panel">
+				<%= Constants::SHORT_SITENAME %> is completely free to employees, and always will be. We make our money from employer fees.
+			</div>
+
+			<h3 class="accordion-header collapsed">What if I'm not working in software development, or not in a supported country?</h3>
+			<div class="accordion-panel">
+				<p>
+					We're targeting software engineers in <%= country_links_as_sentence%> for now.
+				</p>
+				<p>
+					But we're planning to expand, and we've been adding countries as requests come in. We may even branch out
+					to other tech professions.
+				</p>
+				<p>
+					Please leave a request at
+					<%= uservoice_contact_link("our online feedback page")%>.
+					We'll add support for the professions and areas that get the most requests.
+			</div>
+
+			<h3 class="accordion-header collapsed">I hate recruiter spam!</h3>
+			<div class="accordion-panel">
+				So do we. Our mission is to disrupt, destroy, and replace the spamozoidal recruiter industry which we know today.
+				You don't need to sign up to ping employers, but if you do, they'll be able to ping you, and we'll also send you a 
+				small selection  of good opportunities. And you can instantly unsubscribe whenever you want.
+
+			</div>
+
+			<h3 class="accordion-header collapsed">What if my boss finds out?</h3>
+			<div class="accordion-panel">
+				<p>
+					Sometimes it seems that you have to sneak around while looking for a job,
+					like you're <em>cheating</em> on your boss.
+					That's ridiculous.
+					It's completely ethical to switch jobs.
+					But still, the reality is that  can't let them know.
+				</p>
+
+				<p>
+					So, we keep you <em>anonymous</em> unless you choose to contact a specific employer, or respond to their message.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">Who is behind <%= Constants::SHORT_SITENAME%>?</h3>
+			<div class="accordion-panel">
+				<%= render :partial => "layouts/founders"%>
+			</div>
+
+		</div>
+
+		<p class="headline jumbo">
+			More questions?
+		</p>
+		<p class="normal-par">
+			  Contact us  at our  <%= uservoice_contact_link("support form")%>,   
+			  shoot us <%= email_contact_link("an email")%>, and  we'll get right back to you.
+		</p>
+	</div>
+</div>
+
+<%= render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>

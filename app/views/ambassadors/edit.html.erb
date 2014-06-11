@@ -1,0 +1,100 @@
+<div id="profile-edit">
+	<%= render :partial => 'layouts/flash_box' %>
+	
+	<div class="header-strip">
+		<div class="content">
+			<div class="logo"></div>
+		</div>
+	</div>
+	
+	<div id="center-box">
+		<div class="content">
+			<% company_name = @ambassador.employer.company_name %>
+	
+			<div class="update-profile">
+				Connect to potential colleagues about working together at <%=@ambassador.employer.company_name%>. 
+			</div>
+			
+			<div class="form-panel">
+				<%= form_for([@ambassador.employer, @ambassador], :html=>{:id=>"update_ambassador"}) do |f| %>
+					<div class="attr-row">
+						<%= label_tag(nil, "First name", :class=>"mandatory") %>
+						<%= text_field_tag(:firstname, @ambassador.first_name, :autocomplete => "on", :maxlength => Ambassador::MAX_FIRST_NAME_LEN, :class=>"validate[required,custom[nonEmpty],maxSize[#{Ambassador::MAX_FIRST_NAME_LEN}]] half-row-width", :placeholder => "Charles", :spellcheck => false) %>
+					</div>
+					
+					<div class="attr-row">
+						<%= label_tag(nil, "Last name", :class=>"mandatory") %>
+						<%= text_field_tag(:lastname, @ambassador.last_name, :autocomplete => "on", :maxlength => Ambassador::MAX_LAST_NAME_LEN, :class=>"validate[required,custom[nonEmpty],maxSize[#{Ambassador::MAX_LAST_NAME_LEN}]] half-row-width", :placeholder => "Babbage", :spellcheck => false) %>
+					</div>
+					
+					<div class="attr-row">
+						<%= label_tag(nil, "Job title", :class=>"mandatory") %>
+						<%= text_field_tag(:title, @ambassador.title, :autocomplete => "on", :maxlength => Ambassador::MAX_TITLE_LEN, :class=>"validate[required,custom[nonEmpty],maxSize[#{Ambassador::MAX_TITLE_LEN}]] half-row-width input-attr", :placeholder => "Software Engineer", :spellcheck => false) %>	
+					</div>
+					
+					<div class="attr-row">
+						<%= label_tag(nil,  "Email address", :class=>"mandatory") %>
+						<%= text_field_tag(:email, @ambassador.email, :placeholder=> "example@example.com" , :autocomplete => "on", :maxlength => 255, :class=>"validate[required, custom[email],maxSize[255]] half-row-width input-attr", :spellcheck => false) %>		
+					</div>
+					
+					<div class="button-box">
+						<% if @ambassador.new_record? %>
+							<%= submit_tag "Submit", :id=>"submit", :class => "submit-button inline-button", :name => nil %>
+						<% else %>
+							<%= submit_tag "Update", :id=>"submit", :class => "submit-button inline-button", :name => nil %>
+							&nbsp;&nbsp;&nbsp;
+							<%= button_tag "Cancel", :id=>"cancel", :class => "cancel-button inline-button", :name => nil, :type => 'button' %>
+						<% end %>
+					</div>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>
+	
+<script type="text/javascript">
+ 
+	<% unless @ambassador.new_record? %>
+		$("#cancel").click(function() {
+			location.href = "<%=employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>";
+			return false;
+		});
+	<% end %>
+
+	function doSubmitForm() {
+		var res = $("#update_ambassador").validationEngine('validate');
+		if (res) {
+			// prevent double submit
+	 		if($('#submit').attr("disabled") != "disabled") {
+	 			$('#submit').focus();
+				$('.inline-button').attr('disabled','disabled');
+			}
+		}
+	
+		return res;
+	}
+   
+	$("#update_ambassador").submit(function(){
+		if(doSubmitForm()) {
+			trackEvent("ambassador", "ambassador profile updated");
+		} else {
+			trackEvent("ambassador", "error updating ambassador profile");
+			return false;
+		}
+		
+		return true;
+	});
+	
+	//https://bugzilla.mozilla.org/show_bug.cgi?id=443289
+	window.addEventListener('pageshow', PageShowHandler, false);
+	window.addEventListener('unload', UnloadHandler, false);
+	
+	function PageShowHandler() {
+		$('#submit').removeAttr('disabled');
+		window.addEventListener('unload', UnloadHandler, false);
+	}
+	
+	function UnloadHandler() {
+		window.removeEventListener('unload', UnloadHandler, false);
+	}
+</script>

@@ -1,0 +1,7 @@
+<div class="country-chooser-box">
+	<ul class="country-menu">
+	    <li><a href="#" class="selected"><%=image_tag("flags/#{I18n.t :country_code}_flag.png")%></a>
+			<%=all_country_flag_links(request.fullpath, :exclude=>I18n.locale)%>
+	    </li>
+	</ul>
+</div>

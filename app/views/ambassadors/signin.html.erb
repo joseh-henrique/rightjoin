@@ -1,0 +1,27 @@
+<div id="team-signin">
+	<div class="content">
+		<%= render :partial => 'layouts/flash_box' %>
+		
+		<div class="rightjoin"></div>
+		<div class="tell-your-friends">
+			Tell your fellow software developers:
+			<div class="em">&ldquo;Come Work With Me at <%=@employer.company_name%>&rdquo;</div>
+		</div>
+	</div>
+	
+	<div id="signin-box" class="full-width-strip">
+		<div class="content">
+			<div class="signin-with">Sign in with</div>
+			<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-github" %>&nbsp;&nbsp;&nbsp;
+			<%= link_to "Sign-in with LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-linkedin" %>&nbsp;&nbsp;&nbsp;
+			<%= link_to "Sign-in with Twitter", ominauth_login_with_path("twitter", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-twitter" %>&nbsp;&nbsp;&nbsp;
+			<%= link_to "Sign-in with Google+", ominauth_login_with_path("google_oauth2", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-googleplus" %>	
+		</div>
+	</div>
+		
+	<div id="blurbs-box" class="clearfix">
+		<div class="blurb left">A beautiful job post to share</div>	
+		<div class="blurb right">Takes less than one minute</div>
+		<div class="blurb center">Track  clicks and leads</div>
+	</div>
+</div>

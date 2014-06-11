@@ -1,0 +1,86 @@
+<div class="job-ad">
+	<div class="job-ad-body">
+		<div class="position-box">
+		    <span class="position">
+		    	<%=job.position.name%>
+		    </span>
+		    <span class="separator">at</span>
+		    <span class="company"><%=job.company_name %></span>
+		    
+		    <div class="time-distance separator"><%=distance_of_time_in_days_ago(job.created_at)%></div>
+		</div>
+		
+		<div class="location-box">
+			<%=raw job.all_location_parts.map{|loc| h(loc)}.join("<span class='separator'> or </span>")%>
+		</div>
+		
+		<div class="description-box">
+			<% unless job.logo.nil? %>
+				<div class="logo-box">
+					<% if job.company_url.blank? %>
+						<%= image_tag(job.logo.image.standard.url, class: "logo-img") %>
+					<% else %>
+						<%= link_to image_tag(job.logo.image.standard.url, class: "logo-img"), job.company_url, :title => job.company_name, :target => "_blank", :rel => "nofollow", :class => "logo-link" %>
+					<% end %>
+				</div>
+			<% end %>
+			<%= Utils.truncated_plaintext(job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
+		</div>
+		<div style="clear:left"></div>
+		
+		<% if ad_rendering_mode != Ad::RENDERING_MODE_COMPACT %>
+			<% tags = job.tech_stack_list.split(",") %>
+			<% unless tags.blank? %>
+				<div class="tags-box">
+					<% tags.each do |tag| %>
+						<span><%=tag.strip%></span>
+					<% end %>
+				</div>
+			<%end%>	
+		<%end%>
+	</div>
+	
+	<% if ad_rendering_mode != Ad::RENDERING_MODE_COMPACT %>
+		<% if job.active_boards.any? || job.employer.has_active_ambassadors? %>
+			<div class="ad-footer-box">
+				<div class="boards-box">
+					<%job.active_boards.each do |board| %>
+						<span class="board-link <%=board.name%>" board="<%=board.name%>" title="<%=board.tag%>"></span>
+					<%end%>	
+				</div>
+				
+				<% if job.employer.has_active_ambassadors? %>
+					<div class="team">
+						<% job.employer.ambassadors.only_active.shuffle.first(4).each_with_index do |ambassador, i| %>
+							<% resource, link = ambassador.profile_links_map.first %>
+							<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title} in #{job.company_name}", :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
+						<% end %>
+					</div>
+				<% end %>
+			</div>
+		<% end %>
+		
+		<% if ad_rendering_mode != Ad::RENDERING_MODE_NO_PING_BUTTON %>
+			<div class="buttons-box">
+		    	<% employee = get_employee_user_by_session_cookie %>
+		    	<% if employee.nil? %>
+		    		<%=link_to "Sign in", "#", :class => "sign-in-link" %> or <%=link_to "Register", register_path %> to ping the company.
+		    	<% else %>
+		    		<% old_infointerview =  @infointerviews[job.id] %>
+		    		<% if old_infointerview.nil? %>
+						<% unless job.ad_url.blank? %>
+				    		<%=link_to "Learn more", job.ad_url, :target => "_fyi_ad_target", :posid => "#{job.id}", :class=>"learn-more-button" %>
+				    		&nbsp;&nbsp;
+				    	<% end %>
+				    	
+				    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
+							<%= submit_tag "Ping the company", :class => "ping-button", :name => nil%>
+						<% end %>
+					<% else %>
+						<span>You pinged this company <%=distance_of_time_in_days_ago(old_infointerview.created_at).downcase%>.</span>
+					<% end %>
+		    	<% end %>
+	    	</div>
+		<% end %>
+	<% end %>
+</div>

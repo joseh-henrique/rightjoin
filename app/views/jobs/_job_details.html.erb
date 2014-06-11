@@ -1,0 +1,49 @@
+<div id="job-<%=job_details.id%>" class="job-details">
+	<div class="clearfix user-attr-row <%=compact ? "last" : ""%>">
+		<div class="left-col">
+			<% job_pos_tag = current_user.employer? ? "Job title" : "Does this look good after your name?" %>
+			
+			<%= label_tag(:position, job_pos_tag) %> 
+			<div class="user-attr-ro-box"><%=job_details.position_name%></div>
+		</div>
+		<div class="right-col">
+			<%= label_tag(:location, "Where") %>
+			<div class="user-attr-ro-box"><%=job_details.location_name%></div>			
+		</div>
+	</div>
+	
+	<% unless compact == true %>
+		<div class="clearfix user-attr-row">
+			<div class="left-col">
+				<%= label_tag(:company, "Company" ) %> 
+				<div class="user-attr-ro-box">
+					<% if job_details.company_url.blank? %>
+						<%=job_details.company_name %>
+					<% else %>
+						<%=link_to job_details.company_name, job_details.company_url, :target => "_fyi_popup" %>
+					<% end %>
+				</div>
+			</div>
+			<div class="right-col">
+				<%= label_tag(:contact_name, "Contact name") %>
+				<div class="user-attr-ro-box">
+					<% if job_details.employer.li_url.blank? %>
+						<%=job_details.employer.first_name %>&nbsp;<%=job_details.employer.last_name%>
+					<% else %>
+						<%=link_to "#{job_details.employer.first_name} #{job_details.employer.last_name}", job_details.employer.li_url, :class => "li-link", :target => "_fyi_popup"%>
+					<% end %>
+				</div>
+			</div>
+		</div>	
+
+		<% unless job_details.description.blank? %>
+			<div class="user-attr-row">
+				<%#This field is apparently never shown to an employer. The text is employee-facing.%>
+				<%= label_tag(:description, "Would you rather be doing this?") %>
+				<div class="user-attr-ro-box">
+					<div class="formatted-text-box"><%= job_details.description.html_safe %></div>
+				</div>
+			</div>
+		<%end%>
+	<%end%>
+</div>

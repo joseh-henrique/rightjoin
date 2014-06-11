@@ -1,0 +1,13 @@
+<div class="rightjoin-logo-box">
+	<%= link_to "Logo", root_path, :class => 'logo' %>
+	
+	<div class="intended-for">
+		<% if @current_page_info[:intended_for] == :employer %>
+			Employers
+		<% elsif @current_page_info[:intended_for] == :employee %>
+			Engineers
+		<% end%>
+	</div>
+	
+	<%= render :partial => 'layouts/country_chooser'%>			
+</div>

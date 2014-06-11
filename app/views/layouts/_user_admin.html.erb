@@ -1,0 +1,91 @@
+<div class="user-admin clearfix">
+	<div class="left-col">
+		<div class="signin-title">
+			You're signed in as an
+			<% if @current_page_info[:intended_for] == :employee %>
+				engineer
+			<% else %>
+				employer
+			<% end %>
+		</div>
+		<div class="email">
+			<%=current_user.email%>
+		</div>			
+	</div>
+	<div class="right-col">
+		<ul class="admin-menu">
+		    <li class="selected"><a href="#" class="selected"></a>
+				<ul class="drop-down">
+					<li><a href="<%= @current_page_info[:intended_for] == :employee ? edit_user_path(current_user) : edit_employer_path(current_user) %>">Edit profile</a></li>
+					<li><a id="change-pwd-link" href="#">Change password</a></li>
+					<li><a href="<%= @current_page_info[:intended_for] == :employee ? employee_signout_path : employer_signout_path %>">Sign out</a></li>
+				</ul>
+		    </li>
+		</ul>		
+	</div>	
+</div>
+
+<div id="change-pw-toggleable-box" style="display: none;" title="Change password"> 
+	<div id="change-pw-form-div" class="pw-form-div" >
+		<%= form_for(current_user, :url => @current_page_info[:intended_for] == :employee ? change_pw_user_path(current_user, :locale => current_user.country_code) : change_pw_employer_path(current_user), :method => :post, :remote=>true, :html => { :id => "change-pw-form", :class => "change-pw-form-class"}) do |f| %>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= f.label "New password"%><br>
+					<%= f.password_field :password, :class=>"change_pw_form_elem validate[required,custom[nonEmpty],minSize[6],maxSize[40]]" ,:id=>"change-pw-pw-field" %>
+				</div>
+				<div class="form-cell">
+					<%= f.label :password_confirmation, "Confirm password" %><br>
+					<%= f.password_field :password_confirmation ,:class=>"change_pw_form_elem validate[required,custom[nonEmpty],minSize[6],maxSize[40]]" ,:id=>"change-pw-confirm-pw-field"%>
+				</div>
+				<div class="form-cell">
+					<br>
+					<%= submit_tag "Save",:id=>"submit-change-pw", :class=>"standard-button change-pw-form-elem" %>
+					<div id="change-pw-msg"> </div>
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>
+
+<% # Open/shut the change-pw form  %>
+<script type="text/javascript" charset="utf-8">    	
+	$('#change-pwd-link').click(function() {
+		$(".drop-down").css("display", "none");
+		
+		$("#change-pw-toggleable-box").dialog( "open" );
+		$('#change-pw-msg').html("");
+		$(".change_pw_form_elem").attr('readonly', false);
+		$("#submit-change-pw").attr('disabled', false);
+		$("#change-pw-form input[type='password']" ).val("");
+		
+		trackEvent("<%=@current_page_info[:intended_for] == :employee ? "developer" : "employer"%>", "change password");
+		
+		return false;
+	}); 
+</script>
+
+<script type="text/javascript" charset="utf-8">
+	$(document).ready(function(){
+		$("#change-pw-toggleable-box").dialog({
+	      autoOpen: false,
+	      width: 380,
+	      height: 310,
+	      resizable: false,
+	      modal: true
+	  	}).live("dialogclose", function(){
+	  		$("#change-pw-form").validationEngine('hide');
+	  		$(".drop-down").removeAttr('style');
+	  	});
+		
+		$("#change-pw-form").submit(function(){
+			var is_valid = true;
+			/* For forms, true means valid and false is invalid (for fields the opposite)*/
+		 	is_valid = $("#change-pw-form").validationEngine('validate');
+		 	if (is_valid){
+		 		$(".change_pw_form_elem").attr('readonly', true);
+				$("#submit-change-pw").attr('disabled', true);
+			}
+			return is_valid;
+		});
+	});	
+</script>

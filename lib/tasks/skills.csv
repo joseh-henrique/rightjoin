@@ -1,0 +1,230 @@
+name,priority
+Accessibility,1
+Android,1
+C,1
+Customer Support,1
+Database Management,1
+Delphi/Object Pascal,1
+Drupal,1
+Embedded Systems,1
+Hardware Design,1
+iOS,1
+iPhone,1
+Mathematica,1
+MATLAB,1
+Network Engineering,1
+Node.js,1
+Object-Oriented Design,1
+Perl,1
+Process Management,1
+Product Management,1
+Project Management,1
+Rails,1
+Software Testing,1
+Technical Support,1
+Technical Writing,1
+UX Architecture,1
+Web Programming,1
+WordPress,1
+actionscript,1
+ado.net,1
+agile development,1
+aix,1
+ajax,1
+algorithm development,1
+Amazon ec2,1
+ant,1
+apache,1
+api design,1
+application design,1
+architecture,1
+artificial intelligence,1
+asp.net,1
+asp.net mvc,1
+asp.net mvc 3,1
+aspect-oriented programming,1
+automation,1
+Axis2,1
+azure,1
+backbone.js,1
+bash,1
+bdd,1
+bsd,1
+cakephp,1
+clojure,1
+cloud computing,1
+clr,1
+cms,1
+cobol,1
+cocos2d,1
+codeigniter,1
+compilers,1
+configuration management,1
+cqrs,1
+cross platform development,1
+cryptography,1
+css,1
+css3,1
+cuda,1
+customer relations,1
+data structures,1
+database,1
+database design,1
+database development,1
+ddd,1
+delphi,1
+design patterns,1
+development methodologies,1
+distributed computing,1
+distributed development,1
+django,1
+domain driven design,1
+dsl,1
+dvcs,1
+eclipse,1
+emacs,1
+embedded,1
+encryption,1
+enterprise architecture,1
+enterprise development,1
+erlang,1
+excel,1
+extjs,1
+extreme programming,1
+f#,1
+facebook api,1
+flash,1
+flex,1
+game development,1
+git,1
+github,1
+google app engine,1
+grails,1
+groovy,1
+gui design,1
+gwt,1
+hadoop,1
+haskell,1
+heroku,1
+hibernate,1
+html,1
+html5,1
+http protocol,1
+iis,1
+internationalization,1
+java ee,1
+jdbc,1
+jenkins,1
+jetty,1
+jni,1
+jpa,1
+jquery,1
+jquery-ui,1
+jsf,1
+json,1
+jsp,1
+jvm,1
+ldap,1
+linq,1
+linux,1
+linux kernel,1
+lisp,1
+machine learning,1
+magento,1
+maven,1
+mercurial,1
+mfc,1
+Microsoft Office,1
+mobile,1
+mobile app,1
+mongodb,1
+mono,1
+multithreading,1
+mvvm,1
+mysql,1
+netbeans,1
+network programming,1
+nhibernate,1
+nosql,1
+objective-c,1
+opencv,1
+opengl,1
+operating systems,1
+rest,1
+oracle,1
+osx,1
+patent development,1
+pl/sql,1
+postgresql,1
+qt,1
+rdbms,1
+regex,1
+relational database,1
+rspec,1
+ruby-on-rails,1
+scala,1
+soap,1
+scheme,1
+scripting,1
+security,1
+seo,1
+SharePoint,1
+silverlight,1
+Sinatra,1
+soa,1
+software-as-a-service,1
+solaris,1
+spring,1
+sprint,1
+sql server,1
+sqlite,1
+svn,1
+swing,1
+systems programming,1
+tdd,1
+tfs,1
+tomcat,1
+tsql,1
+twitter api,1
+ui,1
+uml,1
+unicode,1
+unit testing,1
+unix,1
+vb script,1
+vb.net,1
+vb6,1
+vba,1
+version control,1
+vim,1
+virtualization,1
+visual studio,1
+visual studio 2010,1
+wcf,1
+web applications development,1
+web browser,1
+web design,1
+web services,1
+winapi,1
+windows internals,1
+winforms,1
+wpf,1
+xaml,1
+xcode,1
+xcode4,1
+xhtml,1
+xml,1
+xslt,1
+zend framework,1
+SQL,100001
+.NET,100002
+Javascript,100003
+Web Development,100004
+Data Mining,100005
+Python,100006
+PHP,100007
+Ruby,100008
+Visual Basic,100009
+Java,100012
+c++,100013
+C#,100014

@@ -1,0 +1,56 @@
+location,position_now,position_wanted,,wanted_salary,skill_a,skill_a_yrs,skill_b,skill_b_yrs,skill_c,skill_c_yrs,qualifier_a,qualifier_b,qualifier_c,country_code
+"london, england","software engineer","software architect",,45,java,5,c++,10,rails,1,stability,"cool technologies",,uk
+"london, england","software engineer","senior software engineer",,55,python,1,java,5,,,"career advancement","work-life balance",stability,uk
+telecommute,"software engineer","software engineer",,50,java,5,"data mining",1,c#,5,"work from home","ace colleagues",,uk
+"london, england","software engineer","mobile app developer",,50,objective-c,5,iphone,1,ios,10,"cool technologies","ace colleagues","workplace perks",uk
+"london, england","software engineer","senior software engineer",,60,android,1,iphone,1,c,10,"ace colleagues","< 5 day workweek",,uk
+"london, england","software engineer","software engineer",,50,java,1,"delphi/object pascal",5,c++,5,"cool technologies","workplace perks",,uk
+"coventry, england","development manager","development manager",,50,,,,,,,,,,uk
+"london, england","software engineer","software engineer",,50,java,10,c++,5,rails,1,"work from home",,,uk
+"manchester, england","software engineer","team lead",,55,python,5,java,1,,,"cool technologies",,,uk
+"manchester, england","software engineer","senior software engineer",,50,java,1,"data mining",5,c#,5,"work from home",,,uk
+telecommute,"software engineer","senior software engineer",,50,objective-c,5,iphone,5,c#,10,"work from home","career advancement",stability,uk
+"manchester, england","software engineer","software engineer",,60,android,1,iphone,1,c,10,"startup environment","< 5 day workweek",,uk
+"manchester, england","software engineer","software engineer",,50,java,5,"delphi/object pascal",1,c++,5,"career advancement","workplace perks","work-life balance",uk
+"manchester, england","software engineer","software engineer",,50,python,1,java,5,php,5,"career advancement",stability,,uk
+"edinburgh, scotland","software engineer","team lead",,55,"delphi/object pascal",5,java,1,matlab,5,"ace colleagues","< 5 day workweek","learning opportunities",uk
+"edinburgh, scotland","software engineer","principal software engineer",,50,"web development",10,java,10,c,10,"< 5 day workweek","workplace perks",,uk
+telecommute,"software engineer","dev lead",,50,"web development",5,javascript,10,node.js,1,"ace colleagues","cool technologies",,uk
+"edinburgh, scotland","software engineer","software engineer",,40,ios,5,rails,1,python,5,"career advancement","ace colleagues",,uk
+"glasgow, scotland","software engineer","dev lead",,50,accessibility,1,"visual basic",5,javascript,5,stability,"startup environment",,uk
+"glasgow, scotland","software engineer","senior software engineer",,55,"database management",1,php,5,perl,5,"career advancement",stability,,uk
+"cambridge, england","software engineer","dev lead",,40,c,10,,,,,"work-life balance",,,uk
+"cambridge, england","software engineer","team lead",,50,"object-oriented design",5,java,10,c++,5,"ace colleagues",,,uk
+"salford, england","software engineer","senior software engineer",,50,perl,5,c#,5,java,5,"career advancement",stability,,uk
+"oxford, england","software engineer","software architect",,50,java,10,c,5,,,stability,,,uk
+"oxford, england","software engineer","software engineer",,40,matlab,5,mathematica,5,"data mining",1,"career advancement",,,uk
+"salford, england","team lead","team lead",,50,c#,5,"web development",5,,,,,,uk
+relocation,dba,dba,,45,"database management",5,perl,10,,,"career advancement","ace colleagues",,uk
+"london, england","qa engineer","qa team lead",,50,"software testing",5,,,,,"career advancement","workplace perks",,uk
+telecommute,"ux architect","ux architect",,45,"ux architecture",5,accessibility,1,,,"workplace perks",,,uk
+"london, england","build engineer","qa engineer",,50,"process management",5,"software testing",5,,,"learning opportunities",,,uk
+"london, england","qa engineer","qa engineer",,55,"software testing",5,,,,,"work from home","career advancement",,uk
+"brighton, england","hardware engineer","hardware engineer",,50,"embedded systems",5,c,5,,,"startup environment","< 5 day workweek",,uk
+telecommute,"mobile app developer","senior software engineer",,50,iphone,1,android,1,ios,5,"career advancement","workplace perks",,uk
+"brighton, england",dba,dba,,50,"database management",10,,,,,"work from home",stability,,uk
+"coventry, england","field engineer","software architect",,50,c++,5,java,5,,,"cool technologies","< 5 day workweek",,uk
+"manchester, england",dba,"field engineer",,45,"database management",10,,,,,"ace colleagues","workplace perks",,uk
+"manchester, england","qa engineer","field engineer",,50,"process management",5,c,1,"software testing",10,"cool technologies","cool technologies",,uk
+relocation,"ux architect","software engineer",,55,"ux architecture",5,c,10,accessibility,1,stability,"ace colleagues",,uk
+"manchester, england","build engineer","project manager",,50,"process management",10,"project management",1,,,"work from home","startup environment",,uk
+"manchester, england","qa engineer","software engineer",,45,"software testing",5,perl,5,java,1,"cool technologies",stability,,uk
+"edinburgh, scotland","hardware engineer","hardware engineer",,50,"embedded systems",5,c,1,,,"work from home","ace colleagues",,uk
+telecommute,"mobile app developer","mobile app developer",,45,iphone,1,objective-c,5,android,1,"work from home",,,uk
+"edinburgh, scotland",dba,dba,,45,"database management",10,c,5,,,"startup environment","cool technologies",,uk
+"edinburgh, scotland","field engineer","field engineer",,40,c++,5,"process management",1,,,"career advancement","work-life balance",,uk
+"edinburgh, scotland",dba,dba,,45,"database management",5,perl,5,,,"career advancement","ace colleagues",,uk
+"edinburgh, scotland","product manager","product manager",,55,"product management",10,java,5,,,"ace colleagues","ace colleagues",,uk
+"edinburgh, scotland","project manager","development manager",,40,"project management",5,,,,,"< 5 day workweek","< 5 day workweek",,uk
+relocation,"qa engineer","qa team lead",,50,"software testing",5,perl,5,,,"ace colleagues","workplace perks",,uk
+"glasgow, scotland","software architect","software architect",,55,,,,,,,,,,uk
+"edinburgh, scotland",dba,dba,,50,"database management",5,"technical writing",1,,,"career advancement",,,uk
+telecommute,"field engineer","pre-sales field engineer",,50,"database management",10,perl,1,,,stability,,,uk
+"salford, england","mobile app developer","principal software engineer",,40,objective-c,5,iphone,5,c,10,"career advancement","ace colleagues",,uk
+"salford, england","team lead","development manager",,65,"web development",5,java,5,matlab,1,"ace colleagues","work-life balance",,uk
+"salford, england","team lead","dev lead",,55,c,10,c#,5,node.js,1,"learning opportunities",,,uk
+telecommute,"dev lead","team lead",,55,perl,10,python,5,"web development",5,"work from home","ace colleagues",,uk

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
+ 
+	<%=render :partial => "layouts/easter_egg"%>
+ 
+
+  
+	<head>
+		<title><%= title %></title>
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700|Roboto:300' rel='stylesheet' type='text/css'>
+		<%= stylesheet_link_tag 'application', :media => "all"%>
+		
+		 
+<%#API Key produces an error in localhost "http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&key=AIzaSyDEQYS0hqC7Gyw0KDgmWBf95U_WLeS7q2E
+#Note that sensor param is no longer used.
+%>
+		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
+	  	<%= javascript_include_tag :application %>
+	  
+		<%= yield :more_js %>		
+		<%= csrf_meta_tags %>
+		<%= favicon_link_tag '/favicon.ico?v=4' %>
+		
+		<%# for Google %>
+		<meta name="description" content="<%=Constants::META_DESC%>. <%=title%>" />
+		<meta name="keywords"  content="<%=Constants::META_KEYWORDS%>, <%=title%>" />
+				<%# for Google and Facebook%>
+		<meta itemprop="image" content="<%=full_image_url('fyi/jim_og.png') %>"><%#[TODO]%>
+		<meta property="og:image" content="<%=full_image_url('fyi/jim_og.png') %>"><%#[TODO]%>
+		
+		<%= yield :more_meta %>
+		
+	</head>
+	<% body_class = @current_page_info[:intended_for].to_s %>
+	<body id="<%=css_class_for_current_page%>" class="<%=body_class%>">
+
+		<%=render :partial => "layouts/easter_egg"%>
+		<%= render :partial => 'layouts/header' %>
+		<%= yield %>
+		<%= render :partial => 'layouts/footer' %>
+		<%= render :partial=> 'widgets/google_analytics' %>
+		<%= debug(params) if Rails.env.development? %>
+		<%= render :partial => 'widgets/uservoice_widget'%>
+	</body>
+</html>

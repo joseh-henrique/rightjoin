@@ -1,0 +1,28 @@
+<%if @current_page_info[:intended_for] == :all%>
+	<%# [TODO]%>
+<% else %>
+	<div class="full-width-stripe" id="header-upper-box">
+		<div id="user-mode-chooser-box">
+			<%= link_to "For Engineers", jobs_url, :class=>"for-engineers" %>
+			<%= link_to "For Employers", employer_welcome_url, :class=>"for-employers" %>
+		</div>
+		
+		<div class="content">
+			<%= render :partial=>'layouts/logo'%>
+			<div class="top-right-box">
+				<% if signed_in? %>
+					<%= render :partial => 'layouts/user_admin'%>
+				<% else %>
+					<%= render :partial => 'layouts/user_signin'%>
+				<% end %>
+			</div>
+		</div>
+	</div>
+
+	<div class="full-width-stripe" id="header-bottom-box">
+		<div class="content">
+			<%= render :partial => 'layouts/header_menu'%>
+			<a href="http://blog.<%=Constants::SITENAME_LC%>" class="blog-link" title="Blog">Blog</a>
+		</div>
+	</div>
+<% end %>

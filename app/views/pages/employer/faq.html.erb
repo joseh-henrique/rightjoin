@@ -1,0 +1,165 @@
+<div id="faq-box-wrapper" class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+
+	<div id="faq-box" class="shadow-box-text-content">
+		<p class="headline jumbo">
+			Why <%= Constants::SHORT_SITENAME%>?
+		</p>
+		<p class="normal-par">
+
+			<%= Constants::SHORT_SITENAME%> helps development teams connect and engage with top engineers in a comfortable and informal way.
+			It's peer-to-peer recruiting combined with the world's best job ad.
+			Our solution attracts &ldquo;stealth&rdquo; candidates, the ones who <em>don't</em> talk to  recruiters.
+		</p>
+		<div id="faq-accordion" class="fyi-accordion faq-accordion">
+			<h3 class="accordion-header collapsed">How is <%= Constants::SHORT_SITENAME%> different?</h3>
+			<div class="accordion-panel">
+				<p>
+					Opening a dialog with comfortably employed and experienced software engineers through normal channels is almost impossible.
+					Think how many great engineers  don’t read ads and don’t pay attention to sourcing spam.
+					They never talk with recruiters unless they absolutely have to.
+				</p>
+				<p>
+					These engineers  stick to their own networks for future jobs, just as you plumb your networks for future hires.
+					Meanwhile you mostly talk to candidates churned out by your staffing front-end.
+					Why would a gainfully employed software engineer want to test your waters
+					if the only option is to endure the bureauratic gantlet?
+				</p>t
+				Why can’t engineers talk to each other without involving recruiters? Of course they do, and
+				we are extending the personal relationship dialog outside of your existing network.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">How do you  help me attract software developers?</h3>
+			<div class="accordion-panel">
+				<p>
+					We've designed a beautiful job posting that shows employed, experienced software engineers
+					the things they want to know about your team.
+				</p>
+				<p>
+					Foremost among these attractions is is your own engineers.
+				</p>
+				<p>
+					When potential employees see this job posting, they  &ldquo;ping&rdquo; your company.
+					Your hiring manager then sees the candidate’s LinkedIn profile
+					(<%= Constants::SHORT_SITENAME%> also provides  optional screening services), and chooses whether to pass
+					the contact over to one of the team for a peer-to-peer conversation.
+				</p>
+
+			</div>
+
+			<h3 class="accordion-header collapsed">How do we get the job posting in front of potential employees?</h3>
+			<div class="accordion-panel">
+
+				<li>
+					We provide the tools for your team  to share the posting on social media and track progress.
+					When a team member shares it, he or she appears at the center&mdash;&the messaging here is not &ldquo;Come work for my boss&rdquo;
+					but &ldquo;<em>Come Work with Us</em>.&rdquo;
+				</li>
+				<li>
+					We also provide a geotargeted tab for the company website; clicking on the tab pops up the same beautiful job post
+					distributed on all the channels.
+				</li>
+				<li>
+					We can also arrange for the tab to highlight your job openings on professional sites read by millions of software developers.
+				</li>
+				<li>
+					We can distribute your ad to leading job-listing services, like Monster, LinkedIn, and Dice. 
+				</li>
+				<li>
+					The posting can pep up recruitment email; it also appears on <%= Constants::SHORT_SITENAME%>'s own job listing.
+				</li>
+
+			</div>
+
+			<h3 class="accordion-header collapsed">Why is opening up the corporate culture the way to bring in strong candidates?</h3>
+			<div class="accordion-panel">
+				<p>
+					&ldquo;The <em>best thing</em> you can do for employees&mdash;a perk better than foosball
+					or free sushi&mdash;is hire only &lsquo;A&rsquo;-players
+					to work alongside them. Excellent colleagues trump everything else&rdquo;
+					(<%= link_to "How Netflix Reinvented HR" ,"http://hbr.org/2014/01/how-netflix-reinvented-hr/ar/2" %>,
+					<i>Harvard Business Review</i>).
+				</p>
+				<p>
+					Treat current and potential employees like the professionals they are. Let them connect. They'll know where to go from there.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">How can I monitor the effectiveness of my recruiting compaign?</h3>
+			<div class="accordion-panel">
+				<p>
+					Your employer dashboard  presents the most important data points, tracking clickbacks, leads, and other key data.
+				</p>
+				<p>
+					We also send you a weekly summary of the most important numbers.
+				</p>
+				<p>
+					Your employees get their own dashboard that show their shares and success in pulling in leads to their professional peers.
+				</p>
+
+			</div>
+
+			<h3 class="accordion-header collapsed">Why don't you provide resum&eacute;s or LinkedIn profiles in the candidate listings?</h3>
+			<div class="accordion-panel">
+				<p>
+					Experienced, employed, developers don't maintain their resum&eacute;s and don't feel like applying to jobs.
+					And face it, you hate browsing resum&eacute;s.
+				</p>
+				<p>
+					So, we only require the <em>minimum</em> of information needed for an introduction.
+				</p>
+				<p>
+					You'll get the relevant professional profiles, like LinkedIn or GitHub, when the candidate makes contact.
+					That serves for screening. If you want to move ahead, you can ask the candidate for a resum&eacute;.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">What does it cost?</h3>
+			<div class="accordion-panel">
+				<p>
+					<%if signed_in?%>
+					You can see the pricing plans on your <%= link_to "profile page", edit_employer_path(current_user, :anchor=>"plans-and-pricing")%>.
+					<%else%>
+					See the <%= link_to "Get Started",  employer_get_started_path(:anchor=>"plans-and-pricing" )%> page for pricing plans.
+					<%end%>
+				</p>
+				<p>
+					Please <%= email_contact_link("contact us") %> for  discounts for pre-paid annual plans.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">Can you support more countries or job categories?</h3>
+			<div class="accordion-panel">
+				<p>
+					We are focusing on software developers an in-demand profession that we know and love.
+					We plan to add more professions once we're sure we can fully serve the demand for recruiting developers.
+				</p>
+				<p>
+					We've been adding new countries over time. The countries we now support are <%= country_links_as_sentence%>.
+				</p>
+				<p>
+					Please <%= email_contact_link("contact us")%>  and let us know what you need, and we'll add the countries
+					and job categories that get the most requests.
+				</p>
+			</div>
+
+			<h3 class="accordion-header collapsed">Who is behind <%= Constants::SHORT_SITENAME%>?</h3>
+			<div class="accordion-panel">
+				<%= render :partial => "layouts/founders"%>
+			</div>
+		</div>
+
+		<p class="headline jumbo">
+			More questions?
+		</p>
+		<p class="normal-par">
+			Contact us through our
+			 <%= uservoice_contact_link("support form")%> or
+			  shoot us <%= email_contact_link("an email")%>, and  we'll get right back to you.
+		</p>
+	</div>
+</div>
+
+<%= render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>
+
