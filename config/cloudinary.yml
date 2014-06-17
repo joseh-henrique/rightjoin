@@ -12,7 +12,7 @@ staging:
   enhance_image_tag: true
   static_image_support: true
 production:
-  cloud_name: rightjoinerok
+  cloud_name: rightjoin
   api_key: '658813272185993'
   api_secret: 1N0ASPV-qXj6MP8fqzrp_PmQnaY
   enhance_image_tag: true
