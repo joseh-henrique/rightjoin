@@ -71,17 +71,20 @@
 	
 	<% unless img_url_for_metas.nil? %>
 			<meta name="twitter:image:src" content="<%=img_url_for_metas%>">
-			<%   # twitter:image:width	 	og:image:width
+			<%   # Do this when we can support Twitter cards
+			#twitter:image:width	 	og:image:width
 				# twitter:image:height	 og:image:height
 			%> 
 	<% end %>
 <% end %>
 
+<%=link_to "RightJoin", root_url, :id=>"rightjoin-label", :target => "_blank"%>
+
 <div id="we-are-hiring-widget-box" class="inner animation-common fadeIn">
 	<% unless @job.nil? %>	
 		<div id="submit-success" style="display:none !important;">
 			<div class="submit-results">
-				<div class="message success">Thanks. We've pinged <%= @job.company_name %> for you.</div> 
+				<div class="message success">Thanks. We'll ping <%= @job.company_name %> for you.</div> 
 				<div class="submit-success-icon animation-common"></div>				
 			</div>
 		</div>
@@ -98,7 +101,8 @@
 				<div id="contel-board-<%=board.id%>" class="for-blurb">
 					<%= image_tag(asset_path("widget/features/#{board.name}-56x56.png"), :class => "icon") %>	
 					<div class="title">
-						<%=board.tag%>
+						<%#Utils.html_unescape  in next line would  support HTML entitites in our board tags%>
+						<%=board.tag%> 
 					</div>
 				</div>
 			<%end%>	
@@ -138,6 +142,7 @@
 					<% unless photo.title.blank? %>
 						<div class="title"><%=photo.title%></div>
 					<% end %>
+					<div class="clickable-indicator"></div>
 				</div>
 			<% end %>
 						
@@ -205,7 +210,9 @@
 							<span><%=tag.strip%></span>
 						<% end %>
 					</div>
-				<%end%>				
+				<%end%>
+				
+				<div class="clickable-indicator"></div>
 			</div>
 			
 			<% if @job.get_photos.any? %>
@@ -220,11 +227,19 @@
 			<div id="signin-box" class="tile double-len cell-signin">
 				<div class="title">Ping the company</div>
 				<div class="sub-title">Click a button to be in touch</div>
-				<div class="img-box">
+				<!--div class="img-box">
 					<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "github" %>
 					&nbsp;&nbsp;
 					<%= link_to "Sign-in with LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "linkedin" %>
-				</div>
+				</div-->
+				
+				<div class="buttons-box">
+					<div class="button-box github"><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id) %></div>
+					&nbsp;
+					<div class="button-box linkedin"><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id) %></div>
+					&nbsp;
+					<div class="button-box rightjoin"><div class="separator"></div><%= link_to "RightJoin", ominauth_login_with_path("rightjoin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id) %></div>
+				</div>				
 			</div>
 			
 			<%if @other_jobs.any?%>
@@ -247,6 +262,7 @@
 			<% if @job.address && @job.address_lat && @job.address_lng %>
 				<div class="tile map clickable cell-34">
 					<%= image_tag("http://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
+					<div class="clickable-indicator"></div>
 				</div>
 			<% else %>
 				<div class="tile swappable blurb cell-34"></div>
@@ -348,7 +364,7 @@ function swap(tile, contentElem, animate) {
 	
 	var old_elem = $(tile).children(".sliding-box"); 
 	var new_elem = $("<div class='sliding-box'>" + $(contentElem).html() + "</div>");
-	new_elem.css("background", $(tile).css("background"));
+	new_elem.css("background-color", $(tile).css("background-color"));
 
 	if(old_elem.length == 0) {
 		$(tile).html(new_elem);

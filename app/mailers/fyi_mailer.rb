@@ -1,5 +1,5 @@
 class FyiMailer < ActionMailer::Base
-  FYI_FROM = "#{Constants::SHORT_SITENAME} <#{Constants::SHORT_SITENAME.downcase}@#{Constants::SITENAME_LC}>"
+  FYI_FROM = "#{Constants::SHORT_SITENAME} <info@#{Constants::SITENAME_LC}>"
   PERSONAL_FROM = "#{Constants::FYI_CRM_NAME} <#{Constants::FYI_CRM_NAME.downcase}@#{Constants::SITENAME_LC}>"
   ADMIN_FROM = "Administrator <#{Constants::ADMIN_EMAIL}>"
 
@@ -288,7 +288,7 @@ class FyiMailer < ActionMailer::Base
     salutation<<" to #{Constants::SHORT_SITENAME}."
 
     content =
-      "I'm #{Constants::FYI_CRM_NAME}, your contact at #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
+      "I'm #{Constants::FYI_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
       "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to apply to jobs.<br><br>" <<
       "We keep you spam-free by letting employers invite you only to jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
       "Go ahead and browse the specialized job listings and ping the employers who interest you.<br><br>" <<

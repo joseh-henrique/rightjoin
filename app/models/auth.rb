@@ -112,7 +112,7 @@ class Auth < ActiveRecord::Base
   
   def profiles_to_str
     res = ""
-    res = self.profile_links_map.to_a.map {|a| "#{a.first}: #{a.last}"}.join("   ") unless self.profile_links_map.blank?
+    res = self.profile_links_map.to_a.map {|a| "#{a.first}: #{a.last}"}.join(", ") unless self.profile_links_map.blank?
     
     return res
   end

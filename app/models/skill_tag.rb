@@ -5,14 +5,14 @@ class SkillTag < ActiveRecord::Base
   
   @@autocomplete = nil
   
-  def self.popular_for_role(role_tag_name = "", limit = 35)
+  def self.popular_for_role(role_tag_name = "", limit = 40)
     Rails.cache.fetch("skills_popular_for_role#{role_tag_name}#{limit}", :expires_in => 3.days) do
       condition = role_tag_name.blank? ? ""  : "and position_tags.name = " + sanitize_sql(["'%s'", role_tag_name])
       popular_with_condition(condition, limit)
     end
   end
   
-  def self.popular_for_position_family(position_family_id, limit = 35)
+  def self.popular_for_position_family(position_family_id, limit = 40)
     Rails.cache.fetch("popular_for_position_family#{position_family_id}#{limit}", :expires_in => 3.days) do
       condition = "and position_tags.family_id = #{position_family_id}"
       popular_with_condition(condition, limit)

@@ -1,34 +1,25 @@
 <% require 'rinku' %>
 
-<div id="infointerview-<%=infointerview.id%>" class="infointerview">
-	<div>
+<div id="infointerview-<%=infointerview.id%>" class="infointerview-box">
+	<div class="infointerview-inner-box">
 		<%= image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)), class: "avatar-img") %>
-	</div>
-	<div class="clearfix user-attr-row">
-		<div class="left-col">
-			<%= label_tag(:firstname, "First name") %> 
-			<div class="user-attr-ro-box"><%=infointerview.first_name%></div>
-		</div>
-		<div class="right-col">
-			<%= label_tag(:firstname, "Last name") %> 
-			<div class="user-attr-ro-box"><%=infointerview.last_name%></div>		
-		</div>
-	</div>
-	
-	<% if infointerview.status_one_of?(Infointerview::NEW, Infointerview::ACTIVE_LEAD) %>
-		<div class="user-attr-row">
-			<%= label_tag(:resume, "Candidate's professional background info") %>
-			<div class="user-attr-ro-box">
-				<%r= infointerview.profiles || ""%>
-				<%=Rinku.auto_link(CGI::escapeHTML(r), :all, 'target="_blank"').html_safe%>
+		
+		<div class="basic-info">
+			<div class="candidate-name"><%=infointerview.first_name%> <%=infointerview.last_name%></div>
+			<div class=""><%=Rinku.auto_link(CGI::escapeHTML(infointerview.email), :all, 'target="_blank"').html_safe%></div>
+			
+			<%if infointerview.user.nil?%>
+				<%profiles = infointerview.profiles || ""%>
+			<%else%>
+				<%profiles = infointerview.user.resume || ""%>
+			<%end%>
+			<div class="">
+				<%=Rinku.auto_link(CGI::escapeHTML(profiles), :all, 'target="_blank"').html_safe%>
 			</div>
 		</div>
 		
-		<% unless infointerview.referred_by.nil? %>
-		<div>
-			Referred by
-			<%=render :partial => 'ambassadors/ambassador', :object => infointerview.referred_by_ambassador%>
-		</div>
-		<% end %>
-	<% end %>
+		<%unless infointerview.user.nil?%>
+			<%=render :partial => 'users/user_details', :object => infointerview.user, :locals => {:for_view=> :searcher}%>
+		<%end%>
+	</div>
 </div>

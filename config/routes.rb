@@ -97,7 +97,7 @@ FiveYearItch::Application.routes.draw do
         post 'change_pw'
         post 'unsubscribe'
         get  'unsubscribe'
-        get  'configure_work_with_us_widget'
+        get  'configure_join_us_tab'
         post 'update_work_with_us_widget_config'  
       end
       

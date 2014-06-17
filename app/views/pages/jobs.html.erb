@@ -120,7 +120,7 @@
 	});	
 	
    	$('.direct-ping-form').live('ajax:success',function(data, status, xhr){
-      $(this).closest(".buttons-box").html("<span class='success'>Thanks. We've pinged the company for you.</span>");
+      $(this).closest(".buttons-box").html("<span class='success'>Thanks. We'll ping the company for you.</span>");
     }).on('ajax:error',function(xhr, status, error){
       if(status.status == 500) {
       	$(this).closest(".buttons-box").html("<span class='error'>Ooops, it didn't work. Please check that your <%=Constants::SHORT_SITENAME%> profile is complete.</span>");<%#[TODO]%>

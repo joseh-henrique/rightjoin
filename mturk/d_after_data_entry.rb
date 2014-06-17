@@ -57,7 +57,7 @@ $skipped_orig_urls =[]
 SERIOUS_SEV = 2
 MEDIUM_SEV = 1
 MILD_SEV = 0
-LOGTHRESHOLD = 1
+LOGTHRESHOLD = -1
 
 # The HIGHER severity is more likely to be printed
 def logline(s,  severity = MILD_SEV, indent = 0)

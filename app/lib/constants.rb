@@ -3,8 +3,8 @@ class Constants
   SHORT_SITENAME ="RightJoin"
   SITENAME = Constants::SHORT_SITENAME + ".io"
   SITENAME_LC = SITENAME.downcase
-  FIVEYEAR_ITCH_SHORT_SITENAME ="FiveYearItch"
-  FIVEYEAR_ITCH_SITENAME  = Constants::FIVEYEAR_ITCH_SHORT_SITENAME + ".com"
+   
+  FIVEYEARITCH_SITENAME  = "FiveYearItch.com"
   
   LEAD_REFERRAL_COOKIE = ":lead_referral_share_id"
   
@@ -18,11 +18,11 @@ class Constants
   MAX_STRING_LENGTH = 250 #Used for various free-text areas.
   
   SAMPLE_USER_EMAIL_BASE_TEMPLATE = "sample%s@"
-  SAMPLE_USER_EMAIL_TEMPLATES = [SITENAME_LC,  FIVEYEAR_ITCH_SITENAME.downcase].map{|domain| SAMPLE_USER_EMAIL_BASE_TEMPLATE + domain}
+  SAMPLE_USER_EMAIL_TEMPLATES = [SITENAME_LC,  FIVEYEARITCH_SITENAME.downcase].map{|domain| SAMPLE_USER_EMAIL_BASE_TEMPLATE + domain}
   CONTACT_EMAIL ="contact@#{SITENAME_LC}"
-  ADMIN_EMAIL ="admin@#{FIVEYEAR_ITCH_SITENAME.downcase}"
-  FYI_RECRUITER_EMAIL = "jennifer@#{FIVEYEAR_ITCH_SITENAME.downcase}"
-  FYI_ADMIN_EMAIL = "robert@#{FIVEYEAR_ITCH_SITENAME.downcase}" 
+  ADMIN_EMAIL ="admin@#{FIVEYEARITCH_SITENAME.downcase}"
+  FYI_RECRUITER_EMAIL = "jennifer@#{FIVEYEARITCH_SITENAME.downcase}"
+  FYI_ADMIN_EMAIL = "robert@#{FIVEYEARITCH_SITENAME.downcase}" 
   
   REMEMBER_TOKEN_INFOINTERVIEW = :remember_token_infointerview
   REMEMBER_TOKEN_AMBASSADOR = :remember_token_ambassador
@@ -34,12 +34,10 @@ class Constants
   
   NUM_INITIAL_FREE_AMB_CONTACTS = "three"
    
-  #USERVOICE_KB_URL = "https://fiveyearitch.uservoice.com/knowledgebase" 
-  
   TELECOMMUTE= 'telecommute'
   RELOCATION = 'relocation'
   ANYWHERE = 'anywhere'
-  OTHER ='other'
+  OTHER_JOB ='other'# Probably not in use; originally used only for signing up from  the 'quiz'
   
 
   GITHUB = "GitHub"
@@ -47,15 +45,27 @@ class Constants
   LINKEDIN = "LinkedIn"
   GOOGLE = "Google"
   FACEBOOK = "Facebook"
+  EMAIL = "Email"
+  OTHER_SHARING_CHANNEL ="Other"
  
   SOCIAL_NETWORK_LINKEDIN = LINKEDIN.downcase
   SOCIAL_NETWORK_FACEBOOK = FACEBOOK.downcase
   SOCIAL_NETWORK_TWITTER = TWITTER.downcase
   SOCIAL_NETWORK_GOOGLE = "google_plusone_share"
   SOCIAL_NETWORK_EMAIL = "email"
+  SOCIAL_NETWORK_OTHER ="other"
+  SOCIAL_NETWORK_SHARE_URL ="share_url"
   
-  SHARE_CHANNELS = [Constants::SOCIAL_NETWORK_LINKEDIN, Constants::SOCIAL_NETWORK_FACEBOOK, Constants::SOCIAL_NETWORK_TWITTER, Constants::SOCIAL_NETWORK_GOOGLE, Constants::SOCIAL_NETWORK_EMAIL]
+  SHARE_CHANNELS = [SOCIAL_NETWORK_LINKEDIN, SOCIAL_NETWORK_FACEBOOK, SOCIAL_NETWORK_TWITTER, SOCIAL_NETWORK_GOOGLE, SOCIAL_NETWORK_EMAIL]
   
+  SHARE_CHANNEL_DISPLAY_NAMES = {
+      SOCIAL_NETWORK_LINKEDIN => LINKEDIN,
+      SOCIAL_NETWORK_FACEBOOK =>  FACEBOOK,
+      SOCIAL_NETWORK_TWITTER =>TWITTER,
+      SOCIAL_NETWORK_GOOGLE => GOOGLE,
+      SOCIAL_NETWORK_EMAIL => EMAIL,
+      SOCIAL_NETWORK_OTHER => OTHER_SHARING_CHANNEL
+    }
   
   OAUTH_TYPE_INSIDER = "insider"
   OAUTH_TYPE_CONTACT = "contact"

@@ -43,7 +43,7 @@
 		<%= will_paginate @jobs, :params => params_for_paginate, :class => 'pagination-controls', :inner_window => 2 %>
 	</div>
 	
-	<div id="search-results-box" class="clearfix">
+	<div id="jobs-search-results-box" class="search-results-box clearfix">
 		<%=render :partial => 'jobs/board_side_bar'%>
 		<div id="jobs-search-list">
 			<% new_ads_counter = 0 %>
@@ -53,7 +53,7 @@
 					<% new_ads_counter += 1 %>
 					<div class="new-tab">New!</div>
 				<%end%>
-				<div class="job-ad-box <%=is_new ? 'new' : ''%>">
+				<div class="job-ad-box">
 					<%=render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL}%>
 				</div>
 			<% end %>

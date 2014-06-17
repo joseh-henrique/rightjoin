@@ -80,14 +80,14 @@ class Ambassador < ActiveRecord::Base
   end
   
   def self.share_description(job)
-     "We're looking for a #{job.position_name}. Ping us to be in touch"
+     "We're looking for a #{job.position_name}. See our ad and ping us to be in touch."
   end
   
   def self.share_title(job)
-    "Come work with me at #{job.company_name}"
+    "Come work with me at #{job.company_name}."
   end
   def self.share_summary(job)
-    "Connect to #{ job.company_name } and talk with us about our work culture"
+    "Connect to #{ job.company_name } and talk with us about our work culture."
   end
    
 end

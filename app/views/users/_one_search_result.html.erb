@@ -1,16 +1,27 @@
-<div class="pin-icon"></div>
-  	<div class="white-box">
+<div class="section-box">
+	<div class="time-distance-in-words">
+		Reference #<%=user.reference_num%>
+	</div>
+	
+	<h2>Targeted position</h2>
+	<div class="targeted-box">
+		<div class="targeted-position"><%=user.wanted_position_name%></div>
+		<div class="targeted-location"><%=raw user.all_location_parts.map{|loc| h(loc)}.join("<span class='location-sep'> or </span>")%></div>
+	</div>
+	
+	<h2>More about the candidate</h2>
     <%=render :partial => 'users/user_details', :object => user, :locals => {:for_view=> :searcher}%>
     
     <div class="contact-candidate-box">
-    	<div class="send-message-title-box">Contact</div>
     	<% if signed_in? && current_user.employer? %>
 			<% active_jobs = current_user.jobs.where(status: Job::LIVE).includes([:location, :position]).all %>
 			<% if not current_user.verified?%>
-				<div>To invite candidates to contact you, please verify your account, above, and search again.</div>
+				<div>To ping candidates, please verify your account, above, and search again.</div>
     		<% elsif active_jobs.empty? %>
-    			<div>Please <%=link_to("create", new_employer_job_path(current_user, :refid => user.reference_num))%> 
-    				a relevant job posting before contacting this candidate.</div>
+    			<div>
+    				Please <%=link_to("create", new_employer_job_path(current_user, :refid => user.reference_num))%> 
+    				a relevant job posting to ping this candidate.
+    			</div>
     		<% else %>
     			<% active_jobs.select! {|job| job.locale == user.locale } %>
 	    		<% past_interviews = Interview.find_all_by_employer_id_and_user_id(current_user, user) %>
@@ -21,47 +32,45 @@
 	    		
 				<% if active_jobs.count > 0 %>
     				<% include_blank = active_jobs.count > 1 && (job.nil? || !active_jobs.include?(job)) %>
-	    			<% job_opts = active_jobs.map { |job| ["#{job.position.name} - #{job.location.name} - #{job.company_name}", job.id] } %>
+	    			<% job_opts = active_jobs.map { |job| ["#{job.position.name} - #{job.location.name}", job.id] } %>
 	    			
-	    			<div class="send-message-box" id="send-message-box-<%=user.id%>">
-	    				<%have_ambs=current_user.has_active_ambassadors? %>
-	    				<div class="message-question">Invite this candidate <%if have_ambs%>to talk to your employees, or<%end%> to apply to  one of your job positions.</div>
-
-				    	<div class="message-form-box">
-							<%= form_for(Interview.new, :remote => true, :html => {:class => "send-msg-form", :id => "message-to-#{user.id}"}) do |f| %>
-		    					<br />
-		    					<%= select(:job, :id, job_opts, {:include_blank => include_blank}, {:class=>"validate[required]"}) %>&nbsp;
-		    					<%= f.hidden_field(:user_id, :value => user.id, :id => "user-id-#{user.id}") %>
-		    					<%= hidden_field_tag(:decision, nil, :id => "decision-#{user.id}", :class => "should-pitch") %>
-		    					<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'yes');" class="send-msg-btn" value="Invite" />&nbsp;
-		    					<% if allow_ignore %>
-		    						<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'no');" class="no-msg-btn" value="Skip" />
-		    					<% end %>
-		    					<img title="Sending the invitation" alt="Sending the invitation" class="wait-indicator" src="<%= asset_path('fyi/loading.gif') %>" />
-		    					<div class="send-message-result"></div>	
-		    				<% end %>
-		    			</div>
-						<% unless past_interviews.blank? %>
-		    				<br>
-		    				<div>
-		    					You've invited this candidate to <%= pluralize(past_interviews.count, 'job position')%> so far.
-		    					You can invite them to more.  
+	    			<div id="send-message-box-<%=user.id%>">
+	    				<div class="send-message-title-box">Contact</div>
+	    				<div class="form-row">
+	    					<div class="form-cell">
+								<%= form_for(Interview.new, :remote => true, :html => {:class => "send-msg-form", :id => "message-to-#{user.id}"}) do |f| %>
+			    					<%= label_tag(:job, "Ping the candidate about this job position.") %><br>
+			    					<%= select(:job, :id, job_opts, {:include_blank => include_blank}, {:class=>"standard-select validate[required]"}) %>&nbsp;
+			    					<%= f.hidden_field(:user_id, :value => user.id, :id => "user-id-#{user.id}") %>
+			    					<%= hidden_field_tag(:decision, nil, :id => "decision-#{user.id}", :class => "should-pitch") %>
+			    					<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'yes');" class="send-msg-btn standard-button" value="Ping" />&nbsp;&nbsp;
+			    					<% if allow_ignore %>
+			    						<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'no');" class="no-msg-btn standard-button" value="Ignore" />
+			    					<% end %>
+			    					<img title="Sending..." alt="Sending..." class="wait-indicator" src="<%= asset_path('shared/loading.gif') %>" />
+			    				<% end %>
+			    				<div class="ajax-error-message"></div>
 		    				</div>
-		    			<% end %>	
+		    			</div>
+		    			
+						<% unless past_interviews.blank? %>
+		    				<div>You've already pinged this candidate about <%= pluralize(past_interviews.count, 'job position')%>.</div>
+		    			<% end %>
 		    		</div>
 	    		<% else %><%#No active jobs%>
-	    			<div>You've  already invited this candidate, or else decided not to invite them.
-	    			</div>
+	    			<div>You've  already pinged this candidate, or marked that you're not interested.</div>
 	    		<% end %>
     		<% end %>
 	    <% else %>
-	    	<div>Please 
+	    	<div>
+	    		To ping the candidate, please
 	    		<% if @current_page_info[:intended_for] == :employee %>
 	    			<%= link_to "sign in", employer_search_path %>
 	    		<% else %>
-	    			<%= link_to "sign in above", "#" %> 
+	    			<%= link_to "sign in", "#", :class => "sign-in-link" %> 
 	    		<% end %>
-	    		with your employer credentials or <%= link_to "register", employer_get_started_path %>.</div>
+	    		with your employer credentials or <%= link_to "register", employer_get_started_path %>.
+	    	</div>
 	    <% end %>
     </div>
 </div>

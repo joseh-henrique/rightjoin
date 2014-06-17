@@ -193,7 +193,7 @@
 
 <script type="text/javascript">
 	function doSubmitForm() {
-		addHttpToUrlIfNeeded($("#li_url"));
+		createValidUrl($("#li_url"));
 		var res = $("form.new_employer, form.edit_employer").validationEngine('validate');
 		if (res) {
 			// prevent double submit

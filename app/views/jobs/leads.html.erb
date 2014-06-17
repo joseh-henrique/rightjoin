@@ -1,110 +1,146 @@
-<div class="content">
+<% require 'rinku' %>
+
+<div class="content" id="employer-leads">
 	<%= render :partial => 'layouts/flash_box' %>
 	
-	<p class="headline">
-		Please pass on pings about the <%=@job.position.name%> posting to your team members.  
-	</p>
-	
-	<div class="white-box fyi-accordion">
-		<h3 class="accordion-header clearfix expanded"><span>Job details</span></h3>
-		<div class="accordion-panel">
-			<%=render :partial => 'jobs/job_details', :object => @job, :locals => {:compact => true}%>
-			<% other_jobs = current_user.jobs.select {|job| job.id != @job.id} #.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id, { :class => job.status == Job::CLOSED ? 'closed-job-select-option' : 'live-job-select-option' }]} %>
-			<br>
-			<% if other_jobs.any? %>
-				<%=label_tag nil, "See leads for other jobs:" %>
-				<% other_jobs.each do |job| %>
-					<div><%=link_to("#{job.position_name} - #{job.location_name}", leads_employer_job_path(current_user, job, :locale => job.country_code))%></div>
-				<% end %>
-			<% end %>
+	<div class="standard-section-header"><span>Leads for this job position</span></div>
+	<div class="section-box">
+		<% if @job.closed? %>
+			<div class="closed-tab">Closed</div>
+		<% end %>
+		<div class="job-ad-box">
+			<%=render :partial => 'jobs/ad_with_counters', :locals => {:job => @job} %>
 		</div>
 	</div>
-	
-	<%if @infointerviews.empty? %>
-		<p class="headline">
-			There are no leads for this job.
-			 To get more pings, share the ad over social networks,
-			 link to it in your recruiting emails,
-			  <%unless @job.employer.join_us_widget_running?%> 
-			  add the tab to your company's site,
-			  <%end%> 
-			  or contact <%=Constants::SHORT_SITENAME%> to add your post to developer-oriented sites.
-			  
-		</p>
-	<%else%>
-		<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id, {"data-email" => ambassador.email, "data-firstname" => ambassador.first_name}] } %>
-		
-		<% active_leads = @infointerviews.select {|lead| lead.status != Infointerview::CLOSED_BY_EMPLOYER} %>
-		<% closed_by_employer_leads = @infointerviews.select {|lead| lead.status == Infointerview::CLOSED_BY_EMPLOYER} %>
-	
+
+	<% active_leads = @infointerviews.select {|lead| lead.status != Infointerview::CLOSED_BY_EMPLOYER && lead.status != Infointerview::CLOSED_BY_FYI} %>
+	<% closed_by_employer_leads = @infointerviews.select {|lead| lead.status == Infointerview::CLOSED_BY_EMPLOYER} %>
+
+	<div class="standard-section-header"><span>Active leads</span></div>
+	<div class="section-box">	
 		<% if active_leads.any? %>
-			<div class="infointerviews-list">
-				<div>Active leads</div>
-				<% active_leads.each do |infointerview| %>
-					<div class="pin-icon"></div>
-		  			<div class="white-box">
-		  				<% if infointerview.status == Infointerview::NEW %>
-		  					<div style="color: red;">**** New ****</div>
-		  				<% end %>
-		  				
-						<%=render :partial => 'infointerviews/infointerview', :object => infointerview%>
-						
+			<% active_leads.each do |infointerview| %>
+  				<% if infointerview.status == Infointerview::NEW %>
+  					<div class="new-tab">New!</div>
+  				<% end %>
+	  			<div class="infointerview-outer-box">
+					<% unless infointerview.referred_by.nil? %>
+						<div class="referred-by">
+							Referred by <%=infointerview.referred_by_ambassador.first_name%>&nbsp;<%=infointerview.referred_by_ambassador.last_name%>
+						</div>
+					<% end %>
+					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post, :class => "close", :title => "Close the lead. You can reopen it later.")%>	
+	  				
+					<%=render :partial => 'infointerviews/infointerview', :object => infointerview%>
+					
+					<% unless @job.closed? %>
 					    <div class="contact-candidate-box">
-					    	<div class="send-message-title-box">Contact</div>
+					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id, {"data-email" => ambassador.email, "data-firstname" => ambassador.first_name}] } %>
 							<% if ambassador_select_opts.empty?%>
-								<div><%=link_to("Add", edit_employer_path(current_user, :anchor=>"ambassadors" ), :method => :get)%> ambassadors.</div>
+								Want your team members to talk to the candidate? <%= link_to("Ask them", employer_path(current_user, :anchor=>"team")) %> to join as ambassadors.
 				    		<% else %>
-				    			<div class="send-message-box" id="send-message-box-<%=infointerview.id%>">
-				    				<div class="message-question">Ask a team member to talk with the candidate</div>
-							    	<div class="message-form-box">
-				    					<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {:class=>"validate[required]"}, :data => {"candidate-profiles" => infointerview.profiles, "candidate-email" => infointerview.email, "candidate-name" => "#{infointerview.first_name} #{infointerview.last_name}"}) %>&nbsp;
-				    					<%=link_to("Write email", "#", :class => "delegate-to-ambassador")%>&nbsp;
-				    					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post)%>
-					    			</div>
+					    		<div class="send-message-title-box">Contact</div>
+				    			<div class="form-row">
+				    				<div class="form-cell">
+				    					<label>Ask someone in your team to talk with the candidate.</label><br>
+			    						<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {}, {:class=>"validate[required] standard-select", :data => {"candidate-profiles" => infointerview.profiles, "candidate-email" => infointerview.email, "candidate-name" => "#{infointerview.first_name} #{infointerview.last_name}"}}) %>&nbsp;
+			    						<%=link_to("Delegate", "#", :class => "delegate-to-ambassador standard-button")%>&nbsp;
+			    					</div>
 					    		</div>
-				    		<% end %>
+					    	<% end %>	
 					    </div>
+				    <%end%>
+				</div>
+			<% end %>
+		<% else %>
+			There are no active leads for this job.
+			<% unless @job.closed? %>
+				To get more pings,
+					<ul>
+						<li>
+							 share the ad over social networks,
+						</li>
+						<li>
+							link to it in your recruiting emails,
+						</li>
+						<%unless @job.employer.join_us_widget_running?%> 
+							<li>add the tab to your company's site,</li>
+						<%end%> 
+						<li>or contact <%=Constants::SHORT_SITENAME%> to add your post to developer-oriented sites.</li>
+				</ul>
+				 <% end %>	
+		<% end %>
+	</div>
+	
+	<% if closed_by_employer_leads.any? %>
+		<div class="standard-section-header"><span>Closed leads</span></div>
+		<div class="section-box clearfix">
+			<% closed_by_employer_leads.each do |infointerview| %>
+				<div class="closed-infointerview-box">
+					<div class="closed-infointerview-top">
+						<%= image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)), class: "avatar-img") %>
+						<div class="candidate-name"><%=infointerview.first_name%> <%=infointerview.last_name%></div>
+						<div class=""><%=Rinku.auto_link(CGI::escapeHTML(infointerview.email), :all, 'target="_blank"').html_safe%></div>
 					</div>
-				<% end %>
-			</div>
-		<%end%>
-		
-		<% if closed_by_employer_leads.any? %>
-			<div class="infointerviews-list">
-				<div>Closed leads</div>
-				<% closed_by_employer_leads.each do |infointerview| %>
-					<div class="pin-icon"></div>
-		  			<div class="white-box">
-						<%=render :partial => 'infointerviews/infointerview', :object => infointerview%>
+					<div class="closed-infointerview-bottom">
 						<%=link_to("Reopen", infointerview_reopen_path(infointerview, :locale => nil), method: :post)%>
 					</div>
-				<% end %>
-			</div>
-		<% end %>
+				</div>
+			<% end %>
+		</div>
+	<% end %>
+	
+	<%# set new leads for this job to seen%>
+	<script type="text/javascript">
+		setTimeout( function() {
+			$.post("<%=leads_set_seen_employer_job_path(@job.employer_id, @job.id)%>");
+		}, <%=Random.new.rand(5000..10000) %>);	// don't send all together
 		
-		<%# set new leads for this job to seen%>
-		<script type="text/javascript">
-			setTimeout( function() {
-				$.post("<%=leads_set_seen_employer_job_path(@job.employer_id, @job.id)%>");
-			}, 0 );	
+		$("a.delegate-to-ambassador").click(function(){
+			var select = $(this).siblings("select").first();
+			var selected_option = select.find(":selected");
+			var email = $(selected_option).attr('data-email');
+			var subject = "Talking to a potential colleague";
+			var body = "Hi, " + $(selected_option).attr('data-firstname') + ",\n";
+			body += "\nPlease be in touch with " + $(select).attr('data-candidate-name') ;
+			body +=	" regarding our open <%=escape_javascript @job.position_name%> position.\n\nEmail them back, maybe talk with them, see if they're right for us and we're right for them.\n\n";
+			body += $(select).attr('data-candidate-profiles') + "\n";
+			body += "Email: " + $(select).attr('data-candidate-email') + "\n\n";
+			body += "Regards,\n";
+			body += "<%=escape_javascript current_user.first_name%>";
+			var link = '/mailto#mailto:' +  email + '?Subject=' + encodeURIComponent(subject) + '&Body=' + encodeURIComponent(body);
+			window.open(link, '_fyi_email');
+			return false;
+		});
+	</script>
+	
+	<% other_active_jobs = current_user.jobs.select {|job| job.id != @job.id && job.status != Job::CLOSED} %>
+	<% other_closed_jobs = current_user.jobs.select {|job| job.id != @job.id && job.status == Job::CLOSED} %>
+	<% if other_active_jobs.any? || other_closed_jobs.any? %>	
+		<div class="standard-section-header"><span>See leads for other jobs</span></div>
+		<div class="section-box clearfix">
+			<% if other_active_jobs.any? %>
+				<div class="job-links-list">
+					<div class="job-links-list-title">Active jobs</div>
+					<ul>
+						<% other_active_jobs.each do |job| %>
+							<li><%=link_to("#{job.position_name} - #{job.location_name}", leads_employer_job_path(current_user, job, :locale => job.country_code))%></li>
+						<% end %>
+					</ul>
+				</div>
+			<% end %>
 			
-			$("a.delegate-to-ambassador").click(function(){
-				var select = $(this).siblings("select").first();
-				var selected_option = select.find(":selected");
-				var email = $(selected_option).attr('data-email');
-				var subject = "Talking to a potential colleague";
-				var body = "Hi, " + $(selected_option).attr('data-firstname') + ",\n"l;
-				body += "\nPlease be in touch with " + $(select).attr('data-candidate-name') + " regarding <%=escape_javascript @job.position_name%> position.\n\n";
-				body += $(select).attr('data-candidate-profiles') + "\n";
-				body += "Email: " + $(select).attr('data-candidate-email') + "\n\n";
-				body += "Regards,\n";
-				body += "<%=escape_javascript current_user.first_name%>";
-				var link = '/mailto#mailto:' + encodeURIComponent(email) + '?Subject=' + encodeURIComponent(subject) + '&Body=' + encodeURIComponent(body);
-				window.open(link, '_fyi_email');
-				return false;
-			});
-		</script>
+			<% if other_closed_jobs.any? %>
+				<div class="job-links-list">
+					<div class="job-links-list-title">Closed jobs</div>
+					<ul>
+						<% other_closed_jobs.each do |job| %>
+							<li><%=link_to("#{job.position_name} - #{job.location_name}", leads_employer_job_path(current_user, job, :locale => job.country_code))%></li>
+						<% end %>
+					</ul>
+				</div>
+			<% end %>
+		</div>
 	<% end %>
 </div>
 
-<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>

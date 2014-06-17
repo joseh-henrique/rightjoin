@@ -97,8 +97,12 @@ class Employer < ActiveRecord::Base
   end
   
   def active_jobs_with_share_statistics
-    Job.active_with_share_statistics.joins(:employer).where("jobs.employer_id = ?", id)
+    jobs_with_share_statistics_by_status(Job::LIVE)
   end
+  
+  def jobs_with_share_statistics_by_status(*status)
+    Job.jobs_with_share_statistics_by_status(status).joins(:employer).where("jobs.employer_id = ?", id)
+  end  
   
   def join_us_widget_running?
     now = Time.parse(ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP"))

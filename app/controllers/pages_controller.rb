@@ -42,7 +42,7 @@ class PagesController < ApplicationController
       @current_page_info = PageInfo::REGISTER
       @user.can_telecommute = true
       
-      fyiscore = params[:fyiscore]
+      fyiscore = params[:fyiscore]# [TODO] The following is for the quiz and can be deleted
       if !fyiscore.nil? && fyiscore.to_i.between?(0, 5)
         flash_now_message(:notice, "We've filled out some of the form for you, using your quiz answers.")
         
@@ -50,11 +50,11 @@ class PagesController < ApplicationController
         @defaults[:no_years] = params[:yearsinjob].to_i
         # Get current job from radio buttons, but if "other" radio button was chosen, get value from field. 
         @defaults[:current_job] = params[:current_job]
-        if @defaults[:current_job] == Constants::OTHER 
+        if @defaults[:current_job] == Constants::OTHER_JOB
           @defaults[:current_job] = params[:currentposition]
         end  
         @defaults[:wanted_job] = params[:wantedposition]
-        @defaults[:wanted_job] ="" if @defaults[:wanted_job] = Constants::OTHER 
+        @defaults[:wanted_job] ="" if @defaults[:wanted_job] = Constants::OTHER_JOB
         @defaults[:salary] = params[:wantedsalary].to_i
         @defaults[:reqirements] = read_requirements_from_quiz
       end

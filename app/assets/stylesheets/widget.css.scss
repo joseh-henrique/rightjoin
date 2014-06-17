@@ -130,9 +130,29 @@ a {
   overflow: hidden;
 }
 
-.clickable:hover {
-  @include box-shadow(0px 0px 0px 1px #A0A0A0);
-  cursor: pointer;
+.clickable-indicator {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.3em;
+  height: 1.3em;
+  background: black image-url("widget/link.png") no-repeat center;
+  @include opacity(30);
+}
+
+.clickable {
+  .clickable-indicator {
+    display: block;
+  }
+  
+  &:hover {
+    cursor: pointer;
+    
+    .clickable-indicator {
+      @include opacity(60);
+    }
+  }
 }
 
 .sliding-box {
@@ -143,7 +163,7 @@ a {
   left: 0;
   
   &.slide-right {
-    @include transition(all .9s); 
+    @include transition(all 1s); 
     // defined under photo, blurb and avatar
     //@include translate(20px);   
     
@@ -189,7 +209,7 @@ a {
 
 .blurb {
   .title {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.25em;
     line-height: 1.25em;
     padding-top: 1em;
@@ -310,7 +330,7 @@ a {
     
     .company-name {
       font-size: 1.25em;
-      font-weight: bold;
+      font-weight: 500;
     }
   }
 }
@@ -319,7 +339,7 @@ a {
   overflow: auto;
   
   .title {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.2em;
   }
   
@@ -339,41 +359,79 @@ a {
 
 #signin-box {
   .title {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.4em;
     line-height: 1.2em;
   }
   
-  .img-box {
+  .buttons-box {
     position: absolute;
     bottom: $tile-padding;
     right: $tile-padding;
-    height: 6em;
+    
+    .button-box {
+      position: relative;
+      display: inline-block;
+      line-height: 2.5em;
+      font-size: 0.8em;
+      font-weight: 500;
+      @include border-radius(4px);
+      color: white;   
+      @include vertical-gradient(rgba(0,0,2,.2), rgba(255,255,255,.2));
+                
+      &:hover {
+        @include vertical-gradient(rgba(0, 0, 2, .4), rgba(255,255,255,.2));
+      }    
+    }
+    
+    .separator {
+      position: absolute;
+      width: 1px;
+      height: 100%;
+      background-color: #000;
+      @include box-shadow(1px 0 #fff);
+      @include opacity(10);
+      left: 2.4em;
+    }
     
     a {
-      width: 6em;
-      height: 6em;
       display: inline-block;
-      text-indent: -9999px;
+      text-decoration: none;
+      padding-left: 3.6em;
+      padding-right: 1.4em;
       
-      &.github {
-        background: #171516 image-url("widget/github.png") no-repeat center;
-        @include background-size (cover);
-        
-        &:hover {
-          background-color: #660033;
-        }
+      &:hover {
+        text-decoration: none;
+        color: white;
       }
-      
-      &.linkedin {
-        background: #00557E image-url("widget/linkedin.png") no-repeat center;
-        @include background-size (cover);
-                
-        &:hover {
-          background-color: #007BB6;
-        }
-      } 
     }
+    
+    .github  {
+      background-color: #000;
+        
+      a {
+        background: transparent image-url("widget/social/github72x72.png") no-repeat 0.5em;
+        background-size: 1.6em;
+      }
+    }
+      
+    .linkedin {
+      background-color: #507db0;
+      
+      a {     
+        background: transparent image-url("widget/social/linkedin72x72.png") no-repeat 0.5em;
+        background-size: 1.8em;        
+      }
+    }
+      
+    .rightjoin {
+      background-color: #06376e;
+      
+      a {
+        background: transparent image-url("widget/social/rightjoin72x72.png") no-repeat 0.5em;
+        background-size: 1.6em;  
+      }
+    } 
   }
 }
 
@@ -426,13 +484,13 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
     display: table;
     width: $tile-width + $tile-padding * 2;
     height: $tile-height - $avatar-size * 2 + $tile-padding * 2;
-    text-align: center;
     
     .title {
       display: table-cell;
       vertical-align: middle;
-      font-weight: bold;
-      font-size: 1.25em;      
+      font-weight: 500;
+      font-size: 1.25em;     
+      padding-left: 1em;
     }
   }
 }
@@ -669,4 +727,17 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   }
 }
 
-
+#rightjoin-label{
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  width: 112px;
+  height: 18px;
+  background: transparent image-url("widget/rightjoin.png") no-repeat center;
+  text-indent: -9999px;
+  @include opacity(70);
+  
+  &:hover {
+    @include opacity(100);
+  }
+}

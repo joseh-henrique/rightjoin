@@ -39,7 +39,7 @@ body {
 }
 
 .em {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .content {
@@ -109,7 +109,7 @@ label {
     .signin-with{
       font-size: 36px;
       line-height: 1em;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
     
     background: transparent image-url("shared/semi-transparent.png") repeat;
@@ -237,7 +237,7 @@ label {
         height: 90px;
         line-height: 90px;
         color: $default-font-color;
-        font-weight: bold;
+        font-weight: 500;
         font-size: 16px;
         
         &:hover {
@@ -333,8 +333,8 @@ label {
       
       .share-button-box {
         display: inline-block;
-        margin-left: 40px;
-        margin-right: 40px;
+        margin-left: 35px;
+        margin-right: 35px;
         
         .share-button {
           @include border-radius(20%);
@@ -374,6 +374,7 @@ label {
     .preview-link {
       color: #555555;
       font-size: 24px;
+      font-weight: 500;
       
       &:hover {
         color: #e8643e;

@@ -1,21 +1,24 @@
 <script type="text/javascript">
 	function load_chart(elem_id, labels, values) {
-		var offset_map = {};
-		$.each(labels, function(index, label){
-			offset_map[index] = label;
-		});
-		
-		$(elem_id).sparkline(values, {
-		    type: 'bar',
-		    height: '20',
-		    barWidth: 8,
-		    zeroAxis: false,
-		    barColor: '#0999e6',
-		    tooltipFormat: '{{offset:offset}} {{value}}',
-		    tooltipValueLookups: {
-		        'offset': offset_map
-		    }
-		});
+		for (var i = 0, sum = 0; i < values.length; sum += values[i++]);
+		if (sum > 0) {
+			var offset_map = {};
+			$.each(labels, function(index, label){
+				offset_map[index] = label;
+			});
+			
+			$(elem_id).sparkline(values, {
+			    type: 'bar',
+			    height: '20',
+			    barWidth: 8,
+			    zeroAxis: false,
+			    barColor: '#0999e6',
+			    tooltipFormat: '{{offset:offset}}: {{value}}',
+			    tooltipValueLookups: {
+			        'offset': offset_map
+			    }
+			});
+		}
 	}
 </script>
 
@@ -26,7 +29,7 @@
 <div class="content" id="employer-dashboard">
 	<%= render :partial => 'layouts/flash_box' %>
 
-	<div class="standard-section-header"><span>Campaign</span><div class="buttons-box"><%=link_to("Add to website", configure_work_with_us_widget_employer_path(current_user, :job => nil, :locale => nil), :class => "standard-button") %></div></div>	
+	<div class="standard-section-header"><span>Campaign</span><div class="header-buttons-box"><%=link_to("Add to website", configure_join_us_tab_employer_path(current_user, :job => nil, :locale => nil), :class => "standard-button") %></div></div>	
 	<div class="section-box counters-box">
 		<% share_info = current_user.shares_statistics %>
 		<% shared = share_info.inject(0){|sum,x| sum + x.shares_count.to_i} %>
@@ -38,9 +41,9 @@
 			<div class="counter-top">
 				<span><%=shared%></span>
 				<div id="chart-shared" class="chart"></div>
-				<% shares_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})} %>
-				<% share_info.each{|share| shares_map[share.network] = share.clicks_count.to_i} %>
-				<script type="text/javascript">load_chart("#chart-shared", [<%=shares_map.keys.map{|label|"'#{label.capitalize}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
+				<% shares_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})} # set up map with 0-values for all keys%>
+				<% share_info.each{|share| shares_map[share.network] = share.shares_count.to_i}  %>
+				<script type="text/javascript">load_chart("#chart-shared", [<%=shares_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">
 				Shared
@@ -49,22 +52,26 @@
 		<div class="counter-box">
 			<div class="counter-top">
 				<span><%=clickbacks%></span>
-				<div id="clickback-shared" class="chart"></div>
-				<% shares_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})} %>
-				<% share_info.each{|share| shares_map[share.network] = share.clicks_count.to_i} %>
-				<script type="text/javascript">load_chart("#clickback-shared", [<%=shares_map.keys.map{|label|"'#{label.capitalize}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
+				<div id="chart-clickback" class="chart"></div>
+				<% clicks_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}  # set up map with 0-values for all keys %>
+				<% share_info.each{|share| clicks_map[share.network] = share.clicks_count.to_i} %>
+				<script type="text/javascript">load_chart("#chart-clickback", [<%=clicks_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=clicks_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
-			<div class="counter-bottom">
+			<div class="counter-bottom">  
 				Clickbacks
-			</div>				
+			</div>
 		</div>
 		<div class="counter-box">
 			<div class="counter-top">
 				<span><%=leads_all%></span>
 				<div id="chart-leads" class="chart"></div>
-				<% shares_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}.merge({"other" => leads_all - leads_share}) %>
-				<% share_info.each{|share| shares_map[share.network] = share.leads_count.to_i} %>
-				<script type="text/javascript">load_chart("#chart-leads", [<%=shares_map.keys.map{|label|"'#{label.capitalize}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
+				<% leads_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}   # set up map with 0-values for all keys
+				   leads_map.merge!({Constants::SOCIAL_NETWORK_OTHER => leads_all - leads_share})  # add 'other to include all shares not otherwise idenntified
+				%> 
+				
+				<% share_info.each{|share| leads_map[share.network] = share.leads_count.to_i} %>
+ 
+ 				<script type="text/javascript">load_chart("#chart-leads", [<%=leads_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=leads_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">
 				Leads
@@ -75,7 +82,7 @@
 			<ul>
 				<% if active_jobs.empty? %>
 					<li class="warning">
-						<%=link_to("Add", new_employer_job_path(current_user), :class => "standard-button")%> a job posting.
+						<%=link_to("Add", new_employer_job_path(current_user))%> a job posting.
 					</li>
 					
 					<% unless free_plan %>
@@ -86,16 +93,20 @@
 				<% else %>
 					<% if ambassadors.blank? %>
 						<li class="warning">
-							Your team is empty. <%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank") %> or 
+							No team members yet. <%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank") %> or 
 							<%=link_to("invite", "#", :id => "invite-team-member-link") %> team members via email.
 						</li>
 					<% else %>
 						<% unless current_user.join_us_widget_running? %>
 							<li class="warning">
-								<%=link_to("Enable", configure_work_with_us_widget_employer_path(current_user, :job => nil, :locale => nil)) %> Work With Us tab for you site.
+								<%=link_to("Enable", configure_join_us_tab_employer_path(current_user, :job => nil, :locale => nil)) %> 
+								the &ldquo;Work With Us&rdquo; tab for your site. <%#TODO Review page%>
 							</li>
-						<% end %>		
-					<% end %>			
+						<% end %>
+						<li class="warning">
+							You can extend your posting's reach by advertising on professional sites. <%=uservoice_contact_link("Contact us")%> for more details.
+						</li>
+					<% end %>
 				<% end %>
 				
 				<% if free_plan %>
@@ -121,19 +132,20 @@
 		<div class="recent-leads-box">
 			<span>Active leads</span>
 			<div class="leads-list">
-				
+				<%#TODO: mpelts%>
 			</div>
 		</div>
 	</div>
 	
-	<div class="standard-section-header"><span>Job postings</span><div class="buttons-box"><%=link_to("Add new", new_employer_job_path(current_user), :class => "standard-button")%></div></div>	
+	<div class="standard-section-header"><span>Job postings</span><div class="header-buttons-box"><%=link_to("Add new", new_employer_job_path(current_user), :class => "standard-button")%></div></div>	
 	<div class="section-box jobs-box">
 		<%=render :partial => 'employer_jobs' %>
 	</div>
 	
+	<a id="team"></a>
 	<div class="standard-section-header">
 		<span>Your team</span>
-		<div class="buttons-box">
+		<div class="header-buttons-box">
 			<%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
 			<% 	  
 			subject = "For your approval: Talking about what it's like to work at #{current_user.company_name}"
@@ -151,17 +163,22 @@
 			<%=mail_to("", "Invite via email", subject: subject, body: "#{body_text}\n\n#{ambassadors_signin_url(current_user.reference_num, :locale => nil)}", :class => "standard-button", :id => "invite-team-member-button", :target => "_fyi_email")%> 
 		</div>
 	</div>
+	
 	<div class="section-box team-box clearfix">
-		<% ambassadors.each_with_index do |ambassador, i| %>
-			<div class="ambassador-admin-box closable">
-				<%=link_to "Deactivate", employer_ambassador_path(ambassador.employer, ambassador, :locale => nil), :method => :delete, :class => "close", :title => "Deactive ambassador profile", :confirm => "Are you sure you want to deactivate this ambassador profile?"%>
-				<%= render :partial => 'ambassadors/ambassador', object: ambassador %>
-				<div class="ambassador-counters-box">
-					<div>Shares: <span class="counter-value"><%=ambassador.shares_counter.to_i%></span></div>
-					<div>Clickbacks: <span class="counter-value"><%=ambassador.clickback_counter.to_i%></span></div>
-					<div>Leads: <span class="counter-value"><%=ambassador.leads_counter.to_i%></span></div>
+		<% if ambassadors.blank? %>
+			Nobody here yet. <%=link_to("Empower", "#", :id => "invite-team-member-link") %> your development team to connect to their peers and bring them onboard. 
+		<% else %>
+			<% ambassadors.each_with_index do |ambassador, i| %>
+				<div class="ambassador-admin-box closable">
+					<%=link_to "Deactivate", employer_ambassador_path(ambassador.employer, ambassador, :locale => nil), :method => :delete, :class => "close", :title => "Deactive ambassador profile", :confirm => "Are you sure you want to deactivate this ambassador profile?"%>
+					<%= render :partial => 'ambassadors/ambassador', object: ambassador %>
+					<div class="ambassador-counters-box">
+						<div>Shares: <span class="counter-value"><%=ambassador.shares_counter.to_i%></span></div>
+						<div>Clickbacks: <span class="counter-value"><%=ambassador.clickback_counter.to_i%></span></div>
+						<div>Leads: <span class="counter-value"><%=ambassador.leads_counter.to_i%></span></div>
+					</div>
 				</div>
-			</div>
+			<% end %>
 		<% end %>
 	</div>
 </div>

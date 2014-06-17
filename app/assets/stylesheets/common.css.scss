@@ -32,7 +32,7 @@
   transform:        $val;
 }
 
-@mixin translate ($val) {
+@mixin translate ($val...) {
   -webkit-transform: translate($val);
   -moz-transform:    translate($val);
   -ms-transform:     translate($val);
@@ -47,11 +47,11 @@
   background-size: $val;
 }
 
-  
-@mixin light-font {
-  font-family: 'Roboto', sans-serif !important;
-  font-weight: 300 !important;
-  font-style: normal !important;
+@mixin vertical-gradient($params...) {
+  background-image: -webkit-linear-gradient(bottom, $params);
+  background-image: -moz-linear-gradient(bottom, $params);
+  background-image: -o-linear-gradient(bottom, $params);
+  background-image: linear-gradient(to top, $params);
 }
 
 @mixin normal-font {
@@ -126,7 +126,7 @@
       
       em {
         font-style: inherit;
-        font-weight: bold;
+        font-weight: 500;
         color: inherit;
       }
     }
@@ -216,3 +216,4 @@ input, textarea, select {
 .float-right {
   float: right;
 }
+

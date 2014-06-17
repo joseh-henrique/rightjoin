@@ -135,15 +135,13 @@ class JobsController < ApplicationController
   
   def leads
     @current_page_info = PageInfo::EMPLOYER_LEADS
-    @job = current_user.jobs.find(params[:id])
+    @job = current_user.jobs_with_share_statistics_by_status(Job::LIVE, Job::CLOSED).order("created_at DESC").find_by_id(params[:id])
     
     raise "Job position not found" if @job.nil?
     
-    @infointerviews = []
-    unless @job.closed?
-      statuses = [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER] # MP: now shows CLOSED_BY_EMPLOYER status
-      @infointerviews = @job.infointerviews.where("infointerviews.status in (#{statuses.join(', ')})") 
-    end
+    statuses = [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]
+    @infointerviews = @job.infointerviews.where(status: statuses) 
+    
   rescue Exception => e
     logger.error e
     flash_message(:error,Constants::ERROR_FLASH)

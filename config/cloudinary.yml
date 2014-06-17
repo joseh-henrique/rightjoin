@@ -5,15 +5,21 @@ development:
   api_secret: 5DJkCwzfBRuRm-5pW-IIqjv-DNU
   enhance_image_tag: true
   static_image_support: false
+staging:
+  cloud_name: rightjoin
+  api_key: '658813272185993'
+  api_secret: 1N0ASPV-qXj6MP8fqzrp_PmQnaY
+  enhance_image_tag: true
+  static_image_support: true
 production:
-  cloud_name: dmuokov3v
-  api_key: '669622646658361'
-  api_secret: 5DJkCwzfBRuRm-5pW-IIqjv-DNU
+  cloud_name: rightjoinerok
+  api_key: '658813272185993'
+  api_secret: 1N0ASPV-qXj6MP8fqzrp_PmQnaY
   enhance_image_tag: true
   static_image_support: true
 test:
-  cloud_name: dmuokov3v
-  api_key: '669622646658361'
-  api_secret: 5DJkCwzfBRuRm-5pW-IIqjv-DNU
+  cloud_name: rightjoin
+  api_key: '658813272185993'
+  api_secret: 1N0ASPV-qXj6MP8fqzrp_PmQnaY
   enhance_image_tag: true
   static_image_support: false

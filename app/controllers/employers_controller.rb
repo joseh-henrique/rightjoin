@@ -3,7 +3,7 @@ class EmployersController < ApplicationController
     
   before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe, :update_work_with_us_widget_config]
   before_filter :init_employer_user, :except => [:we_are_hiring, :ping, :work_with_us_tab, :work_with_us_test]
-  before_filter :correct_user, :only => [:show, :edit, :update, :configure_work_with_us_widget, :update_work_with_us_widget_config]
+  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab, :update_work_with_us_widget_config]
   before_filter :add_verif_flash, :only =>[:show, :edit]
   before_filter :init_join_us_widget, :only =>[:we_are_hiring, :ping]
 
@@ -162,11 +162,11 @@ class EmployersController < ApplicationController
     do_unsubscribe Employer
   end
   
-  def configure_work_with_us_widget
-    @current_page_info = PageInfo::EMPLOYER_CONFIGURE_WORK_WITH_US_WIDGET
+  def configure_join_us_tab
+    @current_page_info = PageInfo::EMPLOYER_CONFIGURE_JOIN_US_TAB
     @employer = current_user
     @employer.join_us_widget_params_map ||= ""
-    render 'configure_work_with_us_widget'
+    render 'configure_join_us_tab'
   end
   
   def update_work_with_us_widget_config
@@ -186,7 +186,7 @@ class EmployersController < ApplicationController
     @employer = Employer.find_by_ref_num(refnum)
     
     # Track widget usage heartbeat every 12 hours. Exclude our own sites, which are not relevant to tracking customer usage.
-    our_sites = ["www.#{Constants::FIVEYEAR_ITCH_SITENAME.downcase}", "localhost", "fyistage.herokuapp.com", "www.#{Constants::SITENAME_LC}", "www.#{Constants::SHORT_SITENAME.downcase}.co.il", "#{Constants::SHORT_SITENAME.downcase}.herokuapp.com"]
+    our_sites = ["www.#{Constants::FIVEYEARITCH_SITENAME.downcase}", "localhost", "fyistage.herokuapp.com", "www.#{Constants::SITENAME_LC}", "www.#{Constants::SHORT_SITENAME.downcase}.co.il", "#{Constants::SHORT_SITENAME.downcase}.herokuapp.com"]
     unless  our_sites.include?(host.to_s.downcase)
       now = Time.parse(ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP"))
       if @employer.join_us_widget_heartbeat.nil? || now - @employer.join_us_widget_heartbeat >= 12.hours

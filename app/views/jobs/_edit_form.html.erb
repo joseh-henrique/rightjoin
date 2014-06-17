@@ -38,7 +38,6 @@
 	function load_photo(image_index, photo_id, photo_url, photo_title){
 		var field_el_name = "#image_" + image_index + "_id";
 		var box_el_name = "#image-box-" + image_index;
-		
 		load_image(field_el_name, box_el_name, photo_id, photo_url, photo_title);
 	}
 </script>
@@ -117,7 +116,7 @@
 	</div>
 	
 	<a id="listings"></a>
-	<%= label_tag(:company_logo, "Check some &ldquo;escape-worthy&rdquo; extras.".html_safe) %>
+	<%= label_tag(:company_logo, "In what special listings would you like to include this job?") %>
 	<div class="form-row group-box clearfix">
 		<div class="form-cell">
 			<ul class="checkbox-grid">
@@ -142,7 +141,7 @@
 	</div>
 	
 	<%benefit_field_len = 40%>
-	<%= label_tag(:company_logo, "More special features.") %>
+	<%= label_tag(:company_logo, "More &ldquo;escape-worthy&rdquo; extras.".html_safe) %>
 	<div class="form-row group-box clearfix">
 		<div class="form-column">
 			<div class="form-cell">
@@ -291,8 +290,8 @@
 	});	
 
 	function doSubmitForm() {
-		addHttpToUrlIfNeeded($("#ad_url"));
-		addHttpToUrlIfNeeded($("#company_url"));
+		createValidUrl($("#ad_url"));
+		createValidUrl($("#company_url"));
 		$("form.new_job, form.edit_job").validationEngine('hideAll');
 		
 		if($("#verify-account-form").length > 0) {

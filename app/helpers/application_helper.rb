@@ -61,9 +61,9 @@ module ApplicationHelper
     if for_view==:employee
       return "What you need from your next job"
     elsif for_view==:searcher || for_view==:employer
-       return "Candidate's job requirements"
+       return "Requirements"
     else
-      raise "for_view #{for_view} unknown" unless Rails.env.production?
+      raise "for_view #{for_view}, unknown" unless Rails.env.production?
     end
   end
   
@@ -138,10 +138,9 @@ module ApplicationHelper
     
   end
   
-  # Used only for user, not employer, not employer
-   
+  # Used only for user, not employer 
   def show_page_s(status)
-    puts "Did not expect Employer" if Rails.env.development? && @user.class==Employer
+    raise  "Did not expect Employer" if Rails.env.development? && @user.class==Employer
     if status == UserConstants::PENDING  
       res = "Your profile is <em>pending verification</em>.
       Verify it by entering the password that we sent you.
@@ -171,7 +170,7 @@ module ApplicationHelper
   
   def  uservoice_contact_link(txt ="contact us")
       # First param is a fallback in case form does not work.
-      extra_param_for_uv = %Q^id="uservoice-contact" data-uv-trigger^
+   extra_param_for_uv = %Q^id="uservoice-contact" data-uv-trigger^
 		contact_link(txt, extra_param_for_uv)
   end
    

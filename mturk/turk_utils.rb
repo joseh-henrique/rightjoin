@@ -11,10 +11,10 @@ module TurkUtils
     BLANK_VALS =[nil, "", "n/a", "nil", NOT_APPLICABLE.downcase, "none", "unknown", "not-selected", "-", "other"]# probably there are no "-".
     
     DEFAULT_COUNTRY_CODE = "default_country_code"
-      INPUT = "Input."
+    INPUT = "Input."
     ANSWER = "Answer."
     OTHER= "Other."
-    HIT_ID = "HITId"
+    HIT_ID = "HI  TId"
     ORIG_AD_URL = "orig_ad_url"
     JOB_AD_URL = "job_ad_url"
  
@@ -24,7 +24,7 @@ module TurkUtils
     WORK_FROM_HOME = "work_from_home"
      RELOCATION ="relocation"
      TELECOMMUTE = "telecommute" 
-    BOARD_NAMES = [WORK_FROM_HOME, "open_source", "startup", "kegerator",  BLEEDING_EDGE_TECH, "meaningful_jobs"]
+    BOARD_NAMES w= [WORK_FROM_HOME, "open_source", "startup", "kegerator",  BLEEDING_EDGE_TECH, "meaningful_jobs"]
     BOOLEAN_BASE_NAMES = BOARD_NAMES + [  RELOCATION]  
     
     STATE = "state"

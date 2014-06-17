@@ -26,12 +26,12 @@
   EMPLOYER_SEARCH = {:id => "pg-search", :title => "Search candidates", :intended_for => :employer}  
   EMPLOYER_INVITE_AMBASSADOR = {:id => "pg-invite-ambassador", :title => "Invite team members", :intended_for => :employer} 
   EMPLOYER_EMBED_WE_ARE_HIRING_WIDGET = {:id => "pg-embed-we-are-hiring-widget", :title => "Configure the \u201dWork With Us\u201d job posting to display on your site", :intended_for => :employer} 
-  EMPLOYER_CONFIGURE_WORK_WITH_US_WIDGET = {:id => "pg-configure-work-with-us", :title => "Configure the \u201dWork With Us\u201d widget", :intended_for => :employer} 
+  EMPLOYER_CONFIGURE_JOIN_US_TAB = {:id => "pg-configure-work-with-us", :title => "Configure the \u201dWork With Us\u201d widget", :intended_for => :employer} 
   
   # ambassadors
-  TEAM_MEMBER_SIGNIN ="Team member signin" # Same text works for both cases
-  AMBASSADOR_CREATE = {:id => "pg-ambassador-create", :title => TEAM_MEMBER_SIGNIN, :intended_for => :ambassador} 
-  AMBASSADOR_SIGNIN = {:id => "pg-ambassador-signin", :title => TEAM_MEMBER_SIGNIN, :intended_for => :ambassador} 
+  TEAM_MEMBER_SIGNIN_TXT ="Team member signin" # Same text works for both cases
+  AMBASSADOR_CREATE = {:id => "pg-ambassador-create", :title => "Find great colleagues", :intended_for => :ambassador} 
+  AMBASSADOR_SIGNIN = {:id => "pg-ambassador-signin", :title => "Team member sign-in", :intended_for => :ambassador} 
   AMBASSADOR_SHOW = {:id => "pg-ambassador_show", :title => "Dashboard", :intended_for => :ambassador} 
   
   # anybody

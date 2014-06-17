@@ -17,6 +17,9 @@
 //= require cloudinary
 //= require jquery.jcrop.min
 //= require cloudinary/processing  
+//= require ZeroClipboard.min
+//= require uservoice 
+ 
 
 if (!window.console) var console = { log: function() {} };
 
@@ -261,17 +264,23 @@ jQuery.fn.fading_highlight = function() {
     });
 };
 
-function addHttpToUrlIfNeeded(elem) {
-	var url = $.trim(elem.val()).toLowerCase();
-	if(url.indexOf('http') != 0 && url.length > 0) {
-		elem.val("http://" + $.trim(elem.val()));
+function createValidUrl(elem) {
+	var old_val = elem.val();
+	var trimmed_old_val = $.trim(old_val);
+	var trimmed_old_val_lc = trimmed_old_val.toLowerCase();//we do this only to account for case variation in HtTp
+	if (trimmed_old_val_lc.indexOf('http') != 0 && trimmed_old_val_lc.length > 0) {
+		elem.val("http://" + trimmed_old_val);
+	} else if (old_val!=trimmed_old_val){
+		elem.val(trimmed_old_val);
 	}
 }
+
+ 
 
 function pitch_position(form_id, should_pitch){
 	var $pitch_form = $(form_id);
 	if ($pitch_form.find(".send-msg-btn").attr("disabled") != "disabled"){
-		$pitch_form.find(".send-message-result").html("");
+		$pitch_form.find(".ajax-error-message").html("");
 		var is_valid = $pitch_form.validationEngine('validate');
 		if (is_valid){
 			$pitch_form.find(".send-msg-btn").attr('disabled', true);
@@ -290,7 +299,7 @@ function pitch_position(form_id, should_pitch){
 $(document).delegate(".send-msg-form", "submit", function (event) {
 	var res = false;
 	if ($(this).find(".send-msg-btn").attr("disabled") != "disabled"){
-		$(this).find(".send-message-result").html("");
+		$(this).find(".ajax-error-message").html("");
 		var is_valid = $(this).validationEngine('validate');
 		if (is_valid){
 			$(this).find(".send-msg-btn").attr('disabled', true);
@@ -363,4 +372,29 @@ function openDialogWindow(href,  width_, height_, name_) {
     win.focus();
     return false;
 }
+
+function highlight(field) {
+	field.focus();
+	field.select();
+}
+
  
+ 
+function zeroclipboard_init(copy_button_selector, data_clipboard_text) {
+ 	ZeroClipboard.config( { swfPath: '/ZeroClipboard.swf' } );
+ 	var button = $(copy_button_selector);
+ 
+    var client = new ZeroClipboard(button );
+	client.on( "ready", function( readyEvent ) {
+	
+		client.on( "copy", function (event) {
+		  var clipboard = event.clipboardData;
+		  clipboard.setData( "text/plain", data_clipboard_text );
+		});
+		
+		
+	  client.on( "aftercopy", function(event) {
+ 	  	alert("Copied to clipboard");//[TODO] show an alert more aesthetically
+	  });
+	});
+}

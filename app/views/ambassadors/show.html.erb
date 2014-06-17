@@ -57,8 +57,10 @@
 			<% else %>
 				<script  type="text/javascript">
 					var networks_js = {};
-					<% networks = {} 
-					Constants::SHARE_CHANNELS.each_with_index do |network, i|
+					<% networks = {}
+					share_channels = Constants::SHARE_CHANNELS
+					share_channels << Constants::SOCIAL_NETWORK_SHARE_URL
+					share_channels.each_with_index do |network, i|
 						networks[network] = "#{i}.#{@ambassador.id.to_s(16)}.#{((Time.now - Constants::FYI_EPOCH) / 1.hours).to_i.to_s(16)}.#{@job.id.to_s(16)}"
 					%>
 						networks_js["<%=network%>"] = "<%=networks[network]%>";
@@ -68,9 +70,9 @@
 				<div class="invite-friends">Get yourself some colleagues you want to work with.</div>
 				
 				<div class="position-chooser">
-					<% ative_jobs = @ambassador.employer.active_jobs %>
-					<% if ative_jobs.size > 1 %>
-						<% options = ative_jobs.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id]} %>
+					<% active_jobs_ = @ambassador.employer.active_jobs %>
+					<% if active_jobs_.size > 1 %>
+						<% options = active_jobs_.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id]} %>
 						<%= label_tag(nil, "Choose position") %>&nbsp;
 						<%=select 'select', 'job', options, {:include_blank => false, :selected => @job.id}, {:class => "half-row-width"}%>
 					<% else %>
@@ -124,7 +126,22 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_EMAIL%>
 								<div class="share-button email" title="Email">
-									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: "#{description}: #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}", :id => "invite_team_member_btn", :target => "_fyi_email")%>
+									<%msg_txt= "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
+								</div>
+							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
+								<div class="share-button email" title="Copy to clipboard">
+									<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+									<a id="copy-button"  data-clipboard-text="<%=msg_txt%>">
+										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
+									</a>
+							 
+									<script>
+									$(document).ready(function(){
+										zeroclipboard_init("#copy-button", unescapeHTML("<%= msg_txt%>")); 
+									});
+									</script>
+								
 								</div>
 							<%end%>
 						</div>

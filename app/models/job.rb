@@ -388,7 +388,11 @@ class Job < ActiveRecord::Base
   end
   
   def self.active_with_share_statistics
-    Job.unscoped.joins("LEFT OUTER JOIN shares ON shares.job_id = jobs.id").where("jobs.status = ?", Job::LIVE).group("jobs.id").select("jobs.*, count(shares.id) as shares_counter, sum(shares.click_counter) as clickback_counter, sum(shares.lead_counter) as leads_counter")
+    self.jobs_with_share_statistics_by_status(Job::LIVE)
+  end
+  
+  def self.jobs_with_share_statistics_by_status(*status)
+    Job.unscoped.joins("LEFT OUTER JOIN shares ON shares.job_id = jobs.id").where(status: status).group("jobs.id").select("jobs.*, count(shares.id) as shares_counter, sum(shares.click_counter) as clickback_counter, sum(shares.lead_counter) as leads_counter")
   end
   
   def get_photo(index) 

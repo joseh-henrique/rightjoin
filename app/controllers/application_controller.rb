@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   def check_uri
     host = request.host
-    if !host.start_with?("fyistage.herokuapp.com") && 
+    if !host.include(".herokuapp.com") && 
        !host.start_with?("localhost") && 
        !host.start_with?("127.0.0.1") && 
        !host.start_with?("lvh.me") &&        

@@ -42,7 +42,8 @@ class Infointerview < ActiveRecord::Base
     self.job.employer
   end
   
-  def inspect
+  
+  def inspect 
     parts = [
     "------------------------------------------------------------------------",
     "** Created at #{self.created_at} (#{((Time.now - self.created_at)/(3600 * 24)).to_i} days ago), status = #{self.status}",

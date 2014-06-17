@@ -1,0 +1,21 @@
+<%= render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_COMPACT} %>
+
+<% 
+all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
+%>
+
+<div class="job-counters clearfix">
+	<div class="job-counter">
+		<div class="counter-value"><%=job.shares_counter.to_i%></div>
+		<div class="counter-title">Shared</div>
+	</div>
+	<div class="job-counter">
+		<div class="counter-value"><%=job.clickback_counter.to_i%></div>
+		<div class="counter-title">Clickbacks</div>
+	</div>
+	<div class="job-counter">
+		<!-- need to count infointerviews as not all leads come from shares-->
+		<div class="counter-value"><%=all_infointerviews_for_this_job.count%></div>
+		<div class="counter-title">Leads</div>
+	</div>
+</div>

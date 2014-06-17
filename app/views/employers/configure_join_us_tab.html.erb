@@ -1,0 +1,189 @@
+<div class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+
+	<div class="content-box">
+		<div class="page-heading-box">
+			<h1>
+				Configure the &ldquo;Join Us&rdquo; tab and add it to your site.
+			</h1>
+		</div>
+		
+		<div id="join-us-tab-configure">
+
+			<div class="standard-section-header">Configure the look and feel</div>
+			<div class="section-box">
+				<div class="form-row clearfix">
+					<div class="form-column controls-box">
+						<div class="form-cell">
+							<label>Tab label</label><br>
+							<%= text_field("config", "label_text", :value => "JOIN US", :spellcheck => true, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]") %>
+						</div>
+				
+						<div class="form-cell">
+							<label>Location on page</label><br>
+							<% positions = [ "top-left", "top-right", "left-top", "left-middle", "left-bottom", "bottom-left", "bottom-right", "right-top", "right-middle", "right-bottom" ] %>
+							<% select_val = "left-top" %>
+							<% select_val ||= positions[0] %>
+							<%=select "config", "tab_position", options_for_select(positions, select_val), {}, { :class => 'standard-select' }%>
+						</div>
+						
+						<div class="form-cell">
+							<label>Background color</label>
+							<div id="tab-background-picker" class="tab-color-picker"></div>
+						</div>
+						
+						<div class="form-cell">
+							<label>Border</label>
+							<div class="radio-row"><%=radio_button_tag 'border', 'white'%>&nbsp;&nbsp;<%=label_tag("border_white", "White")%></div>
+							<div class="radio-row"><%=radio_button_tag 'border', 'black'%>&nbsp;&nbsp;<%=label_tag("border_black", "Black")%></div>
+							<div class="radio-row"><%=radio_button_tag 'border', 'none', true%>&nbsp;&nbsp;<%=label_tag("border_none", "None")%></div>
+						</div>						
+					</div>
+					
+					<div class="form-column">
+						<div class="preview-box">
+							<div id="tab-preview">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+
+
+			<div class="standard-section-header">
+				<span>Embed into your site</span>
+				<div class="header-buttons-box">
+					<%=link_to("Live preview...", "#", :class => "standard-button", :id => "live-preview-button") %>&nbsp;&nbsp;
+					<%=link_to("Copy to clipboard", "#", :class => "standard-button") %>
+				</div>
+			</div>
+			<div class="section-box">
+				<div class="form-cell">
+					<%= label_tag(nil, "Paste this code snippet into your site's HTML, e.g., right before the </body> tag.") %><br>
+					<textarea onClick="this.select();" id="code-input" spellcheck="false" readonly="readonly"></textarea>
+				</div>
+			</div>			
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	var loader_js = "";
+	
+	$(function() {
+		loader_js = "<%=escape_javascript (render :partial=>'employers/work_with_us_loader.js.erb')%>";
+		
+		update_tab_preview();
+		update_loader_js();
+	});
+
+	$('#tab-background-picker').colpick({
+		layout:'hex',
+		submit:0,
+		onChange:function(hsb,hex,rgb,el,bySetColor) {
+			$(el).css('background-color', '#'+hex);
+			update_tab_preview();
+			update_loader_js();
+		}
+	}).keyup(function(){
+		$(this).colpickSetColor(this.value);
+	});
+	
+	$("#config_label_text").blur(function() {
+		if ($(this).val().length == 0){
+			$(this).val("JOIN US");
+		}
+		
+		update_tab_preview();
+		update_loader_js();
+	});
+	
+	$('#config_label_text').on('input', function() { 
+	    update_tab_preview();
+	    update_loader_js();
+	});	
+	
+	$("#config_tab_position").change(function() {
+		update_tab_preview();
+		update_loader_js();
+	});
+	
+	$('input[type=radio][name=border]').change(function() {
+       	update_tab_preview();
+	    update_loader_js();
+    });
+	
+	$("#live-preview-button").click(function(){
+		window.open('<%=work_with_us_test_employer_path(@employer.reference_num, :job => nil, :locale => nil)%>' + "?" + $.param({"tabparams": build_params()})); 
+		if(event.stopPropagation){
+			event.stopPropagation();
+		}
+		event.cancelBubble=true;
+		return false;
+	});
+	
+	function isDark( color ) {
+	    var match = /rgb\((\d+).*?(\d+).*?(\d+)\)/.exec(color);
+	    return parseFloat(match[1])
+	         + parseFloat(match[2])
+	         + parseFloat(match[3])
+	           < 3 * 256 / 2; // r+g+b should be less than half of max (3 * 256)
+	}	
+	
+	function update_tab_colors() {
+		var tab_bg_color = $("#tab-background-picker").css('background-color');
+		$("#tab-preview").css('background-color', tab_bg_color);
+		$("#tab-preview").css("color", isDark(tab_bg_color) ? 'white' : 'black');
+	}
+
+	function update_tab_preview(){		
+		$("#tab-preview").empty();
+		$("#tab-preview").removeClass();
+		$("#tab-preview").removeAttr('style');
+
+		// update tab colors
+		var tab_bg_color = $("#tab-background-picker").css('background-color');
+		$("#tab-preview").css('background-color', tab_bg_color);
+		$("#tab-preview").css("color", isDark(tab_bg_color) ? 'white' : 'black');
+		var border_color = tab_bg_color;
+		if ($("input[type=radio][name=border]:checked").val() == "white") {
+			border_color = "white";
+		} else if ($("input[type=radio][name=border]:checked").val() == "black") {
+			border_color = "black";
+		}
+		$("#tab-preview").css('border-color', border_color);
+		
+		var label_text = $("#config_label_text").val();
+		for (var i=0; i < label_text.length; i++) {
+			if (label_text.charAt(i) == " ") {
+				$("#tab-preview").append( "<span class='gap'>&nbsp;</span>" );
+			} else {
+				$("#tab-preview").append( "<span class='letter'>" + label_text.charAt(i) + "</span>" );
+			}
+		}
+		
+		var position = $("#config_tab_position").val();
+		$("#tab-preview").addClass(position);
+		
+		if(position == "left-middle" || position == "right-middle") {
+			$("#tab-preview").css("margin-top", -1 * $("#tab-preview").outerHeight(false) / 2);
+		}
+	}
+	
+	function build_params() {
+		var params_hash = {};
+		params_hash['bg'] = $("#tab-preview").css('background-color');
+		params_hash['color'] = $("#tab-preview").css("color");
+		params_hash['label'] = $("#config_label_text").val();
+		params_hash['position'] = $("#config_tab_position").val();
+		params_hash['border'] = $("input[type=radio][name=border]:checked").val();
+		
+		return $.param(params_hash);
+	}
+	
+	function update_loader_js() {
+		var loader_js_res = loader_js.replace('var params = "";', 'var params = "' + build_params() + '";');
+		$("#code-input").val("<script type=\"text/javascript\">" + loader_js_res + "<\/script>");
+	}
+</script>

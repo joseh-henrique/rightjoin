@@ -1,9 +1,19 @@
 <%
+activeJobsCount = @employer.active_jobs.count
+
+# initialize params
+color = params["color"]
+background_color = params["bg"]
+border_color = params["border"]
+if border_color.nil? || border_color == "none"
+	border_color = background_color
+end
+label_text = escape_javascript raw params["label"]
+position = params["position"]
+
+
 tab_element_id = "fyi-tab-box"
 border_radius = "6px"
-activeJobsCount = @employer.active_jobs.count
-border_color = @employer.join_us_widget_params_map["tab_border_color"]
-label_text = escape_javascript raw @employer.join_us_widget_params_map["label_text"];
 
 border_bottom_tab = <<-FIN
 	border: 1px solid #{border_color};
@@ -152,8 +162,8 @@ FIN
 				shift = "80px"
 				css = <<-FIN
 					##{tab_element_id} {
-						background: #{@employer.join_us_widget_params_map['tab_background_color']};
-						color: #{@employer.join_us_widget_params_map['tab_text_color']};
+						background: #{background_color};
+						color: #{color};
 				      	font-size: 12px;
 				      	font-weight: bold;
 				      	font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
@@ -173,7 +183,7 @@ FIN
 					}
 				FIN
 				
-				case @employer.join_us_widget_params_map['tab_position']
+				case position
 				when "top-left"
 					css << "##{tab_element_id} {top: 0; left: #{shift}; #{border_top_tab}}"
 				when "top-right"

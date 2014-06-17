@@ -1,36 +1,24 @@
 <% active_jobs = current_user.active_jobs_with_share_statistics.order("created_at DESC").to_a %>
 
-<% unless active_jobs.empty? %>
+<% if active_jobs.empty? %>
+	You have no active jobs. <%=link_to("Create a new", new_employer_job_path(current_user))%> job posting.
+<% else %>
 	<% active_jobs.each do |job| %>
+		<%
+		all_interviews = job.interviews
+		recommended = all_interviews.select {|interview| interview.status_one_of?([Interview::RECOMMENDED])}	
+		all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
+		%>
+
+		<% if Time.now - job.created_at < 1.hour %>
+			<div class="new-tab">New!</div>
+		<% end %>
 		<div class="job-ad-box closable">
 			<div class="above-buttons">
 				<%=link_to("Close", employer_job_path(current_user, job, :locale => job.country_code), :method => :delete, :class => "close", :title => "Close position",
 												:confirm => "Are you sure you want to close this job posting?")%>
 				
-				<%= render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_COMPACT} %>
-				
-				<% 
-				all_interviews = job.interviews
-				recommended = all_interviews.select {|interview| interview.status_one_of?([Interview::RECOMMENDED])}	
-				all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
-				boards = job.ads.map {|ad|ad.board.title}
-				%>
-				
-				<div class="job-counters clearfix">
-					<div class="job-counter">
-						<div class="counter-value"><%=job.shares_counter.to_i%></div>
-						<div class="counter-title">Shared</div>
-					</div>
-					<div class="job-counter">
-						<div class="counter-value"><%=job.clickback_counter.to_i%></div>
-						<div class="counter-title">Clickbacks</div>
-					</div>
-					<div class="job-counter">
-						<!-- need to count infointerviews as not all leads come from shares-->
-						<div class="counter-value"><%=all_infointerviews_for_this_job.count%></div>
-						<div class="counter-title">Leads</div>
-					</div>
-				</div>
+				<%= render :partial => 'jobs/ad_with_counters', :locals => {:job => job} %>
 			</div>
 			
 			<div class="job-control-panel clearfix">

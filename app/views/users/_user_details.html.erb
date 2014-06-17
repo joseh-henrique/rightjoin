@@ -1,112 +1,60 @@
-<% require 'rinku' %>
-
 <div id="user-<%=user_details.id%>" class="user-details">
-	<% if for_view != :employee %>	
-		<div class="time-distance-in-words position-adjustment">
-			Reference #<%=user_details.reference_num%>
-		</div>
-	<%end%>
+	<div class="wanted-postion-box attr-box">
+		<%= label_tag(:wantedposition,  wanted_job_s(for_view)   ) %>
+		<div class="attr-value"><%=user_details.wanted_position_name%></div>			
+	</div>
 	
-	<div class="clearfix user-attr-row">
-		<div class="left-col">
-			<%= label_tag(:currentposition,  current_job_s(for_view) ) %> 
-			<div class="user-attr-ro-box"><%=user_details.current_position_name%></div>
-		</div>
-		<div class="right-col">
+	<div class="location-box attr-box">
+		<%= label_tag(:location, city_s(for_view) ) %>
+		<div class="attr-value">
+			<%=raw user_details.all_location_parts.map{|loc| h(loc)}.join("<span class='location-sep'> or </span>")%>
 		</div>
 	</div>
 	
-	<div class="clearfix user-attr-row">
-		<div class="left-col">
-			<%= label_tag(:wantedposition,  wanted_job_s(for_view)   ) %>
-			<div class="user-attr-ro-box"><%=user_details.wanted_position_name%></div>			
-		</div>
-		<div class="right-col">
-			<%= label_tag(:location, city_s(for_view) ) %>
-			<div class="user-attr-ro-box">
-				<%=raw user_details.all_location_parts.map{|loc| h(loc)}.join("<span class='location-sep'> or </span>")%>
-			</div>			
-		</div>
+	<div class="current-position-box attr-box">
+		<%= label_tag(:currentposition,  current_job_s(for_view) ) %> 
+		<div class="attr-value"><%=user_details.current_position_name%></div>
 	</div>
 	
-	<% if for_view != :employee %>
- 		<div class="user-attr-row">
-			<% unless user_details.user_skills.empty? %>
-				<%= label_tag(:skilltag, skills_s(for_view) ) %>
-				<div class="user-attr-ro-box">
-					<ol id="skills-tags-list" class="tags-list"></ol>
-				</div>
-			<% end %>
+	<% unless user_details.aspiration.nil? %>
+		<div class="aspirations-box attr-box">
+			<%= label_tag(:aspiration,  "Career aspiration") %>
+			<div class="attr-value">
+				<%=User::ASPIRATIONS[user_details.aspiration][:label]%>
+			</div>
+		</div>
+	<% end %>		
+	
+	<% unless user_details.free_text.blank? %>
+		<div class="free-text-box attr-box">
+			<%= label_tag(:free_text,  free_text_s(for_view) ) %>
+			<div class="attr-value">
+				<%= user_details.free_text %>
+			</div>
+		</div>
+	<% end %>
+	
+	<% requirements = user_details.user_job_qualifiers.collect {|req| req.job_qualifier_tag.name} %>
+	<% requirements.push("at least #{Utils::format_currency(user_details.wanted_salary, user_details.locale)}") if user_details.wanted_salary > 0 %>
+	
+	<% unless requirements.empty? %>
+		<div class="requirements-box attr-box">
+			<%= label_tag(:jobqualifiertag,  job_qualifier_s(for_view) ) %>
+			<div class="attr-value"><%=requirements.join(", ")%></div>
+		</div>
+	<% end %>
+	
+	<%unless user_details.user_skills.empty?%>
+		<div class="skills-box attr-box">
+			<%= label_tag(:skilltag, skills_s(for_view) ) %>
+			<div class="attr-value">
+				<ol class="tags-list"></ol>
+			</div>
+			<script type="text/javascript">
+				<% user_details.user_skills.each do |one_skill| %>
+					writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, ".tags-list", "#user-<%=user_details.id%>", true, "Knows <%= "#{one_skill.skill_tag.name} at the #{seniority_s(one_skill.seniority)} level"%>");
+				<% end %>
+			</script>
 		</div>	
-		
-		<% unless user_details.aspiration.nil? %>
-			<div class="user-attr-row">
-				<%= label_tag(:aspiration,  "Candidate's job aspiration") %>
-				<div class="user-attr-ro-box">
-					<%=User::ASPIRATIONS[user_details.aspiration][:label]%>
-				</div>
-			</div>
-		<% end %>	
-		
-		<% if user_details.wanted_salary > 0 %>
-			<div class="clearfix user-attr-row">
-				<div class="left-col">
-					<%= label_tag(:wantedsalary, wanted_salary_s(for_view) ) %>
-					<div class="user-attr-ro-box">At least <%= Utils::format_currency(user_details.wanted_salary, user_details.locale)%></div>
-				</div>
-				<div class="right-col">	
-				</div>
-			</div>
-		<%end%>
-		
-		<% unless user_details.user_job_qualifiers.empty? %>
-			<div class="user-attr-row">
-				<%= label_tag(:jobqualifiertag,  job_qualifier_s(for_view) ) %>
-				<div class="user-attr-ro-box">
-					<ol id="job-qualifier-tags-list" class="tags-list"></ol>
-				</div>
-			</div>
-		<% end %>
-		
-		<% unless user_details.free_text.blank? %>
-			<div class="user-attr-row">
-				<%= label_tag(:free_text,  free_text_s(for_view) ) %>
-				<div class="user-attr-ro-box">
-					<%= user_details.free_text %>
-				</div>
-			</div>
-		<% end %>
-		
-		<script type="text/javascript">
-			<% user_details.user_job_qualifiers.each do |one_qualifier| %>
-				writeTag("<%=escape_javascript(one_qualifier.job_qualifier_tag.name).html_safe%>", "data-job-qualifier", "1", "#job-qualifier-tags-list","#user-<%=user_details.id%>", true, "<%= "Job offers must include #{one_qualifier.job_qualifier_tag.name}"%>");
-			<% end %>
-		
-			<% user_details.user_skills.each do |one_skill| %>
-				writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, "#skills-tags-list", "#user-<%=user_details.id%>", true, "Knows <%= "#{one_skill.skill_tag.name} at #{seniority_s(one_skill.seniority)} level"%>");
-			<% end %>
-		</script>
-	<% end %>
-	
-	<% if for_view == :employer %>
-		<div class="clearfix user-attr-row">
-			<div class="left-col">
-				<%= label_tag(:firstname, "First name") %>
-				<div class="user-attr-ro-box"><%=user_details.first_name%></div>			
-			</div>
-			<div class="right-col">
-				<%= label_tag(:lastname, "Last name") %>
-				<div class="user-attr-ro-box"><%=user_details.last_name %></div>			
-			</div>
-		</div>
-		
-		<div class="user-attr-row">
-			<%= label_tag(:resume, "Candidate's professional background info") %>
-			<div class="user-attr-ro-box">
-				<%r= user_details.resume || ""%>
-				<%=Rinku.auto_link(CGI::escapeHTML(r), :all, 'target="_blank"').html_safe%>
-			</div>
-		</div>
-	<% end %>
+	<%end%>
 </div>
-

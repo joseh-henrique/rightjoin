@@ -7,7 +7,7 @@
 		<!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700|Roboto:300' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
 		<%= stylesheet_link_tag 'team', :media => "all"%>
 		<%= yield :more_style %>
 		
@@ -40,6 +40,5 @@
 			</div>
 		</div>
 		<%= render :partial=> 'widgets/google_analytics' %>
-		<%= render :partial => 'widgets/uservoice_widget'%>
 	</body>
 </html>
