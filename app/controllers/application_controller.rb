@@ -7,21 +7,23 @@ class ApplicationController < ActionController::Base
 
   def check_uri
     host = request.host
+    puts "Host is #{host}"
     if !host.include?(".herokuapp.com") && 
        !host.start_with?("localhost") && 
        !host.start_with?("127.0.0.1") && 
        !host.start_with?("lvh.me") &&        
-       !host.start_with?("10.0.0") && 
+       !host.start_with?("10.0.0") &&
        !(Rails.env.development? && ( host.start_with?("192.168.0.") || host.start_with?("9.148."))) # Virtualbox; need to change this ip each time
-      if request.subdomain.blank?
-        port_str = (request.port==80 ?"": ":"+request.port.to_s) 
-        url_with_www = request.protocol + "www." + Constants::SITENAME_LC+ port_str + request.fullpath
-        
-        headers["Status"] = "301 Moved Permanently"
-        redirect_to url_with_www
-      elsif request.subdomain != "www"
-        redirect_to(jobs_url(:subdomain => "www", :board => request.subdomain))  
-      end
+         
+          if request.subdomain.blank?
+            port_str = (request.port==80 ?"": ":"+request.port.to_s) 
+            url_with_www = request.protocol + "www." + Constants::SITENAME_LC+ port_str + request.fullpath
+            
+            headers["Status"] = "301 Moved Permanently"
+            redirect_to url_with_www
+          # elsif request.subdomain != "www"# Not doing the job board subdomains  any more. 
+            # redirect_to(jobs_url(:subdomain => "www", :board => request.subdomain))  
+          end
     end
   end
 
