@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
            if host.include?(Constants::SITENAME_IL_LC)
               set_default_locale(Constants::COUNTRY_IL) 
            end   
+           
            base_sitename = host.include?(Constants::SITENAME_IL_LC)   ?
                                   Constants::SITENAME_IL_LC  :
                                   Constants::SITENAME_LC
@@ -36,11 +37,18 @@ class ApplicationController < ActionController::Base
   end
   
   # default is US, if it's Canada go with it, use set_locale_by_ip for full geotargeting
-  def set_default_locale(country_code_param = nil )
-    if country_code_param.nil?
-      country_code_param = params[:locale]#param like uk, ca, au, us
+  def set_default_locale(country_code_from_domain= nil )
+    
+    country_code_param = params[:locale]#param like uk, ca, au, us
+    
+    if country_code_param.blank?
+      country_code_param = country_code_from_domain
     end
-    locale_s = Constants::COUNTRIES[country_code_param] unless country_code_param.blank?
+    
+    unless country_code_param.blank?
+      locale_s = Constants::COUNTRIES[country_code_param]
+    end 
+    
     if locale_s.blank?
       I18n.locale = LocationUtils::locale_by_ip(request.remote_ip)
       if I18n.locale != Constants::COUNTRIES[Constants::COUNTRY_CA]
