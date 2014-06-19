@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
            end   
            
  
-          if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAsME.downcase) || host.include?(Constants::SITENAME_IL_LC)
+          if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC)
             port_str = (request.port==80 ?"": ":"+request.port.to_s) 
             url_with_www = request.protocol + "www." + Constants::SITENAME_LC+ port_str + request.fullpath
             
