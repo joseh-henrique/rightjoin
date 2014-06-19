@@ -19,12 +19,10 @@ class ApplicationController < ActionController::Base
               set_default_locale(Constants::COUNTRY_IL) 
            end   
            
-           base_sitename = host.include?(Constants::SITENAME_IL_LC)   ?
-                                  Constants::SITENAME_IL_LC  :
-                                  Constants::SITENAME_LC
-          if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase)
+ 
+          if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAsME.downcase) || host.include?(Constants::SITENAME_IL_LC)
             port_str = (request.port==80 ?"": ":"+request.port.to_s) 
-            url_with_www = request.protocol + "www." + base_sitename+ port_str + request.fullpath
+            url_with_www = request.protocol + "www." + Constants::SITENAME_LC+ port_str + request.fullpath
             
             headers["Status"] = "301 Moved Permanently"
             redirect_to url_with_www
@@ -36,8 +34,12 @@ class ApplicationController < ActionController::Base
     { :locale => I18n.t(:country_code, :locale => I18n.locale) }
   end
   
-  # default is US, if it's Canada go with it, use set_locale_by_ip for full geotargeting
-  def set_default_locale(country_code_from_domain= nil )
+  # Priority order for setting def.locale
+  # 1. country from param
+  # 2. country from host, e.g. is rightjoin.co.il set
+  # 3. set_locale_by_ip  , so long as it is Canada. 
+  # country_code_from_domain is like  uk, il, ca, au, us
+  def set_default_locale(country_code_from_domain = nil )
     
     country_code_param = params[:locale]#param like uk, ca, au, us
     
