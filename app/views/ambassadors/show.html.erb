@@ -130,24 +130,30 @@
 									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
-								<div class="share-button email" title="Copy to clipboard">
-									<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
-									<a id="copy-button"  data-clipboard-text="<%=msg_txt%>">
+								<div class="share-button copy-to-clipboard" >
+									<a id="copy-button" class="copy-button"   >
 										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
-									</a>
-							 
+										<div  class="div-tooltip" >Copied to clipboard</div>	
+									</a>	 		
 									<script>
-									$(document).ready(function(){
-										zeroclipboard_init("#copy-button", unescapeHTML("<%= msg_txt%>")); 
+								 	$(document).ready(function(){
+								 		
+								 		var text_callback = function(){
+								 			//this is a constant function
+				 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+								 			var ret= unescapeHTML("<%= msg_txt%>");
+			 						 			return ret;
+								 		};
+		 	 							zeroclipboard_init("#copy-button" , text_callback); 
 									});
 									</script>
-								
 								</div>
-							<%end%>
+		 					<%end%>
 						</div>
+		
 					<% end %>
 				</div>
-				
+							
 				<a href="<%=we_are_hiring_employer_path(@ambassador.employer.reference_num, job: @job.id)%>" class="preview-link" 
 						onclick="return openDialogWindow(this.href, 1000, 650);">
 					See your posting ...
@@ -190,4 +196,4 @@
 			<% end %>
 		</div>
 	</div>
-</div>
+</div>	

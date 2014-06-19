@@ -3,7 +3,7 @@ class Constants
   SHORT_SITENAME ="RightJoin"
   SITENAME = Constants::SHORT_SITENAME + ".io"
   SITENAME_LC = SITENAME.downcase
-   
+  SITENAME_IL_LC = SHORT_SITENAME.downcase + ".co.il"
   FIVEYEARITCH_SITENAME  = "FiveYearItch.com"
   
   LEAD_REFERRAL_COOKIE = ":lead_referral_share_id"

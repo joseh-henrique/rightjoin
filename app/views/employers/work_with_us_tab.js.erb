@@ -5,18 +5,26 @@ activeJobsCount = @employer.active_jobs.count
 color = params["color"]
 background_color = params["bg"]
 border_color = params["border"]
-if border_color.nil? || border_color == "none"
-	border_color = background_color
+border = "border: none"
+unless border_color.nil? || border_color == "none"
+	border = "border: 2px solid #{border_color}"
 end
 label_text = escape_javascript raw params["label"]
 position = params["position"]
 
+text_shadow = "none";
+if color.casecmp("#FFFFFF") == 0
+	text_shadow = "0px 0px 1px #000;"
+elsif color.casecmp("#000000") == 0
+	text_shadow = " 1px 0px 1px rgba(255, 255, 255, 0.65);"
+end
 
-tab_element_id = "fyi-tab-box"
+
+tab_element_id = "rightjoin-tab"
 border_radius = "6px"
 
 border_bottom_tab = <<-FIN
-	border: 1px solid #{border_color};
+	#{border};
 	border-bottom: 0;
 	-webkit-border-top-left-radius: #{border_radius};
 	-webkit-border-top-right-radius: #{border_radius};
@@ -24,11 +32,11 @@ border_bottom_tab = <<-FIN
 	-moz-border-radius-topright: #{border_radius};
 	border-top-left-radius: #{border_radius};
 	border-top-right-radius: #{border_radius};
-	padding: 0.4em 0.7em 0.4em;
+	padding: 0.4em 0.9em 0.5em;
 FIN
 
 border_left_tab = <<-FIN
-	border: 1px solid #{border_color};
+	#{border};
 	border-left: 0;
 	-webkit-border-top-right-radius: #{border_radius};
 	-webkit-border-bottom-right-radius: #{border_radius};
@@ -36,11 +44,13 @@ border_left_tab = <<-FIN
 	-moz-border-radius-bottomright: #{border_radius};
 	border-top-right-radius: #{border_radius};
 	border-bottom-right-radius: #{border_radius};
-	padding: 0.6em;
+	padding: 0.8em 0.7em 0.8em 0.6em;
+	letter-spacing: 0;
+	text-transform: uppercase;
 FIN
 
 border_top_tab = <<-FIN
-	border: 1px solid #{border_color};
+	#{border};
 	border-top: 0;
 	-webkit-border-bottom-right-radius: #{border_radius};
 	-webkit-border-bottom-left-radius: #{border_radius};
@@ -48,11 +58,11 @@ border_top_tab = <<-FIN
 	-moz-border-radius-bottomleft: #{border_radius};
 	border-bottom-right-radius: #{border_radius};
 	border-bottom-left-radius: #{border_radius};
-	padding: 0.4em 0.7em 0.4em;
+	padding: 0.4em 0.9em 0.5em;
 FIN
 
 border_right_tab = <<-FIN
-	border: 1px solid #{border_color};
+	#{border};
 	border-right: 0;
 	-webkit-border-top-left-radius: #{border_radius};
 	-webkit-border-bottom-left-radius: #{border_radius};
@@ -60,7 +70,9 @@ border_right_tab = <<-FIN
 	-moz-border-radius-bottomleft: #{border_radius};
 	border-top-left-radius: #{border_radius};
 	border-bottom-left-radius: #{border_radius};
-	padding: 0.6em;
+	padding: 0.8em 0.7em;
+	letter-spacing: 0;
+	text-transform: uppercase;
 FIN
 %>
 
@@ -136,7 +148,7 @@ FIN
 	}	
 
 	// widget constructor function
-	global.FYI_workWithUs = function() {
+	global.RightJoin_tab = function() {
 		var _positionsCount = <%=activeJobsCount%>;
 		
 		var buildTabContent = function() {
@@ -147,12 +159,12 @@ FIN
 
 			for (var i=0; i < label_text.length; i++) {
 				if (label_text.charAt(i) == " ") {
-					letterElems.push("<span class='fyi-gap'>&nbsp;</span>");
+					letterElems.push("<span class='rightjoin-gap'>&nbsp;</span>");
 				} else {
-					letterElems.push("<span class='fyi-letter'>" + label_text.charAt(i) + "</span>");
+					letterElems.push("<span class='rightjoin-letter'>" + label_text.charAt(i) + "</span>");
 				}
 			}
-			res = "<div class='fyi-label-box'>" + letterElems.join("") + "</div>";
+			res = "<div class='rightjoin-label-box'>" + letterElems.join("") + "</div>";
 			
 			return res;
 		}
@@ -164,19 +176,23 @@ FIN
 					##{tab_element_id} {
 						background: #{background_color};
 						color: #{color};
-				      	font-size: 12px;
+				      	font-size: 13px;
 				      	font-weight: bold;
-				      	font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
+				      	font-family: 'Lucida Console', Monaco, monospace;
 				      	position: fixed;
 				      	cursor: pointer;
 				      	letter-spacing: 1px;
 				      	z-index: 99999;
+				      	text-shadow: #{text_shadow};
+				      	-webkit-box-shadow: rgba(255, 255, 255, 0.25) 1px 1px 1px inset, rgba(0, 0, 0, 0.5) 0px 1px 2px;
+						-moz-box-shadow: rgba(255, 255, 255, 0.25) 1px 1px 1px inset, rgba(0, 0, 0, 0.5) 0px 1px 2px;
+						box-shadow: rgba(255, 255, 255, 0.25) 1px 1px 1px inset, rgba(0, 0, 0, 0.5) 0px 1px 2px;
 					}
-					##{tab_element_id} .fyi-letter{
+					##{tab_element_id} .rightjoin-letter{
 					  text-align: center;
 					  line-height: 1em;
 					} 
-					##{tab_element_id} .fyi-gap {
+					##{tab_element_id} .rightjoin-gap {
 					  width: 0.5em;
 					  height: 0.5em;
 					  display: inline-block;
@@ -190,26 +206,26 @@ FIN
 					css << "##{tab_element_id} {top: 0; right: #{shift}; #{border_top_tab}}"
 				when "left-top"	
 					css << "##{tab_element_id} {left: 0; top: #{shift}; #{border_left_tab}}"
-					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"
+					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"
 				when "left-middle"
 					css << "##{tab_element_id} {left: 0; top: 50%; margin-top: -#{label_text.length / 2}em; #{border_left_tab}}"
-					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"
+					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"
 				when "left-bottom"
 					css << "##{tab_element_id} {left: 0; bottom: #{shift}; #{border_left_tab}}"
-					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"					
+					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"					
 				when "bottom-left"
 					css << "##{tab_element_id} {bottom: 0; left: #{shift}; #{border_bottom_tab}}"
 				when "bottom-right"
 					css << "##{tab_element_id} {bottom: 0; right: #{shift}; #{border_bottom_tab}}"
 				when "right-top"
 					css << "##{tab_element_id} {top: #{shift}; right: 0; #{border_right_tab}}"
-					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"					
+					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"					
 				when "right-middle"
 					css << "##{tab_element_id} {top: 50%; right: 0; margin-top: -#{label_text.length / 2}em; #{border_right_tab}}"
-					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"						
+					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"						
 				when "right-bottom"
 					css << "##{tab_element_id} {bottom: #{shift}; right: 0; #{border_right_tab}}"
-					css << "##{tab_element_id} .fyi-gap, ##{tab_element_id} .fyi-letter{display: block;}"
+					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"
 				end
 				
 				css.squish!
@@ -235,7 +251,9 @@ FIN
 		    	
 		    	var tabRoot = document.createElement("div");
 		    	tabRoot.setAttribute("id", "<%=tab_element_id%>");
-		    	tabRoot.setAttribute("class", customClassName);
+		    	if (customClassName) {
+		    		tabRoot.setAttribute("class", customClassName);
+		    	}
 		    	tabRoot.innerHTML = buildTabContent();
 		    	var body = document.getElementsByTagName('body')[0];
 		    	insertLast(tabRoot, body);

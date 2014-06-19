@@ -7,7 +7,7 @@ require_relative  'turk_utils'
 
 URL = "Url" 
    
-NEW_HEADERS_B=TurkUtils::NEW_HEADERS_B  = [TurkUtils::DEFAULT_COUNTRY_CODE, TurkUtils::SEARCH, TurkUtils::ORIG_AD_URL] + TurkUtils::BOARD_NAMES
+NEW_HEADERS_B = TurkUtils::NEW_HEADERS_B  
 
 $num_duplicates =0
 

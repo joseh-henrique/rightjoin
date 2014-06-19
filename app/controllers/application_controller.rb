@@ -6,23 +6,27 @@ class ApplicationController < ActionController::Base
   before_filter :check_uri
 
   def check_uri
-    host = request.host
-    puts "Host is #{host}"
+    host = request.host.downcase
+ 
     if !host.include?(".herokuapp.com") && 
        !host.start_with?("localhost") && 
        !host.start_with?("127.0.0.1") && 
        !host.start_with?("lvh.me") &&        
-       !host.start_with?("10.0.0") &&
-       !(Rails.env.development? && ( host.start_with?("192.168.0.") || host.start_with?("9.148."))) # Virtualbox; need to change this ip each time
+       !host.start_with?("10.0.0")  
          
-          if request.subdomain.blank?
+         
+           if host.include?(Constants::SITENAME_IL_LC)
+              set_default_locale(Constants::COUNTRY_IL) 
+           end   
+           base_sitename = host.include?(Constants::SITENAME_IL_LC)   ?
+                                  Constants::SITENAME_IL_LC  :
+                                  Constants::SITENAME_LC
+          if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase)
             port_str = (request.port==80 ?"": ":"+request.port.to_s) 
-            url_with_www = request.protocol + "www." + Constants::SITENAME_LC+ port_str + request.fullpath
+            url_with_www = request.protocol + "www." + base_sitename+ port_str + request.fullpath
             
             headers["Status"] = "301 Moved Permanently"
             redirect_to url_with_www
-          # elsif request.subdomain != "www"# Not doing the job board subdomains  any more. 
-            # redirect_to(jobs_url(:subdomain => "www", :board => request.subdomain))  
           end
     end
   end
@@ -32,8 +36,10 @@ class ApplicationController < ActionController::Base
   end
   
   # default is US, if it's Canada go with it, use set_locale_by_ip for full geotargeting
-  def set_default_locale
-    country_code_param = params[:locale]#param like uk, ca, au, us
+  def set_default_locale(country_code_param = nil )
+    if country_code_param.nil?
+      country_code_param = params[:locale]#param like uk, ca, au, us
+    end
     locale_s = Constants::COUNTRIES[country_code_param] unless country_code_param.blank?
     if locale_s.blank?
       I18n.locale = LocationUtils::locale_by_ip(request.remote_ip)

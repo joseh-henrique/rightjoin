@@ -26,7 +26,7 @@ $full-height: ($tile-padding + $tile-height + $tile-padding + $tile-spacing) * 3
 
 html {
   height: 100%;
-  background: #D9D8BC image-url("widget/bg.jpg") no-repeat center center fixed; 
+  background: #9B4632 image-url("widget/bg.jpg") no-repeat center center fixed; 
   @include background-size (cover);
   font-size: 15px;  
 }

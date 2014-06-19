@@ -379,22 +379,49 @@ function highlight(field) {
 }
 
  
- 
-function zeroclipboard_init(copy_button_selector, data_clipboard_text) {
- 	ZeroClipboard.config( { swfPath: '/ZeroClipboard.swf' } );
- 	var button = $(copy_button_selector);
- 
-    var client = new ZeroClipboard(button );
-	client.on( "ready", function( readyEvent ) {
-	
-		client.on( "copy", function (event) {
-		  var clipboard = event.clipboardData;
-		  clipboard.setData( "text/plain", data_clipboard_text );
-		});
-		
-		
-	  client.on( "aftercopy", function(event) {
- 	  	alert("Copied to clipboard");//[TODO] show an alert more aesthetically
-	  });
+ //tooltip must be inside copy_button_selector with class .div-tooltip  or it will be ignored.
+ //copy_button_selector must be an element of position!=static for relative positioning of tooltip to work.
+ //TODO use zeroClipboard.Core to reduce load size
+function zeroclipboard_init(copy_button_selector, text_callback) {
+	ZeroClipboard.config({
+		swfPath : '/ZeroClipboard.swf'
 	});
+	
+	var button = $(copy_button_selector);
+	
+	var tooltip_div = $(copy_button_selector+" .div-tooltip");
+	if (tooltip_div!=null){
+		tooltip_div.click(function(){ 
+			$(this).hide();
+		});
+	}
+
+ 	var client = new ZeroClipboard(button);
+	client.on("ready", function(readyEvent) {
+		client.on("copy", function(event) {
+			var clipboard = event.clipboardData;
+			var txt=text_callback();
+			clipboard.setData("text/plain", txt);
+		});
+
+		client.on("aftercopy", function(event) {
+			if (tooltip_div!=null){
+				//  hide() is needed in case user clicks juset before fadeOut finishes
+	 			tooltip_div.hide(); 
+	 			tooltip_div.show();
+	 	
+	 			setTimeout(function() { 
+					tooltip_div.fadeOut("slow"); 
+				}, 3000);
+		}
+		});
+	});
+}
+
+function rgb2hex(rgb) {
+    rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }

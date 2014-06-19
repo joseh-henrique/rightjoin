@@ -419,7 +419,7 @@ class FyiMailer < ActionMailer::Base
     @msg2_t = Utils.html_to_txt(@msg2_h)
     
      
-    @msg3_h = "We believe that peer-to-peer recruiting is the best way to bring in strong professionals. Please let us know if you have any questions."
+    @msg3_h = "Peer-to-peer recruiting is the best way to bring in strong professionals. Please let us know if you have any questions."
     @msg3_t = Utils.html_to_txt(@msg3_h )
     
     @msg_footer_h = employer_unsubscribe_link(true, employer) 

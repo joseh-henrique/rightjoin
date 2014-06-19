@@ -16,7 +16,7 @@
 					<div class="form-column controls-box">
 						<div class="form-cell">
 							<label>Tab label</label><br>
-							<%= text_field("config", "label_text", :value => "JOIN US", :spellcheck => true, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]") %>
+							<%= text_field("config", "label_text", :value => "Join us", :spellcheck => true, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]") %>
 						</div>
 				
 						<div class="form-cell">
@@ -41,8 +41,11 @@
 					</div>
 					
 					<div class="form-column">
-						<div class="preview-box">
-							<div id="tab-preview">
+						<div class="form-cell">
+							<label>Quick preview</label>
+							<div class="preview-box">
+								<div id="tab-preview">
+								</div>
 							</div>
 						</div>
 					</div>
@@ -61,8 +64,9 @@
 				<div class="form-cell">
 					<%= label_tag(nil, "Paste this code snippet into your site's HTML, e.g., right before the </body> tag.") %><br>
 					<textarea onClick="this.select();" id="code-input" spellcheck="false" readonly="readonly"></textarea>
+					<span class="note-box">Note, that the tab only appears to vistors from the regiones where you have open positions.</span>
 				</div>
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>
@@ -130,12 +134,6 @@
 	         + parseFloat(match[3])
 	           < 3 * 256 / 2; // r+g+b should be less than half of max (3 * 256)
 	}	
-	
-	function update_tab_colors() {
-		var tab_bg_color = $("#tab-background-picker").css('background-color');
-		$("#tab-preview").css('background-color', tab_bg_color);
-		$("#tab-preview").css("color", isDark(tab_bg_color) ? 'white' : 'black');
-	}
 
 	function update_tab_preview(){		
 		$("#tab-preview").empty();
@@ -145,14 +143,23 @@
 		// update tab colors
 		var tab_bg_color = $("#tab-background-picker").css('background-color');
 		$("#tab-preview").css('background-color', tab_bg_color);
-		$("#tab-preview").css("color", isDark(tab_bg_color) ? 'white' : 'black');
+		
+		if (isDark(tab_bg_color)) {
+			$("#tab-preview").css("color", 'white');
+			$("#tab-preview").css("text-shadow", '0px 0px 1px #000');
+		} else {
+			$("#tab-preview").css("color", 'black');
+			$("#tab-preview").css("text-shadow", '1px 0px 1px rgba(255, 255, 255, 0.65)');
+		}
+		
 		var border_color = tab_bg_color;
 		if ($("input[type=radio][name=border]:checked").val() == "white") {
-			border_color = "white";
+			$("#tab-preview").css('border-color', "white");
 		} else if ($("input[type=radio][name=border]:checked").val() == "black") {
-			border_color = "black";
+			$("#tab-preview").css('border-color', "black");
+		} else {
+			$("#tab-preview").css('border', "none");
 		}
-		$("#tab-preview").css('border-color', border_color);
 		
 		var label_text = $("#config_label_text").val();
 		for (var i=0; i < label_text.length; i++) {
@@ -173,8 +180,8 @@
 	
 	function build_params() {
 		var params_hash = {};
-		params_hash['bg'] = $("#tab-preview").css('background-color');
-		params_hash['color'] = $("#tab-preview").css("color");
+		params_hash['bg'] = rgb2hex($("#tab-preview").css('background-color'));
+		params_hash['color'] = rgb2hex($("#tab-preview").css("color"));
 		params_hash['label'] = $("#config_label_text").val();
 		params_hash['position'] = $("#config_tab_position").val();
 		params_hash['border'] = $("input[type=radio][name=border]:checked").val();

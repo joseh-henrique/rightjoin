@@ -10,7 +10,7 @@
   border-radius: $radius;
 }
 
-@mixin box-shadow($val) {
+@mixin box-shadow($val...) {
   -webkit-box-shadow: $val;
   -moz-box-shadow:    $val;
   box-shadow:         $val;
@@ -217,3 +217,21 @@ input, textarea, select {
   float: right;
 }
 
+ 
+.copy-button{
+   position:relative;
+}
+ 
+.div-tooltip{
+    display: none;
+    position: absolute;
+    cursor: pointer;
+    left: 60px;
+    top: -60px;
+    width:100px;
+    border: solid 1px #eee;
+    background-color: #c08895;
+    color: white;
+    padding: 10px;
+    z-index: 1000;
+}

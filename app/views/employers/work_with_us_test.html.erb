@@ -1,12 +1,28 @@
-<html>
+<!DOCTYPE html>
+<html>  
 	<head>
+		<title>Preview  the "Join Us" tab for your company site</title>
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
+		<%= stylesheet_link_tag 'application', :media => "all"%>
+
 		<script>
 			<%= render :partial => 'employers/work_with_us_loader.js.erb' %>
 		</script>
+		
+		<%= favicon_link_tag '/favicon.ico?v=4' %>
 	</head>
-	<body style="background-color: #E4E4E4;">
-		<div style="color: #525252; font-size: 30px; position: relative; padding: 20px; width: 600px; height: 100px; margin: 0 auto; background-color: #F3F3F3; top: 50%; margin-top: -70px;">
-			Preview the &ldquo;Work With Us&rdquo; tab for the <%=@employer.company_name%> website. To launch the job posting, just click the tab.  
+
+	<body id="test-tab">
+		<div class="message-box">
+			<%#TODO include the relevant company_url in this text%>
+			The  &ldquo;Join Us&rdquo; tab will look like this after you add it to the  <%=@employer.company_name%> website. 
+			<br><br>
+			The tab is geolocated: It will appear <em>only</em> to visitors from areas where you have open positions.
+			<br><br>
+			Click the tab to  launch the job posting.
 		</div>
 	</body>
 </html>

@@ -14,7 +14,7 @@ module TurkUtils
     INPUT = "Input."
     ANSWER = "Answer."
     OTHER= "Other."
-    HIT_ID = "HI  TId"
+    HIT_ID = "HITId"
     ORIG_AD_URL = "orig_ad_url"
     JOB_AD_URL = "job_ad_url"
  
@@ -24,7 +24,7 @@ module TurkUtils
     WORK_FROM_HOME = "work_from_home"
      RELOCATION ="relocation"
      TELECOMMUTE = "telecommute" 
-    BOARD_NAMES w= [WORK_FROM_HOME, "open_source", "startup", "kegerator",  BLEEDING_EDGE_TECH, "meaningful_jobs"]
+    BOARD_NAMES = [WORK_FROM_HOME, "open_source", "startup", "kegerator",  BLEEDING_EDGE_TECH, "meaningful_jobs"]
     BOOLEAN_BASE_NAMES = BOARD_NAMES + [  RELOCATION]  
     
     STATE = "state"
@@ -40,9 +40,9 @@ module TurkUtils
     ON = "on"
     OFF = ""
     US="US"
+    
     NEW_HEADERS_B  = [TurkUtils::DEFAULT_COUNTRY_CODE, TurkUtils::SEARCH, TurkUtils::ORIG_AD_URL] + TurkUtils::BOARD_NAMES
-      
-      
+       
     URL_LIST ="url_list"      
     EDITED_URL_LIST ="edited_"+URL_LIST
            
