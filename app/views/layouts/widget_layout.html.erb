@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
-
-		
-
 	<head>
 		<title><%= title %></title>
 		<!--[if lt IE 9]>
@@ -25,7 +22,7 @@
 		<%= yield :more_meta %>
 	</head>
 	<% body_class = @current_page_info[:intended_for].to_s %>
-	<body id="<%=css_class_for_current_page%>" class="<%=body_class%>">
+	<body id="<%=css_class_for_current_page%>" class="<%=body_class%> <%=@job.effective_join_us_widget_params_map['join-us-style'].blank? ? 'join-us-style1' : @job.effective_join_us_widget_params_map['join-us-style']%>">
 		<%=render :partial => "layouts/easter_egg"%>
 
 		<div class="outer">

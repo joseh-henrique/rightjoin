@@ -29,7 +29,7 @@
 		<%= form_tag @current_page_info[:intended_for] == :employee ? forgot_pw_users_path : forgot_pw_employers_path, :method => :post, :remote => true,:id=>"forgot-pw-form" do %>
 			<div class="form-row">
 				<div class="form-cell">
-					<%= label_tag :email, "Registered Email Address" %><br>
+					<%= label_tag :email, "Registered email address" %><br>
 					<%= text_field_tag(:email, nil, :id=>"forgot-pw-email", :maxlength=>255, :spellcheck =>false, :autocomplete => "off", :class=>"validate[required,custom[email]]")%>
 					&nbsp;
 					<%= submit_tag "Reset password",:id=>"submit-forgot-pw", :class=>"standard-button forgot-pw-form-elem" %>

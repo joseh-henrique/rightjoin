@@ -266,7 +266,7 @@ FIN
 		};
 		
 		var popupWidget = function() {
-			return openDialogWindow("<%=we_are_hiring_employer_path(@employer.reference_num, :job => nil)%>", 1000, 650);
+			return openDialogWindow("<%=we_are_hiring_employer_url(@employer.reference_num, :job => nil)%>", 1000, 650);
 		};	
 	
 	    // public instance methods

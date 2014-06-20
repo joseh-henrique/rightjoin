@@ -67,7 +67,8 @@ INDEED_PARAM_PAIRS = [
                           "utm_campaign=TASC_Indeed",
                           "cid=IndeedOrganic",
                           "utm_campaign=Postings_Indeed",
-                          "codes=IINDEED"
+                          "codes=IINDEED",
+                          "sType=Indeed"
                         ]
                         
 INDEED_PARAM_PAIRS_REGEXES =[/rx_campaign=Indeed\d+/ ]

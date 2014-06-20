@@ -24,7 +24,7 @@ class Utils
    # 2. to give a single breakpoint, 
    # 3. and to give debug dump files.   
    #
-   # (The standard way to block  delivery in dev is to set config.action_mailenew_msg_Sun_11.41.49.2.txtr.delivery_method = :test in environment.rb
+   # (The standard way to block  delivery in dev is to set config.action_mailer.delivery_method = :test in environment.rb
    # and there are other tools like mailtrap.io.)
    def self.deliver(email_msg)
       email_msg.deliver
@@ -225,6 +225,31 @@ class Utils
       res << "<span class='#{elem_class}'>#{c}</span>"
     end
     return res
+  end
+ 
+  A_REQUIRING_PATTERNS = /^(([bcdgjkpqtuvwyz]|onc?e|onetime)$|e[uw]|ux|user|uk|ur[aeiou]|use|ut([^t])|uni(l[^l]|[a-ko-z]))/i
+  AN_REQUIRING_PATTERNS = /^([aefhilmnorsx]$|hono|honest|hour|heir|[aeiou])/i
+  UPCASE_A_REQUIRING_PATTERNS = /^(UN$)/
+  UPCASE_AN_REQUIRING_PATTERNS = /^$/ #need if we decide to support acronyms like "XL" (extra-large)
+  # Code from indefinite_article  gem
+  def self.indefinite_article(noun)
+    first_word = noun.to_s.split(/[- ]/).first
+    if (first_word[AN_REQUIRING_PATTERNS] || first_word[UPCASE_AN_REQUIRING_PATTERNS]) &&
+       !(first_word[A_REQUIRING_PATTERNS] || first_word[UPCASE_A_REQUIRING_PATTERNS])
+      'an'
+    else
+      'a'
+    end
+  end
+  
+  def self.indefinite_article_and_noun(noun)
+    article =indefinite_article(noun)
+ 
+    unless noun.blank?
+      return article +" " + noun
+    else
+      return noun
+    end
   end
 end
 

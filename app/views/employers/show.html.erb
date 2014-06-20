@@ -104,7 +104,7 @@
 							</li>
 						<% end %>
 						<li class="warning">
-							You can extend your posting's reach by advertising on professional sites. <%=uservoice_contact_link("Contact us")%> for more details.
+							You can advertise on professional sites: <%=uservoice_contact_link("Contact us")%> for more details.
 						</li>
 					<% end %>
 				<% end %>
@@ -148,19 +148,17 @@
 		<div class="header-buttons-box">
 			<%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
 			<% 	  
-			subject = "For your approval: Talking about what it's like to work at #{current_user.company_name}"
+			subject = "For your approval: Talking with potential future colleagues"
 			body_text = "Hi,\n\n" <<
-				"Would you like to talk to smart developers about working at  #{current_user.company_name}?\n\n" <<
-				"It's a great way for us to connect with prospective engineers, to help them decide whether they want to work " << 
-				"at  #{current_user.company_name}. And you might enjoy checking out some possible future colleagues.\n\n" << 
-				"#{Constants::SHORT_SITENAME} and I will screen all contacts. We'll keep the number of messages low, usually one or two  messages a week. " <<
-				"You reply to each message directly by email.\n\n" <<
-				"Please follow the link below and give your approval.\n\n" <<
+				"Smart developers are pinging us and asking to talk about working at  #{current_user.company_name}.\n\n" <<
+				"It's a great way for us to connect with potential future colleagues.\n\n" << 
+				"We'll screen all contacts to make sure you only get the good ones. We expect to pass on one or two pings a week for a quick email reply.\n\n" <<
+				"Please sign in at #{ambassadors_signin_url(current_user.reference_num, :locale => nil)}\n\n" <<
 				"Regards,\n\n" <<
 				"#{current_user.first_name}"
 			%>
 			&nbsp;
-			<%=mail_to("", "Invite via email", subject: subject, body: "#{body_text}\n\n#{ambassadors_signin_url(current_user.reference_num, :locale => nil)}", :class => "standard-button", :id => "invite-team-member-button", :target => "_fyi_email")%> 
+			<%=mail_to("", "Invite via email", subject: subject, body:  body_text, :class => "standard-button", :id => "invite-team-member-button", :target => "_fyi_email")%> 
 		</div>
 	</div>
 	

@@ -8,6 +8,7 @@
  *= require validationEngine.jquery 
  *= require animation
  *= require colpick
+ *= require colorPicker
  *= require jquery.Jcrop.min
  *= require_self
 */ 
@@ -19,4 +20,5 @@
 //@import "fyi"; 
 
 @import "common";
+@import "widget-colors";
 @import "rightjoin";

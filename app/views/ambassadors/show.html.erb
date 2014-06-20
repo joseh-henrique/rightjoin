@@ -131,13 +131,12 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
 								<div class="share-button copy-to-clipboard" >
-									<a id="copy-button" class="copy-button"   >
+									<a id="copy-button" class="div-tooltip-holder">
 										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
-										<div  class="div-tooltip" >Copied to clipboard</div>	
+										<div  class="div-tooltip" >Copied</div>	
 									</a>	 		
 									<script>
 								 	$(document).ready(function(){
-								 		
 								 		var text_callback = function(){
 								 			//this is a constant function
 				 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>

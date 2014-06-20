@@ -11,6 +11,7 @@
 //= require jquery.validationEngine
 //= require fyi-autocomplete 
 //= require colpick
+//= require jquery.colorPicker
 //= require cycle.min
 //= require jquery.sparkline.min
 //= require jquery.raty.min
@@ -384,13 +385,14 @@ function highlight(field) {
  //TODO use zeroClipboard.Core to reduce load size
 function zeroclipboard_init(copy_button_selector, text_callback) {
 	ZeroClipboard.config({
-		swfPath : '/ZeroClipboard.swf'
+		swfPath : '/ZeroClipboard.swf',
+			bubbleEvents: false 
 	});
 	
 	var button = $(copy_button_selector);
 	
 	var tooltip_div = $(copy_button_selector+" .div-tooltip");
-	if (tooltip_div!=null){
+	if (tooltip_div.length > 0){
 		tooltip_div.click(function(){ 
 			$(this).hide();
 		});
@@ -402,10 +404,14 @@ function zeroclipboard_init(copy_button_selector, text_callback) {
 			var clipboard = event.clipboardData;
 			var txt=text_callback();
 			clipboard.setData("text/plain", txt);
+			if(event.stopPropagation){
+				event.stopPropagation();
+			}
+			event.cancelBubble=true;
 		});
 
 		client.on("aftercopy", function(event) {
-			if (tooltip_div!=null){
+			if (tooltip_div.length > 0 ){
 				//  hide() is needed in case user clicks juset before fadeOut finishes
 	 			tooltip_div.hide(); 
 	 			tooltip_div.show();
@@ -413,15 +419,23 @@ function zeroclipboard_init(copy_button_selector, text_callback) {
 	 			setTimeout(function() { 
 					tooltip_div.fadeOut("slow"); 
 				}, 3000);
-		}
+		    }
 		});
 	});
 }
 
 function rgb2hex(rgb) {
-    rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
-    function hex(x) {
-        return ("0" + parseInt(x).toString(16)).slice(-2);
-    }
-    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+	 if (  rgb.search("rgb") == -1 ) {
+	      return rgb;
+	 }
+	 else if ( rgb == 'rgba(0, 0, 0, 0)' ) {
+	     return 'transparent';
+	 }
+	 else {
+	      rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+	      function hex(x) {
+	           return ("0" + parseInt(x).toString(16)).slice(-2);
+	      }
+	      return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
+	 }
 }

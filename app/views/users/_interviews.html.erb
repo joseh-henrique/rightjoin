@@ -5,15 +5,15 @@ active_interviews = current_user.interviews.select {|interview| interview.status
 
 <% if active_interviews.blank? %>
 	<div id="no-contacts-box">
-		No invitations yet? <%= link_to "Take a look", jobs_path%> at opportunities in some escape-worthy areas,
-		and talk to colleagues at companies that you might want to work at.
+		No pings yet? <%= link_to "Take a look", jobs_path%> at some escape-worthy opportunities
+		and ping companies to talk to potential colleagues. 
 	</div>
 <% else %>
 	<p id="invitations-header">
 		<% 
 		have_amb = Interview.have_active_ambassadors?(active_interviews) 		
 		%>
-		Employers are inviting you to apply to these job ads<%if have_amb %>, and to contact insiders at their organization<%end%>. 
+		Employers are pinging you, so ping them back<%if have_amb %>, and to be in touch with insiders<%end%>. 
 	</p> 
 	<% active_interviews.each do |interview| %>
 		<div id="interview-<%=interview.id%>" class="user-interviews-box">

@@ -216,22 +216,24 @@ input, textarea, select {
 .float-right {
   float: right;
 }
-
  
-.copy-button{
-   position:relative;
+.div-tooltip-holder {
+  position:relative;
 }
- 
-.div-tooltip{
+
+.div-tooltip{ 
     display: none;
     position: absolute;
     cursor: pointer;
-    left: 60px;
-    top: -60px;
-    width:100px;
-    border: solid 1px #eee;
-    background-color: #c08895;
-    color: white;
-    padding: 10px;
+    
+    // height:24px;
+    // width:100px;
+    top: -50px;
+    left: 75px;
+
+    border: solid 3px #9D9D9D;
+    background-color: #FAFAFA;
+    color: #5E5E5E;
+    padding:5px;
     z-index: 1000;
 }

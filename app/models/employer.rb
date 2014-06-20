@@ -29,7 +29,7 @@ class Employer < ActiveRecord::Base
   end  
   
   def self.happy_get_going_text
-   "Smile as those top-flight engineers get in touch."
+   "Get in touch with professionals worth talking to."
   end
   
   # Method  is used only in  verify.js.erb.  

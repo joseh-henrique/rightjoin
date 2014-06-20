@@ -1109,26 +1109,63 @@ label {
     }
   }
   
-  .join-us-config-box {
+  .join-us-style-selector-box {
+    width: 360px;
+    height: 100px;
+    cursor: pointer;
+    
+    .join-us-style-preview {
+      display: inline-block;
+      width: 90px;
+      height: 70px;
+      padding: 5px;
+      margin-right: 7px;
+      margin-bottom: 10px;
+      
+      &.preview1 {
+        background: #D9D8BC image-url("widget/backgrounds/previews/1.jpg") no-repeat center center; 
+        @include background-size (cover);
+      }
+      &.preview2 {
+        background: #D9D8BC image-url("widget/backgrounds/previews/2.jpg") no-repeat center center; 
+        @include background-size (cover);
+      }
+      &.preview3 {
+        background: #D9D8BC image-url("widget/backgrounds/previews/3.jpg") no-repeat center center; 
+        @include background-size (cover);
+      }
+      &.preview4 {
+        background: #D9D8BC image-url("widget/backgrounds/previews/4.jpg") no-repeat center center; 
+        @include background-size (cover);
+      }
+      &.preview5 {
+        background: #D9D8BC image-url("widget/backgrounds/previews/5.jpg") no-repeat center center; 
+        @include background-size (cover);
+      }
+      &.preview6 {
+        background: #D9D8BC image-url("widget/backgrounds/previews/6.jpg") no-repeat center center; 
+        @include background-size (cover);
+      }      
+    }
+  }
+  
+  #join-us-config-box {
     padding: 16px;
     border: 1px solid #CED6DB;
     display: inline-block;
-    
-    background: #D9D8BC image-url("widget/bg.jpg") no-repeat center center; 
-    @include background-size (cover);    
     
     .tiles-row {
       margin-bottom: 5px;
       
       .tile {
-        box-sizing: border-box;
         float: left;
-        width: 8em;
-        height: 6em;
+        width: 6em;
+        height: 4em;
         margin-right: 5px;
+        padding: 10px;
         
         &.double-len {
-          width: 16em;
+          width: 12em;
         }
         
         &:last-child {
@@ -1142,26 +1179,6 @@ label {
       
       .bg-transparent {
         background-color: transparent;
-      }
-      
-      .bg-color1 {
-        background-color: #fd9500;
-      }
-      
-      .bg-color2 {
-        background-color: #7ab700;
-      }
-      
-      .bg-color3 {
-        background-color: #1eb1ff;
-      }
-      
-      .bg-color4 {
-        background-color: #ad153e;
-      }
-      
-      .bg-color5 {
-        background-color: #ff6d54;
       }
     }
   }

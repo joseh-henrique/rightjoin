@@ -158,11 +158,11 @@ class User < ActiveRecord::Base
   end
   
  def self.capabilities_header
-    "Employer invitations appear here. Check it out."
+    "Pings from employers appear here. Check it out."
  end
 
   def self.happy_get_going_text
-   "Smile, as the invitations come flowing in."
+   "Smile, as employers ping you and ask you to ping them back."
   end
   
   def self.reason_to_verify

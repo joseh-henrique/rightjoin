@@ -11,6 +11,7 @@ class JobsController < ApplicationController
     @job.company_name = current_user.company_name
     @job.locale = I18n.locale.to_s
     @job.employer = current_user
+    @job.join_us_widget_params_map = current_user.join_us_widget_params_map
   end
   
   def copy_properties
@@ -54,6 +55,8 @@ class JobsController < ApplicationController
     @job.address_lat = @base_job.address_lat
     @job.address_lng = @base_job.address_lng
     
+    @job.join_us_widget_params_map = @base_job.join_us_widget_params_map
+    
     @job.tech_stack_list = @base_job.tech_stack_list
     
     flash_now_message(:notice, "Job posting copied. You can now edit it.")
@@ -81,7 +84,7 @@ class JobsController < ApplicationController
     if current_user.has_active_ambassadors?
       flash_message(:notice, "You've created a new job posting.")
     else 
-      flash_message(:notice, "You've created a new job posting. Please invite team members to join you in connecting to their professional colleagues.")
+      flash_message(:notice, "You've created a new job posting. Please invite team members to join and connect to potential colleagues.")
     end
     
     redirect_to employer_path(current_user)
@@ -109,7 +112,6 @@ class JobsController < ApplicationController
   def edit
     @current_page_info = PageInfo::EMPLOYER_EDIT_POSTING
     @job = current_user.jobs.find(params[:id])
-  
     raise "Job position not found" if @job.nil?
   
   rescue Exception => e
@@ -201,6 +203,15 @@ class JobsController < ApplicationController
   end
   
 private
+  def update_global_join_us_style(job)
+    if Utils.to_bool(params["use-style-for-all"])
+      job.employer.join_us_widget_params_map = params["join-us-config"]
+      job.employer.save!
+      
+      Job.update_all( {:join_us_widget_params_map => nil}, {:employer_id => job.employer.id})
+    end
+  end
+
   def update_attrs(job)
     location_obj = LocationTag.find_or_create_by_params(params)
     raise ActiveRecord::RecordInvalid.new(location_obj) if location_obj.errors.any?
@@ -233,6 +244,8 @@ private
     job.address_lng = params["address_lng"]
     
     job.tech_stack_list = params["tech_stack_list"]
+    
+    job.join_us_widget_params_map = params["join-us-config"]
     
     job.save!
   end

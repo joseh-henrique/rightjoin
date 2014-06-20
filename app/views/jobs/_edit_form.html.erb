@@ -175,7 +175,7 @@
 	<div class="form-row clearfix">
 		<div class="form-column">
 			<div class="form-cell">
-								<%= label_tag(nil, "Why would a top developer want to take this job?", :class => "mandatory")%><br>
+				<%= label_tag(nil, "Why would a top developer want to take this job?", :class => "mandatory")%><br>
 				<div id="free-text-counter" class="message-counter"><%=Job::DESCRIPTION_MAX_LEN%></div>
 				<%= text_area_tag(:description, @job.description, :maxlength=>Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter")%>			
 			</div>
@@ -216,26 +216,48 @@
 	</div>
 </div>
 
-<div class="standard-section-header">Appearence in the &ldquo;Join Us&rdquo; panel</div>
+<div class="standard-section-header">Appearance in the &ldquo;Join Us&rdquo; panel</div>
 <div class="section-box">
-	<div class="form-row">
-		<div class="form-cell">
-			
-			<div class="join-us-config-box">
-				<div class="tiles-row clearfix">
-					<div class="tile double-len bg-transparent">&nbsp;</div>
-					<div class="tile bg-color1">&nbsp;</div></td>
-					<div class="tile bg-color2">&nbsp;</div></td>
+	<div class="form-row clearfix">
+		<div class="form-column">
+			<%= label_tag(nil, "Choose a style") %><br>
+			<div class="form-cell join-us-style-selector-box">
+				<% (1..6).each do |i| %>
+					<span class="join-us-style-preview preview<%=i%>"><%=radio_button_tag 'join-us-config[join-us-style]', "join-us-style#{i}", "join-us-style#{i}" == @job.effective_join_us_widget_params_map['join-us-style']%></span>
+				<% end %>
+			</div>
+		</div>
+		
+		<%
+		loaded_style1 = @job.effective_join_us_widget_params_map['chooser-bg-style1'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style1']}"
+		loaded_style2 = @job.effective_join_us_widget_params_map['chooser-bg-style2'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style2']}"
+		loaded_style3 = @job.effective_join_us_widget_params_map['chooser-bg-style3'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style3']}"
+		loaded_style4 = @job.effective_join_us_widget_params_map['chooser-bg-style4'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style4']}"
+		loaded_style5 = @job.effective_join_us_widget_params_map['chooser-bg-style5'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style5']}"
+		%>
+		
+		<div class="form-column">
+			<div class="form-cell">
+				<%= label_tag(nil, "Adjust colors if needed") %><br>
+				<div id="join-us-config-box" class="<%=@job.effective_join_us_widget_params_map['join-us-style'].blank? ? 'join-us-style1' : @job.effective_join_us_widget_params_map['join-us-style']%>">
+					<div class="tiles-row clearfix">
+						<div class="tile double-len bg-transparent"></div>
+						<div class="tile bg-style1" style="<%=loaded_style1%>"><input id="chooser-bg-style1" type="text" name="join-us-config[chooser-bg-style1]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile bg-style2" style="<%=loaded_style2%>"><input id="chooser-bg-style2" type="text" name="join-us-config[chooser-bg-style2]" value="transparent" class="bg-style-input" /></div>
+					</div>
+					<div class="tiles-row clearfix">
+						<div class="tile bg-style3" style="<%=loaded_style3%>"><input id="chooser-bg-style3" type="text" name="join-us-config[chooser-bg-style3]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile double-len bg-style4" style="<%=loaded_style4%>"><input id="chooser-bg-style4" type="text" name="join-us-config[chooser-bg-style4]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile bg-style3" style="<%=loaded_style3%>"></div>
+					</div>
+					<div class="tiles-row clearfix">
+						<div class="tile double-len bg-style5" style="<%=loaded_style5%>"><input id="chooser-bg-style5" type="text" name="join-us-config[chooser-bg-style5]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile bg-style1" style="<%=loaded_style1%>"></div>
+						<div class="tile bg-style2" style="<%=loaded_style2%>"></div>
+					</div>
 				</div>
-				<div class="tiles-row clearfix">
-					<div class="tile bg-color3">&nbsp;</div></td>
-					<div class="tile double-len bg-color4">&nbsp;</div>
-					<div class="tile bg-color3">&nbsp;</div></td>
-				</div>
-				<div class="tiles-row clearfix">
-					<div class="tile double-len bg-color5">&nbsp;</div>
-					<div class="tile bg-color1">&nbsp;</div></td>
-					<div class="tile bg-color2">&nbsp;</div></td>
+				<div>
+					<%= check_box_tag "use-style-for-all", '1', false%>&nbsp;<%= label_tag("use-style-for-all", "Use this style for all jobs") %>
 				</div>
 			</div>
 		</div>
@@ -255,7 +277,18 @@
 
 <script type="text/javascript">
 	dirty_form_fields = false;
+	$.fn.colorPicker.defaults.colors = ['16A085', '27AE60', '7AB700', '1EB1FF', '2980B9', '8E44AD', '2C3E50', 'F39C12', 'FF6D54', 'D35400', 'C0392B', 'AD153E'];
+	$.fn.colorPicker.defaults.showHexField = false;
+	
 	 $(function() {
+	 	function init_style_preview(style_class) {
+	    	$("#join-us-config-box").attr("class", style_class);
+	    	$(".tile").css("background-color", "");
+	    	$(".tile > .colorPicker-picker").css("background-color", "");
+	    	$(".tile > .bg-style-input").val("");
+	    	dirty_form_fields = true;
+	 	}
+	 	
 		$(".monitor-change").on("input", function() {
 			dirty_form_fields = true;
 		});
@@ -269,6 +302,25 @@
 				return "<%=page_leaving_warning_s%>";
 			}
 		});
+		
+		$('.join-us-style-preview').click(function() {
+			var rb = $(this).children("input[type=radio]");
+	    	rb.prop('checked',true);
+	    	init_style_preview(rb.val());
+	    });
+		
+		$('.join-us-style-preview input[type=radio]').change(function() {
+	    	init_style_preview($(this).val());
+	    });
+		
+		<% (1..6).each do |i| %>
+			$("#chooser-bg-style<%=i%>").colorPicker({ 
+				onColorChange : function(id, newValue) { 
+					$(".bg-style<%=i%>").css("background-color", rgb2hex(newValue));
+					dirty_form_fields = true;
+				}
+			});			
+		<% end %>
 	});
 
 	$( "#location" ).googleAddressPicker({

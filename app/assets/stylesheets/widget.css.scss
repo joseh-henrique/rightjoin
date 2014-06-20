@@ -11,6 +11,7 @@
 */ 
 
 @import "common";
+@import "widget-colors";
 
 $default-font-color: #FFF;
 $default-font-size: 15px;
@@ -26,8 +27,6 @@ $full-height: ($tile-padding + $tile-height + $tile-padding + $tile-spacing) * 3
 
 html {
   height: 100%;
-  background: #9B4632 image-url("widget/bg.jpg") no-repeat center center fixed; 
-  @include background-size (cover);
   font-size: 15px;  
 }
 
@@ -183,29 +182,25 @@ a {
   background-color: transparent;
 }
 
-.cell-13, .cell-33, .cell-team, .avatar-1, .avatar-8 {
+.bg-style1 {
   background-color: #fd9500;
 }
 
-.cell-14, .cell-34, .avatar-2, .avatar-7 {
+.bg-style2 {
   background-color: #7ab700;
 }
 
-.cell-21, .cell-24, .avatar-3, .avatar-5 {
+.bg-style3 {
   background-color: #1eb1ff;
 }
 
-.cell-description {
+.bg-style4 {
   background-color: #ad153e;
 }
 
-.cell-signin, .avatar-4, .avatar-6 {
+.bg-style5 {
   background-color: #ff6d54;
-}
-
-.cell-form {
-  background-color: #ac143d;
-}
+} 
 
 .blurb {
   .title {

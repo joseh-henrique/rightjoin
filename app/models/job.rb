@@ -1,4 +1,6 @@
 class Job < ActiveRecord::Base
+  serialize :join_us_widget_params_map, JSON
+  
   belongs_to :employer
   belongs_to :location, :class_name => "LocationTag"
   belongs_to :position, :class_name => "PositionTag"
@@ -77,6 +79,12 @@ class Job < ActiveRecord::Base
       bounding_box = DistanceUtils::bounding_box(new_location.latitude, new_location.longitude, search_radius_in_miles)
       self.assign_attributes(bounding_box, :without_protection => true)
     end
+  end
+  
+  def effective_join_us_widget_params_map
+    res = self.join_us_widget_params_map
+    res ||= self.employer.join_us_widget_params_map
+    res ||= {}
   end
  
   def shutdown!(interview_status)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140523104749) do
+ActiveRecord::Schema.define(:version => 20140619150538) do
 
   create_table "ads", :force => true do |t|
     t.integer  "job_id"
@@ -169,32 +169,33 @@ ActiveRecord::Schema.define(:version => 20140523104749) do
     t.text     "description"
     t.integer  "location_id"
     t.string   "company_name"
-    t.integer  "status",                                              :default => 0
+    t.integer  "status",                                                    :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "locale",                                              :default => "en"
-    t.boolean  "allow_telecommuting",                                 :default => true
-    t.boolean  "allow_relocation",                                    :default => true
+    t.string   "locale",                                                    :default => "en"
+    t.boolean  "allow_telecommuting",                                       :default => true
+    t.boolean  "allow_relocation",                                          :default => true
     t.string   "ad_url"
-    t.decimal  "northmost",           :precision => 15, :scale => 12
-    t.decimal  "southmost",           :precision => 15, :scale => 12
-    t.decimal  "westmost",            :precision => 15, :scale => 12
-    t.decimal  "eastmost",            :precision => 15, :scale => 12
-    t.integer  "invites_counter",                                     :default => 0
-    t.integer  "display_order",                                       :default => 0
+    t.decimal  "northmost",                 :precision => 15, :scale => 12
+    t.decimal  "southmost",                 :precision => 15, :scale => 12
+    t.decimal  "westmost",                  :precision => 15, :scale => 12
+    t.decimal  "eastmost",                  :precision => 15, :scale => 12
+    t.integer  "invites_counter",                                           :default => 0
+    t.integer  "display_order",                                             :default => 0
     t.string   "benefit1"
     t.string   "benefit2"
     t.string   "benefit3"
     t.string   "benefit4"
-    t.text     "tech_stack_list",                                     :default => ""
+    t.text     "tech_stack_list",                                           :default => ""
     t.integer  "image_1_id"
     t.integer  "image_2_id"
     t.integer  "image_3_id"
     t.integer  "logo_image_id"
     t.string   "company_url"
     t.string   "address"
-    t.decimal  "address_lat",         :precision => 15, :scale => 12
-    t.decimal  "address_lng",         :precision => 15, :scale => 12
+    t.decimal  "address_lat",               :precision => 15, :scale => 12
+    t.decimal  "address_lng",               :precision => 15, :scale => 12
+    t.text     "join_us_widget_params_map"
   end
 
   add_index "jobs", ["display_order"], :name => "index_jobs_on_display_order"

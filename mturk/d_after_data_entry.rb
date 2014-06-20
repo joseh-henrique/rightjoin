@@ -593,7 +593,7 @@ def print_worker_problems
 end
  
  
-REDO="redo"
+ 
 def prepare_redo_for_partially_completed(rpts_hash)
   logline "\nCompleteness report: Number of URLs done this many times" , SERIOUS_SEV
   vals = rpts_hash.values

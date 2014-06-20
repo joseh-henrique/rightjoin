@@ -19,11 +19,11 @@ class FyiMailer < ActionMailer::Base
      
     country_code = I18n.t(:country_code, :locale => locale)
     msg2_tail = reason_to_verify
-    @msg2_h = "Enter your password <strong>#{ERB::Util.html_escape(passwd)}</strong> at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> to activate your profile#{msg2_tail}."
-    @msg2_t = "Enter your password\n\t\t#{passwd}\nat #{url} to activate your profile#{msg2_tail}."
+    @msg2_h = "Enter your temporary password <strong>#{ERB::Util.html_escape(passwd)}</strong> at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> to activate your profile#{msg2_tail}."
+    @msg2_t = "Enter your temporary password\n\t\t#{passwd}\nat #{url} to activate your profile#{msg2_tail}."
 
-    @msg3_h = "You can also sign in at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> at any time with your email address <em>#{ERB::Util.html_escape(to_email)}</em> and your password <strong>#{ERB::Util.html_escape(passwd)}</strong>"
-    @msg3_t = "You can also sign in at #{url} at any time\nwith your email address #{to_email} and your password #{passwd}\n\n"
+	    @msg3_h = "You can also sign in at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> with your email address <em>#{ERB::Util.html_escape(to_email)}</em> and your password <strong>#{ERB::Util.html_escape(passwd)}</strong>"
+    @msg3_t = "You can also sign in at #{url}\nwith your email address #{to_email} and your password #{passwd}\n\n"
 
     html_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:html], :handlers => [:erb], :layout => false
     text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
@@ -35,12 +35,12 @@ class FyiMailer < ActionMailer::Base
     @intended_for = intended_for 
     subj = "Your #{Constants::SHORT_SITENAME} password has been reset"
 
-    msg1 = "Your password has been changed!"
+    msg1 = "You have a new temporary password."
     @msg1_h = msg1.clone
     @msg1_t = msg1.clone
 
-    @msg2_h = "Go ahead and <a href=\"#{url}\">sign in</a> with email address #{ERB::Util.html_escape(to_email)} and your new password <b>#{ERB::Util.html_escape(passwd)}</b>"
-    @msg2_t = "Go ahead and sign in to #{url}\nwith email address #{to_email}\nand your new password #{passwd}"
+    @msg2_h = "Go ahead and <a href=\"#{url}\">sign in</a> with email address #{ERB::Util.html_escape(to_email)} and your temporary password <b>#{ERB::Util.html_escape(passwd)}</b>"
+    @msg2_t = "Go ahead and sign in to #{url}\nwith email address #{to_email}\nand your temporary password #{passwd}"
 
     @msg3_h = get_going_txt.clone
     @msg3_t = get_going_txt.clone
@@ -97,7 +97,7 @@ class FyiMailer < ActionMailer::Base
        
     end
     
-    msg3_head ="You can always find your recent invitations on your #{Constants::SHORT_SITENAME}" 
+    msg3_head ="You can always find your recent pings from employers on your #{Constants::SHORT_SITENAME}" 
     msg3_tail="Any questions? Just reply to this email#{Utils::call_us_str(engineer.locale)}.""
     @msg3_h = "#{msg3_head} <a href='#{user_url(engineer, :locale => engineer.country_code)}'>home page</a>.<br>#{msg3_tail}"
     @msg3_t = "#{msg3_head} home page (#{user_url(engineer, :locale => engineer.country_code)}). \n#{msg3_tail}"
@@ -290,7 +290,7 @@ class FyiMailer < ActionMailer::Base
     content =
       "I'm #{Constants::FYI_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
       "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to apply to jobs.<br><br>" <<
-      "We keep you spam-free by letting employers invite you only to jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
+      "We keep you spam-free by letting employers ping you only when they have jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
       "Go ahead and browse the specialized job listings and ping the employers who interest you.<br><br>" <<
       "And don't hesitate to contact me with any questions.<br>"
 
@@ -415,12 +415,12 @@ class FyiMailer < ActionMailer::Base
       @msg1_t = Utils.html_to_txt(@msg1_h)
     
  
-    @msg2_h = "Please review the candidate#{(contact_count == 1)? "'s" : "s'"} information and decide whether to  put a team member in touch at on your <a href='#{employer_url(employer, :locale => nil, :need_approvals=>true)}'>#{Constants::SHORT_SITENAME} home page</a>."  
+    @msg2_h = "Please review the candidate#{(contact_count == 1)? "'s" : "s'"} information and decide whether to  put a team member in touch, at your <a href='#{employer_url(employer, :locale => nil, :need_approvals=>true)}'>#{Constants::SHORT_SITENAME} home page</a>."  
     @msg2_t = Utils.html_to_txt(@msg2_h)
     
      
-    @msg3_h = "Peer-to-peer recruiting is the best way to bring in strong professionals. Please let us know if you have any questions."
-    @msg3_t = Utils.html_to_txt(@msg3_h )
+    @msg3_h = "lease let us know if you have any questions."
+    @msg3_t = @msg3_h.clone
     
     @msg_footer_h = employer_unsubscribe_link(true, employer) 
     @msg_footer_t = employer_unsubscribe_link(false, employer)
@@ -444,7 +444,7 @@ class FyiMailer < ActionMailer::Base
             "and by referring more team members to the social sharing tools."
     @msg2_t = Utils.html_to_txt(@msg2_h)
 
-    @msg3_h = "If you have questions, just reply to this message to contact us at #{Constants::SHORT_SITENAME}."  
+    @msg3_h = "If you have questions, just reply to this message to contact #{Constants::SHORT_SITENAME}."  
     @msg3_t = Utils.html_to_txt(@msg3_h)
     
     @msg_footer_h = employer_unsubscribe_link(true, ambassador.employer)

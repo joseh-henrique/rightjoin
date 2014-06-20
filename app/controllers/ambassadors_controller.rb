@@ -184,14 +184,16 @@ private
   def set_ambassador_from_params
     employer = Employer.find(params[:employer_id])
     @ambassador = Ambassador.find(params[:id])
-    
-    raise "Invalid parameter" if (employer.nil? || @ambassador.nil? || @ambassador.employer.id != employer.id)
+    # Actually, if employer or ambassador are not found by ID, There will be an exception above rather than getting nil values here. So, the checks are not really needed. 
+    raise "Error: Employer #{params[:employer_id]} not found" if  employer.nil?  
+    raise "Error: Ambassador #{params[:id]} not found" if   @ambassador.nil?  
+    raise "Error: Ambassador #{params[:id]} has employer #{@ambassador.employer.id} not #{ employer.id}" if  @ambassador.employer.id != employer.id
     
     return true
     
   rescue Exception => e
     logger.error(e)
-    flash_message(:error, Constants::ERROR_FLASH)
+    flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)
     if employer.nil?
       redirect_to employer_welcome_path
     else
@@ -202,7 +204,7 @@ private
   end
   
   def set_ambassador_check_valid
-    if set_ambassador_from_params
+    if set_ambassador_from_params()
       @auth = current_auth(Constants::REMEMBER_TOKEN_AMBASSADOR)
       if @auth.nil? || @auth.id != @ambassador.auth.id
         flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)

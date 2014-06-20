@@ -80,7 +80,7 @@ class Ambassador < ActiveRecord::Base
   end
   
   def self.share_description(job)
-     "We're looking for a #{job.position_name}. See our ad and ping us to be in touch."
+     "We're looking for #{Utils::indefinite_article_and_noun(job.position_name)}. See our ad and ping us to be in touch."
   end
   
   def self.share_title(job)

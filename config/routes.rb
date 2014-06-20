@@ -98,7 +98,6 @@ FiveYearItch::Application.routes.draw do
         post 'unsubscribe'
         get  'unsubscribe'
         get  'configure_join_us_tab'
-        post 'update_work_with_us_widget_config'  
       end
       
       collection do

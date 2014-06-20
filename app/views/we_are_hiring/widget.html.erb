@@ -1,34 +1,34 @@
 <% content_for :more_style do %> 
   	<style>
-	#we-are-hiring-widget-box {
-		//padding: <%=params[:padding].blank? ? "5px" : params[:padding]%>;
+  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style1'].blank? %>
+	.bg-style1 {
+	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style1']%> !important;
 	}
+	<%end%>
 	
-	<% colors = @colors.split(/\s*,\s*/) %>
-	.job-ad .description-box {
-		<%="border-left-color: #{colors[0]};" unless colors[0].blank?%>
+  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style2'].blank? %>
+	.bg-style2 {
+	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style2']%> !important;
 	}
+	<%end%>
 	
-	.talk-to-box .question {
-		<%="background-color: #{colors[0]};" unless colors[0].blank?%>
-		<%="color: #{colors[1]};" unless colors[1].blank?%>
+  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style3'].blank? %>
+	.bg-style3 {
+	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style3']%> !important;
 	}
+	<%end%>
 	
-	.talk-to-box .body-box .padding {
-		<%="background-color: #{colors[2]};" unless colors[2].blank?%>
+  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style4'].blank? %>
+	.bg-style4 {
+	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style4']%> !important;
 	}
+	<%end%>
 	
-	.talk-to-box .body-box .one-ambassador {
-		<%="background-color: #{colors[2]};" unless colors[2].blank?%>
+  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style5'].blank? %>
+	.bg-style5 {
+	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style5']%> !important;
 	}
-	
-	.fyi-accordion .accordion-header.collapsed {
-		<%="background-color: #{colors[3]};" unless colors[3].blank?%>
-	}
-	
-	.fyi-accordion .accordion-header.expanded {
-		<%="background-color: #{colors[4]};" unless colors[4].blank?%>
-	}
+	<%end%>
 	</style>
 <% end %>
 
@@ -167,7 +167,7 @@
 			</div>
 			
 			<% if @job.employer.ambassadors.only_active.any? %>
-				<div id="work-with-box" class="tile cell-team clearfix">
+				<div id="work-with-box" class="tile cell-team bg-style1 clearfix">
 					<div id="referer-box" class="four-avatars-box clearfix">
 						<% for i in 1..4 do %>
 							<div class="swappable avatar avatar-<%=i%>">
@@ -188,17 +188,17 @@
 					</div>
 				</div>
 			<% else %>
-				<div class="tile swappable blurb cell-13"></div>
+				<div class="tile swappable blurb cell-13 bg-style1"></div>
 			<% end %>
 			
-			<div class="tile swappable blurb cell-14"></div>
+			<div class="tile swappable blurb cell-14 bg-style2"></div>
 		</div>
 		
 		<%# ==== row 2 ====== %>
 		<div class="tile-row clearfix">
-			<div class="tile swappable blurb cell-21"></div>
+			<div class="tile swappable blurb cell-21 bg-style3"></div>
 			
-			<div id="description-box" class="tile double-len cell-description">
+			<div id="description-box" class="tile double-len cell-description bg-style4">
 				<div class="description">
 					<%= Utils.truncated_plaintext(@job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
 				</div>
@@ -216,15 +216,15 @@
 			</div>
 			
 			<% if @job.get_photos.any? %>
-				<div class="tile swappable photo clickable cell-24"></div>
+				<div class="tile swappable photo clickable cell-24 bg-style3"></div>
 			<% else %>
-				<div class="tile swappable blurb cell-24"></div>
+				<div class="tile swappable blurb cell-24 bg-style3"></div>
 			<% end %>			
 		</div>
 		
 		<%# ==== row 3 ====== %>
 		<div class="tile-row clearfix">
-			<div id="signin-box" class="tile double-len cell-signin">
+			<div id="signin-box" class="tile double-len cell-signin bg-style5">
 				<div class="title">Ping the company</div>
 				<div class="sub-title">Click a button to be in touch</div>
 				<!--div class="img-box">
@@ -256,16 +256,16 @@
 					</div>
 				</div>
 			<% else %>
-				<div class="tile swappable blurb cell-33"></div>
+				<div class="tile swappable blurb cell-33 bg-style1"></div>
 			<% end %>
 			
 			<% if @job.address && @job.address_lat && @job.address_lng %>
-				<div class="tile map clickable cell-34">
+				<div class="tile map clickable cell-34 bg-style2">
 					<%= image_tag("http://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
 					<div class="clickable-indicator"></div>
 				</div>
 			<% else %>
-				<div class="tile swappable blurb cell-34"></div>
+				<div class="tile swappable blurb cell-34 bg-style2"></div>
 			<% end %>
 		</div>
 		
@@ -295,7 +295,7 @@
 		<% end %>
 		
 		<% unless @infointerview.nil? %>
-			<div id="contact-form-box" class="tile cell-form">
+			<div id="contact-form-box" class="tile cell-form bg-style5">
 				<a class="close-form" href="#"></a>
 				<div class="more-padding">
 					<div class="title">Let the folks at <%=@job.company_name%> know that you'd like to hear from them.</div>

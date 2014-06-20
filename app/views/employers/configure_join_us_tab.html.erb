@@ -57,14 +57,23 @@
 				<span>Embed into your site</span>
 				<div class="header-buttons-box">
 					<%=link_to("Live preview...", "#", :class => "standard-button", :id => "live-preview-button") %>&nbsp;&nbsp;
-					<%=link_to("Copy to clipboard", "#", :class => "standard-button") %>
+		 			<a href="#" class="standard-button div-tooltip-holder" id="copy-button">Copy to clipboard
+		 				<div class="div-tooltip">Copied</div>	
+		 			</a>
+		 			<script>
+		 					$(document).ready(function(){
+	 							zeroclipboard_init("#copy-button", function(){
+									return $("#code-input").val();;
+						 		}); 
+							});
+					</script>
 				</div>
 			</div>
 			<div class="section-box">
 				<div class="form-cell">
 					<%= label_tag(nil, "Paste this code snippet into your site's HTML, e.g., right before the </body> tag.") %><br>
 					<textarea onClick="this.select();" id="code-input" spellcheck="false" readonly="readonly"></textarea>
-					<span class="note-box">Note, that the tab only appears to vistors from the regiones where you have open positions.</span>
+					<span class="note-box">Note that the tab is geotargeted: It is seen only by vistors from locations where you have open positions.</span>
 				</div>
 			</div>
 		</div>

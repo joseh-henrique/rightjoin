@@ -183,9 +183,9 @@ module UsersControllerCommon
             txt = "Thanks for using #{Constants::SHORT_SITENAME}. Your account was deactivated. (You can reactivate later.)"
           else
             if premium_plan
-              txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've cancelled your premium plan, closed all your job postings, and unsubscribed you." 
+              txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've cancelled your premium plan, closed your job postings, and unsubscribed you." 
             else
-              txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've closed all your job postings and unsubscribed you."
+              txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've closed your job postings and unsubscribed you."
             end
           end
           flash_message(:notice, txt)

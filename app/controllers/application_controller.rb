@@ -8,17 +8,16 @@ class ApplicationController < ActionController::Base
   def check_uri
     host = request.host.downcase
  
-    if !host.include?(".herokuapp.com") && 
-       !host.start_with?("localhost") && 
-       !host.start_with?("127.0.0.1") && 
-       !host.start_with?("lvh.me") &&        
-       !host.start_with?("10.0.0")  
-         
+		unless host.include?(".herokuapp.com") || #These are test hosts; all others are redirected.
+        host.start_with?("localhost") || host.start_with?("127.0.0.1") || host.start_with?("lvh.me") 
          
            if host.include?(Constants::SITENAME_IL_LC)
               set_default_locale(Constants::COUNTRY_IL) 
            end   
            
+           if host.include?(Constants::FIVEYEARITCH_SITENAME.downcase)
+               flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and log in." )
+           end  
  
           if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC)
             port_str = (request.port==80 ?"": ":"+request.port.to_s) 

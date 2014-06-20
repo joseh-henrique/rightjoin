@@ -1,9 +1,9 @@
 class EmployersController < ApplicationController
   include UsersControllerCommon
     
-  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe, :update_work_with_us_widget_config]
+  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe]
   before_filter :init_employer_user, :except => [:we_are_hiring, :ping, :work_with_us_tab, :work_with_us_test]
-  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab, :update_work_with_us_widget_config]
+  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab]
   before_filter :add_verif_flash, :only =>[:show, :edit]
   before_filter :init_join_us_widget, :only =>[:we_are_hiring, :ping]
 
@@ -165,18 +165,7 @@ class EmployersController < ApplicationController
   def configure_join_us_tab
     @current_page_info = PageInfo::EMPLOYER_CONFIGURE_JOIN_US_TAB
     @employer = current_user
-    @employer.join_us_widget_params_map ||= ""
     render 'configure_join_us_tab'
-  end
-  
-  def update_work_with_us_widget_config
-    current_user.join_us_widget_params_map = params[:config]
-    current_user.save!
-    
-    render :nothing => true, status: :ok
-  rescue Exception => e
-    logger.error e
-    render :nothing => true, status: :forbidden    
   end
   
   def work_with_us_tab
@@ -186,8 +175,19 @@ class EmployersController < ApplicationController
     @employer = Employer.find_by_ref_num(refnum)
     
     # Track widget usage heartbeat every 12 hours. Exclude our own sites, which are not relevant to tracking customer usage.
-    our_sites = ["www.#{Constants::FIVEYEARITCH_SITENAME.downcase}", "localhost", "fyistage.herokuapp.com", "www.#{Constants::SITENAME_LC}", "www.#{Constants::SHORT_SITENAME.downcase}.co.il", "#{Constants::SHORT_SITENAME.downcase}.herokuapp.com"]
-    unless  our_sites.include?(host.to_s.downcase)
+    # Given our redirect setup, not all these are needed, but we may change the redirect setup.
+    our_sites = [ 
+        "www.#{Constants::SITENAME_LC}",
+         "#{Constants::SHORT_SITENAME.downcase}.herokuapp.com",
+        "localhost", 
+        "fyistage.herokuapp.com",
+        Constants::SITENAME_IL_LC,  
+        "www.#{Constants::SITENAME_IL_LC}",
+        "www.#{Constants::FIVEYEARITCH_SITENAME.downcase}", 
+        Constants::SITENAME_LC
+       ]
+
+    unless our_sites.include?(host.to_s.downcase)
       now = Time.parse(ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP"))
       if @employer.join_us_widget_heartbeat.nil? || now - @employer.join_us_widget_heartbeat >= 12.hours
         @employer.update_attribute(:join_us_widget_heartbeat, now)
