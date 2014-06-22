@@ -840,7 +840,7 @@ end
 
 def make_system_users
   # Bob - admin
-  usr_bob = User.new({:email =>  Constants::FYI_ADMIN_EMAIL, :password => ADMIN_PASSWORD})
+  usr_bob = User.new({:email =>  Constants::ADMIN_CONSOLE__USER, :password => ADMIN_PASSWORD})
   usr_bob.admin=true
   usr_bob.sample=true
   usr_bob.wanted_salary = 200000

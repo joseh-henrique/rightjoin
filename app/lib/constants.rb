@@ -4,6 +4,9 @@ class Constants
   SITENAME = Constants::SHORT_SITENAME + ".io"
   SITENAME_LC = SITENAME.downcase
   SITENAME_IL_LC = SHORT_SITENAME.downcase + ".co.il"
+  TWITTER_USER = "@" + SHORT_SITENAME
+
+
   FIVEYEARITCH_SHORT_SITENAME ="FiveYearItch"
   FIVEYEARITCH_SITENAME  = "#{FIVEYEARITCH_SHORT_SITENAME}.com"
   
@@ -23,7 +26,7 @@ class Constants
   CONTACT_EMAIL ="contact@#{SITENAME_LC}"
   ADMIN_EMAIL ="admin@#{FIVEYEARITCH_SITENAME.downcase}"
   FYI_RECRUITER_EMAIL = "jennifer@#{FIVEYEARITCH_SITENAME.downcase}"
-  FYI_ADMIN_EMAIL = "robert@#{FIVEYEARITCH_SITENAME.downcase}" 
+  ADMIN_CONSOLE__USER = "robert@#{FIVEYEARITCH_SITENAME.downcase}" 
   
   REMEMBER_TOKEN_INFOINTERVIEW = :remember_token_infointerview
   REMEMBER_TOKEN_AMBASSADOR = :remember_token_ambassador

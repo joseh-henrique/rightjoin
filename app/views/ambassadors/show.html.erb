@@ -84,8 +84,8 @@
 					<%networks.each do |network, setid| %>
 						<div class="share-button-box">
 							
-  							<% title = Ambassador::share_title(@job) %> 
-							<% description = Ambassador::share_description(@job)  %> 
+  							<% title = @job.share_title %> 
+							<% description = @job.share_description  %> 
 							
 							<%case network%>
 							<%when Constants::SOCIAL_NETWORK_LINKEDIN%>

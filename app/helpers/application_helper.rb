@@ -263,4 +263,20 @@ module ApplicationHelper
     return "Yesterday" if date > 2.day.ago
     return "#{distance_of_time_in_words_to_now(date, false)} ago"
   end
+  
+   #TODO Move to job_helper
+   def presentation_image_url(job)
+      ret = nil
+      photos = job.get_photos
+      if photos.any?
+        photo = photos.sample #Random photo
+        ret = photo.image.standard.url
+      elsif !job.logo.nil?  #No photos, try to use company logo
+        ret = job.logo.image.standard.url
+      else # Use RJ logo
+        ret = full_image_url('misc/logos_72.png')
+      end
+      return ret
+  end
+  
 end

@@ -79,13 +79,7 @@ class Ambassador < ActiveRecord::Base
     self.auth = auth
   end
   
-  def self.share_description(job)
-     "Come work with me as #{Utils::indefinite_article_and_noun(job.position_name)} at #{job.employer.company_name}. See the job posting and ping us to be in touch."
-  end
-  
-  def self.share_title(job)
-    "Come work with me at #{job.company_name}."
-  end
+
  
    
 end

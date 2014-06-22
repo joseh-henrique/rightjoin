@@ -1,4 +1,6 @@
 class Job < ActiveRecord::Base
+ 
+    
   serialize :join_us_widget_params_map, JSON
   
   belongs_to :employer
@@ -443,4 +445,14 @@ class Job < ActiveRecord::Base
     logger.error "Inspect failed for #{self.class}: #{e}"
     super.inspect    
   end  
+  
+
+  #Used raw in the HTML.
+  def share_description()
+     "Come work with me as #{Utils::indefinite_article_and_noun(position_name)} at #{ employer.company_name}. See the job posting and ping us to be in touch."
+  end
+  #Used raw in the HTML.
+  def share_title()
+    "Come work with me at #{self.company_name}."
+  end
 end

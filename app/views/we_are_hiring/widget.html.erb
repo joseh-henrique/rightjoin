@@ -35,49 +35,42 @@
 <% #http://moz.com/blog/meta-data-templates-123 %>
 <% content_for :more_meta do %> 
 	<% 
-	# See ambassadors/show.html.erb for similar text
-	   title_for_metas = Ambassador::share_title(@job)
-	   desc_for_metas =  raw  Ambassador::share_description(@job)   
-  	   img_url_for_metas =  @job.logo.nil? ? nil : @job.logo.image.standard.url 
+	  # See ambassadors/show.html.erb for similar metas
+	   title_for_metas = raw  @job.share_title
+	   desc_for_metas =  raw  @job.share_description   
+  	   img_url_for_metas =  presentation_image_url(@job) 
+  	   company_name_for_metas = @job.employer.company_name
     %>
 
 	<%# Google+ %>
-
 	<meta itemprop="name" content="<%=title_for_metas%>"> 
 	<meta itemprop="description" content="<%=desc_for_metas%>" > 
-	<% unless img_url_for_metas.nil? %>
-		<meta itemprop="image" content="<%=img_url_for_metas%>"> 
- 	<% end %>
+	<meta itemprop="image" content="<%=img_url_for_metas%>"> 
 
 	<%# Facebook: http://support.addthis.com/customer/portal/articles/381222-optimize-facebook-sharing#.U0pYjXV5064 %>
 	<meta property="og:title" content="<%=title_for_metas%>" /> 
 	<meta property="og:type" content="article" /> 
-	<% unless img_url_for_metas.nil? %>
-		<meta property="og:image" content="<%=img_url_for_metas%>" /> 
-	<% end %>
+	<meta property="og:image" content="<%=img_url_for_metas%>" /> 
 	<meta property="og:description" content="<%=desc_for_metas%>"  /> 
-	<meta property="og:site_name" content="<%=@job.employer.company_name%> job postings powered by <%=Constants::SITENAME%>" /> 
+	<meta property="og:site_name" content="<%=company_name_for_metas%> job postings powered by <%=Constants::SITENAME%>" /> 
 
 	<%# Twitter cards: https://dev.twitter.com/docs/cards/validation/validator %>
 	<meta name="twitter:card" content="summary">
-
 	<meta name="twitter:title" content="<%=title_for_metas%>"><%#Truncated to 70 chars%>
 	<meta name="twitter:description" content="<%=desc_for_metas%>"><%#Truncated to 200 chars>
-	<meta name="twitter:site" content="@RightJoin" ><%# @username of website	 %>
-	<meta name="twitter:site:id" content="@RightJoin" ><%#   Same as twitter:site, but the user's Twitter ID  %>
+	<meta name="twitter:site" content="#{Constants::TWITTER_USER}" ><%# @username of website	 %>
+	<meta name="twitter:site:id" content="#{Constants::TWITTER_USER}" ><%#   Same as twitter:site, but the user's Twitter ID  %>
     <%# Optional twitter:creator, @username of content creator	 %>
  	<%# Optional twitter:creator:id, Twitter user ID of content creator %>
  	<meta name="twitter:domain" content="<%=Constants::SITENAME_LC%>" > 
+ 		
+	<meta name="twitter:image:src" content="<%=img_url_for_metas%>">
+	<%   
+		 #Do this when we can support Twitter cards. But even there they are optional.
+	     #twitter:image:width	 	og:image:width
+		 #twitter:image:height	 og:image:height
+	%> 
  
-	
-	<% unless img_url_for_metas.nil? %>
-			<meta name="twitter:image:src" content="<%=img_url_for_metas%>">
-			<%   
-				 #Do this when we can support Twitter cards. But even there they are optional.
-			     #twitter:image:width	 	og:image:width
-				 #twitter:image:height	 og:image:height
-			%> 
-	<% end %>
 <% end %>
 
 <%=link_to "RightJoin", root_url, :id=>"rightjoin-label", :target => "_blank"%>
