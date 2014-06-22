@@ -90,6 +90,15 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def add_mandatory_fields_flash 
+    if signed_in? && (current_user.first_name.blank? || current_user.last_name.blank?)      
+      link = "#{view_context.link_to("fill in mandatory fields", register_path)}"
+      html_for_flash = "Please #{link} in your profile to enable outbound contacts."
+      
+      flash_now_message(:notice, html_for_flash)
+    end
+  end  
+  
   def log_model_errors(model_obj)
     has_errors = false
     return unless model_obj

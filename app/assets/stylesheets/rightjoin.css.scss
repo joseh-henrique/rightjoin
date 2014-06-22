@@ -45,7 +45,7 @@ h3 {
   margin: 0 0 3px 0;
 }
 
-a {
+a, .ui-dialog-content a {
   color: #0999e6;
   
   &:hover {
@@ -74,17 +74,27 @@ a {
   
   #flash-container {
     position: relative;
-    font-size: 1em;
-    line-height: 1.5em;
+    line-height: 1.35em;
     margin-bottom: 40px;
     font-size: 1.3em;
-    line-height: 35px;  
     
     .flash-box {
-      padding: 5px 10px 5px 20px;
+      padding: 15px 20px 15px 20px;
       margin-bottom: 10px;
+      
+      a {
+        color: white;
+      }
     }  
   }
+}
+
+.link-x {
+  background: transparent image-url("shared/x.png") no-repeat top left;
+  width: 10px;
+  height: 10px;
+  top: 3px;
+  right: 3px;
 }
 
 .fading_highlight {
@@ -214,6 +224,12 @@ a {
 // empoyer style
 ////////////////////////////////////////////////////////
 .employer {
+  .founder {
+    .picture {
+      border: 1px solid $employer-color;
+    }
+  }
+  
   #voiceover .release-constraint-box {
     background: #0089D3;
     
@@ -346,6 +362,12 @@ a {
 // engineer style
 ///////////////////////////////////////////////////////////
 .employee {
+  .founder {
+    .picture {
+      border: 1px solid $engineer-color;
+    }
+  } 
+  
   #voiceover .release-constraint-box {
     background: #1c898b;
     
@@ -472,6 +494,9 @@ a {
   .share-button {
     display: inline-block;
     padding-left: 10px;
+     a {
+       display: inline-block;
+     }
   }
 }
 
@@ -778,6 +803,10 @@ a {
 .form-column {
   margin-right: 20px;
   float: left;
+  
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
 .group-box {
@@ -791,7 +820,7 @@ input[type=text], input[type=password], textarea, select {
   height: 2.5em;
   padding-left: 0.5em;
   padding-right: 0.5em;
-  color: #7a5e60;
+  color: #485C70;
   width: 340px;
   background: white;
   border: 1px solid #ced6db;
@@ -830,8 +859,8 @@ label {
   border: none;
   
   .ui-dialog-title {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    font-weight: 500;
+    font-size: 16px;
   }
   
   .ui-dialog-content {
@@ -1045,7 +1074,7 @@ label {
   
   #description-text {
     width: 824px;
-    height: 4em;
+    height: 5em;
     resize: none;
   }
   
@@ -1110,8 +1139,7 @@ label {
   }
   
   .join-us-style-selector-box {
-    width: 360px;
-    height: 100px;
+    width: 355px;
     cursor: pointer;
     
     .join-us-style-preview {
@@ -2048,18 +2076,6 @@ label {
 .tags-list {
   margin: 0;
   
-  .deletion-link{
-    position: absolute;
-    display: block;
-    width: 13px;
-    height: 11px;
-    background: image-url("fyi/x_small.gif") no-repeat;
-    cursor: pointer;
-    text-indent: -9999px;
-    right: -4px;
-    top: -4px;
-  }
-   
   .onetag {
     position: relative;
     display: inline-block;
@@ -2072,12 +2088,26 @@ label {
     @include border-radius(4px);
     
     a {
-      @extend .deletion-link;    
+      position: absolute;
+      display: block;
+      width: 14px;
+      height: 14px;
+      background: image-url("shared/tag-x-off.png") no-repeat;
+      cursor: pointer;
+      text-indent: -9999px;
+      right: -4px;
+      top: -4px;
+    }
+    
+    &:hover {
+      a {
+        background: image-url("shared/tag-x-on.png") no-repeat;
+      }
     }
   }
   
-  .data-job-qualifier1, .job-extra1 {
-    background-color: #A7E5A9;
+  .data-job-qualifier1, .defined-salary {
+    background-color: #27AE60;
   }
   
   .data-skill1{
@@ -2566,3 +2596,240 @@ $tab-border-radius: 4px;
     line-height: 1.35em;
   }
 }
+
+#user-edit {
+  .free-text,
+  .professional-profiles {
+    width: 824px;
+    height: 4em;
+  }
+  
+  .location-options-box {
+    padding-top: 5px;
+  }
+  
+  .add-tag-button {
+    @include inline-button(#11a8ab, 14px, 35px, 15px, white, 500);
+    text-transform: none;
+  }
+  
+  #skilltag, #jobqualifiertag {
+    width: 420px;
+  }
+  
+  .tags-list {
+    margin-top: 10px;
+    
+    &:empty {
+      margin-top: 0;
+    }
+  }
+  
+  .only-sign-up {
+    padding-bottom: 10px;
+  }
+  
+  .aspirations-box {
+    .vertical-align: bottom;
+    
+    input[type="radio"]{
+        vertical-align: middle;
+    }    
+    
+    label {
+      line-height: 1.75em;
+      vertical-align: middle;
+      color: #485C70;
+    }
+  }
+  
+  #salary-tags-list {
+    margin-top: 0;
+  } 
+  
+  #salary-tag {
+    margin: 0;
+    line-height: 27px;
+  }
+  
+  .salary-slider-outer-box {
+    text-align: center;
+    width: 462px;
+
+    .salary-slider-inner-box {
+      padding-bottom: 10px;
+      background: transparent image-url("shared/ruller.png") no-repeat bottom left;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      padding-left: 1px;
+      padding-right: 3px;
+      
+      .ui-slider{
+        border: 1px solid #ced6db;
+      }
+      
+      .ui-state-default {
+        @include border-radius(50%);
+      }
+      
+      .ui-corner-all, .ui-slider-range {
+        @include border-radius(10px !important);
+      }
+      
+      .ui-slider-range, .ui-slider-handle {
+        background: #119B9E !important;
+      }
+    }
+  }
+}
+
+.fyi-accordion {
+  .standard-section-header {
+    margin-bottom: 0;
+    margin-top: 5px;
+    cursor: pointer;
+    padding-right: 50px;
+    background-position: right center;
+    background-repeat: no-repeat;    
+      
+    &.expanded {
+      background-image: image-url("shared/accordion-triangle-down.png");
+
+    }
+    
+    &.collapsed {
+      background-image: image-url("shared/accordion-triangle-right.png");   
+    }
+  }
+  
+  .accordion-panel {
+    padding: 20px;
+    background: #F5F5F5;
+    min-height: 80px;
+    text-align: justify;
+    
+    ul {
+      margin: 0 0 0 1em;
+    }
+  }
+  
+  .standard-section-header.collapsed + .accordion-panel {
+    display: none;
+  }
+  
+  .standard-section-header.expanded + .accordion-panel {
+    display: block;
+  }    
+}
+
+#faq-accordion {
+  margin-top: 30px;
+  margin-bottom: 30px;  
+}
+
+#founders-box {
+  .founder {
+    margin-bottom: 30px;
+    .picture {
+      float: left;
+      margin-right: 20px;
+    }
+    .name {
+      font-size: 22px;
+      margin-bottom: 0.4em;
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+#plans-and-pricing{
+  color: #6B696A;
+  
+  td, th {
+    border: 0;
+  }
+  
+  td, th {
+    border-left: 1px solid white;
+    padding: 14px;
+  }
+  
+  .feature-value {
+    text-align: center;
+  }
+  
+  tr.odd {
+    background: #F7F7F7;
+  }
+  
+  tr.even {
+    background: #E0EAEB;
+  }
+  
+  tr.headline {
+    font-size: 18px;
+  }
+  
+  tr.headline, tr.footer {
+    color: white;
+    
+    td, th {
+      padding: 20px 0;
+      text-align: center;
+    }
+    
+    .free {
+      background: #B1DB5D;
+    }
+    
+    .pro {
+      background: #9CCA44;
+    }
+    
+    .enterprise {
+      background: #7BB801;
+    }    
+  }
+  
+  tr.footer {
+    font-weight: 500;
+    
+    .free, .pro, .enterprise {
+      cursor: pointer;
+    }
+  }
+  
+  .free, .pro, .enterprise {
+    width: 176px;
+  }
+  
+  tr.monthly-subscription {
+    .feature-value {
+      font-size: 35px;
+      padding: 30px 0;
+    }
+    
+    .free {
+      color: #B1DB5D;
+    }
+    
+    .pro {
+      color: #9CCA44;
+    }
+    
+    .enterprise {
+      color: #7BB801;
+    }    
+  }
+  
+  .check-mark {
+    .feature-value {
+      font-size: 32px;
+      color: #929292;
+    }
+  }
+}
+

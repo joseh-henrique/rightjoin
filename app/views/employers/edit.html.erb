@@ -1,14 +1,24 @@
 <a name="form" style="visibility: hidden"></a>
 
-<div class="inner">
-	<%= render :partial => 'layouts/flash_box' %>
-</div>
-
 <div class="content">
-	<p class="headline">
-		Edit your employer profile and choose a pricing plan here
-	</p>	
-	<%= render :partial => 'employers/edit_form' %>
+	<%= render :partial => 'layouts/flash_box' %>
+	
+	<div class="content-box">
+		<div class="page-heading-box">
+			<h1>
+				Edit your profile or switch plans
+			</h1>
+			<h2>
+				You can upgrade or downgrade plans at any time.
+			</h2>
+	 	</div>
+	 	
+	 	<div id="employer-edit">
+			<%= render :partial => 'employers/edit_form'%>
+		</div>
+	</div>
+	
+	<div class="content-box">
+		<%= render :partial => 'employers/pricing_plans' %>
+	</div>
 </div>
-
-<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>

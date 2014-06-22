@@ -13,7 +13,9 @@ class User < ActiveRecord::Base
   has_many :infointerviews, :dependent => :nullify
 
   validates :current_position_id, :presence=> true
-  validates :current_position_id, :presence=> true
+  validates :wanted_position, :presence=> true
+  validates :first_name, :presence=> true
+  validates :last_name, :presence=> true
   validate :check_valid_location
   validates :locale, :presence => true # like en, en-IL
   

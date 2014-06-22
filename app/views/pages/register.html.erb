@@ -1,17 +1,24 @@
 <a name="form" style="visibility: hidden"></a>
 
-<div class="inner">
-	<%= render :partial => 'layouts/flash_box' %>
-</div>
-
 <div class="content">
-	<p class="headline">
-		Tell us what turns you on. Employers will invite you to specific jobs that meet your requirements.
-	</p>
-	<p class="subtitle">
-		No resum&eacute; needed, just enough info to make the connection.
-	</p>
-	<%= render :partial => 'users/edit_form' %>
-</div>
+	<%= render :partial => 'layouts/flash_box' %>
 
-<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => true} %>
+	<div class="content-box">
+		<div class="page-heading-box">
+ 			<h1>
+				Tell us what turns you on.
+			</h1>
+			<h2>
+				Employers will ping you about specific jobs that meet your requirements.
+				You can ping them back if you're interested.
+			</h2>
+			<h3>
+				You don't need a resum&eacute;  to sign up, just enough info to make the connection.
+			</h3>
+		</div>
+		
+		<div id="user-edit">
+			<%= render :partial => 'users/edit_form' %>
+		</div>
+	</div>
+</div>

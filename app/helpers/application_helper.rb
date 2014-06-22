@@ -116,7 +116,7 @@ module ApplicationHelper
     if for_view==:employee
        s = "Anything else you'd like to say to employers?"
        if for_edit
-        s << " No need for details, that can come after first contact."
+        s << " No need for details, that can come after you return their ping."
        end
        return s
     elsif for_view==:searcher || for_view==:employer

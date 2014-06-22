@@ -158,7 +158,7 @@ private
         if actual_locale == :unknown
           flash_now_message(:error, 
           "You've hit the #{i18n_country_name} site. Please choose your country at top-left, or  
-				  #{email_contact_link("drop us a line")}, and we'll let you know when we add support for your country.")
+				  #{uservoice_contact_link("drop us a line")}, and we'll let you know when we add support for your country.")
           is_user_valid = false
         elsif actual_locale != I18n.locale
           actual_country_link = country_link(actual_locale, "switch to the __country_name__ site here")

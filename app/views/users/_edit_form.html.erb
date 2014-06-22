@@ -1,196 +1,183 @@
 <% max_salary = I18n.t(:max_salary).to_i %>
 
-<div class="white-box" id="edit-user-box">
-	<%= form_for(@user) do |f| %>  
-		<div id="user-home-accordion" class="fyi-accordion">
-			<% unless @user.new_record? %>
-			<h3 class="accordion-header expanded clearfix"><span>Profile info</span></h3>
-			<div class="accordion-panel">
-			<% end %>
-				<div class="clearfix user-attr-row">
-					<div class="left-col">
-						<%= label_tag(nil,  current_job_s(:employee), :class=>"mandatory") %>
-					  	<a class="field-tooltip" 
-					      title="The job title you now have."> 
-					   	</a> 
-				 		
-				 		<% 
-				 			current_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:current_job] : @user.current_position_name
-				 		%>
-		
-						<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., software engineer", :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :spellcheck => true) %>
-					</div>
-					<div class="right-col">
-					</div>
-				</div>	
-		
-				<div class="clearfix user-attr-row">
-					<div class="left-col">
-						<%= label_tag(nil, wanted_job_s(:employee), :class=>"mandatory") %>
-						<a class="field-tooltip" title="The dream job you'd like to move to. To help employers find you, please use a standard job title."></a>
-						<% wanted_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:wanted_job] : @user.wanted_position_name %>
-						<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :spellcheck => true) %>		
-					</div>
-					<div class="right-col">
-						<%= label_tag(nil, city_s(:employee)) %>
-						<a class="field-tooltip" 
-						      title='The city where you want to work.<br><br>You can start typing a city name or a zip code and use autocomplete.<br><br>We find matches in the city you choose and nearby cities.'></a> 
-						<%= text_field_tag(:location, @user.location_name, 
-							:autocomplete => "off", :placeholder => "e.g., san francisco, california", 
-							:maxlength => 60, :class=>"half-row-width-plus input-attr ", :spellcheck => false) %>
-							
-						<div class="location-options-box">
-							<%= check_box_tag 'can_telecommute', '1', @user.can_telecommute %>&nbsp;<%= label_tag "can_telecommute", "Telecommuting OK" %>
-							<br />
-							<%= check_box_tag 'can_relocate', '1', @user.can_relocate  %>&nbsp;<%= label_tag "can_relocate", "Anywhere in #{I18n.t(:country_name )}" %>
-						</div>
-							
-						<%= hidden_field_tag(:lat, @user.latitude) %>
-						<%= hidden_field_tag(:lng, @user.longitude) %>						
-					</div>
+<%= form_for(@user) do |f| %>  
+	<div class="standard-section-header">For your anonymous profile</div>
+	<div class="section-box">
+		<div class="form-row clearfix">
+			<div class="form-column">
+				<div class="form-cell">
+					<%= label_tag(nil,  current_job_s(:employee), :class=>"mandatory") %><br>
+				  	<a class="field-tooltip" title="The job title you now have."></a>
+			 		<% current_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:current_job] : @user.current_position_name %>
+					<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true) %>			
 				</div>
-		
-				<div class="user-attr-row" id="add-skills">
-					<%= label_tag(nil,  skills_s(:employee)) %>
-					<% skill_levels= 
-						"<ul class='bullet-points'>
-					        <li>
-					           Learner: If you've been  learning or use this technology for 1-2 years
-					        </li>
-					        <li>
-					          Professional: If you've developed production systems with this technology for 3 or more years
-					        </li>
-					        <li>
-					           Expert: If you deal with the hardest challenges
-					          (the ones no one else knows how to solve) with this technology.
-					          You have a proven track record of delivering complex code relating to this technology,
-					          e.g., system internals, infrastructures, frameworks.
-					        </li>
-					 
-					      </ul>"
-		     		%>
-					<a class="user-attr-field-tooltip" title="<%=raw skill_levels%>">
-					</a>
-		
-					<div class="user-attr-edit-box">
-						<%= text_field_tag(:skilltag, nil, :name => nil, :autocomplete => "off", :placeholder => "e.g., java", :maxlength => 60, :class => "input-attr", :spellcheck => false) %>
-						   
-					    <a id="add-skill-btn-10"   class="add-skill-btn add-tag-btn"><span class="left"><%= seniority_s(UserSkill::EXPERT)%></span><span class="right"></span></a>
-						<a id="add-skill-btn-4-6"  class="add-skill-btn add-tag-btn"><span class="left"><%=seniority_s(UserSkill::PROFESSIONAL)%></span><span class="right"></span></a>
-						<a id="add-skill-btn-1"  class="add-skill-btn add-tag-btn"><span class="left"><%=seniority_s(UserSkill::LEARNER)%></span><span class="right"></span></a>	
-					 
-						<ol id="skills-tags-list" class="tags-list"></ol>
-						<%= hidden_field_tag(:skills) %>
-					</div>
-				</div>		
-				
-				<div class="clearfix user-attr-row">
-					<%= label_tag(nil, "Your main aspiration for your next job") %>
-					<a class="user-attr-field-tooltip" 
-				      title='Give us your top aspiration here. Use the "What you need" field to say what else you require from any job offer.'> 
-				   	</a> 
-					<div class="user-attr-edit-box">
-						<% User::ASPIRATIONS.each_with_index do |aspiration, index| %>
-							<div>
-								<%=radio_button_tag 'aspiration', index, @user.aspiration == index%><%= label_tag("aspiration_#{index}", aspiration[:label], class: "radio-buttton-label") %>
-							</div>
-						<% end %>
-					</div>
-				</div>						
-				
-				<div class="user-attr-row">
-					<%= label_tag(nil, wanted_salary_s(:employee)) %>
-					<a class="user-attr-field-tooltip" title="Offers must be for this <%=I18n.t(:salary_period)%> salary or higher"></a>
-					<div class="user-attr-edit-box" id="salary-box">
-						<% wanted_salary = @user.new_record? && !@defaults.nil? ? @defaults[:salary] : @user.wanted_salary %>
-						<%= hidden_field_tag(:wantedsalary, wanted_salary) %>
+				<div class="form-cell">
+					<%= label_tag(nil, city_s(:employee)) %><br>
+					<a class="field-tooltip" 
+					      title='<p>The city where you want to work.</p><p>You can start typing a city name or a zip code and use autocomplete.</p><p>We find matches in the city you choose and nearby cities.</p>'></a> 
+					<%= text_field_tag(:location, @user.location_name, 
+						:autocomplete => "off", :placeholder => "e.g., san francisco, california", 
+						:maxlength => 60, :class=>"", :spellcheck => false) %>
 						
-						<div id="salary-tag" ><span id="salarytext"></span><a id="remove-salary-tag"></a></div>				
-		
-						<div>
-							<div id="salary-slider" ></div> <div id="salary-ruller"><%=Utils::format_currency(max_salary / 2000)%>K</div>
-						</div>
+					<div class="location-options-box">
+						<%= check_box_tag 'can_telecommute', '1', @user.can_telecommute %>&nbsp;<%= label_tag "can_telecommute", "Telecommuting OK" %>
+						<br>
+						<%= check_box_tag 'can_relocate', '1', @user.can_relocate  %>&nbsp;<%= label_tag "can_relocate", "Anywhere in #{I18n.t(:country_name )}" %>
 					</div>
-				</div>		
 					
-				<div class="user-attr-row" id="job-qualifier-ctrls-box">
-					<%= label_tag(nil, job_qualifier_s(:employee ) ) %>
-					<a class="user-attr-field-tooltip" title="Don't be shy. Ask for anything you want.<br><br>Employers only contact you if they can meet your requirements.">
-					</a>
-		     
-					<div class="user-attr-edit-box">
-						<%= text_field_tag(:jobqualifiertag, nil, :name => nil, :autocomplete => "off", 
-								:placeholder => "e.g., learning opportunities", :maxlength => 60, :class => "input-attr", :spellcheck => true) %>
-						<a id="add-job-qualifier-btn" class="add-tag-btn"><span></span></a>
-						<ol id="job-qualifier-tags-list" class="tags-list"></ol>
-						<%= hidden_field_tag(:jobqualifiers) %>
-					</div>
+					<%= hidden_field_tag(:lat, @user.latitude) %>
+					<%= hidden_field_tag(:lng, @user.longitude) %>		
 				</div>
+			</div>
+			
+			<div class="form-column">
+				<div class="form-cell">
+					<%= label_tag(nil, wanted_job_s(:employee), :class=>"mandatory") %><br>
+					<a class="field-tooltip" title="The dream job you'd like to move to. To help employers find you, please use a standard job title."></a>
+					<% wanted_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:wanted_job] : @user.wanted_position_name %>
+					<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true) %>						
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<%= label_tag(nil,  skills_s(:employee)) %>
+			<% skill_levels= 
+				"<ul>
+			        <li>
+			           <em>Learner:</em> If you've been  learning or using this technology for 1-2 years
+			        </li>
+			        <li>
+			          <em>Professional:</em> If you've developed production systems with this technology for 3 or more years
+			        </li>
+			        <li>
+			           <em>Expert:</em> If you deal with the hardest challenges
+			          (the ones no one else knows how to solve) with this technology.
+			          You have a proven track record of delivering complex code relating to this technology,
+			          e.g., system internals, infrastructures, frameworks.
+			        </li>
+			     </ul>"
+			%>
+			<a class="field-tooltip" title="<%=raw skill_levels%>"></a>
+			<div class="form-row group-box">
+				<%= text_field_tag(:skilltag, nil, :name => nil, :autocomplete => "off", :placeholder => "e.g., java", :maxlength => 60, :class => "", :spellcheck => false) %>&nbsp;&nbsp;
+				   
+			    <a id="add-skill-btn-10"   class="add-tag-button"><%= seniority_s(UserSkill::EXPERT)%>&nbsp;+</a>&nbsp;
+				<a id="add-skill-btn-4-6"  class="add-tag-button"><%=seniority_s(UserSkill::PROFESSIONAL)%>&nbsp;+</a>&nbsp;
+				<a id="add-skill-btn-1"  class="add-tag-button"><%=seniority_s(UserSkill::LEARNER)%></span>&nbsp;+</a>	
+			 
+				<ol id="skills-tags-list" class="tags-list"></ol>
+				<%= hidden_field_tag(:skills) %>
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<%= label_tag(nil, "Your main aspiration for your next job") %>
+			<a class="field-tooltip" 
+		      title='Give us your top aspiration here. Use the "What you need" field to say what else you require from any job offer.'> 
+		   	</a>
+			<div class="form-row group-box aspirations-box">
+				<% User::ASPIRATIONS.each_with_index do |aspiration, index| %>
+					<div>
+						<%=radio_button_tag 'aspiration', index, @user.aspiration == index%>&nbsp;<%= label_tag("aspiration_#{index}", aspiration[:label], class: "radio-buttton-label") %>
+					</div>
+				<% end %>
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<%= label_tag(nil, wanted_salary_s(:employee)) %>
+			<a class="field-tooltip" title="Offers must be for this <%=I18n.t(:salary_period)%> salary or higher"></a>
+			<div class="form-row group-box">
+				<% wanted_salary = @user.new_record? && !@defaults.nil? ? @defaults[:salary] : @user.wanted_salary %>
+				<%= hidden_field_tag(:wantedsalary, wanted_salary) %>
 				
-				<div class="user-attr-row full-row-counter-box">
+				<div class="tags-list" id="salary-tags-list">
+					<div id="salary-tag" ><span id="salarytext"></span><a id="remove-salary-tag"></a></div>	
+				</div>
+		
+				<div class="salary-slider-outer-box">
+					<div class="salary-slider-inner-box">
+						<div id="salary-slider" ></div>
+					</div>
+					<div id="salary-ruller"><%=Utils::format_currency(max_salary / 2000)%>K</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<%= label_tag(nil, job_qualifier_s(:employee ) ) %>
+			<a class="field-tooltip" title="<p>Don't be shy. Ask for anything you want.</p><p>Employers only contact you if they can meet your requirements.</p>"></a>
+			<div class="form-row group-box">
+				<%= text_field_tag(:jobqualifiertag, nil, :name => nil, :autocomplete => "off", 
+						:placeholder => "e.g., learning opportunities", :maxlength => 60, :class => "", :spellcheck => true) %>&nbsp;&nbsp;
+				<a id="add-job-qualifier-btn" class="add-tag-button">Add&nbsp;+</a>
+				<ol id="job-qualifier-tags-list" class="tags-list"></ol>
+				<%= hidden_field_tag(:jobqualifiers) %>
+			</div>
+		</div>
+			
+		<div class="form-row clearfix">
+			<div class="form-column">
+				<div class="form-cell">
 					<%= label_tag(nil, free_text_s(:employee, true)) %>
 					<div id="free-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH%></div>
-					<%= text_area_tag(:freetext, @user.free_text, :maxlength => Constants::MAX_STRING_LENGTH, :rows => 2, :id=>"free-text-area", :class=>"full-row-width", :counterId=>"free-text-counter")%>			
+					<%= text_area_tag(:freetext, @user.free_text, :maxlength => Constants::MAX_STRING_LENGTH, :rows => 2, :class=>"free-text", :counterId=>"free-text-counter")%>			
 				</div>
-
-			
-			<% unless @user.new_record? %>
-			</div>			
-				<h3 class="accordion-header expanded clearfix"><span>Some more info (not shown to employers)</span></h3>
-				<div class="accordion-panel">
-					<div class="clearfix user-attr-row">
-						<div class="left-col">
-							<%= label_tag(nil,  "First name") %>
-							<%= text_field_tag(:firstname, @user.first_name, :autocomplete => "on", :maxlength => 60, :class=>"half-row-width input-attr", :spellcheck => false) %>
-						</div>
-						<div class="right-col">
-							<%= label_tag(nil,  "Last name") %>
-							<%= text_field_tag(:lastname, @user.last_name, :autocomplete => "on", :maxlength => 60, :class=>"half-row-width input-attr", :spellcheck => false) %>		
-						</div>
-					</div>
-					
-					<div class="user-attr-row full-row-counter-box">
-						<%= label_tag(nil, "Your professional profiles (LinkedIn, GitHub, etc.)") %>
-						<div id="resume-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH * 2%></div>
-						<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :id=>"resume-text-area", :class=>"full-row-width input-attr", :counterId=>"resume-text-counter")%>			
-					</div>
-					
-					<div class="clearfix user-attr-row">
-						<div class="left-col">
-							<%= label_tag(nil,  raw("Email address"), :class=>"mandatory") %>
-				    		<%= text_field_tag :email, @user.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]] half-row-width input-attr" %>
-		    			</div>
-						<div class="right-col">
-						</div>
-					</div>					
-				</div>
-			<% end %>
+			</div>
 		</div>
-
-		<%if @user.new_record? %>
-			<div class="clearfix user-attr-row">
-				<div class="left-col">
-					<%= label_tag(nil,  raw("Email (We keep it private, and we <em>don't</em> spam.)"), :class=>"mandatory") %>
-					<a class="field-tooltip" title="You will get a confirmation email for activating your profile.">
-					</a>
-		    		<%= text_field_tag :email, params[:email], :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]] half-row-width input-attr" %>
-    			</div>
-				<div class="right-col">
-					<%= label_tag(nil, "   ") %>
-					<div class="only-sign-up">Please sign up <em>only</em> if you have authorization to work in
-						<a href="#" id="country-info"><%=I18n.t :country_name%></a>.</div>
+	</div>
+	
+	<div class="standard-section-header">Personal info for when you ping an employer</div>
+	<div class="section-box">
+		<div class="form-row clearfix">
+			<div class="form-column">
+				<div class="form-cell">
+					<%= label_tag(nil,  "First name", :class=>"mandatory") %><br>
+					<%= text_field_tag(:firstname, @user.first_name, :autocomplete => "on", :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :spellcheck => false) %>			
 				</div>
 			</div>
-			<div id="create-listing-btn-box">
-	      		<%= submit_tag "Find me offers!", :class=>"blue-btn", :id=>"submit", :name => nil %>
+			<div class="form-column">
+				<div class="form-cell">
+					<%= label_tag(nil,  "Last name", :class=>"mandatory") %><br>
+					<%= text_field_tag(:lastname, @user.last_name, :autocomplete => "on", :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :spellcheck => false) %>			
+				</div>
+			</div>		
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell">
+				<%= label_tag(nil, "Your professional profiles (LinkedIn, GitHub, etc.)") %><br>
+				<div id="resume-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH * 2%></div>
+				<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :class=>"professional-profiles", :counterId=>"resume-text-counter")%>			
 			</div>
-  		<%else%>
-			<div id="update-listing-btn-box">
-				<%= submit_tag "Update", :id=>"submit", :class=>"blue-btn", :name => nil %><span>&nbsp;or&nbsp;</span><%= link_to "Cancel", user_path(@user, :locale => @user.country_code) %>
+		</div>
+		
+		<div class="form-row clearfix">
+			<div class="form-column">
+				<div class="form-cell">
+					<%= label_tag(nil,  raw("Email address"), :class=>"mandatory") %><br>
+					<a class="field-tooltip" title="You will get a confirmation email to activate your profile."></a>
+		    		<%= text_field_tag :email, @user.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]]" %>	
+				</div>
 			</div>
-  		<%end%>
-	<% end %>
-</div>
+		</div>	
+	</div>
+	
+	<div class="buttons-box">
+		<%if @user.new_record? %>
+			<h3 class="only-sign-up">
+				Please sign up <em>only</em> if you have authorization to work in <a href="#" id="country-info"><%=I18n.t :country_name%></a>.
+			</h3>
+
+			<%= submit_tag "Let's Go!", :id=>"submit", :class=>"standard-button", :name => nil %>
+		<%else%>
+			<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil %>
+			&nbsp;&nbsp;
+			<%= link_to "Cancel", user_path(@user, :locale => @user.country_code), :class=>"cancel-button" %>
+		<%end%>	
+	</div>
+<% end %>
 
 <div id="country-tooltip-dialog"  title="For work in <%=I18n.t(:country_name)%>" >
 	<p>
@@ -349,11 +336,9 @@
 				var val = ui.value;
 				$( "#wantedsalary" ).val(val);
 				$( "#salarytext" ).update_salary_text({value: val});
-				$(this).children('div:first').animate({ opacity: val / <%=max_salary%> });
 			}
 		});
 		$( "#salarytext" ).update_salary_text({ value: $("#wantedsalary").val()});
-		$( "#salary-slider" ).children('div:first').animate({ opacity: $("#wantedsalary").val() / <%=max_salary%> });
 	});
 
    	$('#remove-salary-tag').click(function() {

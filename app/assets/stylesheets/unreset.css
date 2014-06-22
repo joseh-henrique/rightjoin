@@ -24,8 +24,7 @@ abbr,acronym {
 	cursor:help;
 } 
 em {
-	/*bringing italics back to the em element*/
-	font-style:italic;
+	font-weight:500;
 }
 del {
 	text-decoration:line-through;
@@ -69,6 +68,9 @@ caption {
 p,fieldset,table,pre {
 	/*so things don't run into each other*/
 	margin-bottom:1em;
+}
+p:last-child,fieldset:last-child,table:last-child,pre:last-child {
+	margin-bottom:0;
 }
 /* setting a consistent width, 160px; 
    control of type=file still not possible */

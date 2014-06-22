@@ -66,7 +66,7 @@ $('textarea[counterid], input[counterid]').live('blur', function() {
 });
 
 // accordion
-$('.fyi-accordion .accordion-header').live('click', function(event) { 
+$('.fyi-accordion .standard-section-header').live('click', function(event) { 
 	var panel = $(this).next();
 	var header = $(this);
 	if (panel.is(":visible")) {		

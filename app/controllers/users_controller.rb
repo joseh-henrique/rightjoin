@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   before_filter :init_employer_user, :only => [:index]
   before_filter :correct_user, :only => [:show, :edit, :update, :set_status]
   before_filter :add_verif_flash, :only =>[:show, :edit, :index]
-  before_filter :add_request_edit_profile, :only =>[:show, :index] # also :edit, but with parameter, so we do it in the method
+  before_filter :add_mandatory_fields_flash, :only =>[:show]
   
   def set_status
     ok = false
@@ -31,19 +31,6 @@ class UsersController < ApplicationController
     end
   end  
   
-  def add_request_edit_profile(link_in_page = false)
-      if signed_in? and current_user.employee? and current_user.user_skills.empty?
-        if link_in_page
-          link ="#add-skills"
-        else
-          link = edit_user_path(current_user, :locale => current_user.country_code, :anchor => "add-skills")
-        end
-           
-          add = ActionController::Base.helpers.link_to "add", link
-          flash_now_message(:notice, "Please #{add} some skills, so employers can see that you're amazing.")
-      end
-  end
-
   # Execute  signup request from main form
   def create
 		@user = User.new
@@ -91,7 +78,6 @@ class UsersController < ApplicationController
   end
   
   def edit
-    add_request_edit_profile(true)
     @user = current_user
     @current_page_info = PageInfo::EDIT
   end  

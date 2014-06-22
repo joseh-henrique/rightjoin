@@ -119,7 +119,7 @@
 						
 						<% if ambassadors.count > 1 %>
 							<li class="warning">
-								The <%=EmployerPlan::FREE%> plan allows only one active team member account.
+								The <%=EmployerPlan::FREE%> plan allows only one active team member.
 								Please 	<%=link_to("upgrade", edit_employer_path(current_user, :anchor=>"plans-and-pricing"))%>
 								to the <%=EmployerPlan::PRO %> or <%=EmployerPlan::ENTERPRISE %> plan. 
 							</li>
