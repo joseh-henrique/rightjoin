@@ -2,7 +2,8 @@ class FyiMailer < ActionMailer::Base
   FYI_FROM = "#{Constants::SHORT_SITENAME} <info@#{Constants::SITENAME_LC}>"
   PERSONAL_FROM = "#{Constants::FYI_CRM_NAME} <#{Constants::FYI_CRM_NAME.downcase}@#{Constants::SITENAME_LC}>"
   ADMIN_FROM = "Administrator <#{Constants::ADMIN_EMAIL}>"
-
+  PLEASE_REPLY = "Questions? Just reply to this message to contact #{Constants::SHORT_SITENAME}."
+   
   def create_message(to_email, subj, html_body, text_body, from = FYI_FROM, reply_to = nil )
     result = mail(:to =>to_email, :subject => subj, :from => from, :reply_to => reply_to) do |format|
       format.text { render :text => text_body }
@@ -63,6 +64,14 @@ class FyiMailer < ActionMailer::Base
     in_loc(name, name)
   end
   
+   def call_us_str(locale)
+    res = ""
+    if locale == Constants::COUNTRIES[Constants::COUNTRY_US]
+      res = " Or call us at #{phone_with_pfx}"
+    end
+    return res
+  end  
+  
   def create_engineer_update_email(engineer, invites)
    @intended_for = :employee
    to_email = engineer.email
@@ -98,7 +107,7 @@ class FyiMailer < ActionMailer::Base
     end
     
     msg3_head ="You can always find your recent pings from employers on your #{Constants::SHORT_SITENAME}" 
-    msg3_tail="Any questions? Just reply to this email#{Utils::call_us_str(engineer.locale)}.""
+    msg3_tail ="#{PLEASE_REPLY}#{call_us_str(engineer.locale)}."
     @msg3_h = "#{msg3_head} <a href='#{user_url(engineer, :locale => engineer.country_code)}'>home page</a>.<br>#{msg3_tail}"
     @msg3_t = "#{msg3_head} home page (#{user_url(engineer, :locale => engineer.country_code)}). \n#{msg3_tail}"
     msg_footer_tail =  "(You can reactivate later.)"
@@ -220,7 +229,7 @@ class FyiMailer < ActionMailer::Base
       @msg3_h = "#{msg3_head} <a href='#{employer_url(employer, :locale => all_jobs.first.country_code)}'>home page</a>.<br><br>"
       @msg3_t = "#{msg3_head} home page: #{employer_url(employer, :locale => all_jobs.first.country_code)}\n\n"
       
-      reply_s = "Any questions? Just reply to this email or call us at #{Utils.phone_with_pfx}."
+      reply_s = "#{PLEASE_REPLY}. Or call us at #{Utils.phone_with_pfx}."
       @msg3_h << reply_s
       @msg3_t << reply_s  
       
@@ -419,7 +428,7 @@ class FyiMailer < ActionMailer::Base
     @msg2_t = Utils.html_to_txt(@msg2_h)
     
      
-    @msg3_h = "lease let us know if you have any questions."
+    @msg3_h = PLEASE_REPLY
     @msg3_t = @msg3_h.clone
     
     @msg_footer_h = employer_unsubscribe_link(true, employer) 
@@ -444,7 +453,7 @@ class FyiMailer < ActionMailer::Base
             "and by referring more team members to the social sharing tools."
     @msg2_t = Utils.html_to_txt(@msg2_h)
 
-    @msg3_h = "If you have questions, just reply to this message to contact #{Constants::SHORT_SITENAME}."  
+    @msg3_h = PLEASE_REPLY 
     @msg3_t = Utils.html_to_txt(@msg3_h)
     
     @msg_footer_h = employer_unsubscribe_link(true, ambassador.employer)

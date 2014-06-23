@@ -193,19 +193,19 @@
 
 input, textarea, select {
   &::-webkit-input-placeholder  { 
-    color:#DBDBDB; 
+    color:pink; 
   }
   
   &:-moz-placeholder { 
-    color:#DBDBDB; 
+    color:green; 
   }
   
   &::-moz-placeholder {  /* Firefox 19+ */
-     color:#BBBBBB; 
+     color:blue; 
   }  
   
   &:-ms-input-placeholder {  
-     color:#DBDBDB;
+     color:red;
   }
 }
 

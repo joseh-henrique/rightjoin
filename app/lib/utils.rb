@@ -186,13 +186,7 @@ class Utils
       raise "Wrong reference number #{ref_num}"
   end
   
-  def self.call_us_str(locale)
-    res = ""
-    if locale == Constants::COUNTRIES[Constants::COUNTRY_US]
-      res = ", or call us at #{phone_with_pfx}"
-    end
-    return res
-  end  
+
  
   
   #This should be in helper, but it is here because  it must be accessed from fyi_mailer
