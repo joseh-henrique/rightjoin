@@ -16,14 +16,8 @@
 		
 		<%= csrf_meta_tags %>
 		<%= favicon_link_tag '/favicon.ico?v=4' %>
-		
-		<%# for Google %>
-		<meta name="description"  content="<%=Constants::META_DESC%>. <%=title%>" />
-		<meta name="keywords"  content="<%=Constants::META_KEYWORDS%>, <%=title%>" />
-		
-		<meta itemprop="image" content="<%=full_image_url('fyi/jim_og.png') %>"><%# [TODO] change image%>
-		<meta property="og:image" content="<%=full_image_url('fyi/jim_og.png') %>">
-		<%= yield :more_meta %>
+ 
+	 
 	</head>
 	
 	<% body_class = @current_page_info[:intended_for].to_s %>

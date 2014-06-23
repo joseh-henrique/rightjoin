@@ -36,8 +36,8 @@
 <% content_for :more_meta do %> 
 	<% 
 	  # See ambassadors/show.html.erb for similar metas
-	   title_for_metas = raw  @job.share_title
-	   desc_for_metas =  raw  @job.share_description   
+	   title_for_metas = @job.share_title
+	   desc_for_metas =  @job.share_description   
   	   img_url_for_metas =  presentation_image_url(@job) 
   	   company_name_for_metas = @job.employer.company_name
     %>

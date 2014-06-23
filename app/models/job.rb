@@ -447,11 +447,11 @@ class Job < ActiveRecord::Base
   end  
   
 
-  #Used raw in the HTML.
+ 
   def share_description()
       "Come work with me at #{ employer.company_name}: See the #{position_name} job posting and ping us to talk with me or another member of the dev team."
   end
-  #Used raw in the HTML.
+ 
   def share_title()
     "Come work with me at #{self.company_name}"
   end

@@ -33,21 +33,6 @@
 					</div>
 					
 					<div class="attr-row">
-<style> 
-	::-webkit-input-placeholder {
-  color: pink;
-}
-::-moz-placeholder { /* Firefox 19+ */
-  color: pink;
-}
-:-ms-input-placeholder {
-  color: pink;
-}
-:-moz-placeholder { /* Firefox 18- */
-  color: pink;
-}
-  
-  </style>
 						<%= label_tag(nil,  "Email address", :class=>"mandatory") %>
 						<%= text_field_tag(:email, @ambassador.email, :placeholder=> "example@example.com" , :autocomplete => "on", :maxlength => 255, :class=>"validate[required, custom[email],maxSize[255]] half-row-width input-attr", :spellcheck => false) %>		
 					</div>
