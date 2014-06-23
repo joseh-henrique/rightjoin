@@ -25,8 +25,8 @@
 		<meta name="description" content="<%=Constants::META_DESC%>. <%=title%>" />
 		<meta name="keywords"  content="<%=Constants::META_KEYWORDS%>, <%=title%>" />
 		<%# for Google and Facebook%>
-		<meta itemprop="image" content="<%= full_image_url('misc/logos_72.png') %>"><%#[TODO]%>
-		<meta property="og:image" content="<%= full_image_url('fyi/logos_72.png') %>"><%#[TODO]%>
+		<meta itemprop="image" content="<%= full_image_url(Constants::REPRESENTATIVE_LOGO) %>"><%#[TODO]%>
+		<meta property="og:image" content="<%= full_image_url(Constants::REPRESENTATIVE_LOGO) %>"><%#[TODO]%>
 		
 		<%= yield :more_meta %>
 		

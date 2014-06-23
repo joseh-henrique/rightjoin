@@ -854,7 +854,7 @@ def make_system_users
   
   # Jenny Collins - FYI matchmaker
   emplr_jenny = Employer.new({
-      :email => Constants::FYI_RECRUITER_EMAIL,
+      :email => Constants::RECRUITER_EMAIL_for_TURK_ADS,
       :first_name => "Jenny",
       :last_name => "Collins",
       :company_name => Constants::SHORT_SITENAME,

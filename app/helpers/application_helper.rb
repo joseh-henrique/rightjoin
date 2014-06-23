@@ -274,7 +274,7 @@ module ApplicationHelper
       elsif !job.logo.nil?  #No photos, try to use company logo
         ret = job.logo.image.standard.url
       else # Use RJ logo
-        ret = full_image_url('misc/logos_72.png')
+        ret = full_image_url(Constants::REPRESENTATIVE_LOGO)
       end
       return ret
   end

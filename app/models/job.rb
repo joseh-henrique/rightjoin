@@ -304,7 +304,7 @@ class Job < ActiveRecord::Base
   def self.import_fyi_jobs(url_to_csv)
     new_jobs = []
 
-    fyi_recruiter = Employer.find_by_email(Constants::FYI_RECRUITER_EMAIL)
+    fyi_recruiter = Employer.find_by_email(Constants::RECRUITER_EMAIL_for_TURK_ADS)
     raise "Missing FYI employer" if fyi_recruiter.nil?    
     
     array_of_rows = DbFeeder.feed_from_url(url_to_csv) do |row, i|
@@ -449,10 +449,10 @@ class Job < ActiveRecord::Base
 
   #Used raw in the HTML.
   def share_description()
-     "Come work with me as #{Utils::indefinite_article_and_noun(position_name)} at #{ employer.company_name}. See the job posting and ping us to be in touch."
+      "Come work with me at #{ employer.company_name}: See the #{position_name} job posting and ping us to talk with me or another member of the dev team."
   end
   #Used raw in the HTML.
   def share_title()
-    "Come work with me at #{self.company_name}."
+    "Come work with me at #{self.company_name}"
   end
 end

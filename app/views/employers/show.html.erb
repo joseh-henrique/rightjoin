@@ -114,14 +114,14 @@
 		 				<li class="warning">
 							The <%=EmployerPlan::FREE%> plan allows only one job posting. Please  
 							<%=link_to("upgrade", edit_employer_path(current_user,:anchor=>"plans-and-pricing"))%>
-							to the <%=EmployerPlan::PRO %> or  <%=EmployerPlan::ENTERPRISE %> plan. 
+							to  <%=EmployerPlan::PRO %> or  <%=EmployerPlan::ENTERPRISE %>. 
 						</li>
 						
 						<% if ambassadors.count > 1 %>
 							<li class="warning">
-								The <%=EmployerPlan::FREE%> plan allows only one active team member.
-								Please 	<%=link_to("upgrade", edit_employer_path(current_user, :anchor=>"plans-and-pricing"))%>
-								to the <%=EmployerPlan::PRO %> or <%=EmployerPlan::ENTERPRISE %> plan. 
+								The <%=EmployerPlan::FREE%> plan allows only one team member.
+								Please <%=link_to("upgrade", edit_employer_path(current_user, :anchor=>"plans-and-pricing"))%>
+								to  <%=EmployerPlan::PRO %> or <%=EmployerPlan::ENTERPRISE %>. 
 							</li>
 						<% end %>
 					<% end %>

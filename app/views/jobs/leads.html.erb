@@ -106,7 +106,7 @@
 			body +=	" regarding our open <%=escape_javascript @job.position_name%> position.\n\nEmail them back, maybe talk with them, see if they're right for us and we're right for them.\n\n";
 			body += $(select).attr('data-candidate-profiles') + "\n";
 			body += "Email: " + $(select).attr('data-candidate-email') + "\n\n";
-			body += "Regards,\n";
+			body += "Regards,\n\n";
 			body += "<%=escape_javascript current_user.first_name%>";
 			var link = '/mailto#mailto:' +  email + '?Subject=' + encodeURIComponent(subject) + '&Body=' + encodeURIComponent(body);
 			window.open(link, '_fyi_email');

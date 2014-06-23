@@ -301,6 +301,8 @@ misc/all_12.png: misc/all_12-7402f385afd454d48033f65597019eb6.png
 misc/all_12/index.png: misc/all_12-7402f385afd454d48033f65597019eb6.png
 misc/all_14.png: misc/all_14-6126e0d305401dd938c9990322c5e856.png
 misc/all_14/index.png: misc/all_14-6126e0d305401dd938c9990322c5e856.png
+misc/all_14_with_bg.png: misc/all_14_with_bg-b6cf4e0bf21f9aee9287a9ee5798696e.png
+misc/all_14_with_bg/index.png: misc/all_14_with_bg-b6cf4e0bf21f9aee9287a9ee5798696e.png
 misc/all_18.png: misc/all_18-0bffbcf46080cb87f49eb69527d20a40.png
 misc/all_18/index.png: misc/all_18-0bffbcf46080cb87f49eb69527d20a40.png
 misc/all_21.png: misc/all_21-1e72a50d00b49a74cbb418031a7cee76.png
@@ -585,8 +587,8 @@ application.js: application-589b74c9226bc8ef0a7cc6d8544f1d0e.js
 application/index.js: application-589b74c9226bc8ef0a7cc6d8544f1d0e.js
 Jcrop.gif: Jcrop-aededb5593856fed1e870874c80c2064.gif
 Jcrop/index.gif: Jcrop-aededb5593856fed1e870874c80c2064.gif
-application.css: application-97db4024c581e9dbce4059cfe8638f00.css
-application/index.css: application-97db4024c581e9dbce4059cfe8638f00.css
+application.css: application-559f417fa3549ff5f7d134a2ec2fd5c3.css
+application/index.css: application-559f417fa3549ff5f7d134a2ec2fd5c3.css
 images/ui-bg_flat_0_aaaaaa_40x100.png: images/ui-bg_flat_0_aaaaaa_40x100-4b26fbeea3d3461edfba4b3f45c4759f.png
 images/ui-bg_flat_0_aaaaaa_40x100/index.png: images/ui-bg_flat_0_aaaaaa_40x100-4b26fbeea3d3461edfba4b3f45c4759f.png
 images/ui-bg_flat_0_acacac_40x100.png: images/ui-bg_flat_0_acacac_40x100-a835e9927288b25f17ff01e00082cb51.png

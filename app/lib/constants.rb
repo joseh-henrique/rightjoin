@@ -25,7 +25,7 @@ class Constants
   SAMPLE_USER_EMAIL_TEMPLATES = [SITENAME_LC,  FIVEYEARITCH_SITENAME.downcase].map{|domain| SAMPLE_USER_EMAIL_BASE_TEMPLATE + domain}
   CONTACT_EMAIL ="contact@#{SITENAME_LC}"
   ADMIN_EMAIL ="admin@#{FIVEYEARITCH_SITENAME.downcase}"
-  FYI_RECRUITER_EMAIL = "jennifer@#{FIVEYEARITCH_SITENAME.downcase}"
+  RECRUITER_EMAIL_for_TURK_ADS = "jennifer@#{FIVEYEARITCH_SITENAME.downcase}"
   ADMIN_CONSOLE__USER = "robert@#{FIVEYEARITCH_SITENAME.downcase}" 
   
   REMEMBER_TOKEN_INFOINTERVIEW = :remember_token_infointerview
@@ -101,5 +101,7 @@ class Constants
   FYI_EPOCH = Time.new(2014, 1, 1, 1, 0, 0)
   
   META_KEYWORDS ="Job, employment, offers, recruiters, peer-to-peer recruiting, employer branding, social recruiting, professionals, software engineers, software developers, stealth candidates"
-  META_DESC= "#{Constants::SITENAME} enables peer-to-peer recruiting with employer branding through beautiful, easily sharable job postings" 
+  META_DESC= "#{Constants::SITENAME} enables peer-to-peer recruiting with employer branding through beautiful, easily sharable job postings"
+  
+  REPRESENTATIVE_LOGO = "misc/all_14_with_bg.png"
 end

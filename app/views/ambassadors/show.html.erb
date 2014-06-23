@@ -107,10 +107,11 @@
 									</a>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_TWITTER%>
+		 
 								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%=description%>" <%#The addthis:title is the only thing that is long enough%>
-											addthis:description="<%=title%>">
-												<%# Twitter in fact uses title and desc as title and desc of posting%>
+											addthis:title="<%= description%>" <%#The addthis:title is the only field that allows long text; that is why we are reversing the fields here.%>
+											addthis:description="<%= title   %>">
+											<%# Twitter in fact uses title and desc as title and desc of posting%>
 									<a class="addthis_button_twitter">
 										<%= image_tag "team/share/twitter-small.png", size: "82x82", alt: "Share" %>
 									</a>
