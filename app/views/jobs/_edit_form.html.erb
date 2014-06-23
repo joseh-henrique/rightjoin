@@ -146,6 +146,11 @@
 		<div class="form-column">
 			<div class="form-cell">
 				<div id="benefit-counter1" class="message-counter"><%=benefit_field_len%></div>
+				<style>
+				:-ms-input-placeholder {  
+     				color:#DBDBDB;
+  				}
+				</style>
 				<%= text_field_tag :benefit1, @job.benefit1, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. our famous gourmet lunches", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter1" %>
 			</div>
 			<div class="form-cell">
