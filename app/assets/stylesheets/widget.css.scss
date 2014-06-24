@@ -279,8 +279,10 @@ a {
   
   .tags-box {
     position: absolute;
-    bottom: $tile-padding;
     line-height: 1.2em;
+    bottom: $tile-padding;
+    right: $tile-padding;
+    left: $tile-padding;    
     
     span {
       @include border-radius(4px);

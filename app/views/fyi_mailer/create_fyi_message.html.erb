@@ -1,5 +1,5 @@
 <%
-  raise "unexpected intended_for \"@intended_for\"" unless [:employee, :employer].include?(@intended_for)
+  raise "unexpected intended_for \"@intended_for\"" unless [:employee, :employer, :ambassador].include?(@intended_for)
 	
   fnt_sz_lrg ="font-size:14px"
   fnt_sz_med = "font-size:13px"
@@ -108,10 +108,12 @@
 					<td colspan="3" align="center" bgcolor="<%= gry5_brdr%>" style="padding:15px 0 15px; color:<%=gry4_ftr_txt%>;background:<%=gry5_brdr%>;margin:0;<%=ln_ht_tall%>;<%= font_fam_sans%>;" valign="top">
 						<p style="padding:0;<%=fnt_sz_lrg%>;color:<%=gry4_ftr_txt%>;margin:0;<%= font_fam_sans%>;line-height:16px;">
 							<%# *************TEXT************** %>
-								<% if @intended_for==:employer %>
+								<% if @intended_for == :employer %>
 									<%=Constants::EMPLOYER_TAGLINE%>
+								<% elsif @intended_for == :employee %>
+									<%=Constants::CANDIDATE_TAGLINE%>
 								<% else %>
-									<%=Constants::CANDIDATE_TAGLINE%>.
+									<%=Constants::AMBASSADOR_TAGLINE%>
 								<% end %>
 							<br/>
 							<span style="color:<%=gry4_ftr_txt%>;<%=font_fam_sans%>;<%=fnt_sz_sml%>;">&copy;&nbsp;<%=Time.now.year%>

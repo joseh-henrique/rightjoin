@@ -16,7 +16,7 @@ class JobsController < ApplicationController
   
   def copy_properties
     @current_page_info = PageInfo::EMPLOYER_NEW_POSTING
-    
+   
     @base_job = Job.find params[:copy_from][:jobid]
     
     raise "Not authorized" if @base_job.employer.id != current_user.id
@@ -33,12 +33,15 @@ class JobsController < ApplicationController
     
     @job.allow_relocation = @base_job.allow_relocation
     @job.allow_telecommuting = @base_job.allow_telecommuting
-    @job.location = @base_job.location
-    @job.northmost = @base_job.northmost
-    @job.southmost = @base_job.southmost
-    @job.westmost = @base_job.westmost
-    @job.eastmost = @base_job.eastmost
-
+     
+    if  @base_job.locale == I18n.locale.to_s
+        @job.location = @base_job.location
+        @job.northmost = @base_job.northmost
+        @job.southmost = @base_job.southmost
+        @job.westmost = @base_job.westmost
+        @job.eastmost = @base_job.eastmost
+    end
+    
     @job.description = @base_job.description
     # copy all except url, which is always different
     

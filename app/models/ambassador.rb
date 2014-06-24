@@ -23,6 +23,7 @@ class Ambassador < ActiveRecord::Base
   belongs_to :auth
   has_many :shares, :dependent => :nullify
   has_many :infointerviews, :dependent => :nullify, :foreign_key => :referred_by
+  has_many :followups, :dependent => :destroy
   
   INVITED = 10 # not used
   ACTIVE = 20

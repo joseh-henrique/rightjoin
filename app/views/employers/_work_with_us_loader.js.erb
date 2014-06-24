@@ -1,7 +1,7 @@
 (function(){
 	var params = "<%=params['tabparams'].to_s.html_safe%>";<%#beware: this line is used for lookup in configure_join_us_tab.html.erb%>
 	var ds=document.createElement('script'); ds.type='text/javascript'; ds.async=true; 
-	ds.src='<%=work_with_us_tab_employer_url(@employer.reference_num)%>'; ds.src+='?host=' + encodeURIComponent(location.hostname) + '&' + params;
+	ds.src='<%=work_with_us_tab_employer_url(@employer.reference_num, :locale=>nil)%>'; ds.src+='?host=' + encodeURIComponent(location.hostname) + '&' + params;
 	var es=document.getElementsByTagName('script')[0];
 	ds.onload = function(){
 		var tab = RightJoin_tab(); if (tab.positionsCount() > 0) { tab.setLauncher(tab.createTab()); }

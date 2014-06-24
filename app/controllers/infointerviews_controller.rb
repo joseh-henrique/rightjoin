@@ -1,7 +1,7 @@
 class InfointerviewsController < ApplicationController
-  before_filter :strip_params, :only => [:create, :close, :reopen]
-  before_filter :init_employee_user, :except => [:close, :reopen, :serve_avatar]
-  before_filter :init_infointerview, :only => [:close, :reopen]
+  before_filter :strip_params, :only => [:create, :close, :reopen, :delegate]
+  before_filter :init_employee_user, :except => [:close, :reopen, :serve_avatar, :delegate]
+  before_filter :init_infointerview_with_redirect, :only => [:close, :reopen]
   
   # ajax call
   def create
@@ -107,14 +107,24 @@ class InfointerviewsController < ApplicationController
     redirect_to employer_path(current_user)
   end  
   
+  def delegate
+    init_infointerview
+    ambassador = Ambassador.find(params[:ambassador_id])
+    followup = ambassador.followups.build(:infointerview => @infointerview)
+    followup.save!
+    
+    msg = FyiMailer.create_delegate_infointerview_email(followup)
+    Utils.deliver msg
+    
+    render :nothing => true, status: :ok
+    
+  rescue Exception => e
+    render :nothing => true, status: :forbidden
+  end  
+  
 private
-  def init_infointerview
-    @infointerview = Infointerview.find params[:id]
-    
-    init_employer_user
-    
-    raise "Employer must be signed in" unless signed_in?
-    raise "Employer mismatch" unless @infointerview.job.employer_id == current_user.id
+  def init_infointerview_with_redirect
+    init_infointerview
  
   rescue Exception => e
     logger.error e
@@ -124,5 +134,14 @@ private
     else
       redirect_to employer_welcome_path
     end    
-  end  
+  end
+  
+  def init_infointerview
+    @infointerview = Infointerview.find params[:id]
+    
+    init_employer_user
+    
+    raise "Employer must be signed in" unless signed_in?
+    raise "Employer mismatch" unless @infointerview.job.employer_id == current_user.id    
+  end
 end

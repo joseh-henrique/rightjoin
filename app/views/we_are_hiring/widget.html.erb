@@ -220,7 +220,7 @@
 		<%# ==== row 3 ====== %>
 		<div class="tile-row clearfix">
 			<div id="signin-box" class="tile double-len cell-signin bg-style5">
-				<div class="title">Ping the company</div>
+				<div class="title">Ping <%=@job.company_name%></div>
 				<div class="sub-title">Click a button to be in touch</div>
 				<!--div class="img-box">
 					<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "github" %>

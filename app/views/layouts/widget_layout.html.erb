@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title><%= title %></title>
 		<!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -13,7 +14,7 @@
 		<%= yield :more_js %>
 		
 		<%= csrf_meta_tags %>
-		<%= favicon_link_tag '/favicon.ico?v=4' %>
+		<%= favicon_link_tag '/favicon.ico?v=5' %>
 		
 		<%# for Google %>
 		<meta name="description" content="<%=Constants::META_DESC%>, <%=title%>" />

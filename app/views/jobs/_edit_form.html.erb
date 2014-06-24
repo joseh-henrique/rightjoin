@@ -145,7 +145,7 @@
 	<div class="form-row group-box clearfix">
 		<div class="form-column">
 			<div class="form-cell">
-				<div id="benefit-counter1" class="message-counter"><%=benefit_field_len%></div>	
+				<div id="benefit-counter1" class="message-counter"><%=benefit_field_len%></div>
 				<%= text_field_tag :benefit1, @job.benefit1, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. our famous gourmet lunches", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter1" %>
 			</div>
 			<div class="form-cell">
@@ -168,7 +168,7 @@
 	<div class="form-row">
 		<div class="form-cell">
 			<%= label_tag(nil, "Technical stack (a comma-separated list of tags)")%><br>
-			<%= text_field_tag(:tech_stack_list, @job.tech_stack_list, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false) %>	
+			<%=  text_field_tag(:tech_stack_list, @job.tech_stack_list, :maxlength => 60, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false) %>	
 		</div>
 	</div>	
 	
@@ -177,7 +177,7 @@
 			<div class="form-cell">
 				<%= label_tag(nil, "Why would a top developer want to take this job?", :class => "mandatory")%><br>
 				<div id="free-text-counter" class="message-counter"><%=Job::DESCRIPTION_MAX_LEN%></div>
-				<%= text_area_tag(:description, @job.description, :maxlength=>Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter")%>			
+				<%= text_area_tag(:description, @job.description, :maxlength => Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter")%>			
 			</div>
 		</div>
 	</div>

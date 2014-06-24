@@ -194,6 +194,20 @@ class EmployersController < ApplicationController
       end
     end
     
+    @activeJobsCount = 0
+    
+    # ensure jobs are shown for the actual locale
+    if is_localhost?
+      locale = Constants::LOCALE_EN.to_sym
+    else
+      locale = LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
+    end
+
+    if locale != :unknown_locale
+      I18n.locale = locale
+      @activeJobsCount = @employer.active_jobs.where(locale: I18n.locale).count
+    end
+    
     render 'employers/work_with_us_tab.js.erb', :layout => false
     
   rescue Exception => e

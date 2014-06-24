@@ -264,19 +264,13 @@ module ApplicationHelper
     return "#{distance_of_time_in_words_to_now(date, false)} ago"
   end
   
-   #TODO Move to job_helper
-   def presentation_image_url(job)
-      ret = nil
-      photos = job.get_photos
-      if photos.any?
-        photo = photos.sample #Random photo
-        ret = photo.image.standard.url
-      elsif !job.logo.nil?  #No photos, try to use company logo
-        ret = job.logo.image.standard.url
-      else # Use RJ logo
-        ret = full_image_url(Constants::REPRESENTATIVE_LOGO)
-      end
-      return ret
-  end
+  # Copied from Sprockets::Context.asset_data_uri, and slightly modified.
+  def asset_data_uri path
+    asset = Rails.application.assets.find_asset path
   
+    throw "Could not find asset '#{path}'" if asset.nil?
+  
+    base64 = Base64.encode64(asset.to_s).gsub(/\s+/, "")
+    "data:#{asset.content_type};base64,#{Rack::Utils.escape(base64)}"
+  end  
 end

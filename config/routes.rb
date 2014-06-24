@@ -44,6 +44,7 @@ FiveYearItch::Application.routes.draw do
   match "/lead/:employer_id/create" => "infointerviews#create", :via => :post, :as => :infointerview_create
   match "/infointerview/:id/close" => "infointerviews#close", :via => :post, :as => :infointerview_close
   match "/infointerview/:id/reopen" => "infointerviews#reopen", :via => :post, :as => :infointerview_reopen
+  match "/infointerview/:id/delegate" => "infointerviews#delegate", :via => :post, :as => :infointerview_delegate
   
   # "work with us" widget
   match '/:refnum/join', :to => 'employers#we_are_hiring', :via => :get, :as => :we_are_hiring_employer, :defaults => { :locale => nil }

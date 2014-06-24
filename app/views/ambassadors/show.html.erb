@@ -32,11 +32,11 @@
 			<% else %>
 				<div class="counter-val"><%=stat[:leads_count].to_i%></div>
 			<% end %>
-		<div class="counter-title">Leads</div></div>
+		<div class="counter-title">Contacts</div></div>
 	</div>
 	
 	<div class="recent-leads">
-		Recent leads
+		Active follow-up requests
 		<div>
 			<%max_leads_to_show = 6%>
 			<% leads = @ambassador.infointerviews.where({ status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD]}).limit(max_leads_to_show).order("created_at DESC") %>
@@ -107,10 +107,9 @@
 									</a>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_TWITTER%>
-		 
 								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%= description%>" <%#The addthis:title is the only field that allows long text; that is why we are reversing the fields here.%>
-											addthis:description="<%= title   %>">
+											addthis:title="<%=description%>" <%#The addthis:title is the only field that allows long text; that is why we are reversing the fields here.%>
+											addthis:description="<%=title%>">
 											<%# Twitter in fact uses title and desc as title and desc of posting%>
 									<a class="addthis_button_twitter">
 										<%= image_tag "team/share/twitter-small.png", size: "82x82", alt: "Share" %>
@@ -131,10 +130,10 @@
 									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
-								<div class="share-button copy-to-clipboard" >
+								<div class="share-button copy-to-clipboard" title="Copy to clipboard">
 									<a id="copy-button" class="div-tooltip-holder">
-										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
-										<div  class="div-tooltip" >Copied</div>	
+										<%= image_tag "team/share/clipboard-small.png", size: "82x82", alt: "Copy to clipboard" %>
+										<div class="div-tooltip" >Copied</div>	
 									</a>	 		
 									<script>
 								 	$(document).ready(function(){

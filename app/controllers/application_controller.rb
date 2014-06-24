@@ -9,14 +9,16 @@ class ApplicationController < ActionController::Base
     host = request.host.downcase
  
 		unless host.include?(".herokuapp.com") || #These are test hosts; all others are redirected.
-        host.start_with?("localhost") || host.start_with?("127.0.0.1") || host.start_with?("lvh.me") 
+        host.start_with?("localhost") || host.start_with?("127.0.0.1") || host.start_with?("lvh.me") ||
+        (Rails.env.development? && host.start_with?("192.168."))
          
            if host.include?(Constants::SITENAME_IL_LC)
+              # overrides the locale which was set earlier in set_default_locale
               set_default_locale(Constants::COUNTRY_IL) 
-           end   
+           end
            
            if host.include?(Constants::FIVEYEARITCH_SITENAME.downcase)
-               flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and log in." )
+              flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and log in." )
            end  
  
           if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC)
@@ -35,9 +37,10 @@ class ApplicationController < ActionController::Base
   
   # Priority order for setting def.locale
   # 1. country from param
-  # 2. country from host, e.g. is rightjoin.co.il set
-  # 3. set_locale_by_ip  , so long as it is Canada. 
-  # country_code_from_domain is like  uk, il, ca, au, us
+  # 2. country from host, e.g. rightjoin.co.il 
+  # 3. set_locale_by_ip  , so long as it is a supported country. 
+  #s
+  # Note that country params here  is like  uk, il, ca, au, us
   def set_default_locale(country_code_from_domain = nil )
     
     country_code_param = params[:locale]#param like uk, ca, au, us
@@ -52,9 +55,6 @@ class ApplicationController < ActionController::Base
     
     if locale_s.blank?
       I18n.locale = LocationUtils::locale_by_ip(request.remote_ip)
-      if I18n.locale != Constants::COUNTRIES[Constants::COUNTRY_CA]
-        I18n.locale =  Constants::LOCALE_EN.to_sym
-      end
     else
       I18n.locale = locale_s.to_sym 
     end
@@ -70,6 +70,11 @@ class ApplicationController < ActionController::Base
       I18n.locale = locale_s.to_sym 
     end
   end  
+  
+  def is_localhost?
+    host = request.host.downcase
+    host.start_with?("localhost") || host.start_with?("127.0.0.1") || host.start_with?("lvh.me")
+  end
   
   def add_verif_flash 
     if signed_in? and current_user.pending?

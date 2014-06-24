@@ -35,7 +35,7 @@
 					
 					<% unless @job.closed? %>
 					    <div class="contact-candidate-box">
-					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id, {"data-email" => ambassador.email, "data-firstname" => ambassador.first_name}] } %>
+					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id] } %>
 							<% if ambassador_select_opts.empty?%>
 								Want your team members to talk to the candidate? <%= link_to("Ask them", employer_path(current_user, :anchor=>"team")) %> to join as ambassadors.
 				    		<% else %>
@@ -43,8 +43,10 @@
 				    			<div class="form-row">
 				    				<div class="form-cell">
 				    					<label>Ask someone in your team to talk with the candidate.</label><br>
-			    						<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {}, {:class=>"validate[required] standard-select", :data => {"candidate-profiles" => infointerview.profiles, "candidate-email" => infointerview.email, "candidate-name" => "#{infointerview.first_name} #{infointerview.last_name}"}}) %>&nbsp;
-			    						<%=link_to("Delegate", "#", :class => "delegate-to-ambassador standard-button")%>&nbsp;
+			    						<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {}, {:class=>"validate[required] standard-select ambassadors-list", :data => {"infointerview-path" => infointerview_delegate_path(infointerview.id)}}) %>&nbsp;
+			    						<%=link_to("Delegate", "#", :class => "delegate-to-ambassador standard-button")%>
+			    						&nbsp;
+			    						<div title="Sending..." class="loading-icon"></div>
 			    					</div>
 					    		</div>
 					    	<% end %>	
@@ -97,8 +99,22 @@
 		}, <%=Random.new.rand(5000..10000) %>);	// don't send all together
 		
 		$("a.delegate-to-ambassador").click(function(){
-			var select = $(this).siblings("select").first();
+			var select = $(this).siblings(".ambassadors-list").first();
 			var selected_option = select.find(":selected");
+			
+			$.post($(select).attr('data-infointerview-path'), { ambassador_id: $(selected_option).val() } )
+			.done(function(data) {
+				alert("ok");
+			})
+			.fail(function() {
+				alert("error");
+			})
+			.always(function() {
+			    
+			});			
+			
+			return false;
+			
 			var email = $(selected_option).attr('data-email');
 			var subject = "Talking to a potential colleague";
 			var body = "Hi, " + $(selected_option).attr('data-firstname') + ",\n";

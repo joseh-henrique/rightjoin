@@ -23,7 +23,7 @@ class FyiMailer < ActionMailer::Base
     @msg2_h = "Enter your temporary password <strong>#{ERB::Util.html_escape(passwd)}</strong> at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> to activate your profile#{msg2_tail}."
     @msg2_t = "Enter your temporary password\n\t\t#{passwd}\nat #{url} to activate your profile#{msg2_tail}."
 
-	    @msg3_h = "You can also sign in at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> with your email address <em>#{ERB::Util.html_escape(to_email)}</em> and your password <strong>#{ERB::Util.html_escape(passwd)}</strong>"
+	  @msg3_h = "You can also sign in at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> with your email address <em>#{ERB::Util.html_escape(to_email)}</em> and your password <strong>#{ERB::Util.html_escape(passwd)}</strong>"
     @msg3_t = "You can also sign in at #{url}\nwith your email address #{to_email} and your password #{passwd}\n\n"
 
     html_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:html], :handlers => [:erb], :layout => false
@@ -72,6 +72,35 @@ class FyiMailer < ActionMailer::Base
     return res
   end  
   
+  #[TODO]
+  def create_delegate_infointerview_email(followup)
+    @intended_for = :ambassador
+
+    to_email = followup.ambassador.email
+    subj = "New follow-up request"
+
+    msg1 = "Please be in touch with a candidate regarding #{ERB::Util.html_escape(followup.infointerview.job.position_name)} position in #{ERB::Util.html_escape(followup.infointerview.job.company_name)}."
+    if followup.infointerview.referred_by == followup.ambassador.id
+      msg1 = "Please be in touch with a candidate you referred to #{ERB::Util.html_escape(followup.infointerview.job.position_name)} position in #{ERB::Util.html_escape(followup.infointerview.job.company_name)}."
+    end
+    
+    @msg1_h = msg1.clone
+    @msg1_t = msg1.clone # TODO small bug: escaped company name and position enter text email
+
+    # [TODO] we should explain here what we mean by "follow up"
+    @msg2_h = "See more details about the candidate on your #{ERB::Util.html_escape(followup.infointerview.job.company_name)} team page."
+    @msg2_t = "See more details about the candidate on your #{followup.infointerview.job.company_name} team page."
+
+    msg3 = "Any questions? Just reply to this email or call us at #{Utils.phone_with_pfx}."
+    @msg3_h = msg3.clone
+    @msg3_t = msg3.clone
+
+    html_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:html], :handlers => [:erb], :layout => false
+    text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
+
+    return create_message to_email, subj, html_body, text_body    
+  end
+  
   def create_engineer_update_email(engineer, invites)
    @intended_for = :employee
    to_email = engineer.email
@@ -99,7 +128,7 @@ class FyiMailer < ActionMailer::Base
         raise "Expect only APPROVED invitations here, but found: #{interview}" unless interview.status == Interview::APPROVED
         
         truncated_job_desc = Utils.truncated_plaintext(interview.job.description, :length => 250).html_safe
-        @msg2_h << "<b><a href='#{interview.job.ad_url}' target='_blank'>#{interview.job.position.name} at #{interview.job.company_name}</a></b><br>
+        @msg2_h << "<b><a href='#{interview.job.ad_url}' target='_blank'>#{interview.job.position.name} at #{ERB::Util.html_escape(interview.job.company_name)}</a></b><br>
                           <div style='background:#f8f8f8; padding:10px;'>#{truncated_job_desc}</div><br>"
         @msg2_t << "#{interview.job.position.name} at #{interview.job.company_name} (#{interview.job.ad_url})\n
                        #{truncated_job_desc}\n\n"
@@ -329,7 +358,7 @@ class FyiMailer < ActionMailer::Base
     end
      
     content << "Ask your employees to share our ad using the tools at #{Constants::SHORT_SITENAME}: We've designed a posting that they'll want to share, one that puts them in the center.<br><br>" <<
-        "Add the geotargeted tab to the #{ employer.company_name}  site.<br><br>" <<
+        "Add the geotargeted tab to the #{employer.company_name}  site.<br><br>" <<
         "You can track progress on your profile page, and we'll send you brief weekly summaries. " <<
         "In the meantime, don't hesitate to contact me--I want to know how #{Constants::SHORT_SITENAME} can help you reach out to  more strong developers.<br>"
 
@@ -445,11 +474,11 @@ class FyiMailer < ActionMailer::Base
     @intended_for = :employer
     subject = "#{ambassador.first_name} has signed up to talk to professional peers"
      
-    @msg1_h = "#{ambassador.first_name} #{ambassador.last_name} has joined the  #{ambassador.employer.company_name} team." 
+    @msg1_h = "#{ambassador.first_name} #{ambassador.last_name} has joined the  #{ERB::Util.html_escape(ambassador.employer.company_name)} team." 
     @msg1_t = @msg1_h 
     
     @msg2_h = "Track progress on your <a href='#{employer_url(ambassador.employer, :locale => nil, :anchor=>"ambassadors" )}'>#{Constants::SHORT_SITENAME} home page</a>.<br><br>" << 
-            "Reach out to qualified software engineers by adding the \"Come Work With Us\" tab  to the #{ambassador.employer.company_name} corporate site, " << 
+            "Reach out to qualified software engineers by adding the \"Come Work With Us\" tab  to the #{ERB::Util.html_escape(ambassador.employer.company_name)} corporate site, " << 
             "and by referring more team members to the social sharing tools."
     @msg2_t = Utils.html_to_txt(@msg2_h)
 

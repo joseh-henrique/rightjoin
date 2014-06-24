@@ -7,8 +7,10 @@
 © <%=Time.now.year%> <%=Constants::SITENAME%><% if @intended_for==:employer%>/employers<%end%>
 <% if @intended_for==:employer %>
 <%=Constants::EMPLOYER_TAGLINE%>
+<% elsif @intended_for==:employee %>
+<%=Constants::CANDIDATE_TAGLINE%>
 <% else %>
-<%=Constants::CANDIDATE_TAGLINE%>.
+<%=Constants::AMBASSADOR_TAGLINE%>
 <% end %>
 
 <% unless @msg_footer_t.nil? %>

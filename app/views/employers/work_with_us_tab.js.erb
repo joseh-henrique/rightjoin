@@ -1,10 +1,9 @@
 <%
-activeJobsCount = @employer.active_jobs.count
-
 # initialize params
 color = params["color"]
 background_color = params["bg"]
 border_color = params["border"]
+counter_bg = params["counter-bg"]
 border = "border: none"
 unless border_color.nil? || border_color == "none"
 	border = "border: 2px solid #{border_color}"
@@ -23,6 +22,8 @@ end
 tab_element_id = "rightjoin-tab"
 border_radius = "6px"
 
+flag_path = "flags/#{I18n.t(:country_code, :locale => I18n.locale)}_flag_tab.png"
+
 border_bottom_tab = <<-FIN
 	#{border};
 	border-bottom: 0;
@@ -32,7 +33,8 @@ border_bottom_tab = <<-FIN
 	-moz-border-radius-topright: #{border_radius};
 	border-top-left-radius: #{border_radius};
 	border-top-right-radius: #{border_radius};
-	padding: 0.4em 0.9em 0.5em;
+	padding: 0.5em 33px 0.5em 28px;
+	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat right center;
 FIN
 
 border_left_tab = <<-FIN
@@ -44,9 +46,10 @@ border_left_tab = <<-FIN
 	-moz-border-radius-bottomright: #{border_radius};
 	border-top-right-radius: #{border_radius};
 	border-bottom-right-radius: #{border_radius};
-	padding: 0.8em 0.7em 0.8em 0.6em;
+	padding: 21px 0.7em 28px 0.7em;
 	letter-spacing: 0;
 	text-transform: uppercase;
+	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat bottom center;
 FIN
 
 border_top_tab = <<-FIN
@@ -58,7 +61,8 @@ border_top_tab = <<-FIN
 	-moz-border-radius-bottomleft: #{border_radius};
 	border-bottom-right-radius: #{border_radius};
 	border-bottom-left-radius: #{border_radius};
-	padding: 0.4em 0.9em 0.5em;
+	padding: 0.5em 33px 0.5em 28px;
+	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat right center;
 FIN
 
 border_right_tab = <<-FIN
@@ -70,9 +74,10 @@ border_right_tab = <<-FIN
 	-moz-border-radius-bottomleft: #{border_radius};
 	border-top-left-radius: #{border_radius};
 	border-bottom-left-radius: #{border_radius};
-	padding: 0.8em 0.7em;
+	padding: 21px 0.7em 28px 0.7em;
 	letter-spacing: 0;
 	text-transform: uppercase;
+	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat bottom center;
 FIN
 %>
 
@@ -149,7 +154,7 @@ FIN
 
 	// widget constructor function
 	global.RightJoin_tab = function() {
-		var _positionsCount = <%=activeJobsCount%>;
+		var _positionsCount = <%=@activeJobsCount%>;
 		
 		var buildTabContent = function() {
 			var res = "";
@@ -164,7 +169,7 @@ FIN
 					letterElems.push("<span class='rightjoin-letter'>" + label_text.charAt(i) + "</span>");
 				}
 			}
-			res = "<div class='rightjoin-label-box'>" + letterElems.join("") + "</div>";
+			res = "<div class='rightjoin-label-box'>" + letterElems.join("") + "</div><div class='rightjoin-counter rightjoin-animation rightjoin-pendulum'><%=@activeJobsCount%></div>";
 			
 			return res;
 		}
@@ -173,8 +178,61 @@ FIN
 			<%
 				shift = "80px"
 				css = <<-FIN
+					.rightjoin-animation {
+					  -webkit-animation-fill-mode: both;
+					  -moz-animation-fill-mode: both;
+					  -ms-animation-fill-mode: both;
+					  -o-animation-fill-mode: both;
+					  animation-fill-mode: both;
+					  
+					  -webkit-animation-duration: .8s;
+					  -moz-animation-duration: .8s;
+					  -ms-animation-duration: .8s;
+					  -o-animation-duration: .8s;
+					  animation-duration: .8s;    
+					}
+					@-webkit-keyframes pendulum { 
+					    10% { -webkit-transform: rotate(45deg) }
+					    30% { -webkit-transform: rotate(-30deg) }
+					    50% { -webkit-transform: rotate(15deg) }
+					    70% { -webkit-transform: rotate(-15deg) }
+					    90% { -webkit-transform: rotate(6deg) }
+					    100% { -webkit-transform: rotate(0deg) }
+					}
+					
+					@-moz-keyframes pendulum { 
+					    10% { -moz-transform: rotate(45deg) }
+					    30% { -moz-transform: rotate(-30deg) }
+					    50% { -moz-transform: rotate(15deg) }
+					    70% { -moz-transform: rotate(-15deg) }
+					    90% { -moz-transform: rotate(6deg) }
+					    100% { -moz-transform: rotate(0deg) }
+					}
+					
+					@-o-keyframes pendulum { 
+					    10% { -o-transform: rotate(45deg) }
+					    30% { -o-transform: rotate(-30deg) }
+					    50% { -o-transform: rotate(15deg) }
+					    70% { -o-transform: rotate(-15deg) }
+					    90% { -o-transform: rotate(6deg) }
+					    100% { -o-transform: rotate(0deg) }
+					}
+					
+					@keyframes pendulum { 
+					    10% { transform: rotate(45deg) }
+					    30% { transform: rotate(-30deg) }
+					    50% { transform: rotate(15deg) }
+					    70% { transform: rotate(-15deg) }
+					    90% { transform: rotate(6deg) }
+					    100% { transform: rotate(0deg) }
+					}
+					.rightjoin-pendulum {
+					    -webkit-animation-name: pendulum;
+					    -moz-animation-name: pendulum;
+					    -o-animation-name: pendulum;
+					    animation-name: pendulum;
+					}
 					##{tab_element_id} {
-						background: #{background_color};
 						color: #{color};
 				      	font-size: 13px;
 				      	font-weight: bold;
@@ -197,33 +255,55 @@ FIN
 					  height: 0.5em;
 					  display: inline-block;
 					}
+					##{tab_element_id} .rightjoin-counter {
+					  position: absolute;
+					  width: 18px;
+					  height: 18px;
+					  background: #{counter_bg};
+					  -webkit-border-radius: 50%;
+					  -moz-border-radius: 50%;
+				      border-radius: 50%;
+				      font-size: 10px;
+				      line-height: 19px;
+				      text-align: center;
+					}
 				FIN
 				
 				case position
 				when "top-left"
+					css << "##{tab_element_id} .rightjoin-counter {bottom: -6px; left: -6px; #{box_shadow('1px -1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {top: 0; left: #{shift}; #{border_top_tab}}"
 				when "top-right"
+					css << "##{tab_element_id} .rightjoin-counter {bottom: -6px; left: -6px; #{box_shadow('1px -1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {top: 0; right: #{shift}; #{border_top_tab}}"
 				when "left-top"	
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; right: -6px; #{box_shadow('1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {left: 0; top: #{shift}; #{border_left_tab}}"
 					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"
 				when "left-middle"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; right: -6px; #{box_shadow('1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {left: 0; top: 50%; margin-top: -#{label_text.length / 2}em; #{border_left_tab}}"
 					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"
 				when "left-bottom"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; right: -6px; #{box_shadow('1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {left: 0; bottom: #{shift}; #{border_left_tab}}"
 					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"					
 				when "bottom-left"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; left: -6px; #{box_shadow('1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {bottom: 0; left: #{shift}; #{border_bottom_tab}}"
 				when "bottom-right"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; left: -6px; #{box_shadow('1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {bottom: 0; right: #{shift}; #{border_bottom_tab}}"
 				when "right-top"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; left: -6px; #{box_shadow('-1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {top: #{shift}; right: 0; #{border_right_tab}}"
 					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"					
 				when "right-middle"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; left: -6px; #{box_shadow('-1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {top: 50%; right: 0; margin-top: -#{label_text.length / 2}em; #{border_right_tab}}"
 					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"						
 				when "right-bottom"
+					css << "##{tab_element_id} .rightjoin-counter {top: -6px; left: -6px; #{box_shadow('-1px 1px 1px rgba(0, 0, 0, 0.5)')};}"
 					css << "##{tab_element_id} {bottom: #{shift}; right: 0; #{border_right_tab}}"
 					css << "##{tab_element_id} .rightjoin-gap, ##{tab_element_id} .rightjoin-letter{display: block;}"
 				end
@@ -246,7 +326,7 @@ FIN
 		};		
 		
 		var createTab = function(customClassName) {
-		    <% if activeJobsCount > 0 %>
+		    <% if @activeJobsCount > 0 %>
 		    	createStyle();
 		    	
 		    	var tabRoot = document.createElement("div");
@@ -258,11 +338,21 @@ FIN
 		    	var body = document.getElementsByTagName('body')[0];
 		    	insertLast(tabRoot, body);
 		    	return tabRoot;
+		    <% else %>
+		    	var comment = document.createComment("<%=Constants::SHORT_SITENAME%> diagnostics: No active positions found for the employer <%=@employer.reference_num%>, locale <%=I18n.locale%>");
+		    	var body = document.getElementsByTagName('body')[0];
+		    	insertLast(comment, body);
+		    	return null;
 		    <% end %>
 		};
 		
 		var setLauncher = function(launcherElem) {
-			addEvent(launcherElem, "click", popupWidget);
+			var res = false;
+			if (launcherElem) {
+				addEvent(launcherElem, "click", popupWidget);
+				res = true;
+			}
+			return res;
 		};
 		
 		var popupWidget = function() {

@@ -17,6 +17,7 @@ class Constants
 
   EMPLOYER_TAGLINE = "Connect to Stealth Candidates" 
   CANDIDATE_TAGLINE ="Chat with your professional peers about their workplace"
+  AMBASSADOR_TAGLINE = "Find great colleagues" #[TODO]
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   MAX_STRING_LENGTH = 250 #Used for various free-text areas.

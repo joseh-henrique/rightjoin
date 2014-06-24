@@ -370,7 +370,7 @@ label {
         }   
         
         .copy-to-clipboard {
-          background: #0069a6;
+          background: #11a8ab;
         }  
       }
     }
@@ -387,4 +387,34 @@ label {
   }
 }
 
+.global-zeroclipboard-container {
+  @include border-radius(20%);
+  
+  &:hover {
+    background: #e8643e image-url("team/share/clipboard-small.png") no-repeat;
+  }
+}
 
+/* 
+ :-ms-input-placeholder must come after the definitions for the input fields, otherwise the definitions for the input field 
+ will override the placeholder definitions. We want to keep placeholder definitions together. 
+ So, we are copying all the placeholder definitions into the end of team.css.scss
+ and the end of rightjoin.css.scss.
+ */
+input, textarea, select {
+  &::-webkit-input-placeholder  { 
+    color:#DBDBDB; 
+  }
+  
+  &:-moz-placeholder { 
+    color:#DBDBDB; 
+  }
+  
+  &::-moz-placeholder {  /* Firefox 19+ */
+     color:#BBBBBB; 
+  }  
+  
+  &:-ms-input-placeholder {  
+     color:#DBDBDB !important;
+  }
+}

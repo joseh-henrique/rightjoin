@@ -105,7 +105,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 99999;
+  z-index: 999; /*modal dialog for change pw has 1002*/
   
   font-size: 0.8em;
   line-height: 1.5em;
@@ -188,24 +188,6 @@
   
   .line1, .line2 {
     width: 0;
-  }
-}
-
-input, textarea, select {
-  &::-webkit-input-placeholder  { 
-    color:pink; 
-  }
-  
-  &:-moz-placeholder { 
-    color:green; 
-  }
-  
-  &::-moz-placeholder {  /* Firefox 19+ */
-     color:blue; 
-  }  
-  
-  &:-ms-input-placeholder {  
-     color:red;
   }
 }
 

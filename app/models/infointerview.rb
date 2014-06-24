@@ -12,6 +12,8 @@ class Infointerview < ActiveRecord::Base
   belongs_to :auth
   belongs_to :referred_by_ambassador, :class_name => :Ambassador, :foreign_key => :referred_by
   
+  has_many :followups, :dependent => :destroy
+  
   # for :status
   NEW = 0
   #VETTED_BY_FYI = 10
