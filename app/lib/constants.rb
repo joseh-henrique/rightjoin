@@ -35,7 +35,8 @@ class Constants
   #Note that  PHONE should be accessed through only through Utils::phone_with_pfx. Maybe move the literal to there.
   PHONE= "718-569-8851"
   
-  FYI_CRM_NAME = "Joshua"
+  RJ_CRM_NAME = "Joshua"
+  RJ_CRM_FULLNAME = RJ_CRM_NAME + 
   
   NUM_INITIAL_FREE_AMB_CONTACTS = "three"
    
@@ -92,7 +93,10 @@ class Constants
   COUNTRY_IN = "in"
   
    
-  COUNTRIES = {COUNTRY_US => LOCALE_EN, COUNTRY_AU => "en-AU", COUNTRY_CA => "en-CA", COUNTRY_UK => "en-GB", COUNTRY_IL=>"en-IL", COUNTRY_IN=>"en-IN"}
+  COUNTRIES = {
+    COUNTRY_US => LOCALE_EN, COUNTRY_AU => "en-AU", COUNTRY_CA => "en-CA", 
+    COUNTRY_UK => "en-GB", COUNTRY_GB => "en-GB", # uk is the main one, but gb appears in the GeoCityLite db 
+    COUNTRY_IL=>"en-IL", COUNTRY_IN=>"en-IN"}
  
   TIER_FREE = 1
   TIER_PRO = 2
