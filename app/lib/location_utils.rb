@@ -9,10 +9,13 @@ class LocationUtils
     c = @@db.country(ip)
     unless c.nil?
       country = c.country_code2.downcase
+      puts "P>> Country from db: #{country}"
       locale_s = Constants::COUNTRIES[country] unless country.blank?
-      
       locale = locale_s.to_sym unless locale_s.blank?
-    end
+		end
+    puts "Q>> c nil" if c.nil? if c.blank?
+    puts "R>> Using default locale #{default_locale}"  
+      
     locale ||= default_locale
   end
   

@@ -42,9 +42,10 @@ class ApplicationController < ActionController::Base
   #s
   # Note that country params here  is like  uk, il, ca, au, us
   def set_default_locale(country_code_from_domain = nil )
-    
+    puts "reqeust path>>> #{request.fullpath}"
+    puts "country_code_from_domain>>>#{country_code_from_domain} "
     country_code_param = params[:locale]#param like uk, ca, au, us
-    
+    puts "country_code_param>>>#{country_code_param} "
     if country_code_param.blank?
       country_code_param = country_code_from_domain
     end
@@ -52,11 +53,14 @@ class ApplicationController < ActionController::Base
     unless country_code_param.blank?
       locale_s = Constants::COUNTRIES[country_code_param]
     end 
-    
+      puts "locale_s>>>#{locale_s} "
     if locale_s.blank?
-      I18n.locale = LocationUtils::locale_by_ip(request.remote_ip)
+      loc = LocationUtils::locale_by_ip(request.remote_ip)
+      I18n.locale = loc 
+      puts "locale by IP >>>#{loc} "
     else
       I18n.locale = locale_s.to_sym 
+       puts "NOT BY IP >>>#{locale_s.to_sym} "
     end
   end
   
