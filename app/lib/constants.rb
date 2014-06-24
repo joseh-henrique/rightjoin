@@ -75,7 +75,7 @@ class Constants
   
   OAUTH_TYPE_INSIDER = "insider"
   OAUTH_TYPE_CONTACT = "contact"
-  
+    
   ELIPSIS = ", ..."
   
   # en, in-IL, en-IN etc are locale.

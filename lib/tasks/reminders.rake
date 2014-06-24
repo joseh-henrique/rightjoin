@@ -74,10 +74,10 @@ namespace :cron do
   end
   
   #sent every day to X people until all updated
-  task :send_amb_service_announcement_to_engineers => :environment do
+  task :send_rightjoin_migration_announcement_to_engineers => :environment do
    if !Time.now.sunday? && !Time.now.saturday?
-     count = Reminder.send_amb_service_announcement_to_engineers do |user|
-         new_msg = FyiMailer.create_amb_service_announcement_email(user)
+     count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
+         new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
          Utils.deliver new_msg
      end
      

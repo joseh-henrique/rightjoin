@@ -9,6 +9,7 @@ class Reminder < ActiveRecord::Base
   ADMIN_SUMMARY_SENT = :admin_summary_sent
   BOARDS_UPDATE_ANNOUNCEMENT = :boards_update_announcement
   AMB_SERVICE_ANNOUNCEMENT = :amb_service_announcement
+  RIGHTJOIN_MIGRATION_ANNOUNCEMENT = :rightjoin_migration_announcement
   
   USER_ACCOUNT_ACTIVATED = :user_account_activated
   EMPLOYER_ACCOUNT_ACTIVATED = :employer_account_activated
@@ -176,15 +177,15 @@ class Reminder < ActiveRecord::Base
   end
   
   # send 30 every day, until exhausted
-  def self.send_amb_service_announcement_to_engineers
+  def self.send_rightjoin_migration_announcement_to_engineers
     num_to_send = 30
     users = User.where("status = ? and created_at < ? and (sample = ? or sample is null) and locale = ?", UserConstants::VERIFIED, Time.new(2014, 3, 5), false, Constants::LOCALE_EN)
-                 .where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::AMB_SERVICE_ANNOUNCEMENT).order("created_at asc")
+                 .where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc")
                  .limit(num_to_send)
     users.each do |user|
       begin
         yield user
-        user.add_reminder!(nil, Reminder::AMB_SERVICE_ANNOUNCEMENT)
+        user.add_reminder!(nil, Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT)
       rescue Exception => e
         logger.error(e)
 

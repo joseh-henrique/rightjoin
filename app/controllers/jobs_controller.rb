@@ -40,6 +40,9 @@ class JobsController < ApplicationController
         @job.southmost = @base_job.southmost
         @job.westmost = @base_job.westmost
         @job.eastmost = @base_job.eastmost
+        @job.address = @base_job.address
+        @job.address_lat = @base_job.address_lat
+        @job.address_lng = @base_job.address_lng
     end
     
     @job.description = @base_job.description
@@ -53,11 +56,7 @@ class JobsController < ApplicationController
     @job.image_1_id = @base_job.image_1_id
     @job.image_2_id = @base_job.image_2_id
     @job.image_3_id = @base_job.image_3_id
-    
-    @job.address = @base_job.address
-    @job.address_lat = @base_job.address_lat
-    @job.address_lng = @base_job.address_lng
-    
+  
     @job.join_us_widget_params_map = @base_job.join_us_widget_params_map
     
     @job.tech_stack_list = @base_job.tech_stack_list

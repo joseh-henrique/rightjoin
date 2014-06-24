@@ -6,6 +6,7 @@ class LocationUtils
   @@db = GeoIP.new('db/GeoLiteCity.dat')
   def self.locale_by_ip (ip, default_locale = Constants::LOCALE_EN.to_sym)
     locale = nil
+    puts "O>>>>#{ip}"
     c = @@db.country(ip)
     unless c.nil?
       country = c.country_code2.downcase

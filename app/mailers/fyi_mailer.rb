@@ -1,6 +1,6 @@
 class FyiMailer < ActionMailer::Base
   FYI_FROM = "#{Constants::SHORT_SITENAME} <info@#{Constants::SITENAME_LC}>"
-  PERSONAL_FROM = "#{Constants::FYI_CRM_NAME} <#{Constants::FYI_CRM_NAME.downcase}@#{Constants::SITENAME_LC}>"
+  PERSONAL_FROM = "#{Constants::RJ_CRM_FULLNAME} <#{Constants::RJ_CRM_NAME.downcase}@#{Constants::SITENAME_LC}>"
   ADMIN_FROM = "Administrator <#{Constants::ADMIN_EMAIL}>"
   PLEASE_REPLY = "Questions? Just reply to this message to contact #{Constants::SHORT_SITENAME}."
    
@@ -268,8 +268,8 @@ class FyiMailer < ActionMailer::Base
       return create_message to_email, subj, html_body, text_body   
   end
 
-  #TODO Delete this method?
-  def create_amb_service_announcement_email(candidate)
+   
+  def create_rightjoin_migration_announcement_for_candidates_email(candidate)
     @intended_for = :employee
     to_email = candidate.email
     subj = "#{Constants::SHORT_SITENAME}'s latest"
@@ -279,7 +279,7 @@ class FyiMailer < ActionMailer::Base
      
     pfx = candidate.first_name.blank? ? "" : "Hey #{candidate.first_name},<br><br>"   
  
-    @msg2_h = pfx+
+    @msg2_h = pfx +
       "You may have seen the quizzes on #{Constants::SHORT_SITENAME}. 
       They reveal some pretty interesting <a href='#{findings_url(:locale => I18n.t(:country_code, candidate.locale))}'>results</a>,
       and sometimes they send us off to heads-down coding for weeks on end.<br><br>
@@ -292,7 +292,7 @@ class FyiMailer < ActionMailer::Base
       Our beta is just launching now: Take a look at the first few \"ambassadors\" at <a href='#{jobs_url(:locale => I18n.t(:country_code, candidate.locale))}'>#{Constants::SHORT_SITENAME}</a>.
       If they look like the sort of person you might want to work with, click and ask them what their job is like.<br><br>  
       Best,<br><br>
-      #{Constants::FYI_CRM_NAME}"
+      #{Constants::RJ_CRM_NAME}"
 
     @msg2_t = Utils.html_to_txt @msg2_h
 
@@ -312,7 +312,7 @@ class FyiMailer < ActionMailer::Base
 
 
   CRM_SIGNATURE = "Best,<br><br>
-                  #{Constants::FYI_CRM_NAME}"
+                  #{Constants::RJ_CRM_NAME}"
 
 
   def create_personal_welcome_candidate_email(user)
@@ -322,15 +322,15 @@ class FyiMailer < ActionMailer::Base
     salutation<<" to #{Constants::SHORT_SITENAME}."
 
     content =
-      "I'm #{Constants::FYI_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
+      "I'm #{Constants::RJ_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
       "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to apply to jobs.<br><br>" <<
       "We keep you spam-free by letting employers ping you only when they have jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
-      "Go ahead and browse the specialized job listings and ping the employers who interest you.<br><br>" <<
+      "Go ahead and browse the specialized job listings, and ping the employers who interest you.<br><br>" <<
       "And don't hesitate to contact me with any questions.<br>"
 
-    signature =""+CRM_SIGNATURE
+    signature ="" + CRM_SIGNATURE
 
-    return create_simple_text_email(subject, salutation, content, signature, user.email,PERSONAL_FROM)
+    return create_simple_text_email(subject, salutation, content, signature, user.email, PERSONAL_FROM)
   end
 
 
@@ -340,7 +340,7 @@ class FyiMailer < ActionMailer::Base
 
     salutation = "Hi, #{employer.first_name}, welcome to #{Constants::SHORT_SITENAME}."
 
-    content = "I'm #{Constants::FYI_CRM_NAME}, your contact  at #{Constants::SHORT_SITENAME}. "
+    content = "I'm #{Constants::RJ_CRM_NAME}, co-founder of #{Constants::SHORT_SITENAME}. "
 
     if employer.jobs.blank? || employer.ambassadors.blank?
       please_add_template =  "Please go ahead and add some %s. Feel free to shoot me an email if you have any questions on how to do that.<br><br>"
@@ -360,7 +360,7 @@ class FyiMailer < ActionMailer::Base
 
     signature = ""+CRM_SIGNATURE
 
-    return create_simple_text_email(subject, salutation, content, signature, employer.email,PERSONAL_FROM)
+    return create_simple_text_email(subject, salutation, content, signature, employer.email, PERSONAL_FROM)
   end
 
   def create_admin_summary_email(server_name, events)
