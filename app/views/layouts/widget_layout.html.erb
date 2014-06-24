@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
 	<head>
+		 <%# The meta IE=Edge  is necessary to avoid Quirks mode in IE 10, which causes a bug:
+		 # tooltip for form validation are behind the form.%>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title><%= title %></title>
 		<!--[if lt IE 9]>
