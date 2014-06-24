@@ -44,13 +44,16 @@ class Infointerview < ActiveRecord::Base
     self.job.employer
   end
   
+  def full_candidate_name
+    "#{self.first_name} #{self.last_name}"
+  end
   
   def inspect 
     parts = [
     "------------------------------------------------------------------------",
     "** Created at #{self.created_at} (#{((Time.now - self.created_at)/(3600 * 24)).to_i} days ago), status = #{self.status}",
     "--------- Infointerview (id:#{self.id}, job_id:#{self.job_id}) ---------",
-    "** #{self.first_name} #{self.last_name} - #{self.email}",
+    "** #{self.full_candidate_name} - #{self.email}",
     "** Professional profiles: \"#{self.profiles}\"",
     "** ReferredBy id: #{self.referred_by}",
     "** User id: #{self.user_id}",

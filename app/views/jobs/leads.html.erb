@@ -35,7 +35,7 @@
 					
 					<% unless @job.closed? %>
 					    <div class="contact-candidate-box">
-					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id] } %>
+					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id, {"data-firstname" => escape_javascript(ambassador.first_name)}] } %>
 							<% if ambassador_select_opts.empty?%>
 								Want your team members to talk to the candidate? <%= link_to("Ask them", employer_path(current_user, :anchor=>"team")) %> to join as ambassadors.
 				    		<% else %>
@@ -47,6 +47,7 @@
 			    						<%=link_to("Delegate", "#", :class => "delegate-to-ambassador standard-button")%>
 			    						&nbsp;
 			    						<div title="Sending..." class="loading-icon"></div>
+			    						<div class="results-box"></div>
 			    					</div>
 					    		</div>
 					    	<% end %>	
@@ -101,31 +102,28 @@
 		$("a.delegate-to-ambassador").click(function(){
 			var select = $(this).siblings(".ambassadors-list").first();
 			var selected_option = select.find(":selected");
+			var ambassador_firstname = $(selected_option).attr('data-firstname');
+			
+			var loading_icon = $(this).siblings(".loading-icon").first();
+			$(loading_icon).css("visibility", "visible");
+			
+			var results_box = $(this).siblings(".results-box").first();
+			
+			var self = this;
+			$(self).attr("disabled", "disabled");
 			
 			$.post($(select).attr('data-infointerview-path'), { ambassador_id: $(selected_option).val() } )
 			.done(function(data) {
-				alert("ok");
+				$(results_box).html("<div class='success'>We've passed your follow-up request to " + ambassador_firstname + ".</div>");
 			})
 			.fail(function() {
-				alert("error");
+				$(results_box).html("<div class='error'><%=Constants::ERROR_FLASH%></div>");
 			})
 			.always(function() {
-			    
-			});			
+			    $(loading_icon).css("visibility", "hidden");
+			    $(self).removeAttr("disabled");
+			});
 			
-			return false;
-			
-			var email = $(selected_option).attr('data-email');
-			var subject = "Talking to a potential colleague";
-			var body = "Hi, " + $(selected_option).attr('data-firstname') + ",\n";
-			body += "\nPlease be in touch with " + $(select).attr('data-candidate-name') ;
-			body +=	" regarding our open <%=escape_javascript @job.position_name%> position.\n\nEmail them back, maybe talk with them, see if they're right for us and we're right for them.\n\n";
-			body += $(select).attr('data-candidate-profiles') + "\n";
-			body += "Email: " + $(select).attr('data-candidate-email') + "\n\n";
-			body += "Regards,\n\n";
-			body += "<%=escape_javascript current_user.first_name%>";
-			var link = '/mailto#mailto:' +  email + '?Subject=' + encodeURIComponent(subject) + '&Body=' + encodeURIComponent(body);
-			window.open(link, '_fyi_email');
 			return false;
 		});
 	</script>

@@ -77,19 +77,15 @@ class FyiMailer < ActionMailer::Base
     @intended_for = :ambassador
 
     to_email = followup.ambassador.email
-    subj = "New follow-up request"
+    subj = "Talking to a potential colleague"
 
-    msg1 = "Please be in touch with a candidate regarding #{ERB::Util.html_escape(followup.infointerview.job.position_name)} position in #{ERB::Util.html_escape(followup.infointerview.job.company_name)}."
-    if followup.infointerview.referred_by == followup.ambassador.id
-      msg1 = "Please be in touch with a candidate you referred to #{ERB::Util.html_escape(followup.infointerview.job.position_name)} position in #{ERB::Util.html_escape(followup.infointerview.job.company_name)}."
-    end
-    
+    msg1 = "Please be in touch with #{ERB::Util.html_escape(followup.infointerview.full_candidate_name)} regarding our open #{ERB::Util.html_escape(followup.infointerview.job.position_name)} position." 
     @msg1_h = msg1.clone
     @msg1_t = msg1.clone # TODO small bug: escaped company name and position enter text email
 
-    # [TODO] we should explain here what we mean by "follow up"
-    @msg2_h = "See more details about the candidate on your #{ERB::Util.html_escape(followup.infointerview.job.company_name)} team page."
-    @msg2_t = "See more details about the candidate on your #{followup.infointerview.job.company_name} team page."
+    # [TODO] use different text if the candidate is referred by this ambassador - followup.infointerview.referred_by == followup.ambassador.id
+    @msg2_h = "Email them back, maybe talk with them, see if they're right for us and we're right for them. Find more details and follow up on your #{ERB::Util.html_escape(followup.infointerview.job.company_name)} team page."
+    @msg2_t = "Email them back, maybe talk with them, see if they're right for us and we're right for them. Find more details and follow up on your #{followup.infointerview.job.company_name} team page."
 
     msg3 = "Any questions? Just reply to this email or call us at #{Utils.phone_with_pfx}."
     @msg3_h = msg3.clone
