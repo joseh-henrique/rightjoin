@@ -42,6 +42,14 @@ body {
   font-weight: 500;
 }
 
+a {
+  color: #555555;
+  
+  &:hover {
+    color: #e8643e;
+  }
+}
+
 .content {
   width: $width;
   margin: 0 auto;
@@ -228,6 +236,8 @@ label {
 }
 
 #dashboard {
+  position: relative;
+  
   .header-strip {
     .avatar-box {
       text-align: right;
@@ -256,75 +266,99 @@ label {
     }
   }
   
-  .counters-box {
+  .headline-box {
     margin-top: 70px;
     margin-bottom: 70px;
-    
-    .counter {
-      position: relative;
-      display: inline-block;
-      margin-top: 60px;
-      margin-left: 40px;
-      margin-right: 40px;
-      width: 220px;
-      height: 220px;
-      border: solid 3px white;
-      @include border-radius(50%);
-      
-      .counter-val {
-        width: 220px;
-        height: 220px;
-        line-height: 220px;
-        font-size: 64px;
-      }
-      
-      .counter-title {
-        position: relative;
-        top: -40px;
-      }
+
+    h1 {
+      font-size: 46px;
+      line-height: 1.35em;
+      overflow:hidden;
+      font-weight: normal;
+      padding: 0;
+      margin: 0;
+      margin-bottom: 40px;      
     }
   }
   
-  .see-whats-happening {
-    font-size: 46px;
-    line-height: 1.35em;
+  .counter {
+    font-size: 20px;
+    
+    position: relative;
+    display: inline-block;
+    margin-top: 1em;
+    margin-left: 2em;
+    margin-right: 2em;
+    width: 11em;
+    height: 11em;
+    border: solid 3px white;
+    @include border-radius(50%);
+    
+    .counter-val {
+      width: 3.4375em;
+      height: 3.4375em;
+      line-height: 3.4375em;
+      font-size: 3.2em;
+    }
+    
+    .counter-title {
+      position: relative;
+      top: -2.2em;
+      font-size: 0.9em;
+    }
   }
-  
-  .recent-leads {
+
+  .navigation-strip {
     padding-top: 25px;
     padding-bottom: 25px;
-    background: transparent image-url("shared/semi-transparent.png") repeat;
     font-size: 24px;
     
-    .lead-avatar {
-      display: inline-block;
-      width: 60px;
-      height: 60px;
-      margin-left: 10px;
-      margin-right: 10px;
-      margin-top: 20px;
-      @include border-radius(50%);
-    }
-    
-    div.lead-avatar {
-      background: transparent image-url("shared/no-avatar-semi-transparent-56x56.png") repeat;
-    }
+    a {
+      color: $default-font-color;
+      
+      &:hover {
+        @include opacity(90);
+      }
+    }    
+  }
+  
+  .semitransparent {
+    background: transparent image-url("shared/semi-transparent.png") repeat;
+  }
+   
+  .lead-avatar {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    @include border-radius(50%);
+  }
+  
+  div.lead-avatar {
+    background: transparent image-url("shared/no-avatar-semi-transparent-56x56.png") repeat;
   }  
   
-  .invite-box {
+  .content-box {
     background: white;
     color: #555555;
-    padding-top: 70px;
+    padding-top: 60px;
     padding-bottom: 30px;
     
-    .invite-friends {
+    h1 {
       font-size: 36px;
       line-height: 1.35em;
       overflow:hidden;
-    }
-    
+      font-weight: normal;
+      padding: 0;
+      margin: 0;
+      margin-bottom: 40px;
+    }    
+  }
+  
+  .invite-box {
     .position-chooser {
-      padding-top: 40px;
       padding-bottom: 50px;
     }
     
@@ -376,24 +410,63 @@ label {
     }
     
     .preview-link {
-      color: #555555;
       font-size: 24px;
       font-weight: 500;
+    }
+  }
+    
+  .global-zeroclipboard-container {
+    @include border-radius(20%);
+    
+    &:hover {
+      background: #e8643e image-url("team/share/clipboard-small.png") no-repeat;
+    }
+  }
+  
+  .leads-list {
+    text-align: left;
+    
+    .avatar-img {
+      width: 46px;
+      height: 46px;
+      border: 1px solid #7D5552;
+    }
+    
+    .infointerview-outer-box {
+      font-size: 14px;
+      border-top: 3px solid #7C575B;
+      padding: 20px;
+      background: #FFF3F0;
+      margin-bottom: 60px;
+      position: relative;
       
-      &:hover {
+      .intro {
+        position: absolute;
+        left: 0;
+        top: -20px;
         color: #e8643e;
+        line-height: 15px;        
       }
+      
+      .close {
+        display: block;
+        position: absolute;
+        right: -8px;
+        top: -11px;
+        background: transparent image-url("shared/job-x-off.png") no-repeat top left;
+        width: 18px;
+        height: 18px;
+        z-index: 99999;
+        text-indent: -9999px;
+        
+        &:hover {
+          background: transparent image-url("shared/job-x-on.png") no-repeat top left;
+        }
+      }      
     }
   }
 }
 
-.global-zeroclipboard-container {
-  @include border-radius(20%);
-  
-  &:hover {
-    background: #e8643e image-url("team/share/clipboard-small.png") no-repeat;
-  }
-}
 
 /* 
  :-ms-input-placeholder must come after the definitions for the input fields, otherwise the definitions for the input field 

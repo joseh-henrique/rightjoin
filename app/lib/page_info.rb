@@ -33,6 +33,7 @@
   AMBASSADOR_CREATE = {:id => "pg-ambassador-create", :title => Constants::AMBASSADOR_TAGLINE, :intended_for => :ambassador} 
   AMBASSADOR_SIGNIN = {:id => "pg-ambassador-signin", :title => "Team member sign-in", :intended_for => :ambassador} 
   AMBASSADOR_SHOW = {:id => "pg-ambassador_show", :title => "Dashboard", :intended_for => :ambassador} 
+  AMBASSADOR_FOLLOWUP = {:id => "pg-ambassador_followup", :title => "Talk to potential candidates", :intended_for => :ambassador}   
   
   # anybody
   INDEX = {:id => "pg_index", :title => "Welcome", :intended_for => :all} 

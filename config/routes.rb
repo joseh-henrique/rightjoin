@@ -31,7 +31,7 @@ FiveYearItch::Application.routes.draw do
   
   #ominauth
   match "/auth/:provider/callback" => "omniauth#callback"
-  match "/login_with/:provider" => "omniauth#login_with", :as => :ominauth_login_with
+  match "/login_with/:provider" => "omniauth#login_with", :as => :ominauth_login_with, :via => :post 
   
   # use employer's refnum
   match "/team/:refnum/signin" => "ambassadors#signin", :as => :ambassadors_signin
@@ -119,6 +119,8 @@ FiveYearItch::Application.routes.draw do
       resources :ambassadors, only: [:show, :new, :create, :edit, :update, :destroy] do
         member do
           post 'share'
+          post 'close_followup'
+          get 'followup'
         end
       end
     end

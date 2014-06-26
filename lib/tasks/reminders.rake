@@ -74,15 +74,21 @@ namespace :cron do
   end
   
   #sent every day to X people until all updated
-  task :send_rightjoin_migration_announcement_to_engineers => :environment do
-   if !Time.now.sunday? && !Time.now.saturday?
-     count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
-         new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
-         Utils.deliver new_msg
-     end
-     
-     puts "Amb-service announcements sent: #{count}."
-   end
+  task :send_rj_migration_announcement_to_engineers => :environment do
+         if Time.now < Time.new(2014,6,30)
+           puts "#{Constants::SITENAME} not yet released; not sending migration announcements"
+           return
+         end
+      		count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
+ 
+      		  begin
+       				new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
+				  		Utils.deliver new_msg
+            rescue Exception => e
+                puts e
+            end
+       		end
+     puts "RJ migration announcements sent: #{count}."
   end
   
   # send update to employers about new contact

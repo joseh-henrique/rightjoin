@@ -73,7 +73,7 @@
  
 <% end %>
 
-<%=link_to "RightJoin", root_url, :id=>"rightjoin-label", :target => "_blank"%>
+<%=link_to Constants::SHORT_SITENAME, root_url, :id=>"rightjoin-label", :target => "_blank"%>
 
 <div id="we-are-hiring-widget-box" class="inner animation-common fadeIn">
 	<% unless @job.nil? %>	
@@ -102,7 +102,7 @@
 				</div>
 			<%end%>	
 		 
-			<%fixed_texts = ["talk to your fellow developers", "click GitHub or LinkedIn buttons to send a ping"]%> 
+			<%fixed_texts = ["talk to your fellow developers", "click RightJoin, GitHub or LinkedIn buttons to send a ping"]%> 
 			<% fixed_texts.each_with_index do |label, i| %>
 				<div id="fixed-text<%=i%>" class="for-blurb">
 					<div class="title">
@@ -126,7 +126,9 @@
 			<% @job.employer.ambassadors.only_active.limit(WidgetsHelper::AMBASSADOR_LIMIT).each_with_index do |ambassador, i| %>
 				<div id="contel-work-with-<%=ambassador.id%>" class="for-avatar">				
 					<% resource, link = ambassador.profile_links_map.first %>
-					<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}", :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
+					<% tt_title = ERB::Util.html_escape  "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}" %>
+					<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :id=> "avatar-link-#{ambassador.id}",  :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
+					 <script>$("#<%="avatar-link-#{ambassador.id}" %>").attr('title', "<%=tt_title%>");</script> 
 				</div>
 			<% end %>
 			
@@ -179,7 +181,7 @@
 						<% end %>
 					</div>				
 					<div class="overlay">
-						<div class="title">Come work with us</div>
+						<div class="title">come work with us</div>
 					</div>
 				</div>
 			<% else %>
@@ -222,19 +224,13 @@
 			<div id="signin-box" class="tile double-len cell-signin bg-style5">
 				<div class="title">Ping <%=@job.company_name%></div>
 				<div class="sub-title">Click a button to be in touch</div>
-				<!--div class="img-box">
-					<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "github" %>
-					&nbsp;&nbsp;
-					<%= link_to "Sign-in with LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), :class => "linkedin" %>
-				</div-->
-				
 				<div class="buttons-box">
-					<div class="button-box github"><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id) %></div>
+					<div class="button-box github"><%= image_tag("widget/social/github46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
 					&nbsp;
-					<div class="button-box linkedin"><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id) %></div>
+					<div class="button-box linkedin"><%= image_tag("widget/social/linkedin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
 					&nbsp;
-					<div class="button-box rightjoin"><div class="separator"></div><%= link_to "RightJoin", ominauth_login_with_path("rightjoin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id) %></div>
-				</div>				
+					<div class="button-box rightjoin"><%= image_tag("widget/social/rightjoin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "RightJoin", "#", {id: 'rightjoin-button', class: 'signin-button', method: :post} %></div>
+				</div>
 			</div>
 			
 			<%if @other_jobs.any?%>
@@ -290,20 +286,20 @@
 		<% end %>
 		
 		<% unless @infointerview.nil? %>
-			<div id="contact-form-box" class="tile cell-form bg-style5">
+			<div id="contact-form-box" class="popup-form-box tile cell-form bg-style5">
 				<a class="close-form" href="#"></a>
 				<div class="more-padding">
 					<div class="title">Let the folks at <%=@job.company_name%> know that you'd like to hear from them.</div>
 				
-					<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create_infointerview") do |f| %>  
+					<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-oauth") do |f| %>  
 						<div class="form-row clearfix">
 							<div class="left-col column">
 								<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
-								<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]] half-row-width", :placeholder => "Charles", :spellcheck => false) %>
+								<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false) %>
 							</div>
 							<div class="right-col column">
 								<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
-								<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]] half-row-width", :placeholder => "Babbage", :spellcheck => false) %>
+								<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false) %>
 							</div>
 						</div>
 
@@ -319,7 +315,42 @@
 					
 				</div>
 			</div>
-		<% end %>		
+		<% end %>
+		
+		<div id="ping-with-rightjoin-form-box" class="popup-form-box tile cell-form bg-style5">
+			<a class="close-form" href="#"></a>
+			<div class="more-padding">
+				<div class="title">Ping <%=@job.company_name%> with your <%=Constants::SHORT_SITENAME%> account.</div>
+				<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-rightjoin") do |f| %>  
+					<div class="form-row clearfix">
+						<div class="left-col column">
+							<%= label_tag(nil, "Email address", :class=>"mandatory") %><br>
+							<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>
+						</div>	
+						<div class="right-col column">
+							<%= label_tag(nil, "") %><br>
+							<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
+						</div>												
+					</div>
+					
+					<div class="form-row clearfix">
+						<div class="left-col column">
+							<%= label_tag(nil, "Password", :class=>"mandatory") %><br>
+							<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false) %>	
+						</div>									
+					</div>
+					<div class="form-row" id="ping-with-rightjoin-error">						
+					</div>
+				<% end %>
+			</div>
+			<div class="bottom-box">
+				Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sing up now", register_path, :target => "_blank"%>.
+			</div>
+		</div>
+		
+		<div id="direct-ping-form-box">
+			<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id=>"direct-ping-form") %>  
+		</div>
 	<% else %>
 		No open positions
 	<% end %>
@@ -331,9 +362,13 @@
 var hash = $(location).attr('hash');
 if(hash == "") {
 	<% unless @ambassador.nil? %>
+		<% tt_title = "#{@ambassador.first_name} #{@ambassador.last_name} - #{@ambassador.title}" 
+		tt_title = ERB::Util.html_escape tt_title
+		%>
 		$("#contel-work-with-" + <%=@ambassador.id%>).remove();
-		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" class="referer-link" rel="nofollow" target="_blank" title="<%=escape_javascript @ambassador.first_name%> <%=escape_javascript @ambassador.last_name%> - <%=escape_javascript @ambassador.title%>"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
+		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" id="referer-link-<%=@ambassador.id%>" class="referer-link" rel="nofollow" target="_blank"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
 		$("#referer-box").html(ref_html);
+		$("#referer-link-<%=@ambassador.id %>").attr("title", "<%=tt_title%>");
 	<% end %>
 	initialLoadByTileType("avatar");
 	window.setTimeout(updateOneAvatar, 3000);
@@ -435,21 +470,24 @@ function updateOneAvatar() {
 	}
 }
 
-function doSubmitForm() {
-	var res = $("#create_infointerview").validationEngine('validate');
+function doSubmitForm(form) {
+	var res = form.validationEngine('validate');
 	if (res) {
 		// prevent double submit
-		if($('#submit').attr("disabled") != "disabled") {
-			$('#submit').focus();
-			$('#submit').attr('disabled','disabled');
+		if($('.submit-button').attr("disabled") != "disabled") {
+			$('.submit-button').focus();
+			$('.submit-button').prop("disabled", true);
 		}
 	}
 
 	return res;
 }
    
-$("#create_infointerview").submit(function(){
-	if(doSubmitForm()) {
+$("#create-infointerview-via-oauth, #create-infointerview-via-rightjoin").submit(function(){
+	$("#ping-with-rightjoin-error").html("");
+	
+	var form = $(this);
+	if(doSubmitForm(form)) {
 		trackEvent("developer", "request for infointerview submitted");
 	} else {
 		trackEvent("developer", "error submitting request for infointerview");
@@ -459,8 +497,21 @@ $("#create_infointerview").submit(function(){
 	return true;
 });
 
+$("#rightjoin-button").click(function(){
+	<% if @candidate.nil? %>
+		$('.submit-button').prop("disabled", false);
+		$("#ping-with-rightjoin-error").html("");
+		$("#ping-with-rightjoin-form-box").fadeIn();
+	<% else %>
+		$("#direct-ping-form").submit();
+	<% end %>
+	
+    event.preventDefault(); 
+    return false;	
+});
+
 function showSubmitResults (resultsElem) {
-	$("#contact-form-box").fadeOut("slow");
+	$(".popup-form-box").fadeOut("slow");
 	$("#signin-box").html($(resultsElem).html());	
 }
 
@@ -474,15 +525,16 @@ $("#description-box").click(function(event) {
 <% end %>
 
 <% unless @job.company_url.blank? %>
-$(".logo").addClass("clickable");
-$(".logo").click(function(event) {
-	window.open("<%=@job.company_url%>"); 
-    event.preventDefault(); 
-});
+	$(".logo").addClass("clickable");
+	$(".logo").click(function(event) {
+		window.open("<%=@job.company_url%>"); 
+	    event.preventDefault(); 
+	});
 <% end %>
 
 $(".close-form").click(function(event){
-	$("#contact-form-box").fadeOut("slow");
+	$(".popup-form-box").validationEngine('hideAll');
+	$(".popup-form-box").fadeOut("slow");
 	event.preventDefault(); 
 	return false;
 });
@@ -603,12 +655,25 @@ $(document).ready(function(){
 	
 	window.setTimeout(updateOneTile, 2000);
 	
-   	$('#create_infointerview').on('ajax:success',function(data, status, xhr){
+   	$('#create-infointerview-via-oauth, #direct-ping-form').on('ajax:success',function(data, status, xhr){
       showSubmitResults ("#submit-success");
       $('.submit-success-icon').addClass("pendulum");
     }).on('ajax:error',function(xhr, status, error){
       showSubmitResults ("#submit-error");
     });	
+    
+   	$('#create-infointerview-via-rightjoin').on('ajax:success',function(data, status, xhr){
+      showSubmitResults ("#submit-success");
+      $('.submit-success-icon').addClass("pendulum");
+    }).on('ajax:error',function(xhr, status, error){
+      if (status.responseText != "") {
+      	$("#ping-with-rightjoin-error").hide().html(status.responseText).fadeIn("slow");
+      } else {
+      	showSubmitResults ("#submit-error");
+      }
+      
+      $('.submit-button').prop("disabled", false);
+    });	    
 });
 
 $(document).keyup(function(e) {

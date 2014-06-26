@@ -56,7 +56,7 @@ module UsersControllerCommon
     if signed_in? and current_user?(user_class.find(params[:id]))
       if current_user.pending?
         @user = nil
-        raise Exception, "Account must be verified to change password. Please enter password below, or sign out and use \u201CForgot Password.\u201D"
+        raise Exception, "Account must be verified to change password. Please enter password, or sign out and use \u201CForgot Password.\u201D"
       else
         @user = current_user
         usr_params = params[@user.class.to_s.downcase]# hash key is "user" or "employer"
@@ -180,7 +180,7 @@ module UsersControllerCommon
         else #This is the second HTTP request; first the user made the GET request, and then approved that; and this is a POST request.
           user.unsubscribe
           if user.employee? 
-            txt = "Thanks for using #{Constants::SHORT_SITENAME}. Your account was deactivated. (You can reactivate later.)"
+            txt = "Thanks for using #{Constants::SHORT_SITENAME}. Your account was deactivated."
           else
             if premium_plan
               txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've cancelled your premium plan, closed your job postings, and unsubscribed you." 

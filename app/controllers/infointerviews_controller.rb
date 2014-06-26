@@ -5,9 +5,41 @@ class InfointerviewsController < ApplicationController
   
   # ajax call
   def create
-    auth = current_auth(Constants::REMEMBER_TOKEN_INFOINTERVIEW)
-    if auth.nil? && !signed_in?
+    candidate = nil
+
+    # 1st - check if user provided RightJoin credentials in the widget
+    email = params[:email]
+    password = params[:password]
+    first_name = params[:firstname]
+    last_name = params[:lastname]
+    
+    if !email.blank? && !password.blank?
+      candidate = User.find_by_email(email)
+      if candidate.nil? || !candidate.authenticate(password)
+        render :text => "Invalid email/password combination. Please try again.", status: :unauthorized
+        return # invalid credentails, don't even try other options
+      end
+    end
+    
+    auth = nil
+    if candidate.nil?
+      # 2nd - see if user pings via oauth providers, i.e. provides firstname and lastname
+      if !first_name.blank? && !last_name.blank?
+        auth = current_auth(Constants::REMEMBER_TOKEN_INFOINTERVIEW)
+      end
+      
+      if auth.nil? && signed_in?
+        # 3rd - user might happen to be logged in (either direct ping in the widget, or ping button in the board)
+        candidate = current_user
+      end
+    end
+    
+    if auth.nil? && candidate.nil?
       render :nothing => true, status: :unauthorized
+    elsif !candidate.nil? && candidate.status == UserConstants::PENDING
+      render :text => "Please verify your #{Constants::SHORT_SITENAME} account and retry.", status: :unauthorized
+    elsif !candidate.nil? && (candidate.first_name.blank? || candidate.last_name.blank?)
+      render :text => "Ping failed. Your #{Constants::SHORT_SITENAME} account is incomplete. Please fill out and retry.", status: :unauthorized
     else
       infointerview = Infointerview.new
 
@@ -17,26 +49,26 @@ class InfointerviewsController < ApplicationController
       job = employer.jobs.find(params[:job_id])
       infointerview.job_id = job.id  
       
-      infointerview.email = params[:email]
-      infointerview.first_name = params[:firstname]
-      infointerview.last_name = params[:lastname]
+      infointerview.email = email
+      infointerview.first_name = first_name
+      infointerview.last_name = last_name
       
       unless auth.nil?
         infointerview.auth = auth
         infointerview.profiles = auth.profiles_to_str
       end
       
-      if signed_in?
-        infointerview.user_id = current_user.id
-        infointerview.profiles ||= current_user.resume
-        infointerview.email ||= current_user.email
-        infointerview.first_name ||= current_user.first_name
-        infointerview.last_name ||= current_user.last_name
+      unless candidate.nil?
+        infointerview.user_id = candidate.id
+        infointerview.profiles ||= candidate.resume
+        infointerview.email ||= candidate.email
+        infointerview.first_name ||= candidate.first_name
+        infointerview.last_name ||= candidate.last_name
       end
       
       older_infointerviews = Infointerview.find_by_job_id_and_email(infointerview.job_id, infointerview.email)
       
-      if older_infointerviews.nil? # silently ignore repeated pings from the same user to the same job
+      if older_infointerviews.nil? # silently ignore repeating pings from the same user to the same job
         infointerview.save!
         
         begin

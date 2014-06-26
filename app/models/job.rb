@@ -446,7 +446,9 @@ class Job < ActiveRecord::Base
     super.inspect    
   end  
   
-
+  def share_short_description
+   "Come work with me at #{ employer.company_name}: See the #{position_name} job posting and ping us."
+  end
  
   def share_description()
       "Come work with me at #{ employer.company_name}: See the #{position_name} job posting and ping us to talk with me or another member of the dev team."

@@ -86,36 +86,6 @@ class EmployersController < ApplicationController
      do_change_pw Employer
   end
   
-  def init_join_us_widget
-    @infointerview = nil
-    @job = nil
-    @other_jobs = []
-    @colors = params[:colors] || ""
-    
-    employer = Employer.find_by_ref_num(params[:refnum])
-    @job = employer.active_jobs.find_by_id(params[:job]) unless params[:job].blank?
-    
-    # used to emphasize the ambassador's picture in the widget when seen by himself
-    @ambassador = nil
-    auth = current_auth(Constants::REMEMBER_TOKEN_AMBASSADOR)
-    unless auth.nil?
-      ambassador = auth.ambassadors.find_by_employer_id(employer.id)
-      if !ambassador.nil? && ambassador.status != Ambassador::CLOSED
-        @ambassador = ambassador
-      end
-    end
-    
-    if @job.nil?
-      @other_jobs = employer.active_jobs
-      @job = @other_jobs.pop
-    else
-      @other_jobs.concat employer.active_jobs.select{|j| j.id != @job.id}
-    end
-  rescue Exception => e
-    logger.error e
-    render text: "Error, cannot set up widget."  
-  end
-  
   def we_are_hiring
     @current_page_info = PageInfo::WE_ARE_HIRING_WIDGET
     
@@ -135,11 +105,11 @@ class EmployersController < ApplicationController
       @infointerview.job_id = @job.id
       @infointerview.auth = auth
 
-      if signed_in?
-        @infointerview.email = current_user.email
-        @infointerview.first_name = current_user.first_name
-        @infointerview.last_name = current_user.last_name
-        @infointerview.user_id = current_user.id
+      unless @candidate.nil?
+        @infointerview.email = @candidate.email
+        @infointerview.first_name = @candidate.first_name
+        @infointerview.last_name = @candidate.last_name
+        @infointerview.user_id = @candidate.id
       end
       
       @infointerview.email ||= auth.email
@@ -224,6 +194,39 @@ class EmployersController < ApplicationController
   end
    
   private
+  
+    def init_join_us_widget
+      @infointerview = nil
+      @job = nil
+      @other_jobs = []
+      @colors = params[:colors] || ""
+      
+      employer = Employer.find_by_ref_num(params[:refnum])
+      @job = employer.active_jobs.find_by_id(params[:job]) unless params[:job].blank?
+      
+      @candidate = get_employee_user_by_session_cookie
+      
+      # used to emphasize the ambassador's picture in the widget when seen by himself
+      @ambassador = nil
+      auth = current_auth(Constants::REMEMBER_TOKEN_AMBASSADOR)
+      unless auth.nil?
+        ambassador = auth.ambassadors.find_by_employer_id(employer.id)
+        if !ambassador.nil? && ambassador.status != Ambassador::CLOSED
+          @ambassador = ambassador
+        end
+      end
+      
+      if @job.nil?
+        @other_jobs = employer.active_jobs
+        @job = @other_jobs.pop
+      else
+        @other_jobs.concat employer.active_jobs.select{|j| j.id != @job.id}
+      end
+    rescue Exception => e
+      logger.error e
+      render text: "Error, cannot set up widget."  
+    end  
+  
     def correct_user
       uid_param = params[:id]
       redirect_to employer_welcome_path and return unless uid_param.is_integer?

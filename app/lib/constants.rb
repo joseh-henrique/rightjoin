@@ -16,8 +16,8 @@ class Constants
   NOT_AUTHORIZED_FLASH = "Access to that page needs authorization."
 
   EMPLOYER_TAGLINE = "Connect to Stealth Candidates" 
-  CANDIDATE_TAGLINE ="Chat with your professional peers about their workplace"
-  AMBASSADOR_TAGLINE = "Find great colleagues" #[TODO]
+  CANDIDATE_TAGLINE = "Chat with your professional peers about their workplace"
+  AMBASSADOR_TAGLINE = "Find some great future colleagues" 
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   MAX_STRING_LENGTH = 250 #Used for various free-text areas.
@@ -34,9 +34,7 @@ class Constants
   
   #Note that  PHONE should be accessed through only through Utils::phone_with_pfx. Maybe move the literal to there.
   PHONE= "718-569-8851"
-  
-  RJ_CRM_NAME = "Joshua"
-  RJ_CRM_FULLNAME = RJ_CRM_NAME + 
+
   
   NUM_INITIAL_FREE_AMB_CONTACTS = "three"
    

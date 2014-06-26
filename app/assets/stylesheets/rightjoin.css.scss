@@ -2054,81 +2054,6 @@ label {
   }
 }
 
-/////////////////////// shared ???? ////////////////////
-.user-details {
-  .attr-box {
-    margin-bottom: 15px;
-    
-    &:last-child {
-      margin-bottom: 0;
-    }
-      
-    label {
-      color: #2B3858;
-      font-size: 15px;
-      font-weight: 500;
-    }
-    
-    .attr-value {
-      color: #6A6A6A;
-    }      
-  }
-}
-
-.tags-list {
-  margin: 0;
-  
-  .onetag {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-    color: white;
-    line-height: 27px;
-    margin: 5px 10px 3px 0px;
-    padding: 0 10px;
-    @include border-radius(4px);
-    
-    a {
-      position: absolute;
-      display: block;
-      width: 14px;
-      height: 14px;
-      background: image-url("shared/tag-x-off.png") no-repeat;
-      cursor: pointer;
-      text-indent: -9999px;
-      right: -4px;
-      top: -4px;
-    }
-    
-    &:hover {
-      a {
-        background: image-url("shared/tag-x-on.png") no-repeat;
-      }
-    }
-  }
-  
-  .data-job-qualifier1, .defined-salary {
-    background-color: #27AE60;
-  }
-  
-  .data-skill1{
-    background: #61C3EC image-url("shared/empty-star.png") no-repeat 5px center;
-    padding-left: 24px;
-  }
-  
-  .data-skill5{
-    background: #F39C12 image-url("shared/half-star.png") no-repeat 5px center;
-    padding-left: 24px;
-  }
-  
-  .data-skill10{
-    background: #F6705A image-url("shared/star.png") no-repeat 5px center;
-    padding-left: 24px; 
-  }  
-}
-///////////////////////////////////////////////////////////////////
-
 #users-search-list {
   .section-box {
     border-top: 1px solid #EAEFF1;
@@ -2364,34 +2289,6 @@ label {
   .error {
     margin-top: 10px;
     color: #e74c3c;
-  }
-}
-
-.infointerview-box {
-  .basic-info {
-    padding-bottom: 15px;
-  
-    .candidate-name {
-      font-size: 20px;
-      color: #33495E;
-      font-weight: 500;
-      padding-bottom: 5px;
-    }
-  }
-  
-  .infointerview-inner-box {
-    position: relative;
-    padding-left: 80px;
-    
-    .avatar-img {
-      position: absolute;
-      left: 10px;
-      top: 0;
-    }
-    
-    .wanted-postion-box, .location-box {
-      display: none;
-    }
   }
 }
 

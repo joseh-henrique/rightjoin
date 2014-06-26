@@ -1,5 +1,11 @@
 <% require 'rinku' %>
 
+<% 
+unless defined?(exclude)
+	exclude = []
+end
+%>
+
 <div id="infointerview-<%=infointerview.id%>" class="infointerview-box">
 	<div class="infointerview-inner-box">
 		<%= image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)), class: "avatar-img") %>
@@ -19,7 +25,7 @@
 		</div>
 		
 		<%unless infointerview.user.nil?%>
-			<%=render :partial => 'users/user_details', :object => infointerview.user, :locals => {:for_view=> :searcher}%>
+			<%=render :partial => 'users/user_details', :object => infointerview.user, :locals => {:for_view=> :searcher, :exclude => exclude }%>
 		<%end%>
 	</div>
 </div>

@@ -1,0 +1,10 @@
+<div class="header-strip">
+	<div class="content">
+		<div class="logo"></div>
+		
+		<div class="avatar-box">
+			<%=link_to("#{@ambassador.first_name} #{@ambassador.last_name}", edit_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil))%>
+			<%=image_tag(@ambassador.avatar_path)%>
+		</div>
+	</div>
+</div>

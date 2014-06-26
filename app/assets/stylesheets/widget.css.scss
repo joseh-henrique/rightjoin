@@ -193,7 +193,6 @@ a {
     font-size: 1.25em;
     line-height: 1.25em;
     padding-top: 1em;
-    text-transform: lowercase;
     position: absolute;
     bottom: $tile-padding;
     left: $tile-padding;
@@ -221,7 +220,7 @@ a {
   
   .title {
     background: transparent image-url("shared/semi-transparent.png") repeat;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.25em;
     line-height: 1.25em;
     position: absolute;
@@ -355,11 +354,14 @@ a {
     right: $tile-padding;
     
     .button-box {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;      
       position: relative;
       display: inline-block;
       line-height: 2.5em;
+      height: 2.5em;
+      width: 9em;      
       font-size: 0.8em;
-      font-weight: 500;
       @include border-radius(4px);
       color: white;   
       @include vertical-gradient(rgba(0,0,2,.2), rgba(255,255,255,.2));
@@ -368,6 +370,14 @@ a {
         @include vertical-gradient(rgba(0, 0, 2, .4), rgba(255,255,255,.2));
       }    
     }
+    
+    .provider-logo {
+      width: 1.7em;
+      height: 1.7em;
+      top: 0.4em;
+      left: 0.4em;
+      position: absolute;      
+    }    
     
     .separator {
       position: absolute;
@@ -379,11 +389,16 @@ a {
       left: 2.4em;
     }
     
-    a {
-      display: inline-block;
+    .signin-button {
+      display: block;
       text-decoration: none;
-      padding-left: 3.6em;
-      padding-right: 1.4em;
+      padding-left: 2.4em;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      text-align: center;
       
       &:hover {
         text-decoration: none;
@@ -393,29 +408,14 @@ a {
     
     .github  {
       background-color: #000;
-        
-      a {
-        background: transparent image-url("widget/social/github72x72.png") no-repeat 0.5em;
-        background-size: 1.6em;
-      }
     }
       
     .linkedin {
       background-color: #507db0;
-      
-      a {     
-        background: transparent image-url("widget/social/linkedin72x72.png") no-repeat 0.5em;
-        background-size: 1.8em;        
-      }
     }
       
     .rightjoin {
       background-color: #06376e;
-      
-      a {
-        background: transparent image-url("widget/social/rightjoin72x72.png") no-repeat 0.5em;
-        background-size: 1.6em;  
-      }
     } 
   }
 }
@@ -487,7 +487,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   }
 }
 
-#contact-form-box {
+.popup-form-box {
   position: absolute;
   bottom: $tile-spacing;
   left: 0;
@@ -500,13 +500,16 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
     position: absolute;
     right: 5px;
     top: 5px;
-    background: transparent image-url("widget/x-hover.png") no-repeat top left;
-    @include background-size (cover);
-    @include opacity(60);
-    width: 0.8em;
-    height: 0.8em;
+    background: transparent image-url("shared/x.png") no-repeat top left;
+    @include opacity(50);
+    width: 10px;
+    height: 10px;
     z-index: 999;
     text-indent: -9999px;
+    
+    &:hover {
+      @include opacity(100);
+    }
   }
   
   .more-padding {
@@ -515,7 +518,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   }
   
   .title {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.25em;
     line-height: 1.25em;
     margin-bottom: 1.5em;  
@@ -547,7 +550,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
     }
   }
   
-  input[type="text"] {
+  input[type="text"], input[type="password"] {
     margin: 0;
     color: #626262;
     resize: none;
@@ -567,11 +570,25 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   .button-box {
     text-align: center;
     padding-top: 1em;
-    
-    .submit-button {
-      @include inline-button(#fd9500, 1.2em, 2.4em, 2em, $default-font-color, normal);
-    }
   }
+  
+  .submit-button {
+    @include inline-button(#fd9500, 1.2em, 2em, 2.5em, $default-font-color, normal);
+  }  
+  
+  .bottom-box {
+    position: absolute;
+    bottom: 1.5em;
+    left: 2em;
+  }
+}
+
+#contact-form-box {
+
+}
+
+#ping-with-rightjoin-form-box, #direct-ping-form-box {
+  display: none;
 }
 
 .fadeIn {
@@ -602,7 +619,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   
   .title {
     background: transparent image-url("shared/semi-transparent.png") repeat;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.25em;
     line-height: 1.25em;
     position: absolute;
@@ -697,7 +714,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
 
 .submit-results {
   .message {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.25em;
     line-height: 1.25em;
   }

@@ -26,9 +26,9 @@ class Utils
    #
    # (The standard way to block  delivery in dev is to set config.action_mailer.delivery_method = :test in environment.rb
    # and there are other tools like mailtrap.io.)
-   def self.deliver(email_msg)
+  def self.deliver(email_msg)
       email_msg.deliver
-
+      puts "Sent email to #{email_msg.to}"
       if false and  # Add hashmark between 'if' and 'false to enable writing debug files to disk  
           Rails.env.development?    
             email_msg.body.parts.each do |part|

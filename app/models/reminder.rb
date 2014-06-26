@@ -176,12 +176,11 @@ class Reminder < ActiveRecord::Base
     create_event!(nil, ADMIN_SUMMARY_SENT)
   end
   
-  # send 30 every day, until exhausted
+  # send a few every time until exhausted
   def self.send_rightjoin_migration_announcement_to_engineers
-    num_to_send = 30
-    users = User.where("status = ? and created_at < ? and (sample = ? or sample is null) and locale = ?", UserConstants::VERIFIED, Time.new(2014, 3, 5), false, Constants::LOCALE_EN)
-                 .where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc")
-                 .limit(num_to_send)
+    num_to_send  = FyiConfiguration.fetch_with_default("max_engineer_emails", 20).to_i
+    date_migration_rj = Time.new(2014, 6, 30)
+    users = User.where("status = ? and created_at < ? and (sample = ? or sample is null)", UserConstants::VERIFIED, date_migration_rj, false).where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc").limit(num_to_send)
     users.each do |user|
       begin
         yield user

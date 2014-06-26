@@ -12,10 +12,10 @@
 	<div id="signin-box" class="full-width-strip">
 		<div class="content">
 			<div class="signin-with">Sign in with</div>
-			<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-github" %>&nbsp;&nbsp;&nbsp;
-			<%= link_to "Sign-in with LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-linkedin" %>&nbsp;&nbsp;&nbsp;
-			<%= link_to "Sign-in with Twitter", ominauth_login_with_path("twitter", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-twitter" %>&nbsp;&nbsp;&nbsp;
-			<%= link_to "Sign-in with Google+", ominauth_login_with_path("google_oauth2", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), :class => "signin signin-googleplus" %>	
+			<%= link_to "Sign-in with Github", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), {class: "signin signin-github", method: :post} %>&nbsp;&nbsp;&nbsp;
+			<%= link_to "Sign-in with LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), {class: "signin signin-linkedin", method: :post} %>&nbsp;&nbsp;&nbsp;
+			<%= link_to "Sign-in with Twitter", ominauth_login_with_path("twitter", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), {class: "signin signin-twitter", method: :post} %>&nbsp;&nbsp;&nbsp;
+			<%= link_to "Sign-in with Google+", ominauth_login_with_path("google_oauth2", :locale => nil, :type => Constants::OAUTH_TYPE_INSIDER, :token => @employer.reference_num), {class: "signin signin-googleplus", method: :post} %>	
 		</div>
 	</div>
 		

@@ -1,19 +1,9 @@
 <div id="dashboard">
 	<%= render :partial => 'layouts/flash_box' %>
-
-	<div class="header-strip">
-		<div class="content">
-			<div class="logo"></div>
-			
-			<div class="avatar-box">
-				<%=link_to("#{@ambassador.first_name} #{@ambassador.last_name}", edit_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil))%>
-				<%=image_tag(@ambassador.avatar_path)%>
-			</div>
-		</div>
-	</div>
+	<%= render :partial => 'ambassadors/header' %>
 	
-	<div class="content counters-box">
-		<div class="see-whats-happening">See what's happening with your shares</div>
+	<div class="content headline-box">
+		<h1>See what's happening with your shares</h1>
 						
 		<% stat = @ambassador.shares_statistics.first %>
 		<% stat ||= {:leads_count => 0, :clicks_count => 0} %>
@@ -35,25 +25,31 @@
 		<div class="counter-title">Contacts</div></div>
 	</div>
 	
-	<div class="recent-leads">
-		Active follow-up requests
-		<div>
-			<%max_leads_to_show = 6%>
-			<% leads = @ambassador.infointerviews.where({ status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD]}).limit(max_leads_to_show).order("created_at DESC") %>
-			<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
-				<% if leads.count >= i + 1%>
-					<%= image_tag(lead_avatar_path(leads[i].reference_num, :timestamp => leads[i].updated_at.to_i.to_s(16)), title: "#{leads[i].first_name} #{leads[i].last_name}", class: "lead-avatar") %>
-				<% else %>
-					<div class="lead-avatar"></div>
+	<%max_leads_to_show = 8%>
+	<% leads = @ambassador.followups.where({ status: Followup::NEW}).limit(max_leads_to_show).order("created_at DESC") %>
+	<% if leads.any? %>
+		<div class="navigation-strip semitransparent">
+			<%=link_to "Potential future colleagues who'd like to be in touch", followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>
+			<div>
+				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
+					<% if leads.count >= i + 1%>
+						<% infointerview = leads[i].infointerview %>
+						<%tt_title = ERB::Util.html_escape( "#{infointerview.first_name} #{infointerview.last_name}")%>
+						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :id => "lead-avatar-link-#{infointerview.id}",  class: "lead-avatar"), 
+							followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, anchor: "followup-#{infointerview.id}") %>
+							<script>$("#<%="lead-avatar-link-#{infointerview.id}" %>").attr('title', "<%=tt_title%>");</script>
+					<% else %>
+						<div class="lead-avatar"></div>
+					<% end %>
 				<% end %>
-			<% end %>
+			</div>
 		</div>
-	</div>
+	<% end %>
 	
-	<div class="invite-box">
+	<div class="invite-box content-box">
 		<div class="content">
 			<% if @job.nil? %>
-				<div class="invite-friends">No open positions found for you to share.</div>
+				<h1>No open positions found for you to share.</h1>
 			<% else %>
 				<script  type="text/javascript">
 					var networks_js = {};
@@ -67,7 +63,7 @@
 					<% end %>
 				</script>
 			
-				<div class="invite-friends">Get yourself some colleagues you want to work with.</div>
+				<h1>Get yourself some colleagues you want to work with.</h1>
 				
 				<div class="position-chooser">
 					<% active_jobs_ = @ambassador.employer.active_jobs %>
@@ -86,7 +82,7 @@
 							
   							<% title = @job.share_title %> 
 							<% description = @job.share_description  %> 
-							
+							<% short_desc = @job.share_short_description  %> 
 							<%case network%>
 							<%when Constants::SOCIAL_NETWORK_LINKEDIN%>
 								<div class="share-button linkedin addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
@@ -108,7 +104,7 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_TWITTER%>
 								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%=description%>" <%#The addthis:title is the only field that allows long text; that is why we are reversing the fields here.%>
+											addthis:title="<%=short_desc%>" <%#The addthis:title is the only field that allows long text; that is why we are reversing the fields here.%>
 											addthis:description="<%=title%>">
 											<%# Twitter in fact uses title and desc as title and desc of posting%>
 									<a class="addthis_button_twitter">
@@ -184,15 +180,17 @@
 					$("#select_job").change(function(evt){
 						window.location.href = "<%=employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>" + "?job=" + $( this ).val();
 					});
-					
-					function blinker() {
-					    $('.no-val').fadeOut(300);
-					    $('.no-val').fadeIn(300);
-					}
-					
-					setInterval(blinker, 2000);	
 				</script>				
 			<% end %>
 		</div>
 	</div>
+	
+	<script type="text/javascript">
+		function blinker() {
+		    $('.no-val').fadeOut(300);
+		    $('.no-val').fadeIn(300);
+		}
+		
+		setInterval(blinker, 2000);	
+	</script>					
 </div>	

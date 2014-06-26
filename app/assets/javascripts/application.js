@@ -223,8 +223,8 @@ function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPromp
 				$(olId + " > li").filter(function(){
 				  return $(this).text() == value;
 				}).remove();
-		
-				var title= titleFmt.replace("%s", value);//no stringf in JS, so workaround 
+		 		var tt_title_value = escapeHTML(value);
+				var title= titleFmt.replace("%s", tt_title_value);//no stringf in JS, so workaround 
 				writeTag(value, newTagDataKey, newTagDataVal, olId, null, false, title);
 
 				$(inputId).attr("placeholder",text_for_add_more_plchldr);

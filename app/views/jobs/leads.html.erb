@@ -44,7 +44,7 @@
 				    				<div class="form-cell">
 				    					<label>Ask someone in your team to talk with the candidate.</label><br>
 			    						<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {}, {:class=>"validate[required] standard-select ambassadors-list", :data => {"infointerview-path" => infointerview_delegate_path(infointerview.id)}}) %>&nbsp;
-			    						<%=link_to("Delegate", "#", :class => "delegate-to-ambassador standard-button")%>
+			    						<%=button_tag("Delegate", :class => "delegate-to-ambassador standard-button")%>
 			    						&nbsp;
 			    						<div title="Sending..." class="loading-icon"></div>
 			    						<div class="results-box"></div>
@@ -99,7 +99,7 @@
 			$.post("<%=leads_set_seen_employer_job_path(@job.employer_id, @job.id)%>");
 		}, <%=Random.new.rand(5000..10000) %>);	// don't send all together
 		
-		$("a.delegate-to-ambassador").click(function(){
+		$(".delegate-to-ambassador").click(function(){
 			var select = $(this).siblings(".ambassadors-list").first();
 			var selected_option = select.find(":selected");
 			var ambassador_firstname = $(selected_option).attr('data-firstname');
@@ -114,7 +114,7 @@
 			
 			$.post($(select).attr('data-infointerview-path'), { ambassador_id: $(selected_option).val() } )
 			.done(function(data) {
-				$(results_box).html("<div class='success'>We've passed your follow-up request to " + ambassador_firstname + ".</div>");
+				$(results_box).html("<div class='success'>We've passed on your follow-up request to " + ambassador_firstname + ".</div>");
 			})
 			.fail(function() {
 				$(results_box).html("<div class='error'><%=Constants::ERROR_FLASH%></div>");

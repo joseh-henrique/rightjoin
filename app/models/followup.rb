@@ -9,5 +9,8 @@ class Followup < ActiveRecord::Base
   CLOSED = 10  
   
   scope :only_active, where("status <> ?", Followup::CLOSED)
-    
+  
+  def close
+    update_attributes(:status => Followup::CLOSED)
+  end
 end

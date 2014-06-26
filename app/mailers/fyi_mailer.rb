@@ -1,9 +1,18 @@
 class FyiMailer < ActionMailer::Base
-  FYI_FROM = "#{Constants::SHORT_SITENAME} <info@#{Constants::SITENAME_LC}>"
-  PERSONAL_FROM = "#{Constants::RJ_CRM_FULLNAME} <#{Constants::RJ_CRM_NAME.downcase}@#{Constants::SITENAME_LC}>"
-  ADMIN_FROM = "Administrator <#{Constants::ADMIN_EMAIL}>"
-  PLEASE_REPLY = "Questions? Just reply to this message to contact #{Constants::SHORT_SITENAME}."
    
+  RJ_CRM_NAME = "Joshua"
+  RJ_CRM_FULL_NAME = "Joshua Fox" 
+  CRM_SIGNATURE = "Best,<br><br>
+                  #{ RJ_CRM_NAME}"       
+  
+  
+  FYI_FROM = "#{Constants::SHORT_SITENAME} <info@#{Constants::SITENAME_LC}>"
+  
+  PERSONAL_FROM = "#{RJ_CRM_FULL_NAME} <#{RJ_CRM_NAME.downcase}@#{Constants::SITENAME_LC}>"
+  ADMIN_FROM = "Administrator <#{Constants::ADMIN_EMAIL}>"
+  
+  PLEASE_REPLY = "Questions? Just reply to this message to contact #{Constants::SHORT_SITENAME}."
+  
   def create_message(to_email, subj, html_body, text_body, from = FYI_FROM, reply_to = nil )
     result = mail(:to =>to_email, :subject => subj, :from => from, :reply_to => reply_to) do |format|
       format.text { render :text => text_body }
@@ -67,27 +76,30 @@ class FyiMailer < ActionMailer::Base
    def call_us_str(locale)
     res = ""
     if locale == Constants::COUNTRIES[Constants::COUNTRY_US]
-      res = " Or call us at #{phone_with_pfx}"
+      res = " Or call us at #{Utils.phone_with_pfx}"
     end
     return res
   end  
   
-  #[TODO]
+ 
   def create_delegate_infointerview_email(followup)
     @intended_for = :ambassador
-
-    to_email = followup.ambassador.email
+    amb = followup.ambassador
+    infint= followup.infointerview
+    to_email = amb.email
     subj = "Talking to a potential colleague"
 
-    msg1 = "Please be in touch with #{ERB::Util.html_escape(followup.infointerview.full_candidate_name)} regarding our open #{ERB::Util.html_escape(followup.infointerview.job.position_name)} position." 
-    @msg1_h = msg1.clone
-    @msg1_t = msg1.clone # TODO small bug: escaped company name and position enter text email
+    @msg1_h = "Please be in touch with #{ERB::Util.html_escape(infint.full_candidate_name)} on your #{ERB::Util.html_escape(infint.job.company_name)} #{Constants::SHORT_SITENAME} <a href='#{ambassadors_signin_url(infint.employer.reference_num, :locale => nil)}'>team page</a> about the open #{ERB::Util.html_escape(infint.job.position_name)} position." 
+    @msg1_t = "Please be in touch with #{infint.full_candidate_name} on your #{infint.job.company_name} #{Constants::SHORT_SITENAME} team page  #{ambassadors_signin_url(infint.employer.reference_num, :locale => nil)} about the open #{infint.job.position_name} position." 
+    
 
     # [TODO] use different text if the candidate is referred by this ambassador - followup.infointerview.referred_by == followup.ambassador.id
-    @msg2_h = "Email them back, maybe talk with them, see if they're right for us and we're right for them. Find more details and follow up on your #{ERB::Util.html_escape(followup.infointerview.job.company_name)} team page."
-    @msg2_t = "Email them back, maybe talk with them, see if they're right for us and we're right for them. Find more details and follow up on your #{followup.infointerview.job.company_name} team page."
+    @msg2_h = "Email them back, maybe talk with them, see if you'd like to have #{ERB::Util.html_escape(infint.full_candidate_name)} as a colleague. " <<
+             "You'll see more details and contact info on the <a href='#{ambassadors_signin_url(infint.employer.reference_num, :locale => nil)}'>team page</a>."
+    @msg2_t = "Email them back, maybe talk with them, see  if you'd like to have #{infint.full_candidate_name} as a colleague. " << 
+             "You'll see more details and contact info on the team page."
 
-    msg3 = "Any questions? Just reply to this email or call us at #{Utils.phone_with_pfx}."
+    msg3 = "Questions? Just contact #{amb.employer.first_name} #{amb.employer.last_name} at #{amb.employer.email}"
     @msg3_h = msg3.clone
     @msg3_t = msg3.clone
 
@@ -107,7 +119,7 @@ class FyiMailer < ActionMailer::Base
        
    if invites_from_registered_employers.length > 0
       sing = invites_from_registered_employers.length == 1
-      @msg1_h = sing ? "An employer wants to talk" : "Employers want to talk"
+      @msg1_h = sing ? "A dev team from #{invites_from_registered_employers[0].job.company_name} wants to be in touch." : "Dev teams want to be in touch."
     else # All jobs from FYI itself
        @msg1_h = "We've got a good job match for you."
     end
@@ -133,8 +145,9 @@ class FyiMailer < ActionMailer::Base
     
     msg3_head ="You can always find your recent pings from employers on your #{Constants::SHORT_SITENAME}" 
     msg3_tail ="#{PLEASE_REPLY}#{call_us_str(engineer.locale)}."
-    @msg3_h = "#{msg3_head} <a href='#{user_url(engineer, :locale => engineer.country_code)}'>home page</a>.<br>#{msg3_tail}"
-    @msg3_t = "#{msg3_head} home page (#{user_url(engineer, :locale => engineer.country_code)}). \n#{msg3_tail}"
+    @msg3_h = "#{msg3_head} <a href='#{user_url(engineer, :locale => engineer.country_code)}'>dashboard</a>.<br><br>#{msg3_tail}"
+    @msg3_t = "#{msg3_head} dashboard (#{user_url(engineer, :locale => engineer.country_code)}). \n\n#{msg3_tail}"
+   
     msg_footer_tail =  "(You can reactivate later.)"
     @msg_footer_h = "Not interested anymore? <a href='#{unsubscribe_user_url(:locale => I18n.t(:country_code, engineer.locale), :id => engineer.id, :ref => engineer.reference_num(true))}'>Click here</a> to deactivate your account. #{msg_footer_tail}"
     @msg_footer_t = "Not interested anymore? Go to this URL to deactivate your account:\n#{unsubscribe_user_url(:locale => I18n.t(:country_code, engineer.locale), :id => engineer.id, :ref => engineer.reference_num(true))}\n#{msg_footer_tail}"
@@ -251,8 +264,8 @@ class FyiMailer < ActionMailer::Base
       
      
       msg3_head = "Manage your campaign at your #{Constants::SHORT_SITENAME} "
-      @msg3_h = "#{msg3_head} <a href='#{employer_url(employer, :locale => all_jobs.first.country_code)}'>home page</a>.<br><br>"
-      @msg3_t = "#{msg3_head} home page: #{employer_url(employer, :locale => all_jobs.first.country_code)}\n\n"
+      @msg3_h = "#{msg3_head} <a href='#{employer_url(employer, :locale => all_jobs.first.country_code)}'>dashboard</a>.<br><br>"
+      @msg3_t = "#{msg3_head} dashboard: #{employer_url(employer, :locale => all_jobs.first.country_code)}\n\n"
       
       reply_s = "#{PLEASE_REPLY}. Or call us at #{Utils.phone_with_pfx}."
       @msg3_h << reply_s
@@ -269,50 +282,32 @@ class FyiMailer < ActionMailer::Base
   end
 
    
-  def create_rightjoin_migration_announcement_for_candidates_email(candidate)
-    @intended_for = :employee
-    to_email = candidate.email
-    subj = "#{Constants::SHORT_SITENAME}'s latest"
- 
-    @msg1_h = "Ever wondered what it's like to work at another company?"
-    @msg1_t = Utils.html_to_txt @msg1_h 
+  def create_rightjoin_migration_announcement_for_candidates_email(candidate) 
+      @intended_for = :employee
+      
+      to_email = candidate.email
+      subject = "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SHORT_SITENAME}"
      
-    pfx = candidate.first_name.blank? ? "" : "Hey #{candidate.first_name},<br><br>"   
- 
-    @msg2_h = pfx +
-      "You may have seen the quizzes on #{Constants::SHORT_SITENAME}. 
-      They reveal some pretty interesting <a href='#{findings_url(:locale => I18n.t(:country_code, candidate.locale))}'>results</a>,
-      and sometimes they send us off to heads-down coding for weeks on end.<br><br>
-      That's what happened when 235 developers told us that they want to talk directly to their peers in the hiring companies.<br><br>
-      So today we're excited to announce our new feature: \"Developers recruiting developers.\"<br><br>
-      Click on the profile of a company insider and ask  \"What's it like to work there? Does it match the hype? Is there
-      really a <a href='http://pando.com/2013/12/21/in-praise-of-the-office-kegerator-the-future-of-better-jobs/'>kegerator</a>?\" \u263A<br><br> 
-      We see this as  networking done right. Maybe you (like us) think that networking's great when it involves TCP packets, but when it involves meet-and-greet, we have better things to do. 
-      This feature makes it easy: It puts you right in touch with a fellow developer at an interesting company who wants to be contacted. <br><br> 
-      Our beta is just launching now: Take a look at the first few \"ambassadors\" at <a href='#{jobs_url(:locale => I18n.t(:country_code, candidate.locale))}'>#{Constants::SHORT_SITENAME}</a>.
-      If they look like the sort of person you might want to work with, click and ask them what their job is like.<br><br>  
-      Best,<br><br>
-      #{Constants::RJ_CRM_NAME}"
-
-    @msg2_t = Utils.html_to_txt @msg2_h
-
-    @msg3_h = "And one more thing: If you'd  like to find better colleagues to work with, let us know; 
-         We're looking for employers as beta customers. We want to do what it takes to make you happy."
-           
-    @msg3_t = Utils.html_to_txt @msg3_h
-    
-    @msg_footer_h = "Not interested anymore? <a href='#{unsubscribe_user_url(:locale => I18n.t(:country_code, candidate.locale), :id => candidate.id, :ref => candidate.reference_num(true))}'>Click here</a> to deactivate your account. (You can reactivate later.)"
-    @msg_footer_t = "Not interested anymore? Go to this URL to deactivate your account:\n#{unsubscribe_user_url(:locale => I18n.t(:country_code, candidate.locale), :id => candidate.id, :ref => candidate.reference_num(true))}\n(You can reactivate later.)"
-
-    html_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:html], :handlers => [:erb], :layout => false
-    text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
- 
-    return create_message to_email, subj, html_body, text_body       
+      salutation = candidate.first_name.blank? ? "Welcome" : "Hi, #{candidate.first_name}, it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
+   
+       content =
+          "We've listened to our customers and users, and released a new set of services. "<<
+          "We help developers outside a company connect with developers inside it for peer-to-peer chats, bypassing recruiters and HR.<br><br>" << 
+          "To celebrate our mini-pivot, we've moved from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}.<br><br>" <<
+          "Right now, the new #{Constants::SHORT_SITENAME} is still in closed beta, but you can still login at  <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>  " << 
+          "and you can still use the same services: Employers can ping you and you can ping them.<br><br>" <<
+          "Don't hesitate to contact me with any questions.<br>"
+   
+      signature = "" + CRM_SIGNATURE
+      signature << "<br><br><br>Not interested anymore?  " << 
+          "<a href='#{unsubscribe_user_url(:locale => I18n.t(:country_code, candidate.locale), :id => candidate.id, :ref => candidate.reference_num(true))}'>Click here</a> to deactivate your account. (You can reactivate later.)"
+     
+       
+      return create_simple_text_email(subject, salutation, content, signature, to_email, PERSONAL_FROM)
   end
 
 
-  CRM_SIGNATURE = "Best,<br><br>
-                  #{Constants::RJ_CRM_NAME}"
+  
 
 
   def create_personal_welcome_candidate_email(user)
@@ -322,7 +317,7 @@ class FyiMailer < ActionMailer::Base
     salutation<<" to #{Constants::SHORT_SITENAME}."
 
     content =
-      "I'm #{Constants::RJ_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
+      "I'm #{RJ_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
       "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to apply to jobs.<br><br>" <<
       "We keep you spam-free by letting employers ping you only when they have jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
       "Go ahead and browse the specialized job listings, and ping the employers who interest you.<br><br>" <<
@@ -340,7 +335,7 @@ class FyiMailer < ActionMailer::Base
 
     salutation = "Hi, #{employer.first_name}, welcome to #{Constants::SHORT_SITENAME}."
 
-    content = "I'm #{Constants::RJ_CRM_NAME}, co-founder of #{Constants::SHORT_SITENAME}. "
+    content = "I'm #{RJ_CRM_NAME}, co-founder of #{Constants::SHORT_SITENAME}. "
 
     if employer.jobs.blank? || employer.ambassadors.blank?
       please_add_template =  "Please go ahead and add some %s. Feel free to shoot me an email if you have any questions on how to do that.<br><br>"
@@ -440,16 +435,16 @@ class FyiMailer < ActionMailer::Base
     subject = "Ping#{(contact_count == 1)? "" : "s"} from developers: For your review"
       
     if contact_count == 1
-       dev_s = "a developer is "
+       dev_s = "a developer is"
     else   
-       dev_s =  "#{contact_count} developers are "
+       dev_s =  "#{contact_count} developers are"
     end 
     
     @msg1_h = "Hi, #{employer.first_name}, #{dev_s} pinging you and your team."
-      @msg1_t = Utils.html_to_txt(@msg1_h)
+    @msg1_t = Utils.html_to_txt(@msg1_h)
     
  
-    @msg2_h = "Please review the candidate#{(contact_count == 1)? "'s" : "s'"} information and decide whether to  put a team member in touch, at your <a href='#{employer_url(employer, :locale => nil, :need_approvals=>true)}'>#{Constants::SHORT_SITENAME} home page</a>."  
+    @msg2_h = "Please review the candidate#{(contact_count == 1)? "'s" : "s'"} information and decide whether to  put a team member in touch, at your <a href='#{employer_url(employer, :locale => nil, :need_approvals=>true)}'>#{Constants::SHORT_SITENAME} dashboard</a>."  
     @msg2_t = Utils.html_to_txt(@msg2_h)
     
      
@@ -473,7 +468,7 @@ class FyiMailer < ActionMailer::Base
     @msg1_h = "#{ambassador.first_name} #{ambassador.last_name} has joined the  #{ERB::Util.html_escape(ambassador.employer.company_name)} team." 
     @msg1_t = @msg1_h 
     
-    @msg2_h = "Track progress on your <a href='#{employer_url(ambassador.employer, :locale => nil, :anchor=>"ambassadors" )}'>#{Constants::SHORT_SITENAME} home page</a>.<br><br>" << 
+    @msg2_h = "Track progress on your <a href='#{employer_url(ambassador.employer, :locale => nil, :anchor=>"ambassadors" )}'>#{Constants::SHORT_SITENAME} dashboard</a>.<br><br>" << 
             "Reach out to qualified software engineers by adding the \"Come Work With Us\" tab  to the #{ERB::Util.html_escape(ambassador.employer.company_name)} corporate site, " << 
             "and by referring more team members to the social sharing tools."
     @msg2_t = Utils.html_to_txt(@msg2_h)

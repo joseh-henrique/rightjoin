@@ -1,0 +1,44 @@
+<div id="dashboard">
+	<%= render :partial => 'layouts/flash_box' %>
+	<%= render :partial => 'ambassadors/header' %>
+	
+	<% leads = @ambassador.followups.where({ status: Followup::NEW}).order("created_at DESC") %>	
+	
+	<% if leads.any? %>
+		<div class="content-box leads-list">
+			<div class="content">
+				<h1>Talk with your fellow software developers</h1>
+				<p>Check them out through their web presence.</p>
+				<p>Then, if they look interesting, send a short email to say hi and maybe set up a phone call.</p>
+				<p>The goal is to have an informal chat and find out
+					if you'd enjoy working with this person.</p>
+					<br>
+				<%leads.each do |lead|%>
+					<%infointerview = lead.infointerview%>
+					<a id="followup-<%=infointerview.id%>"></a>
+					<div class="infointerview-outer-box">
+						<div class="intro">
+							<% if infointerview.referred_by.nil? %>
+								<em><%=infointerview.first_name%></em> pinged the company regarding the <em><%=infointerview.job.position_name%></em> postion.
+							<% else %>
+								<% amb_name = infointerview.referred_by == @ambassador.id ? "you" : "#{infointerview.referred_by_ambassador.first_name} #{infointerview.referred_by_ambassador.last_name}" %>
+								<em><%=infointerview.first_name%></em> was referred by <em><%=amb_name%></em> and might be interested in the <em><%=infointerview.job.position_name%></em> postion.
+							<% end %>
+						</div>
+						<%=link_to("Close", close_followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, :followup_id => lead.id), method: :post, :class => "close", :title => "Mark as completed and remove from the list")%>	
+		  				
+						<%=render :partial => 'infointerviews/infointerview', :object => infointerview, :locals => {:exclude => [:salary]}%>
+					</div>
+				<%end%>
+			</div>
+		</div>
+	<% else %>
+		<div class="content headline-box">
+			<h1>No candidates found.</h1>
+		</div>
+	<% end %>
+	
+	<div class="navigation-strip">
+		<%=link_to "See what's happening with your shares", employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>
+	</div>	
+</div>	

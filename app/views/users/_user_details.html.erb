@@ -1,3 +1,9 @@
+<% 
+unless defined?(exclude)
+	exclude = []
+end
+%>
+
 <div id="user-<%=user_details.id%>" class="user-details">
 	<div class="wanted-postion-box attr-box">
 		<%= label_tag(:wantedposition,  wanted_job_s(for_view)   ) %>
@@ -35,7 +41,7 @@
 	<% end %>
 	
 	<% requirements = user_details.user_job_qualifiers.collect {|req| req.job_qualifier_tag.name} %>
-	<% requirements.push("at least #{Utils::format_currency(user_details.wanted_salary, user_details.locale)}") if user_details.wanted_salary > 0 %>
+	<% requirements.push("at least #{Utils::format_currency(user_details.wanted_salary, user_details.locale)}") if user_details.wanted_salary > 0 && !exclude.include?(:salary) %>
 	
 	<% unless requirements.empty? %>
 		<div class="requirements-box attr-box">

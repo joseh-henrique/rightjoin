@@ -5,7 +5,7 @@ class Infointerview < ActiveRecord::Base
   validates :email, :presence => true, :format=> { :with=> Constants::VALID_EMAIL_REGEX }, :length => { :maximum => 255 }
   validates :first_name, :presence => true, :length => { :maximum => 35 }
   validates :last_name, :presence => true, :length => { :maximum => 35 }
-  validates :profiles, :presence => true, :length => { :maximum => 500}  
+  validates_length_of :profiles, :maximum => 500
   
   belongs_to :job
   belongs_to :user

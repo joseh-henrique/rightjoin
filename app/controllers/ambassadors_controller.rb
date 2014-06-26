@@ -1,11 +1,11 @@
 require 'net/http'
 
 class AmbassadorsController < ApplicationController
-  before_filter :strip_params, :only => [:update, :create, :share]
+  before_filter :strip_params, :only => [:update, :create, :share, :close_followup]
   before_filter :init_employer_user, :only => [:destroy]
   before_filter :correct_employer, :only => [:destroy]
   
-  before_filter :set_ambassador_check_valid, :only => [:edit, :show, :update, :share]
+  before_filter :set_ambassador_check_valid, :only => [:edit, :show, :update, :share, :followup, :close_followup]
 
   layout "team_layout" 
    
@@ -151,6 +151,36 @@ class AmbassadorsController < ApplicationController
     render :nothing => true, status: :forbidden
   end
   
+  def followup
+    @current_page_info = PageInfo::AMBASSADOR_FOLLOWUP
+
+    render 'ambassadors/followup'
+    
+  rescue  Exception => e
+    logger.error e
+    flash_message(:error, Constants::ERROR_FLASH)
+    redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)        
+  end
+  
+  def close_followup
+    followup = Followup.find(params[:followup_id])
+    if @ambassador.id != followup.ambassador_id
+      flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)
+      redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
+      return
+    end
+    
+    followup.close
+    
+    flash_message(:notice, "You marked the contact as completed")
+    
+    redirect_to followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)
+  rescue Exception => e
+    logger.error(e)
+    flash_message(:error, Constants::ERROR_FLASH)
+    redirect_to followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)
+  end
+  
   def show
     @current_page_info = PageInfo::AMBASSADOR_CREATE
     
@@ -210,7 +240,7 @@ private
         flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)
         redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
       elsif @ambassador.status == Ambassador::CLOSED
-        flash_message(:error, "The employee profile is closed.") 
+        flash_message(:error, "The team member profile is closed.") 
         redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
       end
     end
