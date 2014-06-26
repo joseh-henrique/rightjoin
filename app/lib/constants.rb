@@ -90,11 +90,14 @@ class Constants
   COUNTRY_IL = "il"
   COUNTRY_IN = "in"
   
-   
+  #TODO encapsulate these hashes in a function.
   COUNTRIES = {
     COUNTRY_US => LOCALE_EN, COUNTRY_AU => "en-AU", COUNTRY_CA => "en-CA", 
-    COUNTRY_UK => "en-GB", COUNTRY_GB => "en-GB", # uk is the main one, but gb appears in the GeoCityLite db 
+    COUNTRY_UK => "en-GB",  
     COUNTRY_IL=>"en-IL", COUNTRY_IN=>"en-IN"}
+ 
+ COUNTRIES_INCLUDING_NON_STANDARD_ABBREV = COUNTRIES.clone
+ COUNTRIES_INCLUDING_NON_STANDARD_ABBREV[COUNTRY_GB] = "en-GB", # uk is the main one, but gb appears in the GeoCityLite db
  
   TIER_FREE = 1
   TIER_PRO = 2

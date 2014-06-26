@@ -318,6 +318,11 @@ $(document).delegate(".send-msg-form", "submit", function (event) {
 	return res;
 });	
 
+function launchMailTo(email, subject, body) {
+	var link = "/mailto#mailto:" + encodeURIComponent(email) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+	window.open(link, '_blank');
+}
+
 $(function() {
 	$(document).tooltip({ 
 		position: { my: "left top+3", at: "left bottom" } 

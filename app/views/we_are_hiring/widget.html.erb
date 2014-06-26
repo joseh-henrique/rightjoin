@@ -344,7 +344,7 @@
 				<% end %>
 			</div>
 			<div class="bottom-box">
-				Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sing up now", register_path, :target => "_blank"%>.
+				Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sign up now", register_path, :target => "_blank"%>.
 			</div>
 		</div>
 		
@@ -497,7 +497,7 @@ $("#create-infointerview-via-oauth, #create-infointerview-via-rightjoin").submit
 	return true;
 });
 
-$("#rightjoin-button").click(function(){
+$("#rightjoin-button").click(function(event){
 	<% if @candidate.nil? %>
 		$('.submit-button').prop("disabled", false);
 		$("#ping-with-rightjoin-error").html("");

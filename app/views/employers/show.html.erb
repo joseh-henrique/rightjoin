@@ -94,7 +94,7 @@
 					<% if ambassadors.blank? %>
 						<li class="warning">
 							No team members yet. <%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank") %> or 
-							<%=link_to("invite", "#", :id => "invite-team-member-link") %> team members via email.
+							<%=link_to("invite", "#", :class => "invite-team-member-link") %> team members via email.
 						</li>
 					<% else %>
 						<% unless current_user.join_us_widget_running? %>
@@ -132,7 +132,19 @@
 		<div class="recent-leads-box">
 			<span>Active leads</span>
 			<div class="leads-list">
-				<%#TODO: mpelts%>
+				<%max_leads_to_show = 16%>
+				<% infointerviews = current_user.last_active_leads(max_leads_to_show) %>
+				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
+					<% if infointerviews.count >= i + 1%>
+						<% infointerview = infointerviews[i] %>
+						<%tt_title = ERB::Util.html_escape( "#{infointerview.first_name} #{infointerview.last_name}")%>
+						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :id => "lead-avatar-link-#{infointerview.id}",  class: "lead-avatar"), 
+							leads_employer_job_path(current_user, infointerview.job, :locale => infointerview.job.country_code, anchor: "lead-#{infointerview.id}") %>
+							<script>$("#<%="lead-avatar-link-#{infointerview.id}" %>").attr('title', "<%=tt_title%>");</script>
+					<% else %>
+						<%=image_tag(asset_path("shared/no-avatar-semi-transparent-56x56.png"), class: "lead-placeholder")%>
+					<% end %>
+				<% end %>	
 			</div>
 		</div>
 	</div>
@@ -147,18 +159,38 @@
 		<span>Your team</span>
 		<div class="header-buttons-box">
 			<%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
-			<% 	  
-			subject = "For your approval: Talking with potential future colleagues"
-			body_text = "Hi,\n\n" <<
-				"Smart developers are pinging us and asking to talk about working at  #{current_user.company_name}.\n\n" <<
-				"It's a great way for us to connect with potential future colleagues.\n\n" << 
-				"We'll screen all contacts to make sure you only get the good ones. We expect to pass on one or two pings a week for a quick email reply.\n\n" <<
-				"Please sign in at #{ambassadors_signin_url(current_user.reference_num, :locale => nil)}\n\n" <<
-				"Regards,\n\n" <<
-				"#{current_user.first_name}"
-			%>
 			&nbsp;
-			<%=mail_to("", "Invite via email", subject: subject, body:  body_text, :class => "standard-button", :id => "invite-team-member-button", :target => "_fyi_email")%> 
+			<%=link_to("Invite via email", "#", :class => "invite-team-member-link standard-button")%> 
+		</div>
+	</div>
+	
+	<div id="invite-team-member-dialog" title="Invite a team member">
+		<% 	  
+		subject = "For your approval: Talking with potential future colleagues"
+		body_text = "Hi,\n\n" <<
+			"Smart developers are pinging us and asking to talk about working at  #{current_user.company_name}.\n\n" <<
+			"It's a great way for us to connect with potential future colleagues.\n\n" << 
+			"We'll screen all contacts to make sure you only get the good ones. We expect to pass on one or two pings a week.\n\n" <<
+			"Please sign in at #{ambassadors_signin_url(current_user.reference_num, :locale => nil)}\n\n" <<
+			"Regards,\n\n" <<
+			"#{current_user.first_name}"
+		%>		
+		<div class="form-row">
+			<div class="form-cell">
+				<%= label_tag(nil, "Subject") %><br>
+				<%= text_field_tag(:subject, subject, :spellcheck => true) %>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="form-cell">
+				<%= label_tag(nil,  "Body") %><br>
+				<%= text_area_tag(:body, body_text, :spellcheck => true)%>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="form-cell">
+				<%= submit_tag "Open in email client...", :id=>"launch-email-client-button", :class=>"standard-button" %>
+			</div>
 		</div>
 	</div>
 	
@@ -182,8 +214,23 @@
 </div>
 
 <script type="text/javascript">
-	$("#invite-team-member-link").click(function(){
-		$("#invite-team-member-button").click();
+	$(document).ready(function(){
+		$("#invite-team-member-dialog").dialog({
+		  autoOpen: false,
+		  width: 700,
+		  height: 500,
+		  resizable: false,
+		  modal: true
+		});
+	});
+
+	$(".invite-team-member-link").click(function(){
+		$("#invite-team-member-dialog").dialog( "open" );
+		return false;
+	});
+	
+	$("#launch-email-client-button").click(function(){
+		launchMailTo("[recipient]", $("#subject").val(), $("#body").html());
 		return false;
 	});
 </script>

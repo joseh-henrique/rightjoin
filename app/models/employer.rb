@@ -88,6 +88,11 @@ class Employer < ActiveRecord::Base
                                     id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
   end
   
+  def last_active_leads(count)
+    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status in (?) and infointerviews.status in (?)", 
+                                    id, [Job::LIVE], [Infointerview::NEW, Infointerview::ACTIVE_LEAD]).limit(count)
+  end  
+  
   def shares_statistics
     Share.joins(:ambassador).where("ambassadors.employer_id = ?", id).group("shares.network").select("shares.network, count(*) as shares_count, sum(shares.click_counter) as clicks_count, sum(shares.lead_counter) as leads_count")
   end

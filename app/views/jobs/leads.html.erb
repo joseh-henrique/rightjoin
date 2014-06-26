@@ -29,6 +29,8 @@
 							Referred by <%=infointerview.referred_by_ambassador.first_name%>&nbsp;<%=infointerview.referred_by_ambassador.last_name%>
 						</div>
 					<% end %>
+					
+					<a id="lead-<%=infointerview.id%>"></a>
 					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post, :class => "close", :title => "Close the lead. You can reopen it later.")%>	
 	  				
 					<%=render :partial => 'infointerviews/infointerview', :object => infointerview%>
@@ -97,7 +99,7 @@
 	<script type="text/javascript">
 		setTimeout( function() {
 			$.post("<%=leads_set_seen_employer_job_path(@job.employer_id, @job.id)%>");
-		}, <%=Random.new.rand(5000..10000) %>);	// don't send all together
+		}, <%=Random.new.rand(3000..6000) %>);	// don't send all together
 		
 		$(".delegate-to-ambassador").click(function(){
 			var select = $(this).siblings(".ambassadors-list").first();

@@ -9,7 +9,7 @@ class LocationUtils
     c = @@db.country(ip)
     unless c.nil?
       country = c.country_code2.downcase
-      locale_s = Constants::COUNTRIES[country] unless country.blank?
+      locale_s = Constants::COUNTRIES_INCLUDING_NON_STANDARD_ABBREV[country] unless country.blank?
       
       locale = locale_s.to_sym unless locale_s.blank?
     end
