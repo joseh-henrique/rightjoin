@@ -90,7 +90,7 @@ class Employer < ActiveRecord::Base
   
   def last_active_leads(count)
     Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status in (?) and infointerviews.status in (?)", 
-                                    id, [Job::LIVE], [Infointerview::NEW, Infointerview::ACTIVE_LEAD]).limit(count)
+                                    id, [Job::LIVE], [Infointerview::NEW, Infointerview::ACTIVE_LEAD]).order("created_at DESC").limit(count)
   end  
   
   def shares_statistics

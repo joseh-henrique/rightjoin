@@ -5,29 +5,23 @@ class UsersController < ApplicationController
   before_filter :init_employee_user, :except => [:index]
   before_filter :init_employer_user, :only => [:index]
   before_filter :correct_user, :only => [:show, :edit, :update, :set_status]
-  before_filter :add_verif_flash, :only =>[:show, :edit, :index]
+  before_filter :add_verif_flash, :only =>[:show, :edit]
+  before_filter :add_activate_account_flash, :only =>[:show, :edit]
   before_filter :add_mandatory_fields_flash, :only =>[:show]
   
   def set_status
-    ok = false
     new_status = params[:status]
     current_user.update_column(:status, new_status)
     current_user.save!
-    ok = true
-    
-    rescue Exception => e
-      logger.error e
-      flash_message(:error, Constants::ERROR_FLASH)
-    ensure
-      if ok
-        @user = current_user
-        respond_to do |format|
-          format.js {
-            render "users/set_status"
-        }
-      end
+  rescue Exception => e
+    logger.error e
+    flash_message(:error, Constants::ERROR_FLASH)
+  ensure
+    if current_user.verified?
+      flash_message(:notice, "You've re-activated your account")
+      redirect_to user_path(current_user, :locale => current_user.country_code)
     else
-      render :js => "window.location.reload(true);"
+      redirect_to edit_user_path(current_user, :locale => current_user.country_code)
     end
   end  
   
@@ -69,6 +63,7 @@ class UsersController < ApplicationController
   
   def show
     @user = current_user
+    @infointerviews = current_user.infointerviews
     @current_page_info = PageInfo::HOME
   end
   
@@ -221,4 +216,11 @@ class UsersController < ApplicationController
         flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)
         redirect_to jobs_path
     end
+    
+    def add_activate_account_flash 
+      if signed_in? and current_user.deleted?     
+        html_for_flash = "Your account is inactive and invisible to employers. #{ActionController::Base.helpers.link_to('Click here', set_status_user_path(current_user, :status => UserConstants::VERIFIED), method: :post)} to reactivate."
+        flash_now_message(:error, html_for_flash)
+      end
+    end    
 end

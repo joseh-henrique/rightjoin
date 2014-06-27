@@ -29,7 +29,7 @@
 	<% leads = @ambassador.followups.where({ status: Followup::NEW}).limit(max_leads_to_show).order("created_at DESC") %>
 	<% if leads.any? %>
 		<div class="navigation-strip semitransparent">
-			<%=link_to "Potential future colleagues who'd like to be in touch", followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>
+			<%=link_to "Follow up on requests", followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>
 			<div>
 				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
 					<% if leads.count >= i + 1%>
@@ -63,7 +63,7 @@
 					<% end %>
 				</script>
 			
-				<h1>Get yourself some colleagues you want to work with.</h1>
+				<h1>Share the ad and get yourself some good colleagues.</h1>
 				
 				<div class="position-chooser">
 					<% active_jobs_ = @ambassador.employer.active_jobs %>
@@ -151,7 +151,7 @@
 							
 				<a href="<%=we_are_hiring_employer_path(@ambassador.employer.reference_num, job: @job.id)%>" class="preview-link" 
 						onclick="return openDialogWindow(this.href, 1000, 650);">
-					See your posting ...
+					See your ad ...
 				</a>
 			
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f26afde78345d26&async=1"></script>

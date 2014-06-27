@@ -1,1 +1,6 @@
-$("#send-message-box-<%=@user_id%>").html("<span>Thanks, we'll ping the candidate about this job position.</span>");
+$("#send-message-box-<%=@user_id%>").fadeOut("fast", 
+	function() {
+		$(this).html("<span>Thanks, we'll ping the candidate about this job position.</span>");
+		$(this).fadeIn("slow");
+	}
+);

@@ -55,6 +55,28 @@
 				<%end%>
 				<div class="job-ad-box">
 					<%=render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL}%>
+					<div class="buttons-box">
+						<% employee = get_employee_user_by_session_cookie %>
+						<% if employee.nil? %>
+							<%=link_to "Sign in", "#", :class => "sign-in-link" %> or <%=link_to "Register", register_path %> to ping the company.
+						<% elsif employee.status == UserConstants::PENDING %>
+							<span>To ping companies, please verify your account.</span>
+						<% else %>
+							<% old_infointerview =  @infointerviews[job.id] %>
+							<% if old_infointerview.nil? %>
+								<% unless job.ad_url.blank? %>
+						    		<%=link_to "Learn more", job.ad_url, :target => "_fyi_ad_target", :posid => "#{job.id}", :class=>"learn-more-button" %>
+						    		&nbsp;&nbsp;
+						    	<% end %>
+						    	
+						    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
+									<%= submit_tag "Ping the company", :class => "ping-button", :name => nil%>
+								<% end %>
+							<% else %>
+								<span>You pinged this company <%=distance_of_time_in_days_ago(old_infointerview.created_at).downcase%>.</span>
+							<% end %>
+						<% end %>
+					</div>					
 				</div>
 			<% end %>
 		</div>

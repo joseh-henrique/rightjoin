@@ -9,30 +9,28 @@ active_interviews = current_user.interviews.select {|interview| interview.status
 		and ping companies to talk to potential colleagues. 
 	</div>
 <% else %>
-	<p id="invitations-header">
-		<% 
-		have_amb = Interview.have_active_ambassadors?(active_interviews) 		
-		%>
-		Employers are pinging you, so ping them back<%if have_amb %>, and to be in touch with insiders<%end%>. 
-	</p> 
 	<% active_interviews.each do |interview| %>
 		<div id="interview-<%=interview.id%>" class="user-interviews-box">
 			<div class="message candidate-facing-ad">
-				<div class="status-text time-distance">
-			    	<%=distance_of_time_in_words(interview.created_at, Time.now)%> ago
-			    </div>
-			    <div class="job-ad-frame">
-					<%= render :partial => 'jobs/ad', :locals => {:job => interview.job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL} %>
+				<div class="job-ad-box">
+					<% job = interview.job %>
+					<%=render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL}%>
+					<div class="buttons-box">
+						<% old_infointerview = @infointerviews.find {|ii| ii.job.id == job.id } %>
+						<% if old_infointerview.nil? %>
+							<% unless interview.job.ad_url.blank? %>
+					    		<%=link_to "Learn more", job.ad_url, :target => "_fyi_ad_target", :posid => "#{job.id}", :class=>"learn-more-button" %>
+					    		&nbsp;&nbsp;
+					    	<% end %>
+					    	
+					    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
+								<%= submit_tag "Ping back", :class => "ping-button", :name => nil%>
+							<% end %>
+						<% else %>
+							<span>You pinged back <%=distance_of_time_in_days_ago(old_infointerview.created_at).downcase%>.</span>
+						<% end %>
+					</div>
 				</div>
-			</div>
-			<span class="message-arrow"></span>
-			<div class="li-link-box">
-				<% if interview.employer.li_url.blank? %>
-					<%=interview.employer.first_name %>&nbsp;<%=interview.employer.last_name%>
-				<% else %>
-					<%=link_to "#{interview.employer.first_name} #{interview.employer.last_name}", interview.employer.li_url, :class => "li-link", :target => "_fyi_popup"%>
-				<% end %>
-				@ <%=interview.job.company_name%>
 			</div>
 		</div>
 	<% end %>

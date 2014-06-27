@@ -144,7 +144,7 @@ class JobsController < ApplicationController
     raise "Job position not found" if @job.nil?
     
     statuses = [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]
-    @infointerviews = @job.infointerviews.where(status: statuses) 
+    @infointerviews = @job.infointerviews.where(status: statuses).order("created_at DESC")
     
   rescue Exception => e
     logger.error e

@@ -17,7 +17,7 @@ $width: 940px;
 
 html {
   height: 100%;
-  background: #C08895 image-url("team/bg.jpg") no-repeat center center fixed; 
+  background: #7D585E image-url("team/bg.jpg") no-repeat center center fixed; 
   @include background-size (cover);
   font-size: $default-font-size;  
 }
@@ -353,13 +353,14 @@ label {
       font-weight: normal;
       padding: 0;
       margin: 0;
-      margin-bottom: 40px;
+      margin-bottom: 10px;
     }    
   }
   
   .invite-box {
     .position-chooser {
-      padding-bottom: 50px;
+      margin-bottom: 50px;
+      margin-top: 50px;
     }
     
     .all-buttons-box {
@@ -414,14 +415,6 @@ label {
       font-weight: 500;
     }
   }
-    
-  .global-zeroclipboard-container {
-    @include border-radius(20%);
-    
-    &:hover {
-      background: #e8643e image-url("team/share/clipboard-small.png") no-repeat;
-    }
-  }
   
   .leads-list {
     text-align: left;
@@ -432,11 +425,15 @@ label {
       border: 1px solid #7D5552;
     }
     
+    .infointerviews-list {
+      margin-top: 60px;
+    } 
+    
     .infointerview-outer-box {
       font-size: 14px;
       border-top: 3px solid #7C575B;
       padding: 20px;
-      background: #FFF3F0;
+      background: #FCF4F2;
       margin-bottom: 60px;
       position: relative;
       
@@ -456,7 +453,7 @@ label {
         background: transparent image-url("shared/job-x-off.png") no-repeat top left;
         width: 18px;
         height: 18px;
-        z-index: 99999;
+        z-index: 999;
         text-indent: -9999px;
         
         &:hover {
@@ -467,6 +464,13 @@ label {
   }
 }
 
+.global-zeroclipboard-container {
+  @include border-radius(20%);
+  
+  &:hover {
+    background: #e8643e image-url("team/share/clipboard-small.png") no-repeat;
+  }
+}
 
 /* 
  :-ms-input-placeholder must come after the definitions for the input fields, otherwise the definitions for the input field 

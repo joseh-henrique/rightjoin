@@ -119,19 +119,20 @@ class FyiMailer < ActionMailer::Base
        
    if invites_from_registered_employers.length > 0
       sing = invites_from_registered_employers.length == 1
-      @msg1_h = sing ? "A dev team from #{invites_from_registered_employers[0].job.company_name} wants to be in touch." : "Dev teams want to be in touch."
+      @msg1_h = sing ? "The dev team from #{invites_from_registered_employers[0].job.company_name} wants to be in touch." : "Dev teams want to be in touch."
     else # All jobs from FYI itself
        @msg1_h = "We've got a good job match for you."
     end
- 
+    contact_amb_s = Interview.have_active_ambassadors?(invites) ? ", and to chat with insiders" : ""
+    msg1_tail = " You're invited to talk directly to them#{contact_amb_s}.<br><br>"
+    
+    @msg1_h << msg1_tail
+    
     @msg1_t = @msg1_h.gsub("<br>", "\n")
     
-    contact_amb_s = Interview.have_active_ambassadors?(invites) ? ", and to chat with insiders" : ""
- 
-    msg2_start = "You're invited to contact them#{contact_amb_s}.<br><br>"
-    @msg2_h = msg2_start 
-    @msg2_t = Utils.html_to_txt(msg2_start)
-    
+    @msg2_h = "Sign in to see all the info at your #{Constants::SHORT_SITENAME} <a href='#{user_url(engineer, :locale => engineer.country_code)}'>dashboard</a>.<br><br>"
+    @msg2_t = Utils.html_to_txt(@msg2_h) 
+     
     invites.each do |interview|
         raise "Expect only APPROVED invitations here, but found: #{interview}" unless interview.status == Interview::APPROVED
         
@@ -140,7 +141,6 @@ class FyiMailer < ActionMailer::Base
                           <div style='background:#f8f8f8; padding:10px;'>#{truncated_job_desc}</div><br>"
         @msg2_t << "#{interview.job.position.name} at #{interview.job.company_name} (#{interview.job.ad_url})\n
                        #{truncated_job_desc}\n\n"
-       
     end
     
     msg3_head ="You can always find your recent pings from employers on your #{Constants::SHORT_SITENAME}" 

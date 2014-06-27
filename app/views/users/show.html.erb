@@ -1,46 +1,16 @@
-<script>
-	$(function() {
-		$("#profile_edit_btn").click(function(event){
-		    event.stopPropagation();
-		    event.preventDefault();
-		    $(this).parents('form:first').submit();
-		});
-	}); 
-</script>
-
-<div class="content">
+<div class="content" id="employee-dashboard">
 	<%= render :partial => 'layouts/flash_box' %>
-	<p class="headline" id="header-show-page">
-		<%=show_page_s(@user.status)%>
-	</p>
-
-	<div class="white-box">
-		<div id="user-home-accordion" class="fyi-accordion">
-			<h3 class="accordion-header expanded clearfix"><span>Profile</span><div class="header-btn-box"><%=button_to("Edit", edit_user_path(current_user, :locale => current_user.country_code), :id => "profile_edit_btn", :method => "get")%></div></h3>
-			<div class="accordion-panel">
-				<%=render :partial => 'user_details', :object => @user, :locals => { :for_view=> :employee}%>
-				<div class="user-attr-row">
-					<label>Status:</label>
-					<div id="listing-status-box" class="user-attr-ro-box"></div>
-				</div>
-			</div>
-			
-			<h3 id="offers" class="accordion-header expanded clearfix"><span>Recent pings from employers</span></h3>
-			<div class="accordion-panel">
-				<%=render :partial => 'interviews'%>
-			</div>
-			
-			<% unless current_user.company_ratings.any? %>
-				<h3 id="company-rating" class="accordion-header expanded clearfix"><span>Rate your company</span></h3>
-				<div class="accordion-panel">
-					<%=render :partial => 'companies/company_rating'%>
-				</div>
-			<% end %>
-		</div>
+	
+	<div class="standard-section-header"><span>Recent pings from employers</span></div>	
+	<div class="section-box interviews-box">
+		<%=render :partial => 'interviews'%>
 	</div>
+	
+	<% unless current_user.company_ratings.any? %>	
+		<div class="standard-section-header"><span>Rate your company</span></div>	
+		<div class="section-box rating-box">
+			<%=render :partial => 'users/company_rating'%>
+		</div>
+	<%end%>
+	
 </div>
-<script type="text/javascript">
-	buildListingStatus(<%=@user.id%>, <%=@user.status%>);
-</script>
-
-<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>

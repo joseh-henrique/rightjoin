@@ -97,46 +97,6 @@ $('.sign-in-link').live('click', function(event) {
 	return false;
 });
 
-// create listing status controls 
-function buildListingStatus(userId, status) {
-	var html = "";
-	if(status == 0) { // pending
-		html = "<span>Not verified</span>";
-	} else if (status == 1) { // verified
-		html = "<span>Active</span><a id='status-inactivate' uid=" + userId + ">Deactivate</a>";
-	} else { // deleted
-		html = "<span>Inactive</span><a id='status-activate' uid=" + userId + ">Activate</a>";
-	}
-	
-	$("#listing-status-box").html(html); 
-}
-
-function postUpdateStatusRequest(uid, status) {
-	$.ajax({
-	  type: "POST",
-	  url: "/users/" + uid + "/set_status",
-	  data: { status: status },
-	  dataType: "script"
-	});
-}
-
-$("#status-inactivate").live("click", function(){
-  postUpdateStatusRequest($(this).attr('uid'), 2);
-  trackEvent("developer", "inactivate listing");
-  return false;
-});
-
-$("#status-activate").live("click", function(){
-  postUpdateStatusRequest($(this).attr('uid'), 1);
-  trackEvent("developer", "activate listing");
-  return false;
-});
-
-$("#status-activate-top").live("click", function(){
-  postUpdateStatusRequest($(this).attr('uid'), 1);
-  return false;
-});
-
 function unescapeHTML(html_text) {
 	var htmlNode = document.createElement("DIV");
 	htmlNode.innerHTML = html_text;
@@ -343,6 +303,31 @@ $(function() {
 		$(this).closest(".compound-input-box").removeClass("active").addClass("inactive");
 	});		
 });
+
+// direct ping button //
+$( ".job-ad-box .direct-ping-form" ).live("submit", function( event ) {
+	$(this).children(".ping-button").attr("disabled", true);
+	return true;
+});	
+
+$('.job-ad-box .direct-ping-form').live('ajax:success',function(data, status, xhr){
+	var resp_box = $(this).closest(".buttons-box");
+  	resp_box.fadeOut("fast", function() {
+    	resp_box.html("<span class='success'>Thanks. We'll ping the company for you.</span>");
+  		resp_box.fadeIn("slow");
+  	});
+}).on('ajax:error',function(xhr, status, error){
+  	var error_text = "Oops! Something went wrong, we'll be on it right away.";
+  	if(status.responseText != "") {
+  		error_text = status.responseText;
+  	}
+  	var resp_box = $(this).closest(".buttons-box");
+ 	resp_box.fadeOut("fast", function() {
+    	resp_box.html("<span class='error'>" + error_text + "</span>");
+  		resp_box.fadeIn("slow");
+  	});
+});
+/////////////////////
 
 // This method supports window sizing and centering, 
 // which in Chrome  does NOT work if you do a simple  window.open(..... 'width=800...'...

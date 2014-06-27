@@ -11,5 +11,4 @@ class Ad < ActiveRecord::Base
   
   RENDERING_MODE_FULL = 0
   RENDERING_MODE_COMPACT = 1
-  RENDERING_MODE_NO_PING_BUTTON = 2
 end

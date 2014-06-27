@@ -1,6 +1,5 @@
 $("#change-pw-wrapper").show();
 $("#flash-ajax-box").html("<%= escape_javascript(render(:partial => 'layouts/flash_content')) %>");
-buildListingStatus(<%=@user.id%>, <%=@user.status%>);
 trackEvent("<%=@user.employee? ? "developer" : "employer"%>", "profile verified");
 <%
 #Employer.capabilities_header actually is no-op: It doesn't replace anything. 
