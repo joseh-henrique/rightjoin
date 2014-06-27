@@ -12,9 +12,10 @@
 		
 		 
 <%#API Key produces an error in localhost "http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&key=AIzaSyDEQYS0hqC7Gyw0KDgmWBf95U_WLeS7q2E
+																															
 #Note that sensor param is no longer used.
 %>
-		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
+		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&libraries=places&key=AIzaSyDEQYS0hqC7Gyw0KDgmWBf95U_WLeS7q2E"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
 	  	<%= javascript_include_tag :application %>
 	  
 		<%= yield :more_js %>		

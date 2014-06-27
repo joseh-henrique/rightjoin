@@ -185,7 +185,7 @@ module UsersControllerCommon
     if signed_in? and current_user.pending?
       dashboard_path = current_user.employee? ? user_path(current_user, :locale => current_user.country_code) : employer_path(current_user)
       
-      html_for_flash = "The account is not verified. <a href='#{dashboard_path}'>Verify your account</a> or resubmit this form to get a new verification email."
+      html_for_flash = "The account is not verified. <a href='#{dashboard_path}'>Verify your account</a> or update this form to get a new verification email."
       
       flash_now_message(:error, html_for_flash)
     end
