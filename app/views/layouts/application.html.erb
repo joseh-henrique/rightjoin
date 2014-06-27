@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>	
 <html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
 	<%=render :partial => "layouts/easter_egg"%>
 	  
@@ -11,10 +11,8 @@
 		<%= stylesheet_link_tag 'application', :media => "all"%>
 		
 		 
-<%#The following key is not in use AIzaSyDEQYS0hqC7Gyw0KDgmWBf95U_WLeS7q2E
-#Note that sensor param is no longer used.
-%>
-		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&libraries=places&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
+		<%#Note that sensor param is no longer used.%>
+		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=#{Constants::GOOGLE_MAPS_API_KEY}"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
 	  	<%= javascript_include_tag :application %>
 	  
 		<%= yield :more_js %>		

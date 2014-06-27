@@ -110,4 +110,6 @@ class Constants
   META_DESC= "#{Constants::SITENAME} enables peer-to-peer recruiting with employer branding through beautiful, easily sharable job postings"
   
   REPRESENTATIVE_LOGO = "misc/all_14_with_bg.png"
+  
+  GOOGLE_MAPS_API_KEY = "AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY"  #this  key is not in use AIzaSyDEQYS0hqC7Gyw0KDgmWBf95U_WLeS7q2E
 end
