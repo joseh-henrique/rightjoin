@@ -4,13 +4,13 @@ class EmployersController < ApplicationController
   before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe]
   before_filter :init_employer_user, :except => [:we_are_hiring, :ping, :work_with_us_tab, :work_with_us_test]
   before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab]
-  before_filter :add_verif_flash, :only =>[:show, :edit]
+  before_filter :add_verif_flash, :only =>[:edit]
   before_filter :init_join_us_widget, :only =>[:we_are_hiring, :ping]
 
   # Execute initial signup request from main form
   def create
     @employer = Employer.new(params)
-    @employer.password = @employer.random_pw()
+    @employer.password = @employer.random_pw
     
     begin
       @employer.validate_email_field!
@@ -32,9 +32,9 @@ class EmployersController < ApplicationController
     plan.save!
     
     sign_in @employer
+    
     country_code = I18n.t(:country_code, I18n.locale) 
-    url= employer_welcome_url(:locale => country_code)
-
+    url = employer_welcome_url(:locale => country_code)
     new_msg = FyiMailer.create_welcome_message(@employer.email, @employer.password, I18n.locale, Employer.reason_to_verify, Employer.homepage_description, url, :employer)
     Utils.deliver(new_msg)
     
@@ -64,6 +64,10 @@ class EmployersController < ApplicationController
   end  
   
   def update
+    if current_user.pending?
+      current_user.password = current_user.random_pw
+    end
+    
     current_user.update_attributes(params)
     
     raise "A plan wasn't selected" if params[:tier].nil?
@@ -73,8 +77,16 @@ class EmployersController < ApplicationController
       plan.save!
     end
     
+    if current_user.pending?
+      country_code = I18n.t(:country_code, I18n.locale) 
+      url = employer_welcome_url(:locale => country_code)
+      new_msg = FyiMailer.create_welcome_message(current_user.email, current_user.password, I18n.locale, Employer.reason_to_verify, Employer.homepage_description, url, :employer)
+      Utils.deliver(new_msg)
+    else
+      flash_message(:notice, "Employer profile updated")    
+    end
+    
     redirect_to employer_path(current_user)
-    flash_message(:notice, "Employer profile updated")
     
     rescue Exception => e
       logger.error e

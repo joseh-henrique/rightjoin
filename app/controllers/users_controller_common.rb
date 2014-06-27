@@ -4,14 +4,11 @@ module UsersControllerCommon
     # Called when entering password from the flash to verify account
     def do_verify(user_class)
       ok = false
-      if !signed_in? or !current_user?(user_class.find(params[:id]))
-        # current user nil only if you open another window; sign  out there, then enter your password for verification
-        flash_message(:error, "Please sign in to verify your account. Check your email for the password, or choose \"Forgot Password\" above.")
-      else
+      if signed_in? && current_user?(user_class.find(params[:id]))
         email = params[:user][:email]
         requested_user = user_class.find_by_email(email)
         raise "#{email} not found" if requested_user.nil?
-        if requested_user!=current_user
+        if requested_user.id != current_user.id
           end_session
         else
           pw = params[:user][:password]
@@ -19,35 +16,20 @@ module UsersControllerCommon
           if pw && current_user.authenticate(pw)
             sign_in current_user
             current_user.verify
-            flash_clear
-            flash_now_message(:notice, verified_flash_s)
-            # TODO Sometimes, when verifying, there is a flash error-message which says "You have already deactivated". 
-            # In that case, upon verifying, this flash message should be removed from the DOM.
+
             ok = true
             
             Reminder.create_event!(current_user.id, user_class == User ? Reminder::USER_ACCOUNT_ACTIVATED : Reminder::EMPLOYER_ACCOUNT_ACTIVATED)
-          else
-            flash_message(:error, "Invalid password. Please try again, or sign out and choose \u201CForgot Password.\u201D")
           end
         end
       end
     rescue Exception => e
       logger.error e
-      flash_message(:error, Constants::ERROR_FLASH)
     ensure
       if ok
-        @user = current_user
-        respond_to do |format|
-          format.js {
-            render "sessions/verify"
-          }
-        end
+        render :nothing => true, status: :ok
       else
-        respond_to do |format|
-          format.js {
-            render :js => "window.location.reload(true);"
-          }
-        end
+        render :nothing => true, status: :forbidden
       end
   end
   
@@ -56,7 +38,7 @@ module UsersControllerCommon
     if signed_in? and current_user?(user_class.find(params[:id]))
       if current_user.pending?
         @user = nil
-        raise Exception, "Account must be verified to change password. Please enter password, or sign out and use \u201CForgot Password.\u201D"
+        raise Exception, "Account must be verified to change password."
       else
         @user = current_user
         usr_params = params[@user.class.to_s.downcase]# hash key is "user" or "employer"
@@ -198,4 +180,14 @@ module UsersControllerCommon
   ensure
     redirect_to root_path
   end
+  
+  def add_verif_flash 
+    if signed_in? and current_user.pending?
+      dashboard_path = current_user.employee? ? user_path(current_user, :locale => current_user.country_code) : employer_path(current_user)
+      
+      html_for_flash = "The account is not verified. <a href='#{dashboard_path}'>Verify your account</a> or resubmit this form to get a new verification email."
+      
+      flash_now_message(:error, html_for_flash)
+    end
+  end  
 end

@@ -884,7 +884,7 @@ label {
     right: 0px;
     
     .success {
-      color: #11a8ab;
+      color: #1C9E85;
     }
     
     .error {
@@ -2315,7 +2315,7 @@ label {
   
   .success {
     margin-top: 10px;
-    color: #11a8ab;
+    color: #1C9E85;
   }
   
   .error {
@@ -2826,6 +2826,17 @@ $tab-border-radius: 4px;
   .deactivate-box {
     margin-bottom: -30px;
     padding-top: 30px;
+  }
+}
+
+#account-verification-dialog {
+  #verification-results {
+    .error {
+      color: #c00852;
+    }
+    .success {
+      color: #1C9E85;
+    }
   }
 }
 

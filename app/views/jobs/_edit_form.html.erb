@@ -373,7 +373,7 @@
 		$("form.new_job, form.edit_job").validationEngine('hideAll');
 		
 		if($("#verify-account-form").length > 0) {
-			$("#verification-pw").validationEngine('showPrompt', 'To post jobs, please verify your account with the password we sent you, or sign out and click \u201CForgot Password.\u201D', 'error', 'topLeft', true);
+			$("#verification-pw").validationEngine('showPrompt', 'To post jobs, please verify your account with the password we sent you.', 'error', 'topLeft', true);
 			$("#verification-pw").focus();
 			
 			return false;

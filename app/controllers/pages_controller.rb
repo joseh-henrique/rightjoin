@@ -3,7 +3,6 @@ class PagesController < ApplicationController
   
   before_filter :init_employee_user, :only => [:root, :welcome, :privacy, :faq, :jobs, :register]
   before_filter :init_employer_user, :only => [:employer_welcome, :employer_get_started, :employer_privacy, :employer_faq, :employer_search]
-  before_filter :add_verif_flash, :only =>[:employer_search]
   before_filter :add_locale_flash, :only =>[:register, :employer_get_started]
   
 
@@ -34,7 +33,7 @@ class PagesController < ApplicationController
   ###############################################################
   # employees
   def register
-    if signed_in?
+    if signed_in? && !current_user.pending?
       flash.keep
       redirect_to(edit_user_path(current_user, :locale => current_user.country_code))
     else
@@ -84,7 +83,7 @@ class PagesController < ApplicationController
   ###############################################################3  
   # employers
   def employer_welcome
-    if signed_in?
+    if signed_in? && !current_user.pending?
       flash.keep
       redirect_to(employer_path(current_user))
     else

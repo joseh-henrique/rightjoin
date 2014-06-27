@@ -1,0 +1,76 @@
+<% if current_user.pending? %>
+	<% verification_path = current_user.employee? ? verify_user_path(current_user, :locale => current_user.country_code) : verify_employer_path(current_user) %>
+	<% edit_path = current_user.employee? ? edit_user_path(current_user, :locale => current_user.country_code) : edit_employer_path(current_user) %>
+
+		<div id="account-verification-dialog" title="Verify your account">
+			<%=form_tag(verification_path, :id => "user-verification-form", :remote => true) do %>
+				<div class="form-row">
+					Please enter the temporary password we sent to <%=current_user.email%>.
+				</div>
+				
+				<div class="form-row clearfix">
+					<div class="form-column">
+						<div class="form-cell">
+							<%= hidden_field_tag("user[email]", current_user.email) %>
+							<%= label_tag(nil, "Temporary password", :class => "mandatory") %><br>
+							<%= password_field_tag(:verify_password, "", :name=> "user[password]", :maxlength => 60, :class=>"validate[required]", :spellcheck => false, :autocomplete => "off") %>
+						</div>
+					</div>
+					<div class="form-column">
+						<div class="form-cell">
+							<%= label_tag(nil, "") %><br>
+							<%= submit_tag "Verify account", :id=>"verify-account-button", :class=>"standard-button", :name => nil %>
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-row" id="verification-results">
+				</div>
+			<%end%>
+		</div>
+	
+	<script type="text/javascript">
+		var verified = false;
+		
+		$("#user-verification-form").submit(function(){
+		 	var is_valid = $(this).validationEngine('validate');
+		 	if (is_valid){
+		 		$("#verify_password").prop('readonly', true);
+				$("#verify-account-button").prop('disabled', true);
+			}
+			return is_valid;
+		});	
+		
+		$(document).on("click", "#change-password-on-verification", function(){
+			$("#account-verification-dialog").dialog("close");
+			openChangePasswordDialog();
+			return false;
+		});
+		
+	   	$('#user-verification-form').on('ajax:success',function(data, status, xhr){
+	    	verified = true;
+	    	fadeInMessage($("#verification-results"), "<span class='success'>Your account is now verified. For maximum security, we recommend you <a id='change-password-on-verification' href='#'>change your password</a>.</span>");
+	    }).on('ajax:error',function(xhr, status, error){
+	 		$("#verify_password").prop('readonly', false);
+			$("#verify-account-button").prop('disabled', false);
+			fadeInMessage($("#verification-results"), "<span class='error'>Verification failed. Please try again or <a href='<%=edit_path%>'>update</a> your profile to get a new verification email.</span>");
+	    });
+	
+		$(document).ready(function(){
+			$("#account-verification-dialog").dialog({
+			  autoOpen: true,
+			  width: 650,
+			  height: 240,
+			  resizable: false,
+			  modal: true,
+			  beforeClose: function(event, ui) {
+			  	if (!verified) {
+			  		window.location.href = "<%=edit_path%>";
+			  		return false;
+			  	}
+			  	return true;
+			  }
+			});
+		});
+	</script>
+<% end %>

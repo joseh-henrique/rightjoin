@@ -138,24 +138,6 @@ module ApplicationHelper
     
   end
   
-  # Used only for user, not employer 
-  def show_page_s(status)
-    raise  "Did not expect Employer" if Rails.env.development? && @user.class==Employer
-    if status == UserConstants::PENDING  
-      res = "Your profile is <em>pending verification</em>.
-      Verify it by entering the password that we sent you.
-      Or sign out and choose \u201CForgot Password\u201D for a new one."
-      
-    elsif status == UserConstants::VERIFIED  
-      res = @user.class.capabilities_header # only user, not employer
-    else #UserConstants::DEACTIVATED
-      res = "Your #{Constants::SHORT_SITENAME} profile is <em>inactive and not visible</em> to anyone but you.
-            You can  <a id='status-activate-top' uid='#{@user.id}'>re-activate</a>."
-      
-    end
-    res.html_safe
-  end
-  
   def seniority_s(seniority)
      UserSkill.seniority_s(seniority)
   end
@@ -165,7 +147,7 @@ module ApplicationHelper
   end
      
   def verified_flash_s
-    "Your account is now verified. For maximum security, we recommend you change your password, above."
+    "Your account is now verified. For maximum security, we recommend you change your password."
   end  
   
   def  uservoice_contact_link(txt ="contact us")

@@ -16,7 +16,7 @@
     	<% if signed_in? && current_user.employer? %>
 			<% active_jobs = current_user.jobs.where(status: Job::LIVE).includes([:location, :position]).all %>
 			<% if not current_user.verified?%>
-				<div>To ping candidates, please verify your account, above, and search again.</div>
+				<div>To ping candidates, please <%=link_to "verify", employer_path(current_user)%> your account.</div>
     		<% elsif active_jobs.empty? %>
     			<div>
     				Please <%=link_to("create", new_employer_job_path(current_user, :refid => user.reference_num))%> 

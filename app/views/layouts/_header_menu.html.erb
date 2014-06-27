@@ -18,7 +18,7 @@
 	<% elsif @current_page_info[:intended_for] == :employer %>
 		<% if current_user %>
 			<li class="n_dashboard">		
-				<%= link_to("Dashboard", employer_welcome_path)  %>
+				<%= link_to("Dashboard", employer_path(current_user))  %>
 			</li>
 		<%else%>
 			<li class="n_welcome">		

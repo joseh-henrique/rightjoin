@@ -3,7 +3,6 @@ class JobsController < ApplicationController
   before_filter :init_employee_user, :only => [:search]
   before_filter :init_employer_user, :except => [:search]
   before_filter :correct_employer, :except => [:search]
-  before_filter :add_verif_flash, :only =>[:new, :edit]
   
   def new
     @current_page_info = PageInfo::EMPLOYER_NEW_POSTING

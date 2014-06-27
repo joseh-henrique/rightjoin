@@ -349,7 +349,7 @@ class FyiMailer < ActionMailer::Base
     end
      
     content << "Ask your employees to share our ad using the tools at #{Constants::SHORT_SITENAME}: We've designed a posting that they'll want to share, one that puts them in the center.<br><br>" <<
-        "Add the geotargeted tab to the #{employer.company_name}  site.<br><br>" <<
+        "Add the geotargeted tab to the #{employer.company_name} site for software developers who are interested in working for you.<br><br>" <<
         "You can track progress on your profile page, and we'll send you brief weekly summaries. " <<
         "In the meantime, don't hesitate to contact me--I want to know how #{Constants::SHORT_SITENAME} can help you reach out to  more strong developers.<br>"
 

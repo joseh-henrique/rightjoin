@@ -76,25 +76,6 @@ class ApplicationController < ActionController::Base
     host.start_with?("localhost") || host.start_with?("127.0.0.1") || host.start_with?("lvh.me")
   end
   
-  def add_verif_flash 
-    if signed_in? and current_user.pending?
-      verification_path = current_user.employee? ? verify_user_path(current_user, :locale => current_user.country_code) : verify_employer_path(current_user)
-      verification_form = 
-         "<form id='verify-account-form' action='#{verification_path}' method='post' data-remote='true' style='display:inline'>" +             
-                "   <input type='password' id='verification-pw' name='user[password]'>" +                 
-                "   <input type='hidden'  name='user[email]' value ='#{current_user.email}'>" +
-                "   <input type='submit' id='verify-account-btn' value='Activate' />" +
-                " </form>"
-      
-      html_for_flash = "To #{current_user.class.short_reason_to_verify}, please enter the password 
-                            <a title='If you haven&apos;t received it in a minute or so, please check your 
-                            spam folder, or sign out and click \u201CForgot Password.\u201D'>we sent you</a>: 
-                              <span class=\"verification-box\">#{verification_form}</span>"
-      
-      flash_now_message(:activate, html_for_flash)
-    end
-  end
-  
   def add_mandatory_fields_flash 
     if signed_in? && (current_user.first_name.blank? || current_user.last_name.blank?)      
       link = "#{view_context.link_to("fill in mandatory fields", register_path)}"

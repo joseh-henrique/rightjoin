@@ -49,7 +49,7 @@
 
 <% # Open/shut the change-pw form  %>
 <script type="text/javascript" charset="utf-8">    	
-	$('#change-pwd-link').click(function() {
+	function openChangePasswordDialog() {
 		$(".drop-down").css("display", "none");
 		
 		$("#change-pw-toggleable-box").dialog( "open" );
@@ -58,8 +58,11 @@
 		$("#submit-change-pw").attr('disabled', false);
 		$("#change-pw-form input[type='password']" ).val("");
 		
-		trackEvent("<%=@current_page_info[:intended_for] == :employee ? "developer" : "employer"%>", "change password");
-		
+		trackEvent("<%=@current_page_info[:intended_for] == :employee ? "developer" : "employer"%>", "change password");		
+	}
+	
+	$('#change-pwd-link').click(function() {
+		openChangePasswordDialog();
 		return false;
 	}); 
 </script>

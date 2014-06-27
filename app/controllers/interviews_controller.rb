@@ -10,8 +10,7 @@ class InterviewsController < ApplicationController
     @user_id = params[:interview][:user_id] # recipient, i.e. employee
     
     unless current_user.verified?#This should never happen because you can't create a job unless you are verified. 
-      @display_error = "To ping candidates, first  
-                            verify your account with the password we sent you, or choose \u201CForgot Password\u201D above."
+      @display_error = "To ping candidates, first verify your account with the password we sent you."
       raise @display_error
     end
       

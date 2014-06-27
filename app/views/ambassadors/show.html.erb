@@ -122,25 +122,25 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_EMAIL%>
 								<div class="share-button email" title="Email">
-									<%msg_txt= "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+									<%msg_txt= "#{description}\n\n#{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
 									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
-								<div class="share-button copy-to-clipboard" title="Copy to clipboard">
-									<a id="copy-button" class="div-tooltip-holder">
+								<div class="share-button copy-to-clipboard" >
+									<a id="copy-button" class="div-tooltip-holder" title="Copy to clipboard"><%# Tooltip here and not on the share button because zeroClipboard interferes with tooltip functionality. %>
 										<%= image_tag "team/share/clipboard-small.png", size: "82x82", alt: "Copy to clipboard" %>
 										<div class="div-tooltip" >Copied</div>	
 									</a>	 		
 									<script>
-								 	$(document).ready(function(){
-								 		var text_callback = function(){
-								 			//this is a constant function
-				 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
-								 			var ret= unescapeHTML("<%= msg_txt%>");
-			 						 			return ret;
-								 		};
-		 	 							zeroclipboard_init("#copy-button" , text_callback); 
-									});
+										 	$(document).ready(function(){
+										 		var text_callback = function(){
+										 			//this is a constant function
+						 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+										 			var ret= unescapeHTML("<%= msg_txt%>");
+					 						 		return ret;
+										 		};
+				 	 							zeroclipboard_init("#copy-button" , text_callback); 
+											});
 									</script>
 								</div>
 		 					<%end%>

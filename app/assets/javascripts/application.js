@@ -376,7 +376,7 @@ function highlight(field) {
 function zeroclipboard_init(copy_button_selector, text_callback) {
 	ZeroClipboard.config({
 		swfPath : '/ZeroClipboard.swf',
-			bubbleEvents: false 
+		bubbleEvents: false 
 	});
 	
 	var button = $(copy_button_selector);
@@ -461,4 +461,11 @@ function colorLuminance(hex, lum) {
 	}
 
 	return rgb;
+}
+
+function fadeInMessage(element, message) {
+	element.fadeOut("fast", function() {
+		element.html(message);
+		element.fadeIn("slow");
+	});
 }

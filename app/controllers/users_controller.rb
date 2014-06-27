@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_filter :init_employee_user, :except => [:index]
   before_filter :init_employer_user, :only => [:index]
   before_filter :correct_user, :only => [:show, :edit, :update, :set_status]
-  before_filter :add_verif_flash, :only =>[:show, :edit]
+  before_filter :add_verif_flash, :only =>[:edit]
   before_filter :add_activate_account_flash, :only =>[:show, :edit]
   before_filter :add_mandatory_fields_flash, :only =>[:show]
   
@@ -30,7 +30,7 @@ class UsersController < ApplicationController
 		@user = User.new
 
 		@user.email= params["email"]
-    @user.password = @user.random_pw()
+    @user.password = @user.random_pw
     @user.locale = I18n.locale.to_s
     
     begin
@@ -48,7 +48,6 @@ class UsersController < ApplicationController
     sign_in @user
     
     url = user_url(@user, :locale => @user.country_code)
-    
     new_msg = FyiMailer.create_welcome_message(@user.email, @user.password, @user.locale, User.reason_to_verify, User.homepage_description, url, :employee)
     Utils.deliver(new_msg)
     
@@ -90,9 +89,21 @@ class UsersController < ApplicationController
       current_user.validate_email_field!
       err_flash_msg = Constants::ERROR_FLASH
       
-      # populate properties    
+      if current_user.pending?
+        current_user.password = current_user.random_pw
+      end
+      
+      # populate properties      
       update_listing current_user
-      flash_message(:notice, "Profile updated")
+      
+      if current_user.pending?
+        url = user_url(current_user, :locale => current_user.country_code)
+        new_msg = FyiMailer.create_welcome_message(current_user.email, current_user.password, current_user.locale, User.reason_to_verify, User.homepage_description, url, :employee)
+        Utils.deliver(new_msg)
+      else
+        flash_message(:notice, "Profile updated")
+      end
+      
       redirect_to user_path(current_user, :locale => current_user.country_code)
       
       return

@@ -60,7 +60,7 @@
 						<% if employee.nil? %>
 							<%=link_to "Sign in", "#", :class => "sign-in-link" %> or <%=link_to "Register", register_path %> to ping the company.
 						<% elsif employee.status == UserConstants::PENDING %>
-							<span>To ping companies, please verify your account.</span>
+							<span>To ping companies, please <%=link_to "verify", user_path(current_user, :locale => current_user.country_code) %> your account.</span>
 						<% else %>
 							<% old_infointerview =  @infointerviews[job.id] %>
 							<% if old_infointerview.nil? %>

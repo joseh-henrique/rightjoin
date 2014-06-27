@@ -1,8 +1,0 @@
-$("#change-pw-wrapper").show();
-$("#flash-ajax-box").html("<%= escape_javascript(render(:partial => 'layouts/flash_content')) %>");
-trackEvent("<%=@user.employee? ? "developer" : "employer"%>", "profile verified");
-<%
-#Employer.capabilities_header actually is no-op: It doesn't replace anything. 
-#For a User, however, it does alter the text
-%>
-$("#header-show-page").html("<%=escape_javascript(@user.class.capabilities_header)%>");
