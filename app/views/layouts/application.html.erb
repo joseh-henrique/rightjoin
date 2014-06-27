@@ -12,7 +12,7 @@
 		
 		 
 		<%#Note that sensor param is no longer used.%>
-		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=#{Constants::GOOGLE_MAPS_API_KEY}"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
+		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=<%=Constants::GOOGLE_MAPS_API_KEY%>"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
 	  	<%= javascript_include_tag :application %>
 	  
 		<%= yield :more_js %>		
