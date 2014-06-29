@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
+	<head>
+		 <%# The meta IE=Edge  is necessary to avoid Quirks mode in IE 10, which causes a bug:
+		 # tooltip for form validation are behind the form.%>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title><%=Constants::SHORT_SITENAME%> - Escape-worthy opportunities</title>
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700=Latin' rel='stylesheet' type='text/css'>
+	  	<%= javascript_include_tag :application %>
+		<%= yield :more_style %>
+		
+		<%= javascript_include_tag :application %>
+		<%= yield :more_js %>
+		
+		<%= csrf_meta_tags %>
+		<%= favicon_link_tag '/favicon.ico?v=5' %>
+		
+		<%# for Google %>
+		<meta name="description" content="<%=Constants::META_DESC%>, <%=title%>" />
+		<meta name="keywords" content="<%=Constants::META_KEYWORDS%>, <%=title%>" />
+		
+		<%= yield :more_meta %>
+	</head>
+	<body>
+		<%=render :partial => "layouts/easter_egg"%>
+
+		<div class="outer">
+			<div class="middle">
+				<%=message%> Please check out other escape-worthy opportunities on <%=link_to Constants::SHORT_SITENAME, jobs_path, :target => "_blank"%>.
+			</div>
+		</div>
+		<%= render :partial=> 'widgets/google_analytics' %>
+	</body>
+</html>
+
+
+
