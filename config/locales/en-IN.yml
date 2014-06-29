@@ -12,12 +12,12 @@ en-IN:
   longitude : 78.96288000000004
   use_province: "false"
   max_salary: "2000000"
-  salary_step: "200000" 
+  salary_step: "50000" 
   salary_period: "annual"
   
   monthly_tier_1_price: "0"
-  monthly_tier_2_price: "11999"
-  monthly_tier_3_price: "29999"
+  monthly_tier_2_price: "3999"
+  monthly_tier_3_price: "9999"
   currency_unit: "&#8360;" 
   thousands_delimiter: ","
   intl_phone_pfx: "+1-"

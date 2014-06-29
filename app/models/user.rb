@@ -105,6 +105,7 @@ class User < ActiveRecord::Base
     
     array_of_order_by = []
     array_of_order_by += orderby
+    array_of_order_by << "created_at DESC"
     order_by_str = self.to_conditions_str(array_of_order_by, ", ")
     order_by_str = "ORDER BY #{order_by_str}" unless order_by_str.blank?
     
@@ -176,7 +177,7 @@ class User < ActiveRecord::Base
   end
 
   def self.homepage_description
-    "home page"
+    "dashboard page"
   end
   
   # like us, uk, il

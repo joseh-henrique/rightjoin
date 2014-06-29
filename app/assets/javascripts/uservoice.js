@@ -27,9 +27,5 @@ function init_uservoice_contact(uv_contact_element_selector, large_size){
 	if (contact_elem.length > 0) {
 		UserVoice.push(['addTrigger',uv_contact_element_selector, params]);
 	}
-}	
-
-init_uservoice_contact('#uservoice-contact'); /* TODO Call this only on pages with #uservoice-contact element is used: Where  uservoice_contact_link is called.*/
-		
-
+}
  

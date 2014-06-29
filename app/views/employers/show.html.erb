@@ -166,7 +166,7 @@
 	
 	<div id="invite-team-member-dialog" title="Invite a team member">
 		<% 	  
-		subject = "For your approval: Talking with potential future colleagues"
+		subject = "Talking with potential future colleagues"
 		body_text = "Hi,\n\n" <<
 			"Smart developers are pinging us and asking to talk about working at  #{current_user.company_name}.\n\n" <<
 			"It's a great way for us to connect with potential future colleagues.\n\n" << 
@@ -189,14 +189,14 @@
 		</div>
 		<div class="form-row">
 			<div class="form-cell">
-				<%= submit_tag "Open in email client...", :id=>"launch-email-client-button", :class=>"standard-button" %>
+				<%= submit_tag "Open in email client...", :id => "launch-email-client-button", :class=>"launch-email-client standard-button" %>
 			</div>
 		</div>
 	</div>
 	
 	<div class="section-box team-box clearfix">
 		<% if ambassadors.blank? %>
-			Nobody here yet. <%=link_to("Empower", "#", :id => "invite-team-member-link") %> your development team to connect to their peers and bring them onboard. 
+			Nobody here yet. Send an invitation to team members, above. 
 		<% else %>
 			<% ambassadors.each_with_index do |ambassador, i| %>
 				<div class="ambassador-admin-box closable">
@@ -229,8 +229,11 @@
 		return false;
 	});
 	
-	$("#launch-email-client-button").click(function(){
+	$(".launch-email-client").click(function(e){
 		launchMailTo("[recipient]", $("#subject").val(), $("#body").html());
+		e.stopPropagation();
+        e.preventDefault();
+        event.cancelBubble = true;
 		return false;
 	});
 </script>

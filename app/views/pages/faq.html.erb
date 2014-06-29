@@ -37,7 +37,7 @@
 				</p>
 				<p>
 					When you &ldquo;contact&rdquo; companies through their <%= Constants::SHORT_SITENAME%> postings, you don't apply for a job.
-					You ping them with a clickor two and let them know that they can contact you for a chat.
+					You ping them with a click or two and let them know that they can contact you for a chat.
 					If they want to talk,  a <em>software developer</em>, not a recruiter, gets in touch.
 				</p>
 			</div>
@@ -50,7 +50,7 @@
 			<h3 class="standard-section-header collapsed">What if I'm not working in software development, or not in a supported country?</h3>
 			<div class="accordion-panel">
 				<p>
-					We're targeting software engineers in <%= country_links_as_sentence%> for now.
+					We're targeting software engineers in <%= country_links_as_sentence(:path => method(:jobs_path))%> for now.
 				</p>
 				<p>
 					But we're planning to expand, and we've been adding countries as requests come in. We may even branch out
@@ -58,15 +58,15 @@
 				</p>
 				<p>
 					Please leave a request at
-					<%= uservoice_contact_link("our online feedback page")%>.
+					<%= uservoice_contact_link("our online feedback form")%>.
 					We'll add support for the professions and areas that get the most requests.
 			</div>
 
 			<h3 class="standard-section-header collapsed">I hate recruiter spam!</h3>
 			<div class="accordion-panel">
 				So do we. Our mission is to disrupt, destroy, and replace the spamozoidal recruiter industry which we know today.
-				You don't need to sign up to ping employers, but if you do, they'll be able to ping you, and we'll also send you a 
-				small selection  of good opportunities. And you can instantly unsubscribe whenever you want.
+				You can sign up to let employers see your anonymous profile and ping you if they can meet your requirements.  
+				We will also persinally recommend a small selection  of good opportunities. And you can instantly unsubscribe whenever you want.
 
 			</div>
 
@@ -77,7 +77,6 @@
 					like you're <em>cheating</em> on your boss.
 					That's ridiculous.
 					It's completely ethical to switch jobs.
-					But still, the reality is that  can't let them know.
 				</p>
 
 				<p>

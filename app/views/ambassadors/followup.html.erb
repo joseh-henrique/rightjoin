@@ -22,10 +22,10 @@
 						<div class="infointerview-outer-box">
 							<div class="intro">
 								<% if infointerview.referred_by.nil? %>
-									<em><%=infointerview.first_name%></em> pinged the company regarding the <em><%=infointerview.job.position_name%></em> postion.
+									<em><%=infointerview.first_name%></em> pinged the company regarding the <em><%=infointerview.job.position_name%></em> position.
 								<% else %>
 									<% amb_name = infointerview.referred_by == @ambassador.id ? "you" : "#{infointerview.referred_by_ambassador.first_name} #{infointerview.referred_by_ambassador.last_name}" %>
-									<em><%=infointerview.first_name%></em> was referred by <em><%=amb_name%></em> and might be interested in the <em><%=infointerview.job.position_name%></em> postion.
+									<em><%=infointerview.first_name%></em> was referred by <em><%=amb_name%></em> and might be interested in the <em><%=infointerview.job.position_name%></em> position.
 								<% end %>
 							</div>
 							<%=link_to("Close", close_followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, :followup_id => lead.id), method: :post, :class => "close", :title => "Mark as completed and remove from the list")%>	

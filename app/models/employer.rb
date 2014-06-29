@@ -3,11 +3,10 @@ class Employer < ActiveRecord::Base
   
   serialize :join_us_widget_params_map, JSON
   
-  attr_accessible  :li_url, :company_name
+  attr_accessible  :company_name
   
   validates :first_name, :presence=> true
   validates :last_name, :presence=> true  
-  validates_format_of :li_url, :with => URI::regexp(%w(http https)), :allow_blank => true
   validates :company_name, :presence => true
 
   has_many :jobs, :dependent => :destroy
@@ -121,7 +120,7 @@ class Employer < ActiveRecord::Base
     "--------- Employer (id:#{self.id}) ---------",
     "** Created at #{self.created_at} (#{((Time.now - self.created_at)/(3600 * 24)).to_i} days ago), status = #{self.status}, tier = #{self.current_plan.name}, sample = #{self.sample}",
     "** #{self.company_name}",
-    "** #{self.first_name} #{self.last_name} #{self.email} #{self.li_url}",
+    "** #{self.first_name} #{self.last_name} #{self.email}",
     "** Job ids: #{jobs_str}"
     ]
     parts.join("\n").concat("\n")

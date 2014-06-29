@@ -15,7 +15,7 @@
 	
 	<% if current_user.verified? %>
 		<h3 class="deactivate-box">
-			Your account is active. Not interested anymore? <%=link_to "Click here", set_status_user_path(current_user, :status => UserConstants::DEACTIVATED), method: :post %> to deactivate your account. (You can reactivate later.)
+			Your account is active. Want to take a break? You can <%=link_to "deactivate", set_status_user_path(current_user, :status => UserConstants::DEACTIVATED), method: :post %>  your account. (You can always reactivate.)
 		</h3>
 	<% end %>
 </div>

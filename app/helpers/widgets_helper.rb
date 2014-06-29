@@ -1,3 +1,4 @@
+#TODO Delete this and associated code
 module WidgetsHelper
   AMBASSADOR_LIMIT = 50
   def get_summary_tuples

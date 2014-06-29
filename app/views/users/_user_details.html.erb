@@ -41,7 +41,7 @@ end
 	<% end %>
 	
 	<% requirements = user_details.user_job_qualifiers.collect {|req| req.job_qualifier_tag.name} %>
-	<% requirements.push("at least #{Utils::format_currency(user_details.wanted_salary, user_details.locale)}") if user_details.wanted_salary > 0 && !exclude.include?(:salary) %>
+	<% requirements.push("at least #{Utils::html_unescape Utils::format_currency(user_details.wanted_salary, user_details.locale)}") if user_details.wanted_salary > 0 && !exclude.include?(:salary) %>
 	
 	<% unless requirements.empty? %>
 		<div class="requirements-box attr-box">

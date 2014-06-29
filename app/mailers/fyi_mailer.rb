@@ -32,8 +32,8 @@ class FyiMailer < ActionMailer::Base
     @msg2_h = "Enter your temporary password <strong>#{ERB::Util.html_escape(passwd)}</strong> at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> to activate your profile#{msg2_tail}."
     @msg2_t = "Enter your temporary password\n\t\t#{passwd}\nat #{url} to activate your profile#{msg2_tail}."
 
-	  @msg3_h = "You can also sign in at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> with your email address <em>#{ERB::Util.html_escape(to_email)}</em> and your password <strong>#{ERB::Util.html_escape(passwd)}</strong>"
-    @msg3_t = "You can also sign in at #{url}\nwith your email address #{to_email} and your password #{passwd}\n\n"
+	  @msg3_h = "You can also sign in at the #{Constants::SHORT_SITENAME} <a href=\"#{url}\">#{pg_name}</a> to activate. "
+    @msg3_t = "You can also sign in at #{url} to activate.\n\n"
 
     html_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:html], :handlers => [:erb], :layout => false
     text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
@@ -94,9 +94,9 @@ class FyiMailer < ActionMailer::Base
     
 
     # [TODO] use different text if the candidate is referred by this ambassador - followup.infointerview.referred_by == followup.ambassador.id
-    @msg2_h = "Email them back, maybe talk with them, see if you'd like to have #{ERB::Util.html_escape(infint.full_candidate_name)} as a colleague. " <<
+    @msg2_h = "Follow up with an email, talk on the phone if you'd like, check if you might want to have #{ERB::Util.html_escape(infint.full_candidate_name)} as a colleague. " <<
              "You'll see more details and contact info on the <a href='#{ambassadors_signin_url(infint.employer.reference_num, :locale => nil)}'>team page</a>."
-    @msg2_t = "Email them back, maybe talk with them, see  if you'd like to have #{infint.full_candidate_name} as a colleague. " << 
+    @msg2_t = "Follow up with an email, talk on the phone if you'd like, check if you might want to have #{infint.full_candidate_name} as a colleague. " << 
              "You'll see more details and contact info on the team page."
 
     msg3 = "Questions? Just contact #{amb.employer.first_name} #{amb.employer.last_name} at #{amb.employer.email}"
@@ -237,13 +237,13 @@ class FyiMailer < ActionMailer::Base
           @msg2_t << reopen.gsub("<br>","\n") 
       end
       
-      # Asking them to invite candidates is a distraction 
-      # # counters 
-      # total_invites_counter = all_jobs.inject(0){|sum,job| sum + job.invites_counter} 
-      # counters_s =""
-      # if all_jobs.any? && total_invites_counter == 0
-        # counters_s<< "You have not invited any candidates yet. Go ahead and invite some to apply to your jobs or speak to your employees.<br>"
-      # end
+      #Asking them to invite candidates is a distraction 
+      # counters 
+      total_invites_counter = all_jobs.inject(0){|sum,job| sum + job.invites_counter} 
+      counters_s =""
+      if all_jobs.any? && total_invites_counter == 0
+        counters_s<< "You can ping candidates on the Stealth Candidates board, and ask them to be in touch.<br>"
+      end
       
       if employer.ambassadors.empty?
         counters_s << "<br> Invite team members to share open positions with their social networks.<br>"  
@@ -267,7 +267,7 @@ class FyiMailer < ActionMailer::Base
       @msg3_h = "#{msg3_head} <a href='#{employer_url(employer, :locale => all_jobs.first.country_code)}'>dashboard</a>.<br><br>"
       @msg3_t = "#{msg3_head} dashboard: #{employer_url(employer, :locale => all_jobs.first.country_code)}\n\n"
       
-      reply_s = "#{PLEASE_REPLY}. Or call us at #{Utils.phone_with_pfx}."
+      reply_s = "#{PLEASE_REPLY} Or call us at #{Utils.phone_with_pfx}."
       @msg3_h << reply_s
       @msg3_t << reply_s  
       
@@ -341,17 +341,17 @@ class FyiMailer < ActionMailer::Base
       please_add_template =  "Please go ahead and add some %s. Feel free to shoot me an email if you have any questions on how to do that.<br><br>"
       to_add = []
       to_add << "job postings"  if employer.jobs.blank?
-      to_add << "employees to represent you to their colleagues" if employer.ambassadors.blank?   
+      to_add << "team members" if employer.ambassadors.blank?   
       please_add_s = please_add_template % to_add.to_sentence
       content << please_add_s
     elsif  
       content<< "I'm writing to tell you what comes next.<br><br>"
     end
      
-    content << "Ask your employees to share our ad using the tools at #{Constants::SHORT_SITENAME}: We've designed a posting that they'll want to share, one that puts them in the center.<br><br>" <<
-        "Add the geotargeted tab to the #{employer.company_name} site for software developers who are interested in working for you.<br><br>" <<
+    content << "We've designed a posting that your team will  want to share, one that puts them in the center. You can point your team members at the social sharing tools, designed for peer-to-peer recruiting<br><br>" <<
+        "You can add the geotargeted \"Join Us\" tab to the #{employer.company_name} site for software developers who are curious about your company.<br><br>" <<
         "You can track progress on your profile page, and we'll send you brief weekly summaries. " <<
-        "In the meantime, don't hesitate to contact me--I want to know how #{Constants::SHORT_SITENAME} can help you reach out to  more strong developers.<br>"
+        "In the meantime, don't hesitate to contact me--I want to know how #{Constants::SHORT_SITENAME} can help you reach out to strong developers.<br>"
 
     signature = ""+CRM_SIGNATURE
 

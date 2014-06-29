@@ -49,7 +49,7 @@ class EmployersController < ApplicationController
   def show
     @current_page_info = PageInfo::EMPLOYER_HOME
     if params[:need_approvals]
-      flash_now_message(:notice, "Please review the candidate pings below, and pass some on to your employees for a chat.")  
+      flash_now_message(:notice, "Please review the candidate pings below, and pass them on to your team members for a chat.")  
     end
   end
   
@@ -79,7 +79,7 @@ class EmployersController < ApplicationController
     
     if current_user.pending?
       country_code = I18n.t(:country_code, I18n.locale) 
-      url = employer_welcome_url(:locale => country_code)
+      url = employer_welcome_url(:locale => country_code) #TODO This should be the employer dashbaord URL. But this welcome URL works 
       new_msg = FyiMailer.create_welcome_message(current_user.email, current_user.password, I18n.locale, Employer.reason_to_verify, Employer.homepage_description, url, :employer)
       Utils.deliver(new_msg)
     else
@@ -104,7 +104,7 @@ class EmployersController < ApplicationController
     render 'we_are_hiring/widget', :layout => "widget_layout" 
   rescue Exception => e
     logger.error e
-    render text: "Error, cannot set up widget."  
+    render 'we_are_hiring/error', :layout => false, :locals => {:message => "The posting could not be loaded."}
   end
   
   def ping
@@ -116,23 +116,23 @@ class EmployersController < ApplicationController
       @infointerview = Infointerview.new
       @infointerview.job_id = @job.id
       @infointerview.auth = auth
-
+      
+      @infointerview.email = auth.email
+      @infointerview.first_name = auth.first_name
+      @infointerview.last_name = auth.last_name
+      
       unless @candidate.nil?
-        @infointerview.email = @candidate.email
-        @infointerview.first_name = @candidate.first_name
-        @infointerview.last_name = @candidate.last_name
+        @infointerview.email ||= @candidate.email
+        @infointerview.first_name ||= @candidate.first_name
+        @infointerview.last_name ||= @candidate.last_name
         @infointerview.user_id = @candidate.id
       end
-      
-      @infointerview.email ||= auth.email
-      @infointerview.first_name ||= auth.first_name
-      @infointerview.last_name ||= auth.last_name
     end
     
     render 'we_are_hiring/widget', :layout => "widget_layout" 
   rescue Exception => e
     logger.error e
-    render text: "Error, cannot set up widget."      
+    render 'we_are_hiring/error', :layout => false, :locals => {:message => "The posting could not be loaded."}
   end
   
   # process the command to auto-reset pw  
@@ -234,9 +234,13 @@ class EmployersController < ApplicationController
       else
         @other_jobs.concat employer.active_jobs.select{|j| j.id != @job.id}
       end
+      
+      if @job.nil?
+        render 'we_are_hiring/error', :layout => false, :locals => {:message => "The position is not active."}
+      end
     rescue Exception => e
       logger.error e
-      render text: "Error, cannot set up widget."  
+      render 'we_are_hiring/error', :layout => false, :locals => {:message => "The posting could not be loaded."}
     end  
   
     def correct_user

@@ -53,14 +53,17 @@
 			<% else %>
 				<script  type="text/javascript">
 					var networks_js = {};
-					<% networks = {}
+					<% 
+					networks = {}
 					share_channels = Constants::SHARE_CHANNELS
-					share_channels << Constants::SOCIAL_NETWORK_SHARE_URL
 					share_channels.each_with_index do |network, i|
 						networks[network] = "#{i}.#{@ambassador.id.to_s(16)}.#{((Time.now - Constants::FYI_EPOCH) / 1.hours).to_i.to_s(16)}.#{@job.id.to_s(16)}"
 					%>
 						networks_js["<%=network%>"] = "<%=networks[network]%>";
 					<% end %>
+					
+					<% networks[Constants::SOCIAL_NETWORK_SHARE_URL] = networks[Constants::SOCIAL_NETWORK_EMAIL] %>
+					networks_js["<%=Constants::SOCIAL_NETWORK_SHARE_URL%>"] = "<%=networks[Constants::SOCIAL_NETWORK_EMAIL]%>";
 				</script>
 			
 				<h1>Share the ad and get yourself some good colleagues.</h1>
@@ -132,15 +135,20 @@
 										<div class="div-tooltip" >Copied</div>	
 									</a>	 		
 									<script>
-										 	$(document).ready(function(){
-										 		var text_callback = function(){
-										 			//this is a constant function
-						 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
-										 			var ret= unescapeHTML("<%= msg_txt%>");
-					 						 		return ret;
-										 		};
-				 	 							zeroclipboard_init("#copy-button" , text_callback); 
-											});
+								 	$(document).ready(function(){
+								 		var text_callback = function(){
+								 			<%# copy to clipboard is counted as email%>
+								 			var evt = { "data": { "service": "<%=Constants::SOCIAL_NETWORK_EMAIL%>" }};
+											onShare(evt);
+								 			
+								 			//this is a constant function
+				 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+								 			var ret= unescapeHTML("<%= msg_txt%>");
+			 						 		
+			 						 		return ret;
+								 		};
+		 	 							zeroclipboard_init("#copy-button" , text_callback); 
+									});
 									</script>
 								</div>
 		 					<%end%>

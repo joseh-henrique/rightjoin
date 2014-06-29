@@ -1,127 +1,171 @@
-<div class="inner">
-	<%= render :partial => 'layouts/flash_box' %>
+<div class="full-width-stripe value-prop-box">
+	<div class="content">
+		<h1>Peer-to-peer recruiting at its best</h1>
+		<h2>Connect the development team directly to their respected peers</h2>
+		
+		<div class="value-prop-box-bullets">
+			<div class="bullet-box beautiful-ads">
+				<h3>Beautiful ads</h3>
+				<span>Attract qualified developers with the best job postings in the world.</span>
+			</div>
+			<div class="bullet-box show-developers">
+				<h3>Show developers why they want to work for you</h3>
+				<span>Leverage your recruiting processes for better employer branding.</span>
+			</div>
+			<div class="bullet-box get-pinged">
+				<h3>Get pinged by pros</h3>
+				</span>Get the best candidates into a conversation with you.</span>
+			</div>						
+		</div>
+	</div>
 </div>
 
-<div class="content">
-	<p class="headline jumbo">
-		Your own employees are the best reason to work for you.
-	</p>
-	<p class="normal-par">
-		The best sign of a good company is the people who work there.  
-		  Add a <em>&ldquo;Come Work With Us&rdquo;</em>  widget to your site and show software developers 
-		  why they want to come join your team.  
-		  
-	</p>
+<div class="welcome-strip get-started-box">
+	<h1>Bringing innovation into recruiting</h1>
+	<h2>Get it all in once place</h2>
 	
-	<br>
-
-	<div id="hire-now-btn-box" class="clearfix employer-content-box">
-		<div class="float-left" style="width:230px;">
-			<%= link_to "Start Free Trial", employer_get_started_path, :class=>"hire-now-button" %>
+	<ul>
+		<li class="ads">
+			<div class="badge"></div>
+			<h3>Attractive ads</h3>
+			<p>Draw in developers with a beautiful job posting that speaks to their interests.</p>
+		</li>
+		<li class="ping">
+			<div class="badge"></div>
+			<h3>"Ping" button</h3>
+			<p>Let experienced, employed engineers ping you with a click and say that they want to talk.</p>
+		</li>
+		<li class="referrals">
+			<div class="badge"></div>
+			<h3>More referrals</h3>
+			<p>Empower your development team to connect to their peers and recruit them.</p>
+		</li>			
+	</ul>
+	
+	<ul>
+		<li class="tab">
+			<div class="badge"></div>
+			<h3>Tab for your site</h3>
+			<p>Turn  developers visiting your site into candidates. Geotargeted at the areas where you're hiring.</p>
+		</li>
+		<li class="board">
+			<div class="badge"></div>
+			<h3><%=Constants::SHORT_SITENAME%> job board</h3>
+			<p>We show off your jobs and the  special attractions that you can offer to skilled professionals.</p>
+		</li>
+		<li class="stealth">
+			<div class="badge"></div>
+			<h3>Stealth candidates board</h3>
+			<p>Find employed software engineers interested in an offer, seeing  their expectations.</p>
+		</li>			
+	</ul>
+	
+	<div class="button-box">
+		<%=link_to "Get started", employer_get_started_path, :class => "standard-button"%>
+		<div class="no-cost-box">
+			Try it at <em>no cost</em>.<br>
+			All premium plans come with <em>two weeks free trial</em>.<br> 
+			<em>No credit card needed</em>.			
 		</div>
-		<p class="normal-par">
-			Try it for free. No credit card needed.
-			Or <%= email_contact_link("contact us")%> for a live demo.
- 
-		</p>
 	</div>
+</div>
 
-	<br>
+<div class="welcome-strip features-box">
+	<div class="content">
+		<h1>Smarter recruiting</h1>
+		<h2>Make stealth candidates want to talk with you.</h2>
+		
+		<div class="row clearfix">
+			<div class="feature widget">
+				<div class="screenshot"></div>
+				<div class="feature-name">Ads designed to attract</div>
+				<p>
+					No need to hire a designer. You get an ad with a custom color theme the moment you fill out a short form. 
+					We've given it  exactly the elements that developers tell us they want to see. 
+				</p>
+			</div>
+			<div class="feature social">
+				<div class="screenshot"></div>
+				<div class="feature-name">Social recruiting centered on your employee</div>
+				<p>
+					The social sharing tools make your team members want to reach out to their fellow professionals.
+					The message is no longer &ldquo;my boss is hiring&rdquo; but rather &ldquo;Come work with me&rdquo;.
+				</p>
+			</div>
+		</div>
 	
-	<div id="how-it-works-box">
-		<p class="headline jumbo">
-			How it works
-		</p>
+			<div class="row clearfix">
+				<div class="feature tabs">
+				<div class="screenshot"></div>
+				<div class="feature-name">Tab for your corporate site.</div>
+				<p>
+					When developers start considering your company, they always visit your site. Catch their
+					attention with the unobtrusive tab which only appears in regions with job openings.   
+				</p>
+			</div>			
+			<div class="feature tracking">
+				<div class="screenshot"></div>
+				<div class="feature-name">Campaign dashboard</div>
+				<p>
+					Get a complete view of the numbers that matter to you: The number of leads per job, from each employee, 
+					from Facebook, LinkedIn, Google+ or Twitter; and more key metrics. 
+				</p>
+			</div>			
+		</div>
+		<!--
+		<div class="row clearfix">
+			<div class="feature reverse">
+				<div class="screenshot"></div>
+				<div class="feature-name">Peer-to-peer recruiting that works</div>
+				<p>
+					Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+					Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</p>
+			</div>
+			<div class="feature board">
+				<div class="screenshot"></div>
+				<div class="feature-name">Peer-to-peer recruiting that works</div>
+				<p>
+					Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+					Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</p>
+			</div>			
+		</div>	
+		-->
+	</div>	
+</div>
 
-		<p class="normal-par">
-			<%= Constants::SHORT_SITENAME%> expands the reach of your company's site and employees
-			to attract  top developers.
-		</p>
-
-		<ul id="how-it-works-list">
-			<li>
-				<div class="employer-content-box">
-					<p class="headline step-title">
-						Boost social recruiting  with a &ldquo;Come Work With Us&rdquo; widget on your site. 
-					</p>
-					<div class="float-right" id="widget-screenshot"></div>
-		 
-					<p class="normal-par">
-						When developers visit your site, catch their interest with an ad designed to appeal to them.
-					 
-					</p>
-				 
-					<p class="normal-par">
-					 Give them the chance to  contact your chosen developers and find out from their peers what your company is really like.
-					 (All incoming contacts are  screened.)
-	
-					</p>
-					<p class="normal-par">
-					In addition, we make it easy for your employees to share this same ad, inviting their professional colleagues to contact them. 
-					</p>
-					
-					 <p class="normal-par">
-					 	
-						It's <em>employee-centered recruiting</em>, with your own developers as the main attraction. 
-					</p>
-					<p class="normal-par">
-					
-					</p>
-				</div>
-			</li>
-
-			<li>
-				<div class="employer-content-box">
-					<div class="float-left" id="board-screenshot"></div>
-								
-					<p class="headline step-title">
-						Show why your job position is exceptional
-					</p>
-								
-					<p class="normal-par">
-						We've figured out the extras that attract strong developers to a job.
-						
-					</p>
-					<p class="normal-par">
-						It's not just compensation: That's table stakes.
-						Developers want meaning in their work, cutting-edge technologies, an enjoyable workspace,
-						the chance to contribute to open-source, and more. 
-					</p>
-					 
-				</div>
-			</li>
-
-			<li>
-				<div class="employer-content-box">
-					<div class="float-right" id="candidates-screenshot"></div>										
-					
-					<p class="headline step-title">
-						Invite <%= Constants::SHORT_SITENAME%> members to apply
-					</p>
-										
-					<p class="normal-par">
-						Software developers at <%= Constants::SHORT_SITENAME%> are exactly
-						the <em>&ldquo;Stealth Candidatess&rdquo;</em> you're looking for.
-
-						They are comfortable, not looking, but when they join <%= Constants::SHORT_SITENAME%>, they're letting you know  that they're open to opportunities
-						that offer something exceptional.
-					</p>
-					<p class="normal-par">
-						You see their <em>expectations</em> upfront, so you can know whether you're likely to close a deal.
-					</p>
-					<p class="normal-par">
-						 Click a member profile to invite them to talk to your employees, or apply to your jobs.
-					</p>
-					<%# The following   lines just test the uservoice largesize contact widget feature%>
-					<div id='contact-for-demo'>Contact us for a demo</div>
-				 	<%= javascript_include_tag :application %>
-					<script>
-						$( document ).ready(function() {
-							init_uservoice_contact('#contact-for-demo',true);
-						});
-					</script>
-				</div>
-			</li>
+<div class="welcome-strip bells-whistles-box">
+	<div class="content">
+		<h1>Bells and whistles</h1>
+		
+		<ul class="clearfix"> 
+			<li>Social sharing tools for your team</li>
+			<li>Stand-out Twitter shares</li>			
+			<li>Geotarget your ads at developers</li>			
+			<li>Choose  look-and-feel for job ad  and tab</li>
+			<li>Track success on dashboard</li>			
+			<li>See candidate LinkedIn and GitHub profiles </li>
+			<li>Know candidate expectations upfront</li>
+			<li>Expert screening service</li>
+			<li>Post your ad on developer-oriented sites</li>
+			<li>Post your ad on leading job boards</li> 
 		</ul>
 	</div>
 </div>
+
+<div class="learn-more-box">
+	<div class="content">
+		<h1>Want to know more?</h1>
+		<div class="buttons-box">
+			<%=link_to "Compare plans and pricing", employer_get_started_path(:anchor => "plans-and-pricing"), :class => "standard-button"%>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<%= link_to "Contact us for a demo", "#", :class=>"standard-button", :id => "uservoice-contact" %>
+			<!--%= uservoice_contact_link "Contact us for a demo", "standard-button" %-->
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	init_uservoice_contact('#uservoice-contact', true);
+</script>

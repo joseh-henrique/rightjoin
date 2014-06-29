@@ -64,6 +64,7 @@ input[type=text], input[type=password], textarea, select {
   color: #7a5e60;
   width: 20em;
   background: white;
+  border: 1px solid #B37E74;
   
   &:focus {
     outline: #ff754d auto 5px;
@@ -72,6 +73,9 @@ input[type=text], input[type=password], textarea, select {
 
 select {
   line-height: 2em !important;
+  height: 2 !important;
+  padding-bottom: 0.25em;
+  padding-top: 0.25em;
 }
 
 label {

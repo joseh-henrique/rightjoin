@@ -317,7 +317,7 @@
 	    } else {
 		    var val_str = val.toString();
 		    var val_with_commas = addDelimitersToNumberString(val_str, "<%=I18n.t(:thousands_delimiter)%>");
-        	    var currency_unit = unescapeHTML( "<%=I18n.t(:currency_unit)%>");
+        	var currency_unit = unescapeHTML( "<%=I18n.t(:currency_unit)%>");
 	    	input_ctrl.html("At least " + currency_unit+ val_with_commas);
 	    	input_ctrl.parent().removeClass("undefined-salary");	   
 			input_ctrl.parent().addClass("onetag");
@@ -331,7 +331,7 @@
 			value: $("#wantedsalary").val(),
 			min: 0,
 			max: <%=max_salary%>,
-			step: 5000,
+			step: <%=I18n.t(:salary_step)%>,
 			slide: function( event, ui ) {
 				var val = ui.value;
 				$( "#wantedsalary" ).val(val);

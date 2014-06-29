@@ -12,11 +12,6 @@
 					<a class="field-tooltip" title="The name of your own organization (whether you are an employer or a recruiter)"></a>	
 					<%= text_field_tag :company_name, @employer.company_name, :maxlength=> 60, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr" %>
 				</div>
-				<div class="form-cell">
-					<%= label_tag(nil, raw("Email"), :class=>"mandatory") %><br>
-					<a class="field-tooltip" title="You will get a confirmation email for activating your profile."></a>			
-					<%= text_field_tag :email, @employer.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[email]] half-row-width input-attr" %>
-				</div>
 			</div>
 			
 			<div class="form-column">
@@ -25,10 +20,10 @@
 					<%= text_field_tag(:last_name, @employer.last_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr") %>
 				</div>
 				<div class="form-cell">
-					<%= label_tag(nil, "Your LinkedIn profile URL") %><br>
-					<a class="field-tooltip" title="Personalize your communication with the candidates."></a>
-					<%= text_field_tag(:li_url, @employer.li_url, :spellcheck =>false, :maxlength => 250, :class=>"validate[custom[linkedin], custom[url]] half-row-width input-attr") %>				
-				</div>
+					<%= label_tag(nil, raw("Email"), :class=>"mandatory") %><br>
+					<a class="field-tooltip" title="You will get a confirmation email for activating your profile."></a>			
+					<%= text_field_tag :email, @employer.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[email]] half-row-width input-attr" %>
+				</div>				
 			</div>
 		</div>
 	</div>	
@@ -63,7 +58,7 @@
 					<td class="feature-value">Unlimited</td>				
 				</tr>
 				<tr class="even">
-					<td class="feature-name">Peer-to-peer recruiting</td>
+					<td class="feature-name">Peer-to-peer recruiting tools</td>
 					<td class="feature-value">Unlimited</td>
 					<td class="feature-value">Unlimited</td>
 					<td class="feature-value">Unlimited</td>				
@@ -121,7 +116,6 @@
 
 <script type="text/javascript">
 	function doSubmitForm() {
-		createValidUrl($("#li_url"));
 		var res = $("form.new_employer, form.edit_employer").validationEngine('validate');
 		if (res) {
 			// prevent double submit

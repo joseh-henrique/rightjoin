@@ -27,11 +27,7 @@
 			<div class="right-col">
 				<%= label_tag(:contact_name, "Contact name") %>
 				<div class="user-attr-ro-box">
-					<% if job_details.employer.li_url.blank? %>
-						<%=job_details.employer.first_name %>&nbsp;<%=job_details.employer.last_name%>
-					<% else %>
-						<%=link_to "#{job_details.employer.first_name} #{job_details.employer.last_name}", job_details.employer.li_url, :class => "li-link", :target => "_fyi_popup"%>
-					<% end %>
+					<%=job_details.employer.first_name %>&nbsp;<%=job_details.employer.last_name%>
 				</div>
 			</div>
 		</div>	

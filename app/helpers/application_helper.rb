@@ -150,18 +150,18 @@ module ApplicationHelper
     "Your account is now verified. For maximum security, we recommend you change your password."
   end  
   
-  def  uservoice_contact_link(txt ="contact us")
+  def  uservoice_contact_link(txt ="contact us", classes = "")
       # First param is a fallback in case form does not work.
    extra_param_for_uv = %Q^id="uservoice-contact" data-uv-trigger^
-		contact_link(txt, extra_param_for_uv)
+		contact_link(txt, extra_param_for_uv, classes)
   end
    
-  def email_contact_link(txt ="contact us")
-     contact_link(txt, "")
+  def email_contact_link(txt ="contact us", classes = "")
+     contact_link(txt, "", classes)
   end
      
-  def contact_link(txt, extra_param_for_uv="")
-      %Q^<a href="mailto:#{Constants::CONTACT_EMAIL}"#{extra_param_for_uv}>#{txt}</a>^.html_safe
+  def contact_link(txt, extra_param_for_uv="", classes = "")
+      %Q^<a href="mailto:#{Constants::CONTACT_EMAIL}"#{extra_param_for_uv} class="#{classes}">#{txt}</a>^.html_safe
   end
   private :contact_link
   

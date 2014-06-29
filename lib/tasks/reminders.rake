@@ -107,17 +107,18 @@ namespace :cron do
   
   # send updates to ambassador about new contacts
   # Must set cron job to the time shown in Reminder.rb  (8 am Pacific)
-  task :update_ambassador_about_new_contact => :environment do
-    counter=0 
-    today_s =Time.now.utc.strftime("%A")#e.g. "Friday","Tuesday"
-    if Reminder::AMBASSADOR_SEND_DAYS.include?(today_s) 
-       Reminder.update_ambassador_about_new_contact do |infointerview|
-          new_msg = FyiMailer.update_ambassador_about_new_contact(infointerview)
-          Utils.deliver new_msg
-          counter += 1
-      end
-      
-      puts "Emails sent to ambassadors: #{counter}."
-    end
-  end
+    # Not needed because of immediate mailing
+  # task :update_ambassador_about_new_contact => :environment do
+    # counter=0 
+    # today_s =Time.now.utc.strftime("%A")#e.g. "Friday","Tuesday"
+    # if Reminder::AMBASSADOR_SEND_DAYS.include?(today_s) 
+       # Reminder.update_ambassador_about_new_contact do |infointerview|
+          # new_msg = FyiMailer.update_ambassador_about_new_contact(infointerview)
+          # Utils.deliver new_msg
+          # counter += 1
+      # end
+#       
+      # puts "Emails sent to ambassadors: #{counter}."
+    # end
+  # end
 end

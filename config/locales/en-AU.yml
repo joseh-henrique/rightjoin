@@ -12,10 +12,10 @@ en-AU:
   longitude : 133.77513599999997
   use_province: "true"
   max_salary: "160000"
-  salary_step: "20000"
+  salary_step: "5000"
   monthly_tier_1_price: "0"
-  monthly_tier_2_price: "199"
-  monthly_tier_3_price: "499"
+  monthly_tier_2_price: "79"
+  monthly_tier_3_price: "199"
   currency_unit: "A$"
   thousands_delimiter: ","
   intl_phone_pfx: "+1-"

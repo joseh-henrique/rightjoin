@@ -56,9 +56,10 @@
 
 	<%# Twitter cards: https://dev.twitter.com/docs/cards/validation/validator %>
 	<meta name="twitter:card" content="summary">
-	<meta name="twitter:title" content="<%=title_for_metas%>"><%#Truncated to 70 chars%>
-	<meta name="twitter:description" content="<%=desc_for_metas%>"><%#Truncated to 200 chars>
-	<meta name="twitter:site" content="#{Constants::TWITTER_USER}" ><%# @username of website	 %>
+	<meta name="twitter:title" content="<%="Looking for a #{@job.position.name} at #{@job.company_name}"%>">    <%#Truncated to 70 chars. Including title, this can be 75 chars for us. Let Twitter truncate if needed.%>
+	
+	<meta name="twitter:description" content="<%=@job.description %>"><%#Truncated to 200 chars. This can be 318 chars for us. Let Twitter truncate if needed.%>
+	<meta name="twitter:site" content="#{Constants::TWITTER_USER}" ><%# @username of website %>
 	<meta name="twitter:site:id" content="#{Constants::TWITTER_USER}" ><%#   Same as twitter:site, but the user's Twitter ID  %>
     <%# Optional twitter:creator, @username of content creator	 %>
  	<%# Optional twitter:creator:id, Twitter user ID of content creator %>
@@ -76,284 +77,280 @@
 <%=link_to Constants::SHORT_SITENAME, root_url, :id=>"rightjoin-label", :target => "_blank"%>
 
 <div id="we-are-hiring-widget-box" class="inner animation-common fadeIn">
-	<% unless @job.nil? %>	
-		<div id="submit-success" style="display:none !important;">
-			<div class="submit-results">
-				<div class="message success">Thanks. We'll ping <%= @job.company_name %> for you.</div> 
-				<div class="submit-success-icon animation-common"></div>				
-			</div>
+	<div id="submit-success" style="display:none !important;">
+		<div class="submit-results">
+			<div class="message success">Thanks. We'll ping <%= @job.company_name %> for you.</div> 
+			<div class="submit-success-icon animation-common"></div>				
 		</div>
-		
-		<div id="submit-error"  style="display:none !important;">
-			<div class="submit-results">
-				<div class="message failure"><%=Constants::ERROR_FLASH%></div>
-			</div>
+	</div>
+	
+	<div id="submit-error"  style="display:none !important;">
+		<div class="submit-results">
+			<div class="message failure"><%=Constants::ERROR_FLASH%></div>
 		</div>
-		
-		<div id="tile-pool" style="display:none !important;">
-			<%#boards%>
-			<%@job.active_boards.each do |board| %>
-				<div id="contel-board-<%=board.id%>" class="for-blurb">
-					<%= image_tag(asset_path("widget/features/#{board.name}-56x56.png"), :class => "icon") %>	
-					<div class="title">
-						<%#Utils.html_unescape  in next line would  support HTML entitites in our board tags%>
-						<%=board.tag%> 
-					</div>
-				</div>
-			<%end%>	
-		 
-			<%fixed_texts = ["talk to your fellow developers", "click RightJoin, GitHub or LinkedIn buttons to send a ping"]%> 
-			<% fixed_texts.each_with_index do |label, i| %>
-				<div id="fixed-text<%=i%>" class="for-blurb">
-					<div class="title">
-						<%=label%>
-					</div>
-				</div>
-			<%end%>
-			
-			<%#ask about%>
-			<%ask_about = @job.benefits%>
-			<% ask_about.each_with_index do |label, i| %>
-				<div id="contel-ask-about-<%=i%>" class="for-blurb">
-					<div class="title">
-						<%=label%>
-					</div>
-				</div>
-			<%end%>
-			
-			<%#work with%>
-			<%#limiting to 50 insiders, yes, I'm optimistic %>
-			<% @job.employer.ambassadors.only_active.limit(WidgetsHelper::AMBASSADOR_LIMIT).each_with_index do |ambassador, i| %>
-				<div id="contel-work-with-<%=ambassador.id%>" class="for-avatar">				
-					<% resource, link = ambassador.profile_links_map.first %>
-					<% tt_title = ERB::Util.html_escape  "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}" %>
-					<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :id=> "avatar-link-#{ambassador.id}",  :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
-					 <script>$("#<%="avatar-link-#{ambassador.id}" %>").attr('title', "<%=tt_title%>");</script> 
-				</div>
-			<% end %>
-			
-			<%# photos%>
-			<% @job.get_photos.each_with_index do |photo, i| %>
-				<div id="contel-photo-<%=photo.id%>" class="for-photo">				
-					<%= image_tag(photo.image.standard.url, class: "photo-img") %>
-					<% unless photo.title.blank? %>
-						<div class="title"><%=photo.title%></div>
-					<% end %>
-					<div class="clickable-indicator"></div>
-				</div>
-			<% end %>
-						
-		</div>
-		
-		<%# ==== row 1 ====== %>
-		<div class="tile-row clearfix">
-			<div class="tile double-len cell-details">
-				<div id="job-details-box">
-				    <div class="position">
-				    	<%=@job.position.name%>
-				    </div>
-					<div class="location"><%=raw @job.all_location_parts.map{|loc| h(loc)}.join("<span class='separator'> or </span>")%></div>
-					
-					<div class="company-box">
-						<% unless @job.logo.nil? %>
-							<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
-						<% end %>
-						<span class="company-name"><%=@job.company_name%></span>
-					</div>
+	</div>
+	
+	<div id="tile-pool" style="display:none !important;">
+		<%#boards%>
+		<%@job.active_boards.each do |board| %>
+			<div id="contel-board-<%=board.id%>" class="for-blurb">
+				<%= image_tag(asset_path("widget/features/#{board.name}-56x56.png"), :class => "icon") %>	
+				<div class="title">
+					<%#Utils.html_unescape  in next line would  support HTML entitites in our board tags%>
+					<%=board.tag%> 
 				</div>
 			</div>
-			
-			<% if @job.employer.ambassadors.only_active.any? %>
-				<div id="work-with-box" class="tile cell-team bg-style1 clearfix">
-					<div id="referer-box" class="four-avatars-box clearfix">
-						<% for i in 1..4 do %>
-							<div class="swappable avatar avatar-<%=i%>">
-								<%= image_tag(asset_path('shared/no-avatar-semi-transparent-56x56.png'), class: "no-avatar-img") %>
-							</div>
-						<% end %>
-					</div>
-					
-					<div class="four-avatars-box clearfix">
-						<% for i in 5..8 do %>
-							<div class="swappable avatar avatar-<%=i%>">
-								<%= image_tag(asset_path('shared/no-avatar-semi-transparent-56x56.png'), class: "no-avatar-img") %>
-							</div>
-						<% end %>
-					</div>				
-					<div class="overlay">
-						<div class="title">come work with us</div>
-					</div>
+		<%end%>	
+	 
+		<%fixed_texts = ["talk to your fellow developers", "click RightJoin, GitHub or LinkedIn buttons to send a ping"]%> 
+		<% fixed_texts.each_with_index do |label, i| %>
+			<div id="fixed-text<%=i%>" class="for-blurb">
+				<div class="title">
+					<%=label%>
 				</div>
-			<% else %>
-				<div class="tile swappable blurb cell-13 bg-style1"></div>
-			<% end %>
-			
-			<div class="tile swappable blurb cell-14 bg-style2"></div>
-		</div>
+			</div>
+		<%end%>
 		
-		<%# ==== row 2 ====== %>
-		<div class="tile-row clearfix">
-			<div class="tile swappable blurb cell-21 bg-style3"></div>
-			
-			<div id="description-box" class="tile double-len cell-description bg-style4">
-				<div class="description">
-					<%= Utils.truncated_plaintext(@job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
+		<%#ask about%>
+		<%ask_about = @job.benefits%>
+		<% ask_about.each_with_index do |label, i| %>
+			<div id="contel-ask-about-<%=i%>" class="for-blurb">
+				<div class="title">
+					<%=label%>
 				</div>
-				
-				<% tags = @job.tech_stack_list.split(",") %>
-				<% unless tags.blank? %>
-					<div class="tags-box">
-						<% tags.each do |tag| %>
-							<span><%=tag.strip%></span>
-						<% end %>
-					</div>
-				<%end%>
-				
+			</div>
+		<%end%>
+		
+		<%#work with%>
+		<%#limiting to 50 insiders, yes, I'm optimistic %>
+		<% @job.employer.ambassadors.only_active.limit(WidgetsHelper::AMBASSADOR_LIMIT).each_with_index do |ambassador, i| %>
+			<div id="contel-work-with-<%=ambassador.id%>" class="for-avatar">				
+				<% resource, link = ambassador.profile_links_map.first %>
+				<% tt_title = ERB::Util.html_escape  "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}" %>
+				<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :id=> "avatar-link-#{ambassador.id}",  :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
+				 <script>$("#<%="avatar-link-#{ambassador.id}" %>").attr('title', "<%=tt_title%>");</script> 
+			</div>
+		<% end %>
+		
+		<%# photos%>
+		<% @job.get_photos.each_with_index do |photo, i| %>
+			<div id="contel-photo-<%=photo.id%>" class="for-photo">				
+				<%= image_tag(photo.image.standard.url, class: "photo-img") %>
+				<% unless photo.title.blank? %>
+					<div class="title"><%=photo.title%></div>
+				<% end %>
 				<div class="clickable-indicator"></div>
 			</div>
-			
-			<% if @job.get_photos.any? %>
-				<div class="tile swappable photo clickable cell-24 bg-style3"></div>
-			<% else %>
-				<div class="tile swappable blurb cell-24 bg-style3"></div>
-			<% end %>			
-		</div>
-		
-		<%# ==== row 3 ====== %>
-		<div class="tile-row clearfix">
-			<div id="signin-box" class="tile double-len cell-signin bg-style5">
-				<div class="title">Ping <%=@job.company_name%></div>
-				<div class="sub-title">Click a button to be in touch</div>
-				<div class="buttons-box">
-					<div class="button-box github"><%= image_tag("widget/social/github46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
-					&nbsp;
-					<div class="button-box linkedin"><%= image_tag("widget/social/linkedin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
-					&nbsp;
-					<div class="button-box rightjoin"><%= image_tag("widget/social/rightjoin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "RightJoin", "#", {id: 'rightjoin-button', class: 'signin-button', method: :post} %></div>
-				</div>
-			</div>
-			
-			<%if @other_jobs.any?%>
-				<div class="tile cell-otherjobs">
-					<div id="other-ads">
-						<div class="title">
-							Other opportunities:
-						</div>
-						<ul>
-							<% @other_jobs.each do |job| %>
-								<li><a class="position" href="<%=we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => params[:mode])%>" ><%=job.position_name%></a></li>
-							<% end %>
-						</ul>
-					</div>
-				</div>
-			<% else %>
-				<div class="tile swappable blurb cell-33 bg-style1"></div>
-			<% end %>
-			
-			<% if @job.address && @job.address_lat && @job.address_lng %>
-				<div class="tile map clickable cell-34 bg-style2">
-					<%= image_tag("http://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
-					<div class="clickable-indicator"></div>
-				</div>
-			<% else %>
-				<div class="tile swappable blurb cell-34 bg-style2"></div>
-			<% end %>
-		</div>
-		
-		<div id="image-viewer" class="viewer">
-			<a href="#" class="close-viewer"></a>
-			
-			<a href="#" class="arrow arrow-left"></a>
-			<div class="content-box">
-				<div class="title">Loading...</div>
-			</div>
-			<% unless @job.logo.nil? %>
-				<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
-			<% end %>
-			<a href="#" class="arrow arrow-right"></a>
-		</div>
-		
-		<% if @job.address_lat && @job.address_lng %>
-			<div id="map-viewer" class="viewer">
-				<a href="#" class="close-viewer"></a>
-				<div class="content-box">
-					<div id="map-canvas">Loading...</div>
-					<% unless @job.address.empty? %>
-						<div class="title"><%=@job.address%></div>
-					<% end %>
-				</div>
-			</div>
 		<% end %>
-		
-		<% unless @infointerview.nil? %>
-			<div id="contact-form-box" class="popup-form-box tile cell-form bg-style5">
-				<a class="close-form" href="#"></a>
-				<div class="more-padding">
-					<div class="title">Let the folks at <%=@job.company_name%> know that you'd like to hear from them.</div>
+					
+	</div>
+	
+	<%# ==== row 1 ====== %>
+	<div class="tile-row clearfix">
+		<div class="tile double-len cell-details">
+			<div id="job-details-box">
+			    <div class="position">
+			    	<%=@job.position.name%>
+			    </div>
+				<div class="location"><%=raw @job.all_location_parts.map{|loc| h(loc)}.join("<span class='separator'> or </span>")%></div>
 				
-					<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-oauth") do |f| %>  
-						<div class="form-row clearfix">
-							<div class="left-col column">
-								<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
-								<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false) %>
-							</div>
-							<div class="right-col column">
-								<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
-								<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false) %>
-							</div>
-						</div>
-
-						<div class="form-row">
-							<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
-							<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>			
-						</div>						
-						
-						<div class="button-box">
-							<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
-						</div>
+				<div class="company-box">
+					<% unless @job.logo.nil? %>
+						<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
 					<% end %>
-					
+					<span class="company-name"><%=@job.company_name%></span>
 				</div>
 			</div>
+		</div>
+		
+		<% if @job.employer.ambassadors.only_active.any? %>
+			<div id="work-with-box" class="tile cell-team bg-style1 clearfix">
+				<div id="referer-box" class="four-avatars-box clearfix">
+					<% for i in 1..4 do %>
+						<div class="swappable avatar avatar-<%=i%>">
+							<%= image_tag(asset_path('shared/no-avatar-semi-transparent-56x56.png'), class: "no-avatar-img") %>
+						</div>
+					<% end %>
+				</div>
+				
+				<div class="four-avatars-box clearfix">
+					<% for i in 5..8 do %>
+						<div class="swappable avatar avatar-<%=i%>">
+							<%= image_tag(asset_path('shared/no-avatar-semi-transparent-56x56.png'), class: "no-avatar-img") %>
+						</div>
+					<% end %>
+				</div>				
+				<div class="overlay">
+					<div class="title">come work with us</div>
+				</div>
+			</div>
+		<% else %>
+			<div class="tile swappable blurb cell-13 bg-style1"></div>
 		<% end %>
 		
-		<div id="ping-with-rightjoin-form-box" class="popup-form-box tile cell-form bg-style5">
-			<a class="close-form" href="#"></a>
-			<div class="more-padding">
-				<div class="title">Ping <%=@job.company_name%> with your <%=Constants::SHORT_SITENAME%> account.</div>
-				<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-rightjoin") do |f| %>  
-					<div class="form-row clearfix">
-						<div class="left-col column">
-							<%= label_tag(nil, "Email address", :class=>"mandatory") %><br>
-							<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>
-						</div>	
-						<div class="right-col column">
-							<%= label_tag(nil, "") %><br>
-							<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
-						</div>												
+		<div class="tile swappable blurb cell-14 bg-style2"></div>
+	</div>
+	
+	<%# ==== row 2 ====== %>
+	<div class="tile-row clearfix">
+		<div class="tile swappable blurb cell-21 bg-style3"></div>
+		
+		<div id="description-box" class="tile double-len cell-description bg-style4">
+			<div class="description">
+				<%= Utils.truncated_plaintext(@job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
+			</div>
+			
+			<% tags = @job.tech_stack_list.split(",") %>
+			<% unless tags.blank? %>
+				<div class="tags-box">
+					<% tags.each do |tag| %>
+						<span><%=tag.strip%></span>
+					<% end %>
+				</div>
+			<%end%>
+			
+			<div class="clickable-indicator"></div>
+		</div>
+		
+		<% if @job.get_photos.any? %>
+			<div class="tile swappable photo clickable cell-24 bg-style3"></div>
+		<% else %>
+			<div class="tile swappable blurb cell-24 bg-style3"></div>
+		<% end %>			
+	</div>
+	
+	<%# ==== row 3 ====== %>
+	<div class="tile-row clearfix">
+		<div id="signin-box" class="tile double-len cell-signin bg-style5">
+			<div class="title">Ping <%=@job.company_name%></div>
+			<div class="sub-title">Click a button to be in touch</div>
+			<div class="buttons-box">
+				<div class="button-box github"><%= image_tag("widget/social/github46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
+				&nbsp;
+				<div class="button-box linkedin"><%= image_tag("widget/social/linkedin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
+				&nbsp;
+				<div class="button-box rightjoin"><%= image_tag("widget/social/rightjoin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "RightJoin", "#", {id: 'rightjoin-button', class: 'signin-button', method: :post} %></div>
+			</div>
+		</div>
+		
+		<%if @other_jobs.any?%>
+			<div class="tile cell-otherjobs">
+				<div id="other-ads">
+					<div class="title">
+						Other opportunities:
 					</div>
-					
-					<div class="form-row clearfix">
-						<div class="left-col column">
-							<%= label_tag(nil, "Password", :class=>"mandatory") %><br>
-							<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false) %>	
-						</div>									
-					</div>
-					<div class="form-row" id="ping-with-rightjoin-error">						
-					</div>
+					<ul>
+						<% @other_jobs.each do |job| %>
+							<li><a class="position" href="<%=we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => params[:mode])%>" ><%=job.position_name%></a></li>
+						<% end %>
+					</ul>
+				</div>
+			</div>
+		<% else %>
+			<div class="tile swappable blurb cell-33 bg-style1"></div>
+		<% end %>
+		
+		<% if @job.address && @job.address_lat && @job.address_lng %>
+			<div class="tile map clickable cell-34 bg-style2">
+				<%= image_tag("http://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
+				<div class="clickable-indicator"></div>
+			</div>
+		<% else %>
+			<div class="tile swappable blurb cell-34 bg-style2"></div>
+		<% end %>
+	</div>
+	
+	<div id="image-viewer" class="viewer">
+		<a href="#" class="close-viewer"></a>
+		
+		<a href="#" class="arrow arrow-left"></a>
+		<div class="content-box">
+			<div class="title">Loading...</div>
+		</div>
+		<% unless @job.logo.nil? %>
+			<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
+		<% end %>
+		<a href="#" class="arrow arrow-right"></a>
+	</div>
+	
+	<% if @job.address_lat && @job.address_lng %>
+		<div id="map-viewer" class="viewer">
+			<a href="#" class="close-viewer"></a>
+			<div class="content-box">
+				<div id="map-canvas">Loading...</div>
+				<% unless @job.address.empty? %>
+					<div class="title"><%=@job.address%></div>
 				<% end %>
 			</div>
-			<div class="bottom-box">
-				Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sign up now", register_path, :target => "_blank"%>.
+		</div>
+	<% end %>
+	
+	<% unless @infointerview.nil? %>
+		<div id="contact-form-box" class="popup-form-box tile cell-form bg-style5">
+			<a class="close-form" href="#"></a>
+			<div class="more-padding">
+				<div class="title">Let the folks at <%=@job.company_name%> know that you'd like to hear from them.</div>
+			
+				<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-oauth") do |f| %>  
+					<div class="form-row clearfix">
+						<div class="left-col column">
+							<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
+							<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false) %>
+						</div>
+						<div class="right-col column">
+							<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
+							<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false) %>
+						</div>
+					</div>
+
+					<div class="form-row">
+						<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
+						<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>			
+					</div>						
+					
+					<div class="button-box">
+						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
+					</div>
+				<% end %>
+				
 			</div>
 		</div>
-		
-		<div id="direct-ping-form-box">
-			<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id=>"direct-ping-form") %>  
-		</div>
-	<% else %>
-		No open positions
 	<% end %>
+	
+	<div id="ping-with-rightjoin-form-box" class="popup-form-box tile cell-form bg-style5">
+		<a class="close-form" href="#"></a>
+		<div class="more-padding">
+			<div class="title">Ping <%=@job.company_name%> with your <%=Constants::SHORT_SITENAME%> account.</div>
+			<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-rightjoin") do |f| %>  
+				<div class="form-row clearfix">
+					<div class="left-col column">
+						<%= label_tag(nil, "Email address", :class=>"mandatory") %><br>
+						<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>
+					</div>	
+					<div class="right-col column">
+						<%= label_tag(nil, "") %><br>
+						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
+					</div>												
+				</div>
+				
+				<div class="form-row clearfix">
+					<div class="left-col column">
+						<%= label_tag(nil, "Password", :class=>"mandatory") %><br>
+						<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false) %>	
+					</div>									
+				</div>
+				<div class="form-row" id="ping-with-rightjoin-error">						
+				</div>
+			<% end %>
+		</div>
+		<div class="bottom-box">
+			Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sign up now", register_path, :target => "_blank"%>.
+		</div>
+	</div>
+	
+	<div id="direct-ping-form-box">
+		<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id=>"direct-ping-form") %>  
+	</div>
 </div>
 
 <%= render :partial => 'layouts/flash_content' %>
@@ -498,7 +495,7 @@ $("#create-infointerview-via-oauth, #create-infointerview-via-rightjoin").submit
 });
 
 $("#rightjoin-button").click(function(event){
-	<% if @candidate.nil? %>
+	<% if @candidate.nil? || @candidate.pending? %>
 		$('.submit-button').prop("disabled", false);
 		$("#ping-with-rightjoin-error").html("");
 		$("#ping-with-rightjoin-form-box").fadeIn();

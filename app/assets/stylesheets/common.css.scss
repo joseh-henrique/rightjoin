@@ -54,6 +54,12 @@
   background-image: linear-gradient(to top, $params);
 }
 
+@mixin box-sizing($params...) {
+  -webkit-box-sizing: $params;
+  -moz-box-sizing: $params;
+  box-sizing: $params;
+}
+
 @mixin normal-font {
   font-family: 'Ubuntu', sans-serif;
   font-weight: normal;
