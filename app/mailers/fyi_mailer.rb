@@ -2,7 +2,7 @@ class FyiMailer < ActionMailer::Base
    
   RJ_CRM_NAME = "Joshua"
   RJ_CRM_FULL_NAME = "Joshua Fox" 
-  CRM_SIGNATURE = "Best,<br><br>
+  CRM_SIGNATURE = "All the best,<br><br>
                   #{ RJ_CRM_NAME}"       
   
   
@@ -265,17 +265,17 @@ class FyiMailer < ActionMailer::Base
       to_email = candidate.email
       subject = "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SHORT_SITENAME}"
      
-      fn = candidate.first_name.blank? ? ""  : candidate.first_name
+      fn = candidate.first_name.blank? ? ""  : (candidate.first_name + ", ")
       
-      salutation =  "Hi, #{fn}, it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
+      salutation =  "Hi, #{fn}it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
    
        content =
-          "We've listened to our customers and users, and released a new set of services. "<<
-          "We help developers outside a company connect with developers inside it for peer-to-peer chats, bypassing recruiters and HR.<br><br>" << 
-          "To celebrate our mini-pivot, we've moved from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}.<br><br>" <<
-          "Right now, the new #{Constants::SITENAME} is still in closed beta, but you can login at <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>. " << 
-          "#{Constants::SHORT_SITENAME} continues to offer the services you know from #{Constants::FIVEYEARITCH_SITENAME}: Employers ping you and you ping them.<br><br>" <<
-          "Don't hesitate to contact me with any questions.<br>"
+          "We've been working on the best way to get better new jobs for developers.<br><br>"<<
+          "We spoke with our  developer members, we spoke with dev team leaders, and we've decided to pivot to \"peer-to-peer\" recruiting: "+
+          "We help developers outside a company connect with developers inside it for a chat, bypassing recruiters and HR.<br><br>" << 
+          "A new direction needs a new name. So, we're moving  from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}.<br><br>" <<
+          "Right now, the new #{Constants::SITENAME} is  in closed beta, but as an  existing user you can login at <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>.<br><br>" << 
+          "If you have any  questions, just hit Reply.<br>"
    
       signature = "" + CRM_SIGNATURE
       signature << "<br><br><br>P.S. Not interested anymore?  " << 

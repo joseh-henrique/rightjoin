@@ -133,7 +133,7 @@
 	<div class="standard-section-header">
 		<span>Your team</span>
 		<div class="header-buttons-box">
-			<%=link_to("Open sign-up page", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
+			<%=link_to("Go to sign-up page", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
 			&nbsp;
 			<%=link_to("Invite a team member", "#", :class => "invite-team-member-link standard-button")%> 
 		</div>

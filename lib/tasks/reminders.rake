@@ -75,12 +75,11 @@ namespace :cron do
   
   #sent every day to X people until all updated
   task :send_rj_migration_announcement_to_engineers => :environment do
-         if Time.now < Time.new(2014,6,30)
+          if Time.now < Time.new(2014,6,30)
            puts "#{Constants::SITENAME} not yet released; not sending migration announcements"
            return
-         end
+          end
       		count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
- 
       		  begin
        				new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
 				  		Utils.deliver new_msg
@@ -88,7 +87,7 @@ namespace :cron do
                 puts e
             end
        		end
-     puts "RJ migration announcements sent: #{count}."
+     puts "RJ migration announcements processed" #sent: #{count}."#TODO: THis number always comes out zero 
   end
   
   # send update to employers about new contact

@@ -2874,12 +2874,14 @@ $tab-border-radius: 4px;
   
   .value-prop-box {
     background: #385B83 image-url("shared/blue-bg.jpg") no-repeat center center; 
-    padding-top: 65px;
+    @include background-size (cover);
+    padding-top: 25px;
     color: #F0EBEF;
     
     h1 {
       font-size: 46px;
       color: white;
+      margin-top: 40px;
     }
     
     h2 {
