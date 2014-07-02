@@ -7,12 +7,12 @@ class EmployerPlan < ActiveRecord::Base
   
   belongs_to :employer
   
-  FREE = "Free"
+  BASIC = "Basic"
   PRO = "Pro"
   ENTERPRISE = "Enterprise"
   
   def name
-    name = FREE
+    name = BASIC
     if self.tier == Constants::TIER_PRO
       name = PRO
     elsif self.tier == Constants::TIER_ENTERPRISE

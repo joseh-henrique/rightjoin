@@ -6,6 +6,7 @@ class EmployersController < ApplicationController
   before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab]
   before_filter :add_verif_flash, :only =>[:edit]
   before_filter :init_join_us_widget, :only =>[:we_are_hiring, :ping]
+  after_filter :minimize_js_response, :only => :work_with_us_tab
 
   # Execute initial signup request from main form
   def create
@@ -151,10 +152,26 @@ class EmployersController < ApplicationController
   end
   
   def work_with_us_tab
+    tab_expires_in = 1.month # default for unsupported locales
+    
     refnum = params[:refnum]
     host = params[:host]
 
     @employer = Employer.find_by_ref_num(refnum)
+    @activeJobsCount = 0
+    
+    # ensure jobs are shown for the actual locale
+    if is_localhost?
+      locale = Constants::LOCALE_EN.to_sym
+    else
+      locale = LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
+    end
+    
+    if locale != :unknown_locale
+      I18n.locale = locale
+      @activeJobsCount = @employer.active_jobs.where(locale: I18n.locale).count
+      tab_expires_in = 15.minutes
+    end
     
     # Track widget usage heartbeat every 12 hours. Exclude our own sites, which are not relevant to tracking customer usage.
     # Given our redirect setup, not all these are needed, but we may change the redirect setup.
@@ -167,30 +184,20 @@ class EmployersController < ApplicationController
         "www.#{Constants::SITENAME_IL_LC}",
         "www.#{Constants::FIVEYEARITCH_SITENAME.downcase}", 
         Constants::SITENAME_LC
-       ]
+    ]
 
-    unless our_sites.include?(host.to_s.downcase)
+    if our_sites.include?(host.to_s.downcase)
+      tab_expires_in = 0
+    else
       now = Time.parse(ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP"))
       if @employer.join_us_widget_heartbeat.nil? || now - @employer.join_us_widget_heartbeat >= 12.hours
         @employer.update_attribute(:join_us_widget_heartbeat, now)
       end
-    end
-    
-    @activeJobsCount = 0
-    
-    # ensure jobs are shown for the actual locale
-    if is_localhost?
-      locale = Constants::LOCALE_EN.to_sym
-    else
-      locale = LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
-    end
-
-    if locale != :unknown_locale
-      I18n.locale = locale
-      @activeJobsCount = @employer.active_jobs.where(locale: I18n.locale).count
-    end
+    end    
     
     render 'employers/work_with_us_tab.js.erb', :layout => false
+    
+    expires_in tab_expires_in, :public => false
     
   rescue Exception => e
     logger.error e
@@ -255,5 +262,10 @@ class EmployersController < ApplicationController
       rescue Exception => e
         flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)
         redirect_to employer_welcome_path
+    end
+    
+    # minimize JS on the fly
+    def minimize_js_response
+      response.body = Uglifier.new.compile(response.body)
     end
 end

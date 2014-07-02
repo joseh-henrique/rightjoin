@@ -655,10 +655,18 @@ a, .ui-dialog-content a {
         
         #email-input {
           background: #50597b image-url("shared/envelop.png") no-repeat 6px center !important;
+          
+          &:-webkit-autofill, &:-webkit-autofill:focus {
+            background: #FAFFBD image-url("shared/envelop.png") no-repeat 6px center !important;
+          }
         }
         
         #pw-input {
           background: #50597b image-url("shared/lock.png") no-repeat 6px center !important;
+          
+          &:-webkit-autofill, &:-webkit-autofill:focus {
+            background: #FAFFBD image-url("shared/lock.png") no-repeat 6px center !important;
+          }
         }
         
         #submit-signin {
@@ -796,6 +804,10 @@ a, .ui-dialog-content a {
   &:last-child {
     margin-bottom: 0;
   }
+}
+
+.form-cell.inline {
+  display: inline-block;
 }
 
 .form-column {
@@ -1049,6 +1061,10 @@ label {
   height: 12px;
   text-align: center;
   display: none;
+  
+  &.length-exceeded-alert {
+    background: #c00852;
+  }
 }
 
 #pg-new-posting {
@@ -2082,7 +2098,7 @@ label {
   
   #body {
     width: 640px;
-    height: 230px;
+    height: 240px;
   }
 }
 
@@ -2726,7 +2742,7 @@ $tab-border-radius: 4px;
       text-align: center;
     }
     
-    .free {
+    .basic {
       background: #B1DB5D;
     }
     
@@ -2742,12 +2758,12 @@ $tab-border-radius: 4px;
   tr.footer {
     font-weight: 500;
     
-    .free, .pro, .enterprise {
+    .basic, .pro, .enterprise {
       cursor: pointer;
     }
   }
   
-  .free, .pro, .enterprise {
+  .basic, .pro, .enterprise {
     width: 176px;
   }
   
@@ -2757,7 +2773,7 @@ $tab-border-radius: 4px;
       padding: 30px 0;
     }
     
-    .free {
+    .basic {
       color: #B1DB5D;
     }
     

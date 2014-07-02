@@ -166,9 +166,10 @@
 	</div>
 	
 	<div class="form-row">
-		<div class="form-cell">
+		<div class="form-cell inline">
 			<%= label_tag(nil, "Technical stack (a comma-separated list of tags)")%><br>
-			<%=  text_field_tag(:tech_stack_list, @job.tech_stack_list, :maxlength => 60, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false) %>	
+			<div id="tech-stack-counter" class="message-counter">60</div>
+			<%=  text_field_tag(:tech_stack_list, @job.tech_stack_list, :maxlength => 60, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false, :counterId=>"tech-stack-counter") %>	
 		</div>
 	</div>	
 	
@@ -382,13 +383,13 @@
 		var res = $("form.new_job, form.edit_job").validationEngine('validate');
 		
 		if(!$.trim($("#location").val()) || !$.trim($("#lat").val()) || !$.trim($("#lng").val())){
-			res = res && false;
+			res = false;
 			$("#location").validationEngine('showPrompt', "We couldn't recognize the location entered. Please use the auto-complete.", 'error', 'topRight', true);
 			$("#location").focus();
 		}
 		
 		if($.trim($("#address").val()) && (!$.trim($("#address_lat").val()) || !$.trim($("#address_lng").val()))){
-			res = res && false;
+			res = false;
 			$("#address").validationEngine('showPrompt', "We couldn't recognize the address entered. Please use the auto-complete.", 'error', 'topRight', true);
 			$("#address").focus(); 
 		}
@@ -492,8 +493,8 @@
 		  	
 		  	$("#office_address").validationEngine('hideAll');
 		  	
-			$("#address_lat").val(place.geometry.location.k);
-			$("#address_lng").val(place.geometry.location.A);	
+			$("#address_lat").val(place.geometry.location.lat());
+			$("#address_lng").val(place.geometry.location.lng());	
 	  	} else {
 			$("#address_lat").val("");
 			$("#address_lng").val("");

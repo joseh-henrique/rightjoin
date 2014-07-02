@@ -162,8 +162,8 @@ $.widget("ui.googleAddressPicker", {
 	         }
 	         
 	         res.name = filtered_address_components.join(", ").toLowerCase();	
-	         res.lat = this.selected_place.geometry.location.k;
-	         res.lng = this.selected_place.geometry.location.A;
+	         res.lat = this.selected_place.geometry.location.lat();
+	         res.lng = this.selected_place.geometry.location.lng();
 		}
 		
 		return res;

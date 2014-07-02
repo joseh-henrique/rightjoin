@@ -26,17 +26,13 @@ class Constants
   SAMPLE_USER_EMAIL_TEMPLATES = [SITENAME_LC,  FIVEYEARITCH_SITENAME.downcase].map{|domain| SAMPLE_USER_EMAIL_BASE_TEMPLATE + domain}
   CONTACT_EMAIL ="contact@#{SITENAME_LC}"
   ADMIN_EMAIL ="admin@#{FIVEYEARITCH_SITENAME.downcase}"
-  RECRUITER_EMAIL_for_TURK_ADS = "jennifer@#{FIVEYEARITCH_SITENAME.downcase}"
+  RECRUITER_EMAIL_FOR_TURK_ADS = "jennifer@#{FIVEYEARITCH_SITENAME.downcase}"
   ADMIN_CONSOLE__USER = "robert@#{FIVEYEARITCH_SITENAME.downcase}" 
   
   REMEMBER_TOKEN_INFOINTERVIEW = :remember_token_infointerview
   REMEMBER_TOKEN_AMBASSADOR = :remember_token_ambassador
   
-  #Note that  PHONE should be accessed through only through Utils::phone_with_pfx. Maybe move the literal to there.
-  PHONE= "718-569-8851"
 
-  
-  NUM_INITIAL_FREE_AMB_CONTACTS = "three"
    
   TELECOMMUTE= 'telecommute'
   RELOCATION = 'relocation'
@@ -96,10 +92,10 @@ class Constants
     COUNTRY_UK => "en-GB",  
     COUNTRY_IL=>"en-IL", COUNTRY_IN=>"en-IN"}
  
- COUNTRIES_INCLUDING_NON_STANDARD_ABBREV = COUNTRIES.clone
- COUNTRIES_INCLUDING_NON_STANDARD_ABBREV[COUNTRY_GB] = "en-GB";  
+  COUNTRIES_INCLUDING_NON_STANDARD_ABBREV = COUNTRIES.clone
+  COUNTRIES_INCLUDING_NON_STANDARD_ABBREV[COUNTRY_GB] = "en-GB";  
  
-  TIER_FREE = 1
+  TIER_BASIC = 1
   TIER_PRO = 2
   TIER_ENTERPRISE = 3
   

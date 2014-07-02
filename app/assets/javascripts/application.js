@@ -53,8 +53,16 @@ $('textarea[counterid], input[counterid]').live('focus keyup blur', function() {
     
     var counterId = $(this).attr('counterId');
     if (counterId != null) {
-    	$('#' + counterId).show();
-    	$('#' + counterId).html(maxlength - val.length);
+    	var counterElem = $('#' + counterId);
+    	
+    	counterElem.show();
+    	counterElem.html(maxlength - val.length);
+    	
+    	if(maxlength - val.length <= 0) {
+    		counterElem.addClass("length-exceeded-alert");
+    	} else {
+    		counterElem.removeClass("length-exceeded-alert");
+    	}
     }
 });
 

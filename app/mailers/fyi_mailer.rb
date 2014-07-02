@@ -159,11 +159,11 @@ class FyiMailer < ActionMailer::Base
   end
   
   
-  def create_employer_update_email(employer, all_jobs, open_jobs, just_expired_jobs)
+  def create_employer_update_email(employer, all_jobs, open_jobs, just_expired_jobs)#TODO: Last param not used. Remove
        @intended_for = :employer
        
        to_email = employer.email
-       subj = "Here's what's happening with your social job ads at #{Constants::SHORT_SITENAME}."
+       subj = "What's happening with your ads at #{Constants::SHORT_SITENAME}."
        todays_day = Time.now.strftime('%A')
         
        @msg1_h =  "It's #{todays_day}. Time to let you know what's been going on with your job postings in the last week."
@@ -186,67 +186,44 @@ class FyiMailer < ActionMailer::Base
        end
      
        # list open jobs
-       if open_jobs.empty?
-         if employer.current_plan.tier > Constants::TIER_FREE
-            premium_no_jobs_s = "You have a premium plan but no open job positions. If you'd like to freeze your account, you can simply revert to a free plan at anytime.<br><br>"
-            @msg2_h <<  premium_no_jobs_s
-            @msg2_t <<  premium_no_jobs_s.gsub("<br>", "\n")
-         end
+       if open_jobs.empty?          
+          no_jobs_no_charge_s = "You have no open job positions. (You won't be charged for any month in which you had no open positions.)<br><br>"
+          @msg2_h <<  no_jobs_no_charge_s
+          @msg2_t <<  no_jobs_no_charge_s.gsub("<br>", "\n")
        else
-        stats_s = "Your open job postings:<br><br>"
-        @msg2_h << stats_s 
-        @msg2_t << stats_s.gsub("<br>", "\n")
-      
-       open_jobs.each_with_index do |job, index|
-          bullet = all_jobs.count > 1 ? "#{index + 1})" : ""
-          @msg2_h <<  "#{bullet} <b>#{job.position.name}</b>#{in_loc_h(job.location.name)}"
-          @msg2_t <<  "#{bullet} #{job.position.name}#{in_loc_t(job.location.name)}"
-          boards= job.ads.map { |ad| ad.board.title }
-          if boards.empty?
-              no_boards_s = "&nbsp;isn't included in the listings at #{Constants::SITENAME}.
-                              You can still search our listings and invite candidates to apply.<br><br>"
-                   
-              @msg2_h  << no_boards_s  
-              @msg2_t  << no_boards_s.gsub("<br>", "\n").gsub( "&nbsp;","\t")
-          else
-              board_list_s = "&nbsp;is listed under #{ boards.map {|board| "%{styleopen}#{board}%{styleclose}"}.to_sentence}.<br><br>" 
-              @msg2_h << board_list_s % {:styleopen => "<b>", :styleclose => "</b>"} 
-              @msg2_t << (board_list_s % {:styleopen => "", :styleclose => ""}).gsub("<br>", "\n").gsub("&nbsp;","\t")
-          end
+          stats_s = "Your open job postings:<br><br>"
+          @msg2_h << stats_s 
+          @msg2_t << stats_s.gsub("<br>", "\n")
+        
+          open_jobs.each_with_index do |job, index|
+            bullet = all_jobs.count > 1 ? "#{index + 1})" : ""
+            @msg2_h <<  "#{bullet} <b>#{job.position.name}</b>#{in_loc_h(job.location.name)}"
+            @msg2_t <<  "#{bullet} #{job.position.name}#{in_loc_t(job.location.name)}"
+            boards= job.ads.map { |ad| ad.board.title }
+            if boards.empty?
+                @msg2_h  << "<br><br>"  
+                @msg2_t  << "\n\n"
+            else
+                board_list_s = "&nbsp;is listed under #{ boards.map {|board| "%{styleopen}#{board}%{styleclose}"}.to_sentence}.<br><br>" 
+                @msg2_h << board_list_s % {:styleopen => "<b>", :styleclose => "</b>"} 
+                @msg2_t << (board_list_s % {:styleopen => "", :styleclose => ""}).gsub("<br>", "\n").gsub("&nbsp;","\t")
+            end
         end            
      end
       
 
-      unless just_expired_jobs.empty?
-          recently_closed_s = "Recently expired postings<br><br>"
-          bullet = "\u2022".encode('utf-8')
-          
-          @msg2_h << recently_closed_s 
-          @msg2_t << recently_closed_s.gsub("<br>","\n") 
-    
-          just_expired_jobs.each do |job|
-              @msg2_h << "#{bullet}&nbsp;<b>#{job.position.name}</b>#{in_loc_h(job.location.name)}<br>"
-              @msg2_t << "#{bullet} #{job.position.name}#{in_loc_t(job.location.name)}\n"
-          end
-          
-          reopen = "<br>With the free plan, ads are removed from  #{Constants::SITENAME} after a month, " +
-            "though they continue  in the web component accessed through a tab on your site until you close them. " + 
-            "If you'd like a job posting to continue in our listings after it has expired, please re-post it.<br><br>"
-        
-          @msg2_h << reopen
-          @msg2_t << reopen.gsub("<br>","\n") 
-      end
+       
       
       #Asking them to invite candidates is a distraction 
       # counters 
       total_invites_counter = all_jobs.inject(0){|sum,job| sum + job.invites_counter} 
       counters_s =""
       if all_jobs.any? && total_invites_counter == 0
-        counters_s<< "You can ping candidates on the Stealth Candidates board, and ask them to be in touch.<br>"
+        counters_s<< "To bring in some good candidates, you can ping developers on the Stealth Candidates board, and ask them to be in touch.<br>"
       end
       
       if employer.ambassadors.empty?
-        counters_s << "<br> Invite team members to share open positions with their social networks.<br>"  
+        counters_s << "<br>To increase referral hires, invite team members to share open positions with their social networks.<br>"  
       end
       
       shared_counter = all_jobs.inject(0){|sum,job| sum + job.shares_counter.to_i} 
@@ -267,7 +244,7 @@ class FyiMailer < ActionMailer::Base
       @msg3_h = "#{msg3_head} <a href='#{employer_url(employer, :locale => all_jobs.first.country_code)}'>dashboard</a>.<br><br>"
       @msg3_t = "#{msg3_head} dashboard: #{employer_url(employer, :locale => all_jobs.first.country_code)}\n\n"
       
-      reply_s = "#{PLEASE_REPLY} Or call us at #{Utils.phone_with_pfx}."
+      reply_s =  PLEASE_REPLY
       @msg3_h << reply_s
       @msg3_t << reply_s  
       
@@ -294,12 +271,12 @@ class FyiMailer < ActionMailer::Base
           "We've listened to our customers and users, and released a new set of services. "<<
           "We help developers outside a company connect with developers inside it for peer-to-peer chats, bypassing recruiters and HR.<br><br>" << 
           "To celebrate our mini-pivot, we've moved from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}.<br><br>" <<
-          "Right now, the new #{Constants::SHORT_SITENAME} is still in closed beta, but you can still login at  <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>  " << 
-          "and you can still use the same services: Employers can ping you and you can ping them.<br><br>" <<
+          "Right now, the new #{Constants::SITENAME} is still in closed beta, but you can login at <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>. " << 
+          "#{Constants::SHORT_SITENAME} continues to offer the services you know from #{Constants::FIVEYEARITCH_SITENAME}: Employers ping you and you ping them.<br><br>" <<
           "Don't hesitate to contact me with any questions.<br>"
    
       signature = "" + CRM_SIGNATURE
-      signature << "<br><br><br>Not interested anymore?  " << 
+      signature << "<br><br><br>P.S. Not interested anymore?  " << 
           "<a href='#{unsubscribe_user_url(:locale => I18n.t(:country_code, candidate.locale), :id => candidate.id, :ref => candidate.reference_num(true))}'>Click here</a> to deactivate your account. (You can reactivate later.)"
      
        

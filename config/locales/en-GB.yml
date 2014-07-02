@@ -14,7 +14,7 @@ en-GB:
   max_salary: "100000"
   salary_step: "2000"
   salary_period: ""
-  monthly_tier_1_price: "0"
+  monthly_tier_1_price: "5"
   monthly_tier_2_price: "49"
   monthly_tier_3_price: "129"
   currency_unit: "£"

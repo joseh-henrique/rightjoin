@@ -120,7 +120,6 @@ module UsersControllerCommon
   
   def do_unsubscribe(user_class)
     country_code = I18n.t(:country_code, I18n.locale)
-    premium_plan = false
     user = user_class.find_by_id(params[:id])#Use find_by_id to produce nil rather than error as opposed to find()
         
     if user_class == User 
@@ -129,7 +128,7 @@ module UsersControllerCommon
     else # employer
       root_path = employer_welcome_path #  Note that employers do not have their own native locale 
       unsubscribe_path = unsubscribe_employer_path(:id => params[:id], :ref => params[:ref])
-      premium_plan = user.current_plan.tier > Constants::TIER_FREE
+  
     end
     
 
@@ -151,11 +150,7 @@ module UsersControllerCommon
           if user.employee? 
             txt = "Please <a href='#{unsubscribe_path}' data-method='post'>click here</a> to deactivate your account and unsubscribe. (You can reactivate later.)"
           else
-            if premium_plan
-              txt = "Please <a href='#{unsubscribe_path}' data-method='post'>click here</a> to cancel your premium plan, close all job postings, and unsubscribe."  
-            else
-              txt = "Please <a href='#{unsubscribe_path}' data-method='post'>click here</a> to close all job postings and unsubscribe."
-            end
+            txt = "Please <a href='#{unsubscribe_path}' data-method='post'>click here</a> to close all job postings and unsubscribe."
           end
 
           flash_message(:error, txt) 
@@ -164,11 +159,7 @@ module UsersControllerCommon
           if user.employee? 
             txt = "Thanks for using #{Constants::SHORT_SITENAME}. Your account was deactivated."
           else
-            if premium_plan
-              txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've cancelled your premium plan, closed your job postings, and unsubscribed you." 
-            else
-              txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've closed your job postings and unsubscribed you."
-            end
+            txt = "Thanks for using #{Constants::SHORT_SITENAME}. We've closed your job postings and unsubscribed you."
           end
           flash_message(:notice, txt)
         end
@@ -178,7 +169,7 @@ module UsersControllerCommon
   rescue Exception => e
     flash_message(:error, e.message)
   ensure
-    redirect_to root_path
+    redirect_to jobs_path
   end
   
   def add_verif_flash 

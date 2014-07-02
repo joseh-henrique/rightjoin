@@ -187,11 +187,11 @@ class Utils
   end
   
 
- 
+  PHONE= "718-569-8851"
   
   #This should be in helper, but it is here because  it must be accessed from fyi_mailer
   def self.phone_with_pfx
-    return "#{I18n.t(:intl_phone_pfx)}#{Constants::PHONE}"
+    return "#{I18n.t(:intl_phone_pfx)}#{PHONE}"
   end  
    
    def self.items_to_counts(array)

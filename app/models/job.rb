@@ -25,7 +25,7 @@ class Job < ActiveRecord::Base
   validates :benefit2, :allow_blank => true, :length => { :maximum => 40 }
   validates :benefit3, :allow_blank => true, :length => { :maximum => 40 }
   validates :benefit4, :allow_blank => true, :length => { :maximum => 40 }
-  
+    
   default_scope :order => 'jobs.created_at DESC'
   
   LIVE = 1    # for :status
@@ -301,11 +301,14 @@ class Job < ActiveRecord::Base
   
   # The CSV file must have the following columns:
   # description, country-code, location, latitude, longitude, title, company, relocation, job-ad-url, kegerator, meaningful-jobs, bleeding-edge-tech, startup, open-source 
+  # TODO this method will only work when you create jennifer@rightjoin.io. 
+  # Per current plans we
+  # are not going to use this method and it can be deleted.
   def self.import_fyi_jobs(url_to_csv)
     new_jobs = []
 
-    fyi_recruiter = Employer.find_by_email(Constants::RECRUITER_EMAIL_for_TURK_ADS)
-    raise "Missing FYI employer" if fyi_recruiter.nil?    
+    fyi_recruiter = Employer.find_by_email(Constants::RECRUITER_EMAIL_FOR_TURK_ADS)
+    raise "Missing RJ built-in employer: Need to create it #{Constants::RECRUITER_EMAIL_FOR_TURK_ADS}" if fyi_recruiter.nil?    
     
     array_of_rows = DbFeeder.feed_from_url(url_to_csv) do |row, i|
       begin

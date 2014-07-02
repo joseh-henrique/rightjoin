@@ -79,6 +79,7 @@ class JobsController < ApplicationController
     job.display_order = Job::NORMAL_JOB_DISPLAY_RANK
     update_attrs(job)
     update_boards(job)
+    update_global_join_us_style(job)
 
     Reminder.create_event!(job.id, Reminder::JOB_CREATED)
     
@@ -113,6 +114,8 @@ class JobsController < ApplicationController
   def edit
     @current_page_info = PageInfo::EMPLOYER_EDIT_POSTING
     @job = current_user.jobs.find(params[:id])
+    @job.join_us_widget_params_map ||= current_user.join_us_widget_params_map
+    
     raise "Job position not found" if @job.nil?
   
   rescue Exception => e
@@ -166,6 +169,7 @@ class JobsController < ApplicationController
     job = current_user.jobs.find(params[:id])
     update_attrs(job)
     update_boards(job)
+    update_global_join_us_style(job)
    
     flash_message(:notice, "Job position updated")
     

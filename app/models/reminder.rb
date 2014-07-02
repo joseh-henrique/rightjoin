@@ -38,8 +38,7 @@ class Reminder < ActiveRecord::Base
      counter = 0
      invites = []
      Interview.unscoped.where("status = ?", Interview::APPROVED).order('user_id, created_at asc').each do |invite|
-   
-         if counter >= max_engineer_emails 
+          if counter >= max_engineer_emails 
              logger.error "The limit of max #{max_engineer_emails} send_jobs_update_to_engineers emails exceeded! Bug or grand success???"
              break
          end
@@ -87,7 +86,7 @@ class Reminder < ActiveRecord::Base
      counter = 0
      all_jobs = []
      open_jobs = []
-     just_expired_jobs = []
+     just_expired_jobs = [] #TODO not used, remove
   
     # Here we query for all open jobs. However, before generating each mail, we close any expired jobs (see 13 lines down). 
     # So fyi_mailer will receive some closed jobs, all of which are recently expired.
@@ -107,14 +106,7 @@ class Reminder < ActiveRecord::Base
          counter += 1
        end
        
-       # auto-expire jobs, but only if it's a free plan
-       if job.employer.current_plan.tier == Constants::TIER_FREE && job.expire_ads!(1.month)
-         job.shutdown!(Interview::CLOSED_EXPIRED)
-         just_expired_jobs << job
-       else
-         open_jobs << job
-       end
-       
+       open_jobs << job
        all_jobs << job
      end
      

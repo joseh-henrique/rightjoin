@@ -58,12 +58,6 @@ class Employer < ActiveRecord::Base
   end
   
   def unsubscribe 
-    premium_plan = self.current_plan.tier > Constants::TIER_FREE
-    if premium_plan
-      plan = self.employer_plans.build(:tier => Constants::TIER_FREE, :monthly_price => Utils::monthly_price( Constants::TIER_FREE))
-      plan.save!
-    end
-    
     self.jobs.where("status <> ?", Job::CLOSED).each do |job|
       job.shutdown!(Interview::CLOSED_BY_EMPLOYER)
     end

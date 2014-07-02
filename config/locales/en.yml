@@ -14,7 +14,7 @@ en:
   max_salary: "200000"
   salary_step: "5000"
   salary_period: ""
-  monthly_tier_1_price: "0"
+  monthly_tier_1_price: "9"
   monthly_tier_2_price: "79"
   monthly_tier_3_price: "199"
   currency_unit: "$" 

@@ -24,7 +24,6 @@
 
 <% active_jobs = current_user.active_jobs_with_share_statistics.order("created_at DESC").to_a %>
 <% ambassadors = current_user.active_ambassadors_with_share_statistics.to_a %>
-<% free_plan = current_user.current_plan.tier == Constants::TIER_FREE %>
 
 <div class="content" id="employer-dashboard">
 	<%= render :partial => 'layouts/flash_box' %>
@@ -84,12 +83,6 @@
 					<li class="warning">
 						<%=link_to("Add", new_employer_job_path(current_user))%> a job posting.
 					</li>
-					
-					<% unless free_plan %>
-						<li class="info">
-							Not hiring right now? You can <%=link_to("edit your profile", edit_employer_path(current_user,:anchor=>"plans-and-pricing"))%> and switch to the <%=EmployerPlan::FREE%> plan.
-						</li>
-					<% end %>
 				<% else %>
 					<% if ambassadors.blank? %>
 						<li class="warning">
@@ -108,24 +101,6 @@
 						</li>
 					<% end %>
 				<% end %>
-				
-				<% if free_plan %>
-		 			<% if active_jobs.count > 1 %>
-		 				<li class="warning">
-							The <%=EmployerPlan::FREE%> plan allows only one job posting. Please  
-							<%=link_to("upgrade", edit_employer_path(current_user,:anchor=>"plans-and-pricing"))%>
-							to  <%=EmployerPlan::PRO %> or  <%=EmployerPlan::ENTERPRISE %>. 
-						</li>
-						
-						<% if ambassadors.count > 1 %>
-							<li class="warning">
-								The <%=EmployerPlan::FREE%> plan allows only one team member.
-								Please <%=link_to("upgrade", edit_employer_path(current_user, :anchor=>"plans-and-pricing"))%>
-								to  <%=EmployerPlan::PRO %> or <%=EmployerPlan::ENTERPRISE %>. 
-							</li>
-						<% end %>
-					<% end %>
-				<% end %>		
 			</ul>
 		</div>
 		
@@ -158,9 +133,9 @@
 	<div class="standard-section-header">
 		<span>Your team</span>
 		<div class="header-buttons-box">
-			<%=link_to("Add yourself", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
+			<%=link_to("Open sign-up page", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank", :class => "standard-button")%>
 			&nbsp;
-			<%=link_to("Invite via email", "#", :class => "invite-team-member-link standard-button")%> 
+			<%=link_to("Invite a team member", "#", :class => "invite-team-member-link standard-button")%> 
 		</div>
 	</div>
 	
@@ -168,13 +143,20 @@
 		<% 	  
 		subject = "Talking with potential future colleagues"
 		body_text = "Hi,\n\n" <<
-			"Smart developers are pinging us and asking to talk about working at  #{current_user.company_name}.\n\n" <<
-			"It's a great way for us to connect with potential future colleagues.\n\n" << 
-			"We'll screen all contacts to make sure you only get the good ones. We expect to pass on one or two pings a week.\n\n" <<
+			"We're looking for some smart developers to work with us at #{current_user.company_name}.\n\n" <<
+			"#{Constants::SHORT_SITENAME} gives us a beautiful ad in which our current developers are the highlight. " << 
+			"It has social sharing tools to help you spread it.\n\n" << 
+			"Experienced developers then ping us through this ad. We may connect a few developers with you for a chat about working here.\n\n" <<
 			"Please sign in at #{ambassadors_signin_url(current_user.reference_num, :locale => nil)}\n\n" <<
 			"Regards,\n\n" <<
 			"#{current_user.first_name}"
 		%>		
+		<div class="form-row">
+			<div class="form-cell">
+				Copy the  text below into an email. 
+				You can then modify it to suit your company culture and the people you're sending it to. 
+			</div>
+		</div>		
 		<div class="form-row">
 			<div class="form-cell">
 				<%= label_tag(nil, "Subject") %><br>
@@ -217,8 +199,8 @@
 	$(document).ready(function(){
 		$("#invite-team-member-dialog").dialog({
 		  autoOpen: false,
-		  width: 700,
-		  height: 500,
+		  width: 750,
+		  height: 560,
 		  resizable: false,
 		  modal: true
 		});

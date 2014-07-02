@@ -430,7 +430,7 @@ def make_sample_employers(type = BASIC_SAMPLE)
       emplr.created_at = age_in_seconds ? age_in_seconds.to_i.seconds.ago : rand(60).days.ago - (rand(22)+1).hours - rand(59).minutes # in the past
       emplr.save!
       
-      tier=Constants::TIER_FREE
+      tier=Constants::TIER_BASIC
       plan = emplr.employer_plans.build(:tier => tier, :monthly_price => Utils::monthly_price(tier))
      plan.save!
      # p emplr
@@ -852,9 +852,9 @@ def make_system_users
   usr_bob.locale = Constants::LOCALE_EN
   usr_bob.save!
   
-  # Jenny Collins - FYI matchmaker
+  # Jenny Collins - RJ matchmaker
   emplr_jenny = Employer.new({
-      :email => Constants::RECRUITER_EMAIL_for_TURK_ADS,
+      :email => Constants::RECRUITER_EMAIL_FOR_TURK_ADS,
       :first_name => "Jenny",
       :last_name => "Collins",
       :company_name => Constants::SHORT_SITENAME,
@@ -875,7 +875,7 @@ def set_free_plan_for_all_employers
   Employer.all.each do |e|
     plan = e.current_plan
     if plan.nil?
-      plan = e.employer_plans.build(:tier => Constants::TIER_FREE, :monthly_price => 0)
+      plan = e.employer_plans.build(:tier => Constants::TIER_BASIC, :monthly_price => 0)
       plan.save!
     end
   end

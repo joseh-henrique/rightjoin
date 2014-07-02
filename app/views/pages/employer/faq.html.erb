@@ -119,14 +119,20 @@
 			<div class="accordion-panel">
 				<p>
 					<%if signed_in?%>
-					You can see the pricing plans on your <%= link_to "profile page", edit_employer_path(current_user, :anchor=>"plans-and-pricing")%>.
+						You can see the pricing plans on your <%= link_to "profile page", edit_employer_path(current_user, :anchor=>"plans-and-pricing")%>.
 					<%else%>
-					See the <%= link_to "Get Started",  employer_get_started_path(:anchor=>"plans-and-pricing" )%> page for pricing plans.
+						See the <%= link_to "Get Started", employer_get_started_path(:anchor=>"plans-and-pricing" )%> page for pricing plans.
 					<%end%>
 				</p>
 				<p>
 					Please <%= email_contact_link("contact us") %> for  discounts for pre-paid annual plans.
 				</p>
+			</div>
+
+			<h3 class="standard-section-header collapsed">I'm not hiring right now. Can I freeze my subscription?</h3>
+			<div class="accordion-panel">
+				 Just close all open job positions. We do not charge for  months in which there are no open jobs.
+				 You can simply add job positions to resume your paid plan when you need it again. 
 			</div>
 
 			<h3 class="standard-section-header collapsed">Can you support more countries or job categories?</h3>
