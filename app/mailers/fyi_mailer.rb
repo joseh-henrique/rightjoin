@@ -265,7 +265,9 @@ class FyiMailer < ActionMailer::Base
       to_email = candidate.email
       subject = "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SHORT_SITENAME}"
      
-      salutation = candidate.first_name.blank? ? "Welcome" : "Hi, #{candidate.first_name}, it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
+      fn = candidate.first_name.blank? ? ""  : candidate.first_name
+      
+      salutation =  "Hi, #{fn}, it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
    
        content =
           "We've listened to our customers and users, and released a new set of services. "<<

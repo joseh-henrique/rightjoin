@@ -123,10 +123,10 @@ module UsersControllerCommon
     user = user_class.find_by_id(params[:id])#Use find_by_id to produce nil rather than error as opposed to find()
         
     if user_class == User 
-      root_path = root_path(:locale => country_code)
+      base_path_for_user_type = jobs_path(:locale => country_code)
       unsubscribe_path = unsubscribe_user_path(:locale => country_code, :id => params[:id], :ref => params[:ref])
     else # employer
-      root_path = employer_welcome_path #  Note that employers do not have their own native locale 
+      base_path_for_user_type = employer_welcome_path #  Note that employers do not have their own native locale 
       unsubscribe_path = unsubscribe_employer_path(:id => params[:id], :ref => params[:ref])
   
     end
@@ -169,7 +169,7 @@ module UsersControllerCommon
   rescue Exception => e
     flash_message(:error, e.message)
   ensure
-    redirect_to jobs_path
+     redirect_to base_path_for_user_type
   end
   
   def add_verif_flash 
