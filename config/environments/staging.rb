@@ -29,8 +29,10 @@ FiveYearItch::Application.configure do
   config.action_mailer.raise_delivery_errors = true
   
   config.action_mailer.default_url_options = {
-    :host => "fyistage.herokuapp.com"
+    :host => "fyistage.herokuapp.com", 
+    Constants::STAGING_SECRET_PARAM_NAME => Constants::STAGING_SECRET_PARAM_VALUE
   }
+  Rails.application.routes.default_url_options[Constants::STAGING_SECRET_PARAM_NAME] = Constants::STAGING_SECRET_PARAM_VALUE
   
   # setting up sendgrid
   ActionMailer::Base.smtp_settings = {

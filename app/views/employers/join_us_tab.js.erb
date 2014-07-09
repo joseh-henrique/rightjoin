@@ -4,6 +4,7 @@ color = params["color"]
 background_color = params["bg"]
 border_color = params["border"]
 counter_bg = params["counter-bg"]
+geotarget = params["geotarget"] == "true"
 border = "border: none"
 unless border_color.nil? || border_color == "none"
 	border = "border: 2px solid #{border_color}"
@@ -33,8 +34,8 @@ border_bottom_tab = <<-FIN
 	-moz-border-radius-topright: #{border_radius};
 	border-top-left-radius: #{border_radius};
 	border-top-right-radius: #{border_radius};
-	padding: 0.5em 33px 0.5em 28px;
-	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat right center;
+	padding: 0.5em #{geotarget ? '33px' : '28px'} 0.5em 28px;
+	background: #{background_color} #{geotarget ? "url(#{asset_data_uri flag_path}) no-repeat right center" : ""};
 FIN
 
 border_left_tab = <<-FIN
@@ -46,10 +47,10 @@ border_left_tab = <<-FIN
 	-moz-border-radius-bottomright: #{border_radius};
 	border-top-right-radius: #{border_radius};
 	border-bottom-right-radius: #{border_radius};
-	padding: 21px 0.7em 28px 0.7em;
+	padding: 21px 0.7em #{geotarget ? '28px' : '20px'} 0.7em;
 	letter-spacing: 0;
 	text-transform: uppercase;
-	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat bottom center;
+	background: #{background_color} #{geotarget ? "url(#{asset_data_uri flag_path}) no-repeat bottom center" : ""};
 FIN
 
 border_top_tab = <<-FIN
@@ -61,8 +62,8 @@ border_top_tab = <<-FIN
 	-moz-border-radius-bottomleft: #{border_radius};
 	border-bottom-right-radius: #{border_radius};
 	border-bottom-left-radius: #{border_radius};
-	padding: 0.5em 33px 0.5em 28px;
-	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat right center;
+	padding: 0.5em #{geotarget ? '33px' : '28px'} 0.5em 28px;
+	background: #{background_color} #{geotarget ? "url(#{asset_data_uri flag_path}) no-repeat right center" : ""};
 FIN
 
 border_right_tab = <<-FIN
@@ -74,10 +75,10 @@ border_right_tab = <<-FIN
 	-moz-border-radius-bottomleft: #{border_radius};
 	border-top-left-radius: #{border_radius};
 	border-bottom-left-radius: #{border_radius};
-	padding: 21px 0.7em 28px 0.7em;
+	padding: 21px 0.7em #{geotarget ? '28px' : '20px'} 0.7em;
 	letter-spacing: 0;
 	text-transform: uppercase;
-	background: #{background_color} url(#{asset_data_uri flag_path}) no-repeat bottom center;
+	background: #{background_color} #{geotarget ? "url(#{asset_data_uri flag_path}) no-repeat bottom center" : ""};
 FIN
 %>
 
@@ -153,7 +154,7 @@ FIN
 	}	
 
 	// widget constructor function
-	global.RightJoin_tab = function() {
+	global.JoinUs_tab = function() {
 		var _positionsCount = <%=@activeJobsCount%>;
 		
 		var buildTabContent = function() {
@@ -176,7 +177,7 @@ FIN
 		
 		var createStyle = function() {
 			<%
-				shift = "80px"
+				shift = "10%"
 				css = <<-FIN
 					.rightjoin-animation {
 					  -webkit-animation-fill-mode: both;
@@ -356,7 +357,7 @@ FIN
 		};
 		
 		var popupWidget = function() {
-			return openDialogWindow("<%=we_are_hiring_employer_url(@employer.reference_num, :job => nil)%>", 1000, 650);
+			return openDialogWindow("<%=we_are_hiring_employer_url(@employer.reference_num, :job => nil, :locale => geotarget ? I18n.t(:country_code, :locale => I18n.locale) : nil)%>", 1000, 650);
 		};	
 	
 	    // public instance methods

@@ -14,7 +14,7 @@
 			<% else %>
 				<div class="counter-val"><%=stat[:clicks_count].to_i%></div>
 			<% end %>
-		<div class="counter-title">Clickbacks</div></div>
+		<div class="counter-title">Clicks</div></div>
 		
 		<div class="counter">
 			<% if stat[:leads_count].to_i == 0 %>
@@ -35,9 +35,8 @@
 					<% if leads.count >= i + 1%>
 						<% infointerview = leads[i].infointerview %>
 						<%tt_title = ERB::Util.html_escape( "#{infointerview.first_name} #{infointerview.last_name}")%>
-						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :id => "lead-avatar-link-#{infointerview.id}",  class: "lead-avatar"), 
+						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => h("#{infointerview.first_name} #{infointerview.last_name}").to_str,  class: "with-tooltip lead-avatar"), 
 							followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, anchor: "followup-#{infointerview.id}") %>
-							<script>$("#<%="lead-avatar-link-#{infointerview.id}" %>").attr('title', "<%=tt_title%>");</script>
 					<% else %>
 						<div class="lead-avatar"></div>
 					<% end %>

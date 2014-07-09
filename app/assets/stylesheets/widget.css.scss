@@ -97,10 +97,7 @@ body {
 
 a {
   color: #FFF;
-
-  &:focus, &:hover, &:active {
-    color: rgba(255,255,255,0.75);
-  }
+  @include opacity(100);
 }
 
 
@@ -151,7 +148,7 @@ a {
     // defined under photo, blurb and avatar
     //@include translate(20px);   
     
-    @include box-shadow(-8px 0px 17px -4px rgba(255,255,255,1));   
+    @include box-shadow(-5px 0px 5px 0px rgba(255, 255, 255, 0.6));   
   }
 }
 
@@ -240,6 +237,41 @@ a {
   }
 }
 
+.cell-movie-preview {
+  width: $tile-width + $tile-padding * 2;
+  height: $tile-height + $tile-padding * 2;
+  padding: 0;  
+  
+  .center-helper {
+    display: inline-block; 
+    position:relative; 
+    right: -50%;  
+    
+    img {
+      height: $tile-height + $tile-padding * 2;
+      position: relative; 
+      left:-50%;
+    }      
+  }
+  
+  .play-button {
+    position: absolute;
+    display: block;
+    text-indent: -9999px;
+    width: $tile-width + $tile-padding * 2;
+    height: $tile-height + $tile-padding * 2;
+    background: transparent image-url("shared/play-button.png") no-repeat center center;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    @include opacity(90);
+    
+    &:hover {
+      @include opacity(100);
+    }
+  }
+}
+
 .map {
   width: $tile-width + $tile-padding * 2;
   height: $tile-height + $tile-padding * 2;
@@ -290,28 +322,33 @@ a {
   .position {
     font-size: 2.2em;
     letter-spacing: -1px;
-    line-height: 1.1em;
+    line-height: 1.05em;
   }
   
-  .location {
-    font-size: 1.25em;
-    line-height: 1.1em;
-    margin-top: 0.5em;
+  .company-name {
+    font-size: 1.4em;
+    line-height: 1em;
+    margin-top: 0.4em;
   }
   
-  .company-box {
+  .logo-location-box {
     position: absolute;
     bottom: 0;
     
     .logo {
-      margin-right: 0.5em;
+      margin-right: 1em;
       margin-left: 1px;
-      height: 3em;
+      height: 3.5em;
+      vertical-align: bottom;
+      display: inline-block;
     }
     
-    .company-name {
-      font-size: 1.25em;
+    .location {
+      font-size: 1.05em;
+      line-height: 1.1em;
       font-weight: 500;
+      @include opacity(60);
+      display: inline-block;
     }
   }
 }
@@ -336,8 +373,14 @@ a {
   bottom: 0;
   right: 0;
   left: 0;
+  
   .position {
     text-overflow: ellipsis;
+    @include opacity(80);
+  
+    &:focus, &:hover, &:active {
+      @include opacity(100);
+    }
   }
 }
 
@@ -493,7 +536,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   left: 0;
   width: $triple-tile-width;
   height: $double-tile-height;
-  z-index: 9999;
+  z-index: 5000; // validation tooltips z-index 5001
   
   .close-form {
     display: block;
@@ -554,16 +597,18 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
     margin: 0;
     color: #626262;
     resize: none;
-    border: 1px solid #d8e5ed;
+    border: 1px solid #979797;
     background-color: white; 
     font-size: 1em;
     line-height: 1.25em;
     width: 18em;
     padding: 0.5em;
     font-family: 'Ubuntu', sans-serif;
+    outline: none;
     
     &:focus {
-      border: 1px solid #051b29;
+      border: 1px solid #666;
+      outline: none;
     }
   }
   
@@ -737,11 +782,6 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   height: 18px;
   background: transparent image-url("widget/rightjoin.png") no-repeat center;
   text-indent: -9999px;
-  @include opacity(70);
-  
-  &:hover {
-    @include opacity(100);
-  }
 }
 
 /* 

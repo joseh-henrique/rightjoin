@@ -3,7 +3,7 @@ class Employer < ActiveRecord::Base
   
   serialize :join_us_widget_params_map, JSON
   
-  attr_accessible  :company_name
+  attr_accessible  :company_name, :reminder_body, :reminder_subject, :reminder_period
   
   validates :first_name, :presence=> true
   validates :last_name, :presence=> true  
@@ -71,6 +71,11 @@ class Employer < ActiveRecord::Base
     self.jobs.where("status = ?", Job::LIVE)
   end
   
+  def self.employer_ids_for_ambassador_reminder
+    # have active jobs, active ambassadors and reminder period > 0
+    Employer.joins(:jobs,:ambassadors).where("employers.reminder_period > ? and jobs.status = ? and ambassadors.status = ?", 0, Job::LIVE, Ambassador::ACTIVE).pluck("distinct employers.id")
+  end
+  
   # Returns array of Employers, where each employer object has an additional field which is not in the Employer class--employer.contacts_count.
   def self.count_infointerviews(*statuses)
     Employer.joins(:jobs => :infointerviews).select("count(infointerviews.id) as contacts_count, employers.*").where("infointerviews.status in (#{statuses.join(', ')})").group("employers.id")
@@ -107,6 +112,44 @@ class Employer < ActiveRecord::Base
     return !join_us_widget_heartbeat.nil? && now - join_us_widget_heartbeat < 24.hours
   end
   
+  def reminder
+    default_subject = "Take a break and share!"
+    default_body = "Hi [first-name],\n\n"\
+              "This is a friendly reminder to share our job postings and find us some good colleagues.\n\n" <<
+               "The message gets through better if it's sent periodically. It takes 2 clicks and no more than 30 seconds of your time.\n\n"\
+              "[team-page-url]\n\n"\
+              "Regards,\n\n"\
+              "#{self.first_name}"#[TODO]Escape this. a name like <script>1/0</script> is stripped out in email clients, so this is not a huge problel
+
+   {:subject => self.reminder_subject.blank? ? default_subject : self.reminder_subject,
+    :body => self.reminder_body.blank? ? default_body : self.reminder_body,
+    :period => self.reminder_period}
+  end
+  
+  def self.send_pending_reminders_to_all_ambassadors
+    counter = 0
+    
+    employer_ids = Employer.employer_ids_for_ambassador_reminder
+    employer_ids.each do |id|
+      employer = Employer.find(id)
+      period = employer.reminder_period
+      employer.ambassadors.each do |ambassador|
+        if ambassador.should_remind(employer.reminder[:period])
+          begin
+            new_msg = FyiMailer.create_ambassador_reminder_message(ambassador, employer.reminder[:subject], employer.reminder[:body])
+            Utils.deliver new_msg
+            counter += 1
+          rescue Exception => e
+            # We swallow the exception so that one failure does not cause failure in all
+            logger.error e
+          end          
+        end
+      end
+    end
+    
+    return counter
+  end    
+
   def inspect
     jobs_str = jobs.collect {|job| "#{job.id}"}.compact.join(", ")
     

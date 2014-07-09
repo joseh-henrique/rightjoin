@@ -55,6 +55,8 @@ class JobsController < ApplicationController
     @job.image_1_id = @base_job.image_1_id
     @job.image_2_id = @base_job.image_2_id
     @job.image_3_id = @base_job.image_3_id
+    
+    @job.video_url = @base_job.video_url
   
     @job.join_us_widget_params_map = @base_job.join_us_widget_params_map
     
@@ -243,6 +245,8 @@ private
     job.image_1_id = params["image_1_id"]
     job.image_2_id = params["image_2_id"]
     job.image_3_id = params["image_3_id"]
+    
+    job.video_url = params["video_url"]
     
     job.address = params["address"]
     job.address_lat = params["address_lat"]

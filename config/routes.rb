@@ -46,15 +46,15 @@ FiveYearItch::Application.routes.draw do
   match "/infointerview/:id/reopen" => "infointerviews#reopen", :via => :post, :as => :infointerview_reopen
   match "/infointerview/:id/delegate" => "infointerviews#delegate", :via => :post, :as => :infointerview_delegate
   
-  # "work with us" widget
-  match '/:refnum/join', :to => 'employers#we_are_hiring', :via => :get, :as => :we_are_hiring_employer, :defaults => { :locale => nil }
-  match '/:refnum/ping', :to => 'employers#ping', :via => :get, :as => :ping_employer, :defaults => { :locale => nil }
-  
   resources :photos, :only => [:index, :create] 
    
   scope "(:locale)", :locale => /us|uk|au|ca|il|in|/ do
     root :to => 'pages#index'
     match '/', :to => 'pages#index', :as => :country_root
+    
+    # "work with us" widget
+    match '/:refnum/join', :to => 'employers#we_are_hiring', :via => :get, :as => :we_are_hiring_employer, :defaults => { :locale => nil }
+    match '/:refnum/ping', :to => 'employers#ping', :via => :get, :as => :ping_employer, :defaults => { :locale => nil }    
     
     # employee
     match '/welcome', :to => 'pages#welcome'
@@ -74,8 +74,8 @@ FiveYearItch::Application.routes.draw do
     match '/employer/search', :to => 'pages#employer_search'
     match '/employer/signin', :to => 'sessions#employer_signin', :as => :employer_signin
     match '/employer/signout', :to => 'sessions#employer_signout', :as => :employer_signout
-    match '/employer/:refnum/work_with_us_tab', :to => 'employers#work_with_us_tab', :via => :get, :as => :work_with_us_tab_employer
-    match '/employer/:refnum/work_with_us_test', :to => 'employers#work_with_us_test', :via => :get, :as => :work_with_us_test_employer
+    match '/employer/:refnum/join_us_tab', :to => 'employers#join_us_tab', :via => :get, :as => :join_us_tab_employer
+    match '/employer/:refnum/join_us_test', :to => 'employers#join_us_test', :via => :get, :as => :join_us_test_employer
 
     resources :company_ratings, only: [:create]
      
@@ -99,6 +99,7 @@ FiveYearItch::Application.routes.draw do
         post 'unsubscribe'
         get  'unsubscribe'
         get  'configure_join_us_tab'
+        post 'configure_reminder'
       end
       
       collection do
@@ -122,6 +123,9 @@ FiveYearItch::Application.routes.draw do
           post 'close_followup'
           get 'followup'
         end
+        collection do
+          post 'remind'   
+        end        
       end
     end
     

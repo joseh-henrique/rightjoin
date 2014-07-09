@@ -1,9 +1,9 @@
 require 'net/http'
 
 class AmbassadorsController < ApplicationController
-  before_filter :strip_params, :only => [:update, :create, :share, :close_followup]
-  before_filter :init_employer_user, :only => [:destroy]
-  before_filter :correct_employer, :only => [:destroy]
+  before_filter :strip_params, :only => [:update, :create, :share, :close_followup, :remind]
+  before_filter :init_employer_user, :only => [:destroy, :remind]
+  before_filter :correct_employer, :only => [:destroy, :remind]
   
   before_filter :set_ambassador_check_valid, :only => [:edit, :show, :update, :share, :followup, :close_followup]
 
@@ -30,7 +30,8 @@ class AmbassadorsController < ApplicationController
     @ambassador.status = Ambassador::CLOSED
     @ambassador.save!
     
-    flash_message(:notice, "#{@ambassador.first_name}'s team member profile is now inactive.")
+    fn = ERB::Util.html_escape  @ambassador.first_name 
+    flash_message(:notice, "#{fn}'s team member profile is now inactive.")
     
     redirect_to employer_path current_user
     
@@ -195,7 +196,42 @@ class AmbassadorsController < ApplicationController
   rescue  Exception => e
     logger.error e
     flash_message(:error, Constants::ERROR_FLASH)
-    redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)    
+    redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
+  end
+  
+  #This is not our standard design for distinguishing exception types. What is?
+  class  AmbassadorException < StandardError
+     def initialize(data)
+        @data = data
+      end
+      attr_reader :data
+  end
+  
+  def remind
+    employer = current_user
+    
+    ambassador = Ambassador.find(params[:ambassador_id])
+    raise AmbassadorException.new("Unexpected employer") if ambassador.employer_id != employer.id
+    raise AmbassadorException.new( "Can't send reminder to a team member who has been removed") if ambassador.status == Ambassador::CLOSED
+    
+    subject = params[:reminder_subject]
+    body = params[:reminder_body]
+    
+    new_msg = FyiMailer.create_ambassador_reminder_message(ambassador, subject, body)
+    Utils.deliver new_msg
+    
+    now = Time.parse(ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP"))
+    ambassador.update_attributes(:reminder_sent_at => now)
+    
+    flash_message(:notice, "Reminder has been sent.")
+  rescue  AmbassadorException => ae
+    logger.error ae
+    flash_message(:error, ae.data)
+  rescue  Exception => e
+    logger.error e
+    flash_message(:error, Constants::ERROR_FLASH)
+  ensure
+    redirect_to employer_path(employer)    
   end
   
 private
@@ -216,7 +252,7 @@ private
     @ambassador = Ambassador.find(params[:id])
     # Actually, if employer or ambassador are not found by ID, There will be an exception above rather than getting nil values here. So, the checks are not really needed. 
     raise "Error: Employer #{params[:employer_id]} not found" if  employer.nil?  
-    raise "Error: Ambassador #{params[:id]} not found" if   @ambassador.nil?  
+    raise "Error: Ambassador #{params[:id]} not found" if @ambassador.nil?  
     raise "Error: Ambassador #{params[:id]} has employer #{@ambassador.employer.id} not #{ employer.id}" if  @ambassador.employer.id != employer.id
     
     return true

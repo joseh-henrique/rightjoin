@@ -4,30 +4,42 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   before_filter :set_default_locale
   before_filter :check_uri
-
+  before_filter :check_secret_param
+  
   def check_uri
-    host = request.host.downcase
+		if Rails.env.production?
+      host = request.host.downcase
+      from = params["from"].to_s		  
+		  
+      if from.include?(Constants::SITENAME_IL_LC)
+        # overrides the locale which was set earlier in set_default_locale
+        set_default_locale(Constants::COUNTRY_IL) 
+      end
+      
+      if from.include?(Constants::FIVEYEARITCH_SITENAME.downcase) 
+        flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and sign in." )
+      end  
  
-		unless host.include?(".herokuapp.com") || #These are test hosts; all others are redirected.
-        host.start_with?("localhost") || host.start_with?("127.0.0.1") || host.start_with?("lvh.me") ||
-        (Rails.env.development? && host.start_with?("192.168."))
-         
-           if host.include?(Constants::SITENAME_IL_LC)
-              # overrides the locale which was set earlier in set_default_locale
-              set_default_locale(Constants::COUNTRY_IL) 
-           end
-           
-           if host.include?(Constants::FIVEYEARITCH_SITENAME.downcase)
-              flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and log in." )
-           end  
- 
-          if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC)
-            port_str = (request.port==80 ?"": ":"+request.port.to_s) 
-            url_with_www = request.protocol + "www." + Constants::SITENAME_LC+ port_str + request.fullpath
-            
-            headers["Status"] = "301 Moved Permanently"
-            redirect_to url_with_www
-          end
+      if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC)
+        port_str = (request.port==80 ? "" : ":"+request.port.to_s)
+        redir_host  ="www." + Constants::SITENAME_LC
+        orig_path= request.fullpath
+        param_char = orig_path.include?("?") ? "&" : "?"
+        redir_path = "#{orig_path}#{param_char}from=#{host}"
+        url_with_www = request.protocol + redir_host + port_str +redir_path 
+        
+        redirect_to url_with_www, :status => 301
+      end
+    end
+  end
+  
+  def check_secret_param
+    if Rails.env.staging?
+      if params[Constants::STAGING_SECRET_PARAM_NAME] != Constants::STAGING_SECRET_PARAM_VALUE
+        unless request.path.start_with?('/auth/')
+          redirect_to "/403.html", status: :gone
+        end
+      end
     end
   end
 
@@ -229,25 +241,25 @@ class ApplicationController < ActionController::Base
       @search_location = nil
     elsif fallback_pos
       @voiceover = "No results for <em>\"#{ERB::Util.html_escape(pos)}\"</em>."
-      @voiceover << " Searching for other positions in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove'></a></div>" unless loc.blank?
+      @voiceover << " Searching for other positions in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove' class='with-tooltip'></a></div>" unless loc.blank?
       @voiceover << " Listing the most recent job postings" if loc.blank?
       @search_position = nil
     elsif fallback_loc
       @voiceover = "No results for <em>\"#{ERB::Util.html_escape(loc)}\"</em>."
-      @voiceover << "  Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove'></a></div> in other areas" unless pos.blank?
+      @voiceover << "  Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove' class='with-tooltip'></a></div> in other areas" unless pos.blank?
       @voiceover << "  Listing  the most recent job postings" if pos.blank?
       @search_location = nil
     else 
       if !pos.blank? && !loc.blank?
-        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove'></a></div> in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove'></a></div>"
+        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove' class='with-tooltip'></a></div> in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove' class='with-tooltip'></a></div>"
       elsif !loc.blank?
-        @voiceover = "Searching for jobs in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove'></a></div>"
+        @voiceover = "Searching for jobs in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove' class='with-tooltip'></a></div>"
       elsif !pos.blank?
-        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove'></a></div>"
+        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove' class='with-tooltip'></a></div>"
       end
     end
     
-    @voiceover << " in the category: <div class='release-constraint-box' id='release-board-constraint'><span>#{board_obj.title_case}</span><a title='Remove'></a></div>" unless board_obj.blank?
+    @voiceover << " in the category: <div class='release-constraint-box' id='release-board-constraint'><span>#{board_obj.title_case}</span><a title='Remove' class='with-tooltip'></a></div>" unless board_obj.blank?
   
     if ((fallback_pos || fallback_loc) && !signed_in?)
         register_txt = "#{view_context.link_to("Register", register_path)} and let employers invite you to escape-worthy jobs that meet your requirements." 
@@ -384,25 +396,25 @@ class ApplicationController < ActionController::Base
       @search_location = nil
     elsif fallback_pos
       @voiceover = "No results for <em>\"#{ERB::Util.html_escape(pos)}\"</em>."
-      @voiceover << " Searching for other titles in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove'></a></div>" unless loc.blank?
+      @voiceover << " Searching for other titles in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove' class='with-tooltip'></a></div>" unless loc.blank?
       @voiceover << " Listing most recent candidates" if loc.blank?
       @search_position = nil
     elsif fallback_loc
       @voiceover = "No results for <em>\"#{ERB::Util.html_escape(loc)}\"</em>."
-      @voiceover << "  Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove'></a></div> in other areas" unless pos.blank?
+      @voiceover << "  Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove' class='with-tooltip'></a></div> in other areas" unless pos.blank?
       @voiceover << "  Listing most recent candidates" if pos.blank?
       @search_location = nil
     else 
       if !pos.blank? && !loc.blank?
-        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove'></a></div> in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove'></a></div>"
+        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove' class='with-tooltip'></a></div> in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove' class='with-tooltip'></a></div>"
       elsif !loc.blank?
-        @voiceover = "Searching for candidates in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove'></a></div>"
+        @voiceover = "Searching for candidates in <div class='release-constraint-box'  id='release-location-constraint'><span>#{ERB::Util.html_escape(loc)}</span><a title='Remove' class='with-tooltip'></a></div>"
       elsif !pos.blank?
-        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove'></a></div>"
+        @voiceover = "Searching for <div class='release-constraint-box'  id='release-position-constraint'><span>#{ERB::Util.html_escape(pos)}</span><a title='Remove' class='with-tooltip'></a></div>"
       end
     end
     
-    @voiceover << ", filtered by <div class='release-constraint-box'  id='release-skill-constraint'><span>#{@skill}</span><a title='Remove'></a></div>" unless @skill.blank?
+    @voiceover << ", filtered by <div class='release-constraint-box'  id='release-skill-constraint'><span>#{@skill}</span><a title='Remove' class='with-tooltip'></a></div>" unless @skill.blank?
   end
   
 private 

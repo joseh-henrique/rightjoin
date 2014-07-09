@@ -29,7 +29,7 @@
 			$( "#skill" ).cachedautocomplete({
 				multiValue: false,
 				sequentialMatching: false,
-				url: "/autocomplete/skills"
+				url: "<%=autocomplete_skills_path(:locale => nil)%>"
 			});
 						
 			$( "#location" ).locationcomplete({

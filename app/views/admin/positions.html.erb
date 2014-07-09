@@ -31,7 +31,7 @@
 			});
 		
 			$( "#wantedposition" ).cachedautocomplete({
-				url: "/autocomplete/positions",
+				url: "<%=autocomplete_positions_path(:locale => nil)%>",
 				sequentialMatching: false
 			});
 		</script>

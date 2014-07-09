@@ -32,7 +32,8 @@ class Constants
   REMEMBER_TOKEN_INFOINTERVIEW = :remember_token_infointerview
   REMEMBER_TOKEN_AMBASSADOR = :remember_token_ambassador
   
-
+  STAGING_SECRET_PARAM_NAME = "_s"
+  STAGING_SECRET_PARAM_VALUE = "red"
    
   TELECOMMUTE= 'telecommute'
   RELOCATION = 'relocation'

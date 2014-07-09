@@ -9,7 +9,7 @@
 					<%= label_tag(nil,  current_job_s(:employee), :class=>"mandatory") %><br>
 				  	<a class="field-tooltip" title="The job title you now have."></a>
 			 		<% current_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:current_job] : @user.current_position_name %>
-					<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true) %>			
+					<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "10") %>			
 				</div>
 				<div class="form-cell">
 					<%= label_tag(nil, city_s(:employee)) %><br>
@@ -17,12 +17,12 @@
 					      title='<p>The city where you want to work.</p><p>You can start typing a city name or a zip code and use autocomplete.</p><p>We find matches in the city you choose and nearby cities.</p>'></a> 
 					<%= text_field_tag(:location, @user.location_name, 
 						:autocomplete => "off", :placeholder => "e.g., san francisco, california", 
-						:maxlength => 60, :class=>"", :spellcheck => false) %>
+						:maxlength => 60, :class=>"", :spellcheck => false, :tabindex => "30") %>
 						
 					<div class="location-options-box">
-						<%= check_box_tag 'can_telecommute', '1', @user.can_telecommute %>&nbsp;<%= label_tag "can_telecommute", "Telecommuting OK" %>
+						<%= check_box_tag 'can_telecommute', '1', @user.can_telecommute, :tabindex => "40" %>&nbsp;<%= label_tag "can_telecommute", "Telecommuting OK" %>
 						<br>
-						<%= check_box_tag 'can_relocate', '1', @user.can_relocate  %>&nbsp;<%= label_tag "can_relocate", "Anywhere in #{I18n.t(:country_name )}" %>
+						<%= check_box_tag 'can_relocate', '1', @user.can_relocate, :tabindex => "50"  %>&nbsp;<%= label_tag "can_relocate", "Anywhere in #{I18n.t(:country_name )}" %>
 					</div>
 					
 					<%= hidden_field_tag(:lat, @user.latitude) %>
@@ -35,7 +35,7 @@
 					<%= label_tag(nil, wanted_job_s(:employee), :class=>"mandatory") %><br>
 					<a class="field-tooltip" title="The dream job you'd like to move to. To help employers find you, please use a standard job title."></a>
 					<% wanted_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:wanted_job] : @user.wanted_position_name %>
-					<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true) %>						
+					<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "20") %>						
 				</div>
 			</div>
 		</div>
@@ -60,11 +60,11 @@
 			%>
 			<a class="field-tooltip" title="<%=raw skill_levels%>"></a>
 			<div class="form-row group-box">
-				<%= text_field_tag(:skilltag, nil, :name => nil, :autocomplete => "off", :placeholder => "e.g., java", :maxlength => 60, :class => "", :spellcheck => false) %>&nbsp;&nbsp;
+				<%= text_field_tag(:skilltag, nil, :name => nil, :autocomplete => "off", :placeholder => "e.g., java", :maxlength => 60, :class => "", :spellcheck => false, :tabindex => "60") %>&nbsp;&nbsp;
 				   
-			    <a id="add-skill-btn-10"   class="add-tag-button"><%= seniority_s(UserSkill::EXPERT)%>&nbsp;+</a>&nbsp;
-				<a id="add-skill-btn-4-6"  class="add-tag-button"><%=seniority_s(UserSkill::PROFESSIONAL)%>&nbsp;+</a>&nbsp;
-				<a id="add-skill-btn-1"  class="add-tag-button"><%=seniority_s(UserSkill::LEARNER)%></span>&nbsp;+</a>	
+			    <a id="add-skill-btn-10"   class="add-tag-button" tabindex = "70"><%= seniority_s(UserSkill::EXPERT)%>&nbsp;+</a>&nbsp;
+				<a id="add-skill-btn-4-6"  class="add-tag-button" tabindex = "80"><%=seniority_s(UserSkill::PROFESSIONAL)%>&nbsp;+</a>&nbsp;
+				<a id="add-skill-btn-1"  class="add-tag-button" tabindex = "90"><%=seniority_s(UserSkill::LEARNER)%></span>&nbsp;+</a>	
 			 
 				<ol id="skills-tags-list" class="tags-list"></ol>
 				<%= hidden_field_tag(:skills) %>
@@ -79,7 +79,7 @@
 			<div class="form-row group-box aspirations-box">
 				<% User::ASPIRATIONS.each_with_index do |aspiration, index| %>
 					<div>
-						<%=radio_button_tag 'aspiration', index, @user.aspiration == index%>&nbsp;<%= label_tag("aspiration_#{index}", aspiration[:label], class: "radio-buttton-label") %>
+						<%=radio_button_tag 'aspiration', index, @user.aspiration == index, :tabindex => "100"%>&nbsp;<%= label_tag("aspiration_#{index}", aspiration[:label], class: "radio-buttton-label") %>
 					</div>
 				<% end %>
 			</div>
@@ -110,8 +110,8 @@
 			<a class="field-tooltip" title="<p>Don't be shy. Ask for anything you want.</p><p>Employers only contact you if they can meet your requirements.</p>"></a>
 			<div class="form-row group-box">
 				<%= text_field_tag(:jobqualifiertag, nil, :name => nil, :autocomplete => "off", 
-						:placeholder => "e.g., learning opportunities", :maxlength => 60, :class => "", :spellcheck => true) %>&nbsp;&nbsp;
-				<a id="add-job-qualifier-btn" class="add-tag-button">Add&nbsp;+</a>
+						:placeholder => "e.g., learning opportunities", :maxlength => 60, :class => "", :spellcheck => true, :tabindex => "110") %>&nbsp;&nbsp;
+				<a id="add-job-qualifier-btn" class="add-tag-button" tabindex = "120">Add&nbsp;+</a>
 				<ol id="job-qualifier-tags-list" class="tags-list"></ol>
 				<%= hidden_field_tag(:jobqualifiers) %>
 			</div>
@@ -122,7 +122,7 @@
 				<div class="form-cell">
 					<%= label_tag(nil, free_text_s(:employee, true)) %>
 					<div id="free-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH%></div>
-					<%= text_area_tag(:freetext, @user.free_text, :maxlength => Constants::MAX_STRING_LENGTH, :rows => 2, :class=>"free-text", :counterId=>"free-text-counter")%>			
+					<%= text_area_tag(:freetext, @user.free_text, :maxlength => Constants::MAX_STRING_LENGTH, :rows => 2, :class=>"free-text", :counterId=>"free-text-counter", :tabindex => "120")%>			
 				</div>
 			</div>
 		</div>
@@ -134,13 +134,13 @@
 			<div class="form-column">
 				<div class="form-cell">
 					<%= label_tag(nil,  "First name", :class=>"mandatory") %><br>
-					<%= text_field_tag(:firstname, @user.first_name, :autocomplete => "on", :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :spellcheck => false) %>			
+					<%= text_field_tag(:firstname, @user.first_name, :autocomplete => "on", :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :spellcheck => false, :tabindex => "130") %>			
 				</div>
 			</div>
 			<div class="form-column">
 				<div class="form-cell">
 					<%= label_tag(nil,  "Last name", :class=>"mandatory") %><br>
-					<%= text_field_tag(:lastname, @user.last_name, :autocomplete => "on", :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :spellcheck => false) %>			
+					<%= text_field_tag(:lastname, @user.last_name, :autocomplete => "on", :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :spellcheck => false, :tabindex => "140") %>			
 				</div>
 			</div>		
 		</div>
@@ -149,7 +149,7 @@
 			<div class="form-cell">
 				<%= label_tag(nil, "Your professional profiles (LinkedIn, GitHub, etc.)") %><br>
 				<div id="resume-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH * 2%></div>
-				<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :class=>"professional-profiles", :counterId=>"resume-text-counter")%>			
+				<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :class=>"professional-profiles", :counterId=>"resume-text-counter", :tabindex => "150")%>			
 			</div>
 		</div>
 		
@@ -158,7 +158,7 @@
 				<div class="form-cell">
 					<%= label_tag(nil,  raw("Email address"), :class=>"mandatory") %><br>
 					<a class="field-tooltip" title="You will get a confirmation email to activate your profile."></a>
-		    		<%= text_field_tag :email, @user.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]]" %>	
+		    		<%= text_field_tag :email, @user.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required,custom[email]]", :tabindex => "160" %>	
 				</div>
 			</div>
 		</div>	
@@ -170,11 +170,11 @@
 				Please sign up <em>only</em> if you have authorization to work in <a href="#" id="country-info"><%=I18n.t :country_name%></a>.
 			</h3>
 
-			<%= submit_tag "Let's Go!", :id=>"submit", :class=>"standard-button", :name => nil %>
+			<%= submit_tag "Let's Go!", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "170" %>
 		<%else%>
-			<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil %>
+			<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "170" %>
 			&nbsp;&nbsp;
-			<%= link_to "Cancel", user_path(@user, :locale => @user.country_code), :class=>"cancel-button" %>
+			<%= link_to "Cancel", user_path(@user, :locale => @user.country_code), :class=>"cancel-button", :tabindex => "180" %>
 		<%end%>	
 	</div>
 <% end %>
@@ -208,13 +208,13 @@
     });
 	
 	$( "#currentposition" ).cachedautocomplete({
-		url: "/autocomplete/positions",
+		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
 	});	
 	
 	$( "#wantedposition" ).cachedautocomplete({
-		url: "/autocomplete/positions",
+		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
 		extraParam: "#currentposition"
 	});
@@ -222,14 +222,14 @@
 	$( "#skilltag" ).cachedautocomplete({
 		multiValue: true,
 		sequentialMatching: false,
-		url: "/autocomplete/skills",
+		url: "<%=autocomplete_skills_path(:locale => nil)%>",
 		extraParam: "#wantedposition"
 	});
 	
 	$( "#jobqualifiertag" ).cachedautocomplete({
 		multiValue: true,
 		sequentialMatching: false,
-		url: "/autocomplete/jobqualifiers",
+		url: "<%=autocomplete_jobqualifiers_path(:locale => nil)%>",
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(JobQualifierTag, 8)).html_safe%>
 	});	
 </script>

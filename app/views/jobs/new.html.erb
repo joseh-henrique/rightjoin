@@ -18,9 +18,9 @@
 	
 						<%= label_tag(nil, "Take job settings from") %>	
 						<div>
-							<%=select 'copy_from', 'jobid', options, {:include_blank => false}, {:class => "standard-select"}%>
+							<%=select 'copy_from', 'jobid', options, {:include_blank => false}, {:class => "standard-select", :tabindex => "5"}%>
 							&nbsp;
-							<%= submit_tag("Copy", :class => "standard-button copy-settings-button", :name => nil) %>
+							<%= submit_tag("Copy", :class => "standard-button copy-settings-button", :name => nil, :tabindex => "6") %>
 						</div>
 					<% end %>
 				</div>

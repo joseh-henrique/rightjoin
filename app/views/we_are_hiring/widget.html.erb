@@ -122,13 +122,11 @@
 		<%end%>
 		
 		<%#work with%>
-		<%#limiting to 50 insiders, yes, I'm optimistic %>
-		<% @job.employer.ambassadors.only_active.limit(WidgetsHelper::AMBASSADOR_LIMIT).each_with_index do |ambassador, i| %>
-			<div id="contel-work-with-<%=ambassador.id%>" class="for-avatar">				
+		<%#limiting to 20 insiders %>
+		<% @job.employer.ambassadors.only_active.limit(20).each_with_index do |ambassador, i| %>
+			<div id="contel-work-with-<%=ambassador.id%>" class="for-avatar">
 				<% resource, link = ambassador.profile_links_map.first %>
-				<% tt_title = ERB::Util.html_escape  "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}" %>
-				<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :id=> "avatar-link-#{ambassador.id}",  :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
-				 <script>$("#<%="avatar-link-#{ambassador.id}" %>").attr('title', "<%=tt_title%>");</script> 
+				<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}",  :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
 			</div>
 		<% end %>
 		
@@ -152,13 +150,17 @@
 			    <div class="position">
 			    	<%=@job.position.name%>
 			    </div>
-				<div class="location"><%=raw @job.all_location_parts.map{|loc| h(loc)}.join("<span class='separator'> or </span>")%></div>
+			    
+				<div class="company-name">
+					<%=@job.company_name%>
+				</div>			    
 				
-				<div class="company-box">
+				<div class="logo-location-box">
 					<% unless @job.logo.nil? %>
 						<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
 					<% end %>
-					<span class="company-name"><%=@job.company_name%></span>
+					
+					<div class="location"><%=raw @job.all_location_parts.map{|loc| h(loc)}.join("<br>")%></div>
 				</div>
 			</div>
 		</div>
@@ -188,7 +190,15 @@
 			<div class="tile swappable blurb cell-13 bg-style1"></div>
 		<% end %>
 		
-		<div class="tile swappable blurb cell-14 bg-style2"></div>
+		<% video_preview_url = @job.video_preview_url %>
+		<% if video_preview_url.blank? %>
+			<div class="tile swappable blurb cell-14 bg-style2"></div>
+		<% else %>
+			<div class="tile cell-14 bg-style2 cell-movie-preview">
+				<div class="center-helper"><%=image_tag(video_preview_url)%></div>
+				<%=link_to "Play", "#", :class=>"play-button" %>
+			</div>
+		<% end %>
 	</div>
 	
 	<%# ==== row 2 ====== %>
@@ -241,7 +251,7 @@
 					</div>
 					<ul>
 						<% @other_jobs.each do |job| %>
-							<li><a class="position" href="<%=we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => params[:mode])%>" ><%=job.position_name%></a></li>
+							<li><a class="position" href="<%=we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => params[:mode], :locale => params[:locale])%>" ><%=job.position_name%></a></li>
 						<% end %>
 					</ul>
 				</div>
@@ -285,6 +295,70 @@
 		</div>
 	<% end %>
 	
+	<% video_id = @job.video_id %>
+	<% unless video_id.blank? %>
+		<div id="video-viewer" class="viewer">
+			<a href="#" class="stop-video close-viewer"></a>
+			
+			<div class="content-box">
+				<div id="youtube-player"></div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			var youtube_player_loading = false;
+			var youtube_player = null;
+			
+			function load_viewer() {
+				if(!youtube_player_loading) {
+					youtube_player_loading = true;
+					
+					var tag = document.createElement('script');
+					
+					tag.src = "https://www.youtube.com/iframe_api";
+					var firstScriptTag = document.getElementsByTagName('script')[0];
+					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+				}
+			}		
+			
+			function onYouTubeIframeAPIReady() {
+				youtube_player = new YT.Player('youtube-player', {
+				  height: '100%',
+				  width: '100%',
+				  videoId: '<%=video_id%>',
+				  events: {
+				    'onReady': onPlayerReady
+				  }
+				});
+			}
+			
+			function onPlayerReady(event) {
+       			event.target.playVideo();
+      		}			
+			
+			$(".play-button").click(function(event){
+				$("#video-viewer").fadeIn();
+				
+				if(youtube_player_loading && youtube_player) {
+					youtube_player.playVideo();
+				} else {
+					load_viewer();
+				}
+				
+				event.preventDefault(); 
+				return false;
+			});
+			
+			$(".stop-video").click(function(event){
+				if(youtube_player){
+					youtube_player.pauseVideo();
+				}
+				event.preventDefault(); 
+				return false;
+			});			
+		</script>
+	<% end %>
+	
 	<% unless @infointerview.nil? %>
 		<div id="contact-form-box" class="popup-form-box tile cell-form bg-style5">
 			<a class="close-form" href="#"></a>
@@ -295,21 +369,21 @@
 					<div class="form-row clearfix">
 						<div class="left-col column">
 							<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
-							<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false) %>
+							<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false, :tabindex => "10") %>
 						</div>
 						<div class="right-col column">
 							<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
-							<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false) %>
+							<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false, :tabindex => "20") %>
 						</div>
 					</div>
 
 					<div class="form-row">
 						<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
-						<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>			
+						<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "30") %>			
 					</div>						
 					
 					<div class="button-box">
-						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
+						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "40"%>
 					</div>
 				<% end %>
 				
@@ -325,18 +399,18 @@
 				<div class="form-row clearfix">
 					<div class="left-col column">
 						<%= label_tag(nil, "Email address", :class=>"mandatory") %><br>
-						<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false) %>
+						<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "10") %>
 					</div>	
 					<div class="right-col column">
 						<%= label_tag(nil, "") %><br>
-						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off"%>
+						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "30"%>
 					</div>												
 				</div>
 				
 				<div class="form-row clearfix">
 					<div class="left-col column">
 						<%= label_tag(nil, "Password", :class=>"mandatory") %><br>
-						<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false) %>	
+						<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false, :tabindex => "20") %>	
 					</div>									
 				</div>
 				<div class="form-row" id="ping-with-rightjoin-error">						
@@ -344,7 +418,7 @@
 			<% end %>
 		</div>
 		<div class="bottom-box">
-			Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sign up now", register_path, :target => "_blank"%>.
+			Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sign up now", register_path, :target => "_blank", :tabindex => "40"%>.
 		</div>
 	</div>
 	
@@ -359,13 +433,10 @@
 var hash = $(location).attr('hash');
 if(hash == "") {
 	<% unless @ambassador.nil? %>
-		<% tt_title = "#{@ambassador.first_name} #{@ambassador.last_name} - #{@ambassador.title}" 
-		tt_title = ERB::Util.html_escape tt_title
-		%>
 		$("#contel-work-with-" + <%=@ambassador.id%>).remove();
-		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" id="referer-link-<%=@ambassador.id%>" class="referer-link" rel="nofollow" target="_blank"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
+		<%title_val = "#{@ambassador.first_name} #{@ambassador.last_name} - #{@ambassador.title}"%>
+		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" title="<%=title_val%>" class="referer-link" rel="nofollow" target="_blank"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
 		$("#referer-box").html(ref_html);
-		$("#referer-link-<%=@ambassador.id %>").attr("title", "<%=tt_title%>");
 	<% end %>
 	initialLoadByTileType("avatar");
 	window.setTimeout(updateOneAvatar, 3000);
@@ -375,7 +446,7 @@ if(hash == "") {
 		.done(function(data) {
 			if(data.avatar_path && data.first_name && data.last_name && data.title && data.id && data.profile_link) {
 				$("#contel-work-with-" + data.id).remove();
-				var ref_html = '<a href="' + data.profile_link + '" class="referer-link" rel="nofollow" target="_blank" title="' + data.first_name + ' ' + data.last_name + ' - ' + data.title + '"><img class="referer-img" src="' + data.avatar_path + '"></a>';
+				var ref_html = '<a href="' + data.profile_link + '" class="referer-link" rel="nofollow" target="_blank" title="' + escapeAttr(data.first_name) + ' ' + escapeAttr(data.last_name) + ' - ' + escapeAttr(data.title) + '"><img class="referer-img" src="' + data.avatar_path + '"></a>';
 				$("#referer-box").html(ref_html);
 			}
 		})
@@ -675,7 +746,7 @@ $(document).ready(function(){
 
 $(document).keyup(function(e) {
 	if (e.keyCode == 27) {
-		$(".viewer").fadeOut();
+		$(".viewer .close-viewer").click();
 	}
 });
 </script>

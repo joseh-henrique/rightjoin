@@ -292,7 +292,7 @@ class FyiMailer < ActionMailer::Base
   def create_personal_welcome_candidate_email(user)
     subject = "Welcome to #{Constants::SHORT_SITENAME} "
 
-    salutation = user.first_name.blank? ? "Welcome" : "Hi, #{user.first_name}, welcome"
+    salutation = user.first_name.blank? ? "Welcome" : "Hi, #{user.first_name}, welcome" #[TODO] escape name. But email clients script script tags, so this is not too bad
     salutation<<" to #{Constants::SHORT_SITENAME}."
 
     content =
@@ -312,7 +312,7 @@ class FyiMailer < ActionMailer::Base
   def create_personal_welcome_employer_email(employer)
     subject = "Welcome to #{Constants::SHORT_SITENAME}"
 
-    salutation = "Hi, #{employer.first_name}, welcome to #{Constants::SHORT_SITENAME}."
+    salutation = "Hi, #{employer.first_name}, welcome to #{Constants::SHORT_SITENAME}."#[TODO] escape name. But email clients script script tags, so this is not too bad
 
     content = "I'm #{RJ_CRM_NAME}, co-founder of #{Constants::SHORT_SITENAME}. "
 
@@ -444,8 +444,8 @@ class FyiMailer < ActionMailer::Base
     @intended_for = :employer
     subject = "#{ambassador.first_name} has signed up to talk to professional peers"
      
-    @msg1_h = "#{ambassador.first_name} #{ambassador.last_name} has joined the  #{ERB::Util.html_escape(ambassador.employer.company_name)} team." 
-    @msg1_t = @msg1_h 
+    @msg1_h = "#{ERB::Util.html_escape(ambassador.first_name)} #{ERB::Util.html_escape(ambassador.last_name)} has joined the #{ERB::Util.html_escape(ambassador.employer.company_name)} team." 
+    @msg1_t = "#{ambassador.first_name} #{ambassador.last_name} has joined the #{ambassador.employer.company_name} team." 
     
     @msg2_h = "Track progress on your <a href='#{employer_url(ambassador.employer, :locale => nil, :anchor=>"ambassadors" )}'>#{Constants::SHORT_SITENAME} dashboard</a>.<br><br>" << 
             "Reach out to qualified software engineers by adding the \"Come Work With Us\" tab  to the #{ERB::Util.html_escape(ambassador.employer.company_name)} corporate site, " << 
@@ -462,6 +462,11 @@ class FyiMailer < ActionMailer::Base
     text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
  
     return create_message ambassador.employer.email, subject, html_body, text_body       
+  end
+  
+  def create_ambassador_reminder_message(ambassador, subject, body)
+    body = body.gsub("[first-name]", ambassador.first_name).gsub("[team-page-url]", ambassadors_signin_url(ambassador.employer.reference_num, :locale => nil))
+    new_msg = create_message(ambassador.email, subject, body.gsub("\n", "<br>"), body)
   end
 
   private

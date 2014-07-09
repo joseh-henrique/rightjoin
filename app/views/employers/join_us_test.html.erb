@@ -9,7 +9,7 @@
 		<%= stylesheet_link_tag 'application', :media => "all"%>
 
 		<script>
-			<%= render :partial => 'employers/work_with_us_loader.js.erb' %>
+			<%= render :partial => 'employers/join_us_loader.js.erb' %>
 		</script>
 		
 		<%= favicon_link_tag '/favicon.ico?v=5' %>
@@ -19,8 +19,10 @@
 		<div class="message-box">
 			<%#TODO include the relevant company_url in this text%>
 			The  &ldquo;Join Us&rdquo; tab will look like this after you add it to the  <%=@employer.company_name%> website. 
-			<br><br>
-			The tab is geolocated: It will appear <em>only</em> to visitors from areas where you have open positions.
+			<%if params[:geotarget] == "true"%>
+				<br><br>
+				The tab is geo-targeted: It will appear <em>only</em> to visitors from areas where you have open positions.
+			<% end %>
 			<br><br>
 			Click the tab to  launch the job posting.
 		</div>

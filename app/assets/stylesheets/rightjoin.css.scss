@@ -220,6 +220,10 @@ a, .ui-dialog-content a {
   border: 1px solid #2980b9;
 }
 
+.cancel-button {
+  @include inline-button(#b3bec5, 14px, 35px, 28px, white, 500);
+}
+
 ////////////////////////////////////////////////////////
 // empoyer style
 ////////////////////////////////////////////////////////
@@ -1189,7 +1193,16 @@ label {
       &.preview6 {
         background: #D9D8BC image-url("widget/backgrounds/previews/6.jpg") no-repeat center center; 
         @include background-size (cover);
-      }      
+      }
+      &.preview7 {
+        background: #F39C12; 
+      }
+      &.preview8 {
+        background: #004881; 
+      } 
+      &.preview9 {
+        background: #065F63; 
+      }             
     }
   }
   
@@ -1317,6 +1330,7 @@ label {
 #images-index {
   .image-box {
     margin-bottom: 30px;
+    background: #DCE6EC;
   }
 }
 
@@ -1360,6 +1374,10 @@ label {
     .photo-close {
       background: transparent image-url("shared/img-x-on.png") no-repeat center;
     }
+  }
+  
+  &:focus {
+    background-color: #c4d0d8;
   }
 }  
 
@@ -1884,6 +1902,29 @@ label {
     margin-bottom: 40px;
   }
   
+  .team-box {
+    position: relative;
+    padding-right: 40px;
+    
+    .configure-reminder-link {
+      position: absolute;
+      display: block;
+      text-indent: -9999px;
+      width: 24px;
+      height: 24px;
+      top: 15px;
+      right: 10px; 
+      
+      &.on {
+        background: transparent image-url("shared/bell-on.png") no-repeat center center;
+      }
+      
+      &.off {
+        background: transparent image-url("shared/bell-off.png") no-repeat center center;
+      }
+    }
+  }
+  
   .counter-box {
     display: inline-block;
     width: 150px;
@@ -2040,18 +2081,17 @@ label {
     margin-right: 30px;
     margin-bottom: 30px;
     background: #E9F0F4;
-    padding: 12px 15px 15px 75px;
+    padding: 12px 15px 6px 75px;
     border-top: 3px solid #E9F0F4;
     
     .ambassador-box {
         .details {
-          border-bottom: 1px solid #c5d6e2;
-          padding-bottom: 6px;
         }
      }
      
      .ambassador-counters-box {
        padding-top: 6px;
+       padding-bottom: 10px;
        font-size: 14px;
        
        .counter-value {
@@ -2059,11 +2099,18 @@ label {
          padding-left: 3px;
        }
      }
+     
+     .ambassador-controls-box {
+        margin-left: -75px;
+        margin-right: -15px;
+        padding-right: 15px;
+        padding-top: 5px;
+        border-top: 1px solid #DBE3E6;
+        text-align: right;
+     }
   }
   
   .ambassador-box {
-    font-color: #34495e;
-    
     .avatar-box {
       position: absolute;
       top: 12px;
@@ -2087,17 +2134,34 @@ label {
       }
     }
   }
+  
+  .send-reminder-link.due {
+    padding-left: 12px;
+    background: transparent image-url("shared/yellow-dot.png") no-repeat center left;
+  } 
 }
 
-#invite-team-member-dialog {
+.employer-dialog {
   display: none;
   
-  #subject {
+  input[type=text] {
     width: 640px;
   }
   
-  #body {
+  textarea {
     width: 640px;
+    height: 210px;
+    resize: none;
+  }
+  
+  .loading-icon {
+    left: 6px;
+    bottom: 18px;
+  }  
+}
+
+#invite-team-member-dialog {
+   textarea {
     height: 240px;
   }
 }
@@ -2401,6 +2465,8 @@ $tab-border-radius: 4px;
 
 #join-us-tab-configure {
   .controls-box {
+    width: 265px; 
+    
     input[type=text] {
       width: 200px;
     }
@@ -2533,14 +2599,9 @@ $tab-border-radius: 4px;
   }
   
   #code-input {
-    height: 190px;
+    height: 220px;
     width: 814px;
     overflow-y: scroll;
-  }
-  
-  .note-box {
-    font-size: 13px;
-    font-weight: 500;
   }
 }
 
@@ -2845,21 +2906,63 @@ $tab-border-radius: 4px;
   }
 }
 
-#account-verification-dialog {
-  #verification-results {
-    .error {
-      color: #c00852;
-    }
-    .success {
-      color: #1C9E85;
-    }
+#account-verification-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background: transparent image-url("shared/semi-transparent-dark.png") repeat;
+  display: table;
+  
+  &:focus {
+    outline: none;    
+  }
+
+  
+  .center-wrapper {
+    height: 100%;
+    vertical-align: middle;
+    display: table-cell;
   }
   
-  .verification-wait-indicator {
-    position: relative;
-    bottom: -7px;
-    right: -4px;
-    display: inline-block;
+  .close {
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: transparent url(/assets/shared/x-16x16.gif) no-repeat center;
+    z-index: 99999;
+    cursor: pointer;
+    top: 50%;
+    margin-top: -10px;
+    right: 14px;
+    text-indent: -9999px;
+  }
+  
+  .account-verification-box {
+    margin: 0 auto;
+    width: 650px;
+    height: 300px;
+    
+    #verification-results {
+      .error {
+        color: #c00852;
+      }
+      .success {
+        color: #1C9E85;
+      }
+    }
+    
+    .verification-wait-indicator {
+      position: relative;
+      right: -6px;
+      display: inline-block;
+      vertical-align: middle;
+    }
   }
 }
 

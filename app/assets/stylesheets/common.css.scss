@@ -75,7 +75,7 @@
   line-height: $height;
   height: $height;
   text-transform: uppercase;
-  color: $font-color;
+  color: $font-color !important;
   background-color: $bg-color;
   padding: 0 $horz-padding 0;
   cursor: pointer;
@@ -87,7 +87,7 @@
   @include box-shadow( inset 0px -2px 0px 0px rgba(0,0,0, 0.3));
   
   &:not([disabled]) {  
-    &:hover {
+    &:hover, &:focus {
       text-decoration: none !important;
       background-color: darken($bg-color, 3%);
       color: $font-color;
@@ -105,6 +105,14 @@
     color: $font-color;
     cursor: auto;
   }
+}
+
+:focus {
+  outline: 1px dotted #ADADAD;
+}
+
+input[type="radio"], input[type="checkbox"], label {
+  vertical-align: middle;
 }
 
 #flash-container {

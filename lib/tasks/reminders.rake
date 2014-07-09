@@ -27,7 +27,7 @@ namespace :cron do
   
   # sent twice in a week, Monday and Thursday
   task :send_jobs_update_to_engineers => :environment do
-    if Time.now.monday? || Time.now.thursday?
+    if Time.now.monday? || Time.now.thursday?  || Time.now.wednesday?
        Reminder.send_jobs_update_to_engineers do |invites|
         new_msg = FyiMailer.create_engineer_update_email(invites.first.user, invites)
         Utils.deliver new_msg
@@ -103,6 +103,11 @@ namespace :cron do
       puts "New contacts updates sent to employers: #{counter}."
     end
   end
+  
+  task :send_scheduled_reminders_to_ambassadors => :environment do
+    counter = Employer.send_pending_reminders_to_all_ambassadors
+    puts "Reminders sent to ambassadors: #{counter}."
+  end  
   
   # send updates to ambassador about new contacts
   # Must set cron job to the time shown in Reminder.rb  (8 am Pacific)

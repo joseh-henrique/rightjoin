@@ -21,7 +21,7 @@
 				$('<div class="photo-title">' + photo_title + '</div>').appendTo(target_box);
 			}
 			
-			$('<div class="photo-close" title="Remove"></div>').click(function(e) {
+			$('<div class="photo-close with-tooltip" title="Remove"></div>').click(function(e) {
 				box.empty();
 				field.val("");
 				
@@ -31,7 +31,9 @@
 	            e.preventDefault();
 	            event.cancelBubble = true;
 	            return false;
-			}).appendTo(target_box);
+			}).appendTo(target_box).tooltip({ 
+				position: { my: "left top+3", at: "left bottom" } 
+			});
 		});
 	}
 	
@@ -50,12 +52,12 @@
 		<div class="form-column">
 			<div class="form-cell">
 				<%= label_tag(nil, "Hiring company", :class=>"mandatory") %><br>
-				<%= text_field_tag :company_name, @job.company_name, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[nonEmpty]] half-row-width input-attr monitor-change" %>
+				<%= text_field_tag :company_name, @job.company_name, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[nonEmpty]] half-row-width input-attr monitor-change", :tabindex => "10" %>
 			</div>
 	
 			<div class="form-cell">
 				<%= label_tag(:company_url, "Company URL") %><br>
-				<%= text_field_tag(:company_url, @job.company_url, :maxlength=>500, :class=>"validate[custom[url]] input-attr half-row-width monitor-change", :spellcheck => false) %>
+				<%= text_field_tag(:company_url, @job.company_url, :maxlength=>500, :class=>"validate[custom[url]] input-attr half-row-width monitor-change", :spellcheck => false, :tabindex => "20") %>
 			</div>
 		</div>
 		
@@ -63,7 +65,7 @@
 			<div class="form-cell">
 				<%= label_tag(:company_logo, "Company logo") %>
 				
-				<div id="company-logo-box" class="logo-image image-box"></div>
+				<div id="company-logo-box" class="logo-image image-box" tabindex = "30"></div>
 				<%= hidden_field_tag("company_logo_image_id") %>
 				
 				<%logo = @job.logo%>
@@ -85,12 +87,12 @@
 				<%= label_tag(:position, "The position you need to fill", :class => "mandatory") %><br>
 				<a class="field-tooltip" title="To find candidates more effectively, please use standard job titles. The autocomplete will help.">
 				</a>
-				<%= text_field_tag(:position, @job.position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change", :spellcheck => true) %>
+				<%= text_field_tag(:position, @job.position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change", :spellcheck => true, :tabindex => "40") %>
 			</div>
 			<div class="form-cell">
 				<%= label_tag(:location, "Where?", :class => "mandatory") %><br>
 				<a class="field-tooltip" title="The city where the employee will work. Searches for cities in the geographical area will also find this."></a>
-				<%= text_field_tag(:location, @job.location_name, :autocomplete => "off", :placeholder => "e.g., san francisco, california", :maxlength => 60,  :spellcheck => false, :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change") %>
+				<%= text_field_tag(:location, @job.location_name, :autocomplete => "off", :placeholder => "e.g., san francisco, california", :maxlength => 60,  :spellcheck => false, :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change", :tabindex => "60") %>
 	
 				<%= hidden_field_tag(:address_lat, @job.address_lat) %>
 				<%= hidden_field_tag(:address_lng, @job.address_lng) %>
@@ -99,9 +101,9 @@
 				<%= hidden_field_tag(:lng, @job.longitude) %>
 	
 				<div class="location-options-box">
-					<%= check_box_tag :allow_telecommuting, 'yes', @job.allow_telecommuting%> <%= label_tag(:allow_telecommuting, "Telecommuting is a possibility.") %>
+					<%= check_box_tag :allow_telecommuting, 'yes', @job.allow_telecommuting, :tabindex => "70"%> <%= label_tag(:allow_telecommuting, "Telecommuting is a possibility.") %>
 					<br>
-					<%= check_box_tag :allow_relocation, 'yes', @job.allow_relocation%> <%= label_tag(:allow_relocation, "We'll consider relocating a new hire.") %>
+					<%= check_box_tag :allow_relocation, 'yes', @job.allow_relocation, :tabindex => "80"%> <%= label_tag(:allow_relocation, "We'll consider relocating a new hire.") %>
 				</div>		
 			</div>		
 		</div>
@@ -110,7 +112,7 @@
 			<div class="form-cell">
 				<%= label_tag(nil, "URL to full job description") %><br>
 				<a class="field-tooltip" title="An optional link to a job description (at your own site, an applicant tracking system, or a job board)."></a>	
-				<%= text_field_tag :ad_url, @job.ad_url.to_s, :maxlength=>500, :spellcheck =>false, :class=>"validate[custom[url]] half-row-width input-attr monitor-change" %>								
+				<%= text_field_tag :ad_url, @job.ad_url.to_s, :maxlength=>500, :spellcheck =>false, :class=>"validate[custom[url]] half-row-width input-attr monitor-change", :tabindex => "50" %>								
 			</div>
 		</div>
 	</div>
@@ -121,7 +123,7 @@
 		<div class="form-cell">
 			<ul class="checkbox-grid">
 				<% Board.all.each_with_index do |board, i| %>
-					<li title="<%=board.description.html_safe%>">
+					<li class="with-tooltip" title="<%=board.description.html_safe%>">
 						<%
 							checked = (board.name == params[:board])
 							if @job.new_record?
@@ -133,34 +135,34 @@
 							end
 						%>
 						
-						<%= check_box_tag "board[#{board.name}]", '1', checked, :id => "board_#{board.id}"%>&nbsp;<%= label_tag("board_#{board.id}", board.title_case) %>
+						<%= check_box_tag "board[#{board.name}]", '1', checked, :id => "board_#{board.id}", :tabindex => "#{80 + i}"%>&nbsp;<%= label_tag("board_#{board.id}", board.title_case, :tabindex => "#{80 + i}") %>
 					</li>
 				<% end %>
 			</ul>	
 		</div>
 	</div>
 	
-	<%benefit_field_len = 40%>
+	<%benefit_field_len = 60%>
 	<%= label_tag(:company_logo, "More &ldquo;escape-worthy&rdquo; extras.".html_safe) %>
 	<div class="form-row group-box clearfix">
 		<div class="form-column">
 			<div class="form-cell">
 				<div id="benefit-counter1" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit1, @job.benefit1, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. our famous gourmet lunches", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter1" %>
+				<%= text_field_tag :benefit1, @job.benefit1, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., our famous gourmet lunches", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter1", :tabindex => "90" %>
 			</div>
 			<div class="form-cell">
 				<div id="benefit-counter2" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit2, @job.benefit2, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. hackathons & programming challenges", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter2" %>	
+				<%= text_field_tag :benefit2, @job.benefit2, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., hackathons & programming challenges", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter2", :tabindex => "110" %>	
 			</div>
 		</div>
 		<div class="form-column">
 			<div class="form-cell">
 				<div id="benefit-counter3" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit3, @job.benefit3, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. our open source contribution", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter3" %>
+				<%= text_field_tag :benefit3, @job.benefit3, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., 1+ paid conference yearly", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter3", :tabindex => "100" %>
 			</div>
 			<div class="form-cell">
 				<div id="benefit-counter4" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit4, @job.benefit4, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g. flexible work schedules", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter4" %>
+				<%= text_field_tag :benefit4, @job.benefit4, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., flexible work schedules", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter4", :tabindex => "120" %>
 			</div>
 		</div>		
 	</div>
@@ -169,16 +171,16 @@
 		<div class="form-cell inline">
 			<%= label_tag(nil, "Technical stack (a comma-separated list of tags)")%><br>
 			<div id="tech-stack-counter" class="message-counter">60</div>
-			<%=  text_field_tag(:tech_stack_list, @job.tech_stack_list, :maxlength => 60, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false, :counterId=>"tech-stack-counter") %>	
+			<%=  text_field_tag(:tech_stack_list, @job.tech_stack_list, :maxlength => 60, :autocomplete => "off", :placeholder => "e.g., bigdata, ruby, scala, hadoop, sql", :class => "monitor-change", :spellcheck => false, :counterId=>"tech-stack-counter", :tabindex => "130") %>	
 		</div>
 	</div>	
 	
 	<div class="form-row clearfix">
 		<div class="form-column">
 			<div class="form-cell">
-				<%= label_tag(nil, "Why would a top developer want to take this job?", :class => "mandatory")%><br>
+				<%= label_tag(nil, "Why would a talented professional want to take this job?", :class => "mandatory")%><br>
 				<div id="free-text-counter" class="message-counter"><%=Job::DESCRIPTION_MAX_LEN%></div>
-				<%= text_area_tag(:description, @job.description, :maxlength => Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter")%>			
+				<%= text_area_tag(:description, @job.description, :maxlength => Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter", :tabindex => "140")%>			
 			</div>
 		</div>
 	</div>
@@ -189,20 +191,20 @@
 	<div class="form-row">
 		<div class="form-cell">
 			<%= label_tag(nil, "Great office location? Let candidates know.")%><br>
-			<%= text_field_tag(:address, @job.address, :maxlength=>255, :class=>"monitor-change", :spellcheck => false) %>
+			<%= text_field_tag(:address, @job.address, :maxlength=>255, :class=>"monitor-change", :spellcheck => false, :tabindex => "150") %>
 			<div id="map-canvas"></div>
 		</div>
 	</div>
 </div>	
 
-<div class="standard-section-header">Images</div>
+<div class="standard-section-header">Images and video</div>
 <div class="section-box">
 	<div class="form-row">
 		<div class="form-cell">
 			<%= label_tag(nil, "Images of your awesome office space, ping-pong table, kegerator, whatever.")%><br>
 				<div class="images-list clearfix">
 				<% (1..3).each do |i| %>
-					<div id="image-box-<%=i%>" class="custom-image image-box" data-index="<%=i%>"></div>
+					<div id="image-box-<%=i%>" class="custom-image image-box" data-index="<%=i%>" tabindex = "<%=160 + i%>"></div>
 					<%= hidden_field_tag("image_#{i}_id") %>
 					
 					<%photo = @job.get_photo(i)%>
@@ -215,6 +217,13 @@
 			</div>
 		</div>
 	</div>
+	<div class="form-row">
+		<div class="form-cell inline">
+			<%= label_tag(nil, "YouTube video URL")%><br>
+			<a class="field-tooltip" title="At your video's YouTube page, click the Share button and copy the link here."></a>
+			<%= text_field_tag(:video_url, @job.video_url, :maxlength=>255, :class=>"validate[custom[url], custom[youtubeUrl], custom[youtubeSanity]] monitor-change", :spellcheck => false, :tabindex => "170") %>
+		</div>
+	</div>
 </div>
 
 <div class="standard-section-header">Styling your &ldquo;Join Us&rdquo; panel</div>
@@ -223,8 +232,8 @@
 		<div class="form-column">
 			<%= label_tag(nil, "Choose a style") %><br>
 			<div class="form-cell join-us-style-selector-box">
-				<% (1..6).each do |i| %>
-					<span class="join-us-style-preview preview<%=i%>"><%=radio_button_tag 'join-us-config[join-us-style]', "join-us-style#{i}", "join-us-style#{i}" == @job.effective_join_us_widget_params_map['join-us-style']%></span>
+				<% (1..9).each do |i| %>
+					<span class="join-us-style-preview preview<%=i%>"><%=radio_button_tag 'join-us-config[join-us-style]', "join-us-style#{i}", "join-us-style#{i}" == @job.effective_join_us_widget_params_map['join-us-style'], :tabindex => "180"%></span>
 				<% end %>
 			</div>
 		</div>
@@ -258,7 +267,7 @@
 					</div>
 				</div>
 				<div>
-					<%= check_box_tag "use-style-for-all", '1', false%>&nbsp;<%= label_tag("use-style-for-all", "Use this style for all jobs") %>
+					<%= check_box_tag "use-style-for-all", '1', false, :tabindex => "190"%>&nbsp;<%= label_tag("use-style-for-all", "Use this style for all jobs") %>
 				</div>
 			</div>
 		</div>
@@ -267,12 +276,12 @@
 
 <div class="buttons-box">
 	<%if @job.new_record? %>
-		<%= submit_tag "Create", :id=>"submit", :class=>"standard-button", :name => nil %>
+		<%= submit_tag "Create", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "200" %>
 	<%else%>
-		<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil %>
+		<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "200" %>
 	<%end%>	
 	&nbsp;&nbsp;
-	<%= link_to "Cancel", employer_path(current_user), :id => "cancel-link", :class=>"cancel-button" %>
+	<%= link_to "Cancel", employer_path(current_user), :id => "cancel-link", :class=>"cancel-button", :tabindex => "210" %>
 </div>
 <% end %>
 
@@ -340,7 +349,7 @@
     });
 	
 	$( "#position" ).cachedautocomplete({
-		url: "/autocomplete/positions",
+		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
 	});
@@ -348,16 +357,30 @@
 	$( "#tech_stack_list" ).cachedautocomplete({
 		multiValue: true,
 		sequentialMatching: false,
-		url: "/autocomplete/skills"
+		url: "<%=autocomplete_skills_path(:locale => nil)%>",
+		extraParam: "#position"
 	});	
 	
 	$(".custom-image").click(function (){
 		var image_index = $(this).data("index");
 		$('#photo-chooser').imageChooser({
 			onChoose: function(id, path, title) {
-				load_photo(image_index, id, path, title);
+				load_photo(image_index, id, escapeHTML(path), escapeHTML(title));
 			}
 		}).imageChooser( 'open' );
+	});
+
+	$(".custom-image").keypress(function (e){
+		if(e.which == 13 || e.which == 32) {
+			var image_index = $(this).data("index");
+			$('#photo-chooser').imageChooser({
+				onChoose: function(id, path, title) {
+					load_photo(image_index, id, escapeHTML(path), escapeHTML(title));
+				}
+			}).imageChooser( 'open' );
+			
+			return false;
+		}
 	});
 	
 	$(".logo-image").click(function (){
@@ -367,7 +390,19 @@
 			}
 		}).imageChooser( 'open' );
 	});	
-
+	
+	$(".logo-image").keypress(function (e){
+		if(e.which == 13 || e.which == 32) {
+			$('#photo-chooser').imageChooser({
+				onChoose: function(id, path, title) {
+					load_image("#company_logo_image_id", "#company-logo-box", id, path, "");
+				}
+			}).imageChooser( 'open' );
+			
+			return false;
+		}
+	});	
+	
 	function doSubmitForm() {
 		createValidUrl($("#ad_url"));
 		createValidUrl($("#company_url"));

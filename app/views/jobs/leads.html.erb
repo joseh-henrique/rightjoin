@@ -31,7 +31,7 @@
 					<% end %>
 					
 					<a id="lead-<%=infointerview.id%>"></a>
-					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post, :class => "close", :title => "Close the lead. You can reopen it later.")%>	
+					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post, :class => "close with-tooltip", :title => "Close the lead. You can reopen it later.")%>	
 	  				
 					<%=render :partial => 'infointerviews/infointerview', :object => infointerview%>
 					
@@ -48,7 +48,7 @@
 			    						<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {}, {:class=>"validate[required] standard-select ambassadors-list", :data => {"infointerview-path" => infointerview_delegate_path(infointerview.id)}}) %>&nbsp;
 			    						<%=button_tag("Delegate", :class => "delegate-to-ambassador standard-button")%>
 			    						&nbsp;
-			    						<div title="Sending..." class="loading-icon"></div>
+			    						<div title="Sending..." class="with-tooltip loading-icon"></div>
 			    						<div class="results-box"></div>
 			    					</div>
 					    		</div>

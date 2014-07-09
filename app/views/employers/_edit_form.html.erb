@@ -5,24 +5,24 @@
 			<div class="form-column">
 				<div class="form-cell">
 					<%= label_tag(nil, "Contact person first name", :class=>"mandatory") %><br>
-					<%= text_field_tag(:first_name, @employer.first_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr") %>
+					<%= text_field_tag(:first_name, @employer.first_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :tabindex => "10") %>
 				</div>
 				<div class="form-cell">
 					<%= label_tag(nil, "Company name", :class=>"mandatory") %><br>
 					<a class="field-tooltip" title="The name of your own organization (whether you are an employer or a recruiter)"></a>	
-					<%= text_field_tag :company_name, @employer.company_name, :maxlength=> 60, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr" %>
+					<%= text_field_tag :company_name, @employer.company_name, :maxlength=> 60, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :tabindex => "30" %>
 				</div>
 			</div>
 			
 			<div class="form-column">
 				<div class="form-cell">
 					<%= label_tag(nil, "Contact person last name", :class=>"mandatory") %><br>
-					<%= text_field_tag(:last_name, @employer.last_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr") %>
+					<%= text_field_tag(:last_name, @employer.last_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :tabindex => "20") %>
 				</div>
 				<div class="form-cell">
 					<%= label_tag(nil, raw("Email"), :class=>"mandatory") %><br>
 					<a class="field-tooltip" title="You will get a confirmation email for activating your profile."></a>			
-					<%= text_field_tag :email, @employer.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[email]] half-row-width input-attr" %>
+					<%= text_field_tag :email, @employer.email, :maxlength=>255, :spellcheck =>false, :class=>"validate[required, custom[email]] half-row-width input-attr", :tabindex => "40" %>
 				</div>				
 			</div>
 		</div>
@@ -96,9 +96,9 @@
 					end
 					%>
 		  			<%# Signature is radio_button_tag(name, value, checked , options = {})%>
-					<td class="basic"><%= radio_button_tag 'tier', Constants::TIER_BASIC.to_s, default_tier == Constants::TIER_BASIC, :class => "validate[required]" %><br>Try the <%=EmployerPlan::BASIC%> plan</td>
-					<td class="pro"><%= radio_button_tag 'tier', Constants::TIER_PRO.to_s, default_tier == Constants::TIER_PRO, :class => "validate[required]" %><br>Try the <%=EmployerPlan::PRO%> plan</td>
-					<td class="enterprise"><%= radio_button_tag 'tier', Constants::TIER_ENTERPRISE.to_s, default_tier == Constants::TIER_ENTERPRISE, :class => "validate[required]" %><br>Try the <%=EmployerPlan::ENTERPRISE%> plan</td>
+					<td class="basic"><%= radio_button_tag 'tier', Constants::TIER_BASIC.to_s, default_tier == Constants::TIER_BASIC, :class => "validate[required]", :tabindex => "50" %><br>Try the <%=EmployerPlan::BASIC%> plan</td>
+					<td class="pro"><%= radio_button_tag 'tier', Constants::TIER_PRO.to_s, default_tier == Constants::TIER_PRO, :class => "validate[required]", :tabindex => "60" %><br>Try the <%=EmployerPlan::PRO%> plan</td>
+					<td class="enterprise"><%= radio_button_tag 'tier', Constants::TIER_ENTERPRISE.to_s, default_tier == Constants::TIER_ENTERPRISE, :class => "validate[required]", :tabindex => "70" %><br>Try the <%=EmployerPlan::ENTERPRISE%> plan</td>
 				</tr>				
 			</table>
 		</div>
@@ -111,11 +111,11 @@
 				<%= hidden_field_tag(:board, board) %>
 			<%end%>	
 
-			<%= submit_tag "Get Started", :class=>"standard-button", :id=>"submit", :name => nil %>
+			<%= submit_tag "Get Started", :class=>"standard-button", :id=>"submit", :name => nil, :tabindex => "80" %>
 		<%else%>
-			<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil %>
+			<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "80" %>
 			&nbsp;&nbsp;
-			<%= link_to "Cancel", employer_path(@employer), :class=>"cancel-button" %>
+			<%= link_to "Cancel", employer_path(@employer), :class=>"cancel-button", :tabindex => "90" %>
 		<%end%>	
 	</div>			
 <% end %>

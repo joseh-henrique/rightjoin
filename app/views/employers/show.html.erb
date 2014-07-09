@@ -45,7 +45,7 @@
 				<script type="text/javascript">load_chart("#chart-shared", [<%=shares_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">
-				Shared
+				Shares
 			</div>
 		</div>
 		<div class="counter-box">
@@ -57,7 +57,7 @@
 				<script type="text/javascript">load_chart("#chart-clickback", [<%=clicks_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=clicks_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">  
-				Clickbacks
+				Clicks
 			</div>
 		</div>
 		<div class="counter-box">
@@ -93,7 +93,7 @@
 						<% unless current_user.join_us_widget_running? %>
 							<li class="warning">
 								<%=link_to("Enable", configure_join_us_tab_employer_path(current_user, :job => nil, :locale => nil)) %> 
-								the &ldquo;Work With Us&rdquo; tab for your site. <%#TODO Review page%>
+								the &ldquo;Join Us&rdquo; tab for your site. <%#TODO Review page%>
 							</li>
 						<% end %>
 						<li class="warning">
@@ -112,10 +112,8 @@
 				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
 					<% if infointerviews.count >= i + 1%>
 						<% infointerview = infointerviews[i] %>
-						<%tt_title = ERB::Util.html_escape( "#{infointerview.first_name} #{infointerview.last_name}")%>
-						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :id => "lead-avatar-link-#{infointerview.id}",  class: "lead-avatar"), 
+						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => h("#{infointerview.first_name} #{infointerview.last_name}").to_str,  class: "with-tooltip lead-avatar"), 
 							leads_employer_job_path(current_user, infointerview.job, :locale => infointerview.job.country_code, anchor: "lead-#{infointerview.id}") %>
-							<script>$("#<%="lead-avatar-link-#{infointerview.id}" %>").attr('title', "<%=tt_title%>");</script>
 					<% else %>
 						<%=image_tag(asset_path("shared/no-avatar-semi-transparent-56x56.png"), class: "lead-placeholder")%>
 					<% end %>
@@ -139,7 +137,7 @@
 		</div>
 	</div>
 	
-	<div id="invite-team-member-dialog" title="Invite a team member">
+	<div id="invite-team-member-dialog" title="Invite a team member" class="employer-dialog">
 		<% 	  
 		subject = "Talking with potential future colleagues"
 		body_text = "Hi,\n\n" <<
@@ -176,34 +174,128 @@
 		</div>
 	</div>
 	
+	<div id="send-reminder-dialog" title="Send a reminder" class="employer-dialog">
+		<%= form_tag remind_employer_ambassadors_path(current_user), :id => 'reminder-form' do %>
+			<%= hidden_field_tag(:ambassador_id) %>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag(nil, "Subject", :class=>"mandatory") %><br>
+					<%= text_field_tag(:reminder_subject, current_user.reminder[:subject], :maxlength => 250, :spellcheck => true, :class => "validate[required,custom[nonEmpty]]") %>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-cell inline">
+					<%= label_tag(nil,  "Body", :class=>"mandatory") %><br>
+					<%= text_area_tag(:reminder_body, "", :spellcheck => true, :maxlength => 600, :class => "validate[required,custom[nonEmpty]]")%>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= submit_tag "Send", :id => "send-reminder-button", :class=>"standard-button" %>
+					<div title="Sending..." class="loading-icon" id="reminder-sending-icon"></div>
+				</div>
+			</div>
+		<%end%>
+	</div>
+	
+	<div id="configure-reminder-dialog" title="Configure reminder" class="employer-dialog">
+		<%= form_tag configure_reminder_employer_path(current_user), :id => 'configure-reminder-form' do %>
+			<div class="form-row">
+				<div class="form-cell">
+					Sending reminders periodically makes an effective campaign. Configure the reminder period, as well as the email template used for reminders.
+				</div>
+			</div>				
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag(nil, "Reminder period", :class=>"mandatory") %><br>
+					<% reminder_period_options = {"Don't send automatic reminders" => 0, "Once a week" => 7, "Every two weeks" => 14, "Once a month" => 30} %>
+					<%=select_tag :reminder_period, options_for_select(reminder_period_options, current_user.reminder[:period]), { :class => 'standard-select' }%>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag(nil, "Subject", :class=>"mandatory") %><br>
+					<%= text_field_tag(:reminder_template_subject, current_user.reminder[:subject], :maxlength => 250, :spellcheck => true, :class => "validate[required,custom[nonEmpty]]") %>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-cell inline">
+					<%= label_tag(nil,  "Body", :class=>"mandatory") %><br>
+					<a class="field-tooltip" title="All instances of [first-name] and [team-page-url] in the email will automatically be replaced with the actual values."></a>
+					<%= text_area_tag(:reminder_template_body, current_user.reminder[:body], :spellcheck => true, :maxlength => 600, :class => "validate[required,custom[nonEmpty]]")%><br>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= submit_tag "Save", :id => "configure-reminder-button", :class=>"standard-button" %>
+					<div title="Saving..." class="with-tooltip loading-icon" id="configure-reminder-sending-icon"></div>
+				</div>
+			</div>
+		<%end%>
+	</div>	
+	
 	<div class="section-box team-box clearfix">
 		<% if ambassadors.blank? %>
 			Nobody here yet. Send an invitation to team members, above. 
 		<% else %>
 			<% ambassadors.each_with_index do |ambassador, i| %>
 				<div class="ambassador-admin-box closable">
-					<%=link_to "Deactivate", employer_ambassador_path(ambassador.employer, ambassador, :locale => nil), :method => :delete, :class => "close", :title => "Deactive ambassador profile", :confirm => "Are you sure you want to deactivate this ambassador profile?"%>
+					<%=link_to "Deactivate", employer_ambassador_path(ambassador.employer, ambassador, :locale => nil), :method => :delete, :class => "close with-tooltip", :title => "Deactive team member profile", :confirm => "Are you sure you want to deactivate this team member profile?"%>
 					<%= render :partial => 'ambassadors/ambassador', object: ambassador %>
 					<div class="ambassador-counters-box">
 						<div>Shares: <span class="counter-value"><%=ambassador.shares_counter.to_i%></span></div>
-						<div>Clickbacks: <span class="counter-value"><%=ambassador.clickback_counter.to_i%></span></div>
+						<div>Clicks: <span class="counter-value"><%=ambassador.clickback_counter.to_i%></span></div>
 						<div>Leads: <span class="counter-value"><%=ambassador.leads_counter.to_i%></span></div>
+					</div>
+					<div class="ambassador-controls-box">
+						<% 
+						remind_every_days = 10
+						if ambassador.should_remind(remind_every_days)
+							due_class = "due"
+							title_str = "The last reminder was sent more than #{remind_every_days} days ago."
+						end
+						%>
+						
+						<%=link_to "Send reminder", "#", :class => "with-tooltip send-reminder-link #{due_class}", :title => title_str, :data => {:ambassador_id => ambassador.id, :ambassador_first_name => escape_javascript(ambassador.first_name)}%>
 					</div>
 				</div>
 			<% end %>
+			
+			<% 
+			reminder_link_class = current_user.reminder[:period] == 0 ? "off" : "on" 
+			reminder_link_title = current_user.reminder[:period] == 0 ? "Set a reminder" : "Reminder is set" 
+			%>
+			<%=link_to("Configure reminders", "#", :class => "with-tooltip configure-reminder-link #{reminder_link_class}", :title => "#{reminder_link_title}")%>
 		<% end %>
 	</div>
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function(){
-		$("#invite-team-member-dialog").dialog({
-		  autoOpen: false,
-		  width: 750,
-		  height: 560,
-		  resizable: false,
-		  modal: true
-		});
+	$("#configure-reminder-dialog").dialog({
+	  autoOpen: false,
+	  width: 750,
+	  height: 610,
+	  resizable: false,
+	  modal: true
+	});
+
+	$(".configure-reminder-link").click(function(){
+		$("#configure-reminder-dialog").dialog( "open" );
+		return false;
+	});
+	
+	$("#configure-reminder-form").validationEngine();
+	$("#configure-reminder-form").submit(function( event ) {
+	  $("#configure-reminder-button").prop("disabled", true);
+	  $("#configure-reminder-sending-icon").css("visibility", "visible");
+	});
+
+	$("#invite-team-member-dialog").dialog({
+	  autoOpen: false,
+	  width: 750,
+	  height: 580,
+	  resizable: false,
+	  modal: true
 	});
 
 	$(".invite-team-member-link").click(function(){
@@ -218,6 +310,40 @@
         event.cancelBubble = true;
 		return false;
 	});
+	
+	$("#reminder-form").validationEngine();
+	
+	$("#send-reminder-dialog").dialog({
+	  autoOpen: false,
+	  width: 750,
+	  height: 470,
+	  resizable: false,
+	  modal: true
+	});
+	
+	$("#reminder-form").submit(function( event ) {
+	  $("#send-reminder-button").prop("disabled", true);
+	  $("#reminder-sending-icon").css("visibility", "visible");
+	});
+
+	$(".send-reminder-link").click(function(){
+		$("#ambassador_id").val($(this).data("ambassador-id"));
+		var body = "<%=escape_javascript current_user.reminder[:body]%>";
+		body = body.replace("[first-name]", $(this).data("ambassador-first-name"));
+		body = body.replace("[team-page-url]", "<%=ambassadors_signin_url(current_user.reference_num, :locale => nil)%>");
+		$("#reminder_body").html(body);
+		$("#send-reminder-dialog").dialog('option', 'title', "Send a reminder to " + $(this).data("ambassador-first-name"));
+		$("#send-reminder-dialog").dialog("open");
+		return false;
+	});
+	
+	$(".launch-email-client").click(function(e){
+		launchMailTo("[recipient]", $("#subject").val(), $("#body").html());
+		e.stopPropagation();
+        e.preventDefault();
+        event.cancelBubble = true;
+		return false;
+	});	
 </script>
 
 <%=render :partial => 'sessions/verification_form'%>

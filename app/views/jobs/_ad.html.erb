@@ -48,19 +48,15 @@
 			<div class="ad-footer-box">
 				<div class="boards-box">
 					<%job.active_boards.each do |board| %>
-						<span class="board-link <%=board.name%>" board="<%=board.name%>" title="<%=board.tag%>"></span>
+						<span class="with-tooltip board-link <%=board.name%>" board="<%=board.name%>" title="<%=board.tag%>"></span>
 					<%end%>	
 				</div>
 				
 				<% if job.employer.has_active_ambassadors? %>
 					<div class="team">
-						<% job.employer.ambassadors.only_active.shuffle.first(4).each_with_index do |ambassador, i| %>
-							<% resource, link = ambassador.profile_links_map.first 
-							tt_title_ =  ERB::Util.html_escape "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title} in #{job.company_name}"
-							# It makes sense to set tt_title_ as title in next line. But that gives us an unescaped title! Don't know why!  So I use JS, below. 
-							%>
-							<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :id=> "avatar-link-#{ambassador.id}", :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
-							<script>$("#<%="avatar-link-#{ambassador.id}" %>").attr('title', "<%=tt_title_%>");</script>
+						<% job.employer.ambassadors.only_active.shuffle.first(3).each_with_index do |ambassador, i| %>
+							<% resource, link = ambassador.profile_links_map.first %>
+							<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => h("#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title} in #{job.company_name}").to_str, :target => "_blank", :rel => "nofollow", :class => "with-tooltip avatar-link" %>
 						<% end %>
 					</div>
 				<% end %>

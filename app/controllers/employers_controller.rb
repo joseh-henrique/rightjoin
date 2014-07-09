@@ -1,12 +1,12 @@
 class EmployersController < ApplicationController
   include UsersControllerCommon
     
-  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe]
-  before_filter :init_employer_user, :except => [:we_are_hiring, :ping, :work_with_us_tab, :work_with_us_test]
-  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab]
+  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe, :configure_reminder]
+  before_filter :init_employer_user, :except => [:we_are_hiring, :ping, :join_us_tab, :join_us_test]
+  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab, :configure_reminder]
   before_filter :add_verif_flash, :only =>[:edit]
   before_filter :init_join_us_widget, :only =>[:we_are_hiring, :ping]
-  after_filter :minimize_js_response, :only => :work_with_us_tab
+  after_filter :minimize_js_response, :only => :join_us_tab
 
   # Execute initial signup request from main form
   def create
@@ -151,11 +151,14 @@ class EmployersController < ApplicationController
     render 'configure_join_us_tab'
   end
   
-  def work_with_us_tab
+  def join_us_tab
     tab_expires_in = 1.month # default for unsupported locales
     
     refnum = params[:refnum]
     host = params[:host]
+    geotarget = params[:geotarget] == "true"
+    
+    raise "Mising mandatory parameter \"host\"" if host.blank?
 
     @employer = Employer.find_by_ref_num(refnum)
     @activeJobsCount = 0
@@ -169,7 +172,7 @@ class EmployersController < ApplicationController
     
     if locale != :unknown_locale
       I18n.locale = locale
-      @activeJobsCount = @employer.active_jobs.where(locale: I18n.locale).count
+      @activeJobsCount = geotarget ? @employer.active_jobs.where(locale: I18n.locale).count : @employer.active_jobs.count
       tab_expires_in = 15.minutes
     end
     
@@ -195,7 +198,7 @@ class EmployersController < ApplicationController
       end
     end    
     
-    render 'employers/work_with_us_tab.js.erb', :layout => false
+    render 'employers/join_us_tab.js.erb', :layout => false
     
     expires_in tab_expires_in, :public => false
     
@@ -204,12 +207,27 @@ class EmployersController < ApplicationController
     render :text => "// #{Constants::ERROR_FLASH}".html_safe, :layout => false
   end
   
-  def work_with_us_test
+  def join_us_test
     @employer = Employer.find_by_ref_num(params[:refnum])
-    render 'work_with_us_test', :layout => false
+    render 'join_us_test', :layout => false
   rescue Exception => e
     flash_message(:error, Constants::NOT_AUTHORIZED_FLASH)
     redirect_to employer_welcome_path  
+  end
+  
+  def configure_reminder
+    subject = params[:reminder_template_subject]
+    body = params[:reminder_template_body]
+    period = params[:reminder_period]
+    
+    current_user.update_attributes(:reminder_subject => subject, :reminder_body => body, :reminder_period => period)
+    
+    flash_message(:notice, "Reminder attributes have been updated.")
+  rescue  Exception => e
+    logger.error e
+    flash_message(:error, Constants::ERROR_FLASH)
+  ensure
+    redirect_to employer_path(current_user)            
   end
    
   private
@@ -235,11 +253,14 @@ class EmployersController < ApplicationController
         end
       end
       
+      # is locale presents in the URL the request is for local jobs
+      local_active_jobs = params[:locale].nil? ? employer.active_jobs : employer.active_jobs.where(locale: I18n.locale)
+      
       if @job.nil?
-        @other_jobs = employer.active_jobs
+        @other_jobs = local_active_jobs
         @job = @other_jobs.pop
       else
-        @other_jobs.concat employer.active_jobs.select{|j| j.id != @job.id}
+        @other_jobs.concat local_active_jobs.select{|j| j.id != @job.id}
       end
       
       if @job.nil?

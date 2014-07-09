@@ -119,6 +119,10 @@ function escapeHTML( string ) {
     return jQuery( '<pre>' ).text( string ).html();
 }
 
+function escapeAttr( string ) {
+    return string.replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+}
+
 // tag selectors
 function writeTag(newTagTxt, newTagDataKey, newTagDataVal, olId, idContext, readOnly, title) {
 	var buildTagTypeClassName = function (newTagDataKey, newTagDataVal){
@@ -131,7 +135,7 @@ function writeTag(newTagTxt, newTagDataKey, newTagDataVal, olId, idContext, read
 		return $insertAfterElem;
 	};
 	
-	var newTag = $('<li title="'+escapeHTML(title)+'" class="onetag ' + buildTagTypeClassName(newTagDataKey, newTagDataVal) + '" />').text(newTagTxt);
+	var newTag = $('<li title="'+escapeAttr(escapeHTML(title))+'" class="with-tooltip onetag ' + buildTagTypeClassName(newTagDataKey, newTagDataVal) + '" />').text(newTagTxt);
 	newTag.attr(newTagDataKey, newTagDataVal);
 	
 	if(!readOnly){			
@@ -178,6 +182,10 @@ function writeTag(newTagTxt, newTagDataKey, newTagDataVal, olId, idContext, read
   	if(!readOnly){
   		newTag.slideDown('fast');
   	}
+  	
+  	newTag.tooltip({ 
+		position: { my: "left top+3", at: "left bottom" } 
+	});
 }
 
 function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPrompt, titleFmt, text_for_add_more_plchldr) {
@@ -191,9 +199,8 @@ function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPromp
 				$(olId + " > li").filter(function(){
 				  return $(this).text() == value;
 				}).remove();
-		 		var tt_title_value = escapeHTML(value);
-				var title= titleFmt.replace("%s", tt_title_value);//no stringf in JS, so workaround 
-				writeTag(value, newTagDataKey, newTagDataVal, olId, null, false, title);
+				var title= titleFmt.replace("%s", value);//no stringf in JS, so workaround 
+				writeTag(value, newTagDataKey, newTagDataVal, olId, null, false, escapeHTML(title));
 
 				$(inputId).attr("placeholder",text_for_add_more_plchldr);
 			  	$(inputId).validationEngine('hidePrompt');
@@ -292,7 +299,7 @@ function launchMailTo(email, subject, body) {
 }
 
 $(function() {
-	$(document).tooltip({ 
+	$(".with-tooltip, .field-tooltip").tooltip({ 
 		position: { my: "left top+3", at: "left bottom" } 
 	});
 	
@@ -416,7 +423,7 @@ function zeroclipboard_init(copy_button_selector, text_callback) {
 	 	
 	 			setTimeout(function() { 
 					tooltip_div.fadeOut("slow"); 
-				}, 3000);
+				}, 1000);
 		    }
 		});
 	});

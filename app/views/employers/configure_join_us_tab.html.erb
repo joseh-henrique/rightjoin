@@ -16,28 +16,32 @@
 					<div class="form-column controls-box">
 						<div class="form-cell">
 							<label>Tab label</label><br>
-							<%= text_field("config", "label_text", :value => "Join us", :spellcheck => true, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]") %>
+							<%= text_field("config", "label_text", :value => "Join us", :spellcheck => true, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]]", :tabindex => "10") %>
 						</div>
 				
 						<div class="form-cell">
 							<label>Location on page</label><br>
-							<% positions = [ "top-left", "top-right", "left-top", "left-middle", "left-bottom", "bottom-left", "bottom-right", "right-top", "right-middle", "right-bottom" ] %>
-							<% select_val = "left-top" %>
-							<% select_val ||= positions[0] %>
-							<%=select "config", "tab_position", options_for_select(positions, select_val), {}, { :class => 'standard-select' }%>
+							<% positions = [ "left-top", "left-middle", "left-bottom", "bottom-left", "bottom-right", "right-top", "right-middle", "right-bottom", "top-left", "top-right" ] %>
+							<% select_val = positions[0] %>
+							<%=select "config", "tab_position", options_for_select(positions, select_val), {}, { :class => 'standard-select', :tabindex => "20" }%>
 						</div>
 						
 						<div class="form-cell">
 							<label>Background color</label>
-							<div id="tab-background-picker" class="tab-color-picker"></div>
+							<div id="tab-background-picker" class="tab-color-picker", tabindex = "30"></div>
 						</div>
 						
 						<div class="form-cell">
 							<label>Border</label>
-							<div class="radio-row"><%=radio_button_tag 'border', 'white'%>&nbsp;&nbsp;<%=label_tag("border_white", "White")%></div>
-							<div class="radio-row"><%=radio_button_tag 'border', 'black'%>&nbsp;&nbsp;<%=label_tag("border_black", "Black")%></div>
-							<div class="radio-row"><%=radio_button_tag 'border', 'none', true%>&nbsp;&nbsp;<%=label_tag("border_none", "None")%></div>
-						</div>						
+							<div class="radio-row"><%=radio_button_tag 'border', 'white', :tabindex => "40"%>&nbsp;&nbsp;<%=label_tag("border_white", "White")%></div>
+							<div class="radio-row"><%=radio_button_tag 'border', 'black', :tabindex => "40"%>&nbsp;&nbsp;<%=label_tag("border_black", "Black")%></div>
+							<div class="radio-row"><%=radio_button_tag 'border', 'none', true, :tabindex => "40"%>&nbsp;&nbsp;<%=label_tag("border_none", "None")%></div>
+						</div>
+						
+						<div class="form-cell">
+							<%= check_box_tag "geotarget", '1', true, :tabindex => "50"%>&nbsp;
+							<%=label_tag("geotarget", "Geo-targeted	 (visible only to visitors from areas where you have open positions.)")%>
+						</div>
 					</div>
 					
 					<div class="form-column">
@@ -56,8 +60,8 @@
 			<div class="standard-section-header">
 				<span>Embed into your site</span>
 				<div class="header-buttons-box">
-					<%=link_to("Live preview...", "#", :class => "standard-button", :id => "live-preview-button") %>&nbsp;&nbsp;
-		 			<a href="#" class="standard-button div-tooltip-holder" id="copy-button">Copy to clipboard
+					<%=link_to("Live preview...", "#", :class => "standard-button", :id => "live-preview-button", :tabindex => "60") %>&nbsp;&nbsp;
+		 			<a href="#" class="standard-button div-tooltip-holder" id="copy-button" , tabindex = "70">Copy to clipboard
 		 				<div class="div-tooltip">Copied</div>	
 		 			</a>
 		 			<script>
@@ -72,8 +76,7 @@
 			<div class="section-box">
 				<div class="form-cell">
 					<%= label_tag(nil, "Paste this code snippet into your site's HTML, e.g., right before the </body> tag.") %><br>
-					<textarea onClick="this.select();" id="code-input" spellcheck="false" readonly="readonly"></textarea>
-					<span class="note-box">Note that the tab is geotargeted: It is seen only by visitors from locations where you have open positions.</span>
+					<textarea onClick="this.select();" id="code-input" spellcheck="false" readonly="readonly" tabindex = "80"></textarea>
 				</div>
 			</div>
 		</div>
@@ -88,7 +91,7 @@
 	var loader_js = "";
 	
 	$(function() {
-		loader_js = "<%=escape_javascript (render :partial=>'employers/work_with_us_loader.js.erb')%>";
+		loader_js = "<%=escape_javascript (render :partial=>'employers/join_us_loader.js.erb')%>";
 		
 		update_tab_preview();
 		update_loader_js();
@@ -129,9 +132,15 @@
        	update_tab_preview();
 	    update_loader_js();
     });
+    
+    $("#geotarget").change(function() {
+	    update_loader_js();
+    });
 	
 	$("#live-preview-button").click(function(){
-		window.open('<%=work_with_us_test_employer_path(@employer.reference_num, :job => nil, :locale => nil)%>' + "?" + $.param({"tabparams": build_params()})); 
+		var test_base_url = "<%=join_us_test_employer_path(@employer.reference_num, :job => nil, :locale => nil)%>";
+		var param_char = test_base_url.indexOf("?") > -1 ? "&" : "?";
+		window.open(test_base_url + param_char + "geotarget=" + $("#geotarget").is(":checked") + "&" + $.param({"tabparams": build_params()})); 
 		if(event.stopPropagation){
 			event.stopPropagation();
 		}
@@ -190,12 +199,13 @@
 		params_hash['position'] = $("#config_tab_position").val();
 		params_hash['border'] = $("input[type=radio][name=border]:checked").val();
 		params_hash['counter-bg'] = colorLuminance(params_hash['bg'], isDark(params_hash['bg']) ? -0.3 : 0.3);
+		params_hash['geotarget'] = $("#geotarget").is(":checked");
 		
 		return $.param(params_hash);
 	}
 	
 	function update_loader_js() {
 		var loader_js_res = loader_js.replace('var params = "";', 'var params = "' + build_params() + '";');
-		$("#code-input").val("<script type=\"text/javascript\">" + loader_js_res + "<\/script>");
+		$("#code-input").val("<script type=\"text/javascript\">\n" + loader_js_res + "\n<\/script>");
 	}
 </script>

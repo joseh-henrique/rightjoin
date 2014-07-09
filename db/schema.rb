@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140623134019) do
+ActiveRecord::Schema.define(:version => 20140706095513) do
 
   create_table "ads", :force => true do |t|
     t.integer  "job_id"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20140623134019) do
     t.datetime "updated_at",                         :null => false
     t.text     "profile_links_map"
     t.integer  "auth_id"
+    t.datetime "reminder_sent_at"
   end
 
   add_index "ambassadors", ["employer_id"], :name => "index_ambassadors_on_employer_id"
@@ -110,6 +111,9 @@ ActiveRecord::Schema.define(:version => 20140623134019) do
     t.datetime "updated_at"
     t.text     "join_us_widget_params_map"
     t.datetime "join_us_widget_heartbeat"
+    t.string   "reminder_subject"
+    t.text     "reminder_body"
+    t.integer  "reminder_period",           :default => 0
   end
 
   add_index "employers", ["email"], :name => "index_employers_on_email", :unique => true
@@ -206,6 +210,7 @@ ActiveRecord::Schema.define(:version => 20140623134019) do
     t.decimal  "address_lat",               :precision => 15, :scale => 12
     t.decimal  "address_lng",               :precision => 15, :scale => 12
     t.text     "join_us_widget_params_map"
+    t.string   "video_url"
   end
 
   add_index "jobs", ["display_order"], :name => "index_jobs_on_display_order"

@@ -10,14 +10,14 @@
 						<div class="form-cell">
 							<%= label_tag(:wantedposition, "The job position that will scratch your itch") %><br>
 							<a class="field-tooltip" title="To find jobs more effectively, please use standard job titles, provided automatically."></a>
-							<%= text_field_tag(:wantedposition, @search_position.nil? ? '' : @search_position.name.html_safe, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"half-row-width", :spellcheck => true) %>	
+							<%= text_field_tag(:wantedposition, @search_position.nil? ? '' : @search_position.name.html_safe, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"half-row-width", :spellcheck => true, :tabindex => "10") %>	
 						</div>
 					</div>
 					<div class="form-column">
 						<div class="form-cell">
 							<%= label_tag(:location, "Where?") %><br>
 							<a class="field-tooltip" title='The city where you want to work. You can start typing a city name or a zip code and use autocomplete.<br><br>You can also choose a predefined tag from the dropdown list.<br><br>The search returns jobs in this and nearby cities.'></a>
-							<%= text_field_tag(:location, @search_location.nil? ? '' : @search_location.name.html_safe, :autocomplete => "off", :placeholder => "san francisco, california", :maxlength => 60,  :spellcheck => false, :class=>"half-row-width") %>
+							<%= text_field_tag(:location, @search_location.nil? ? '' : @search_location.name.html_safe, :autocomplete => "off", :placeholder => "san francisco, california", :maxlength => 60,  :spellcheck => false, :class=>"half-row-width", :tabindex => "20") %>
 							<%= hidden_field_tag(:lat) %>
 							<%= hidden_field_tag(:lng) %>
 						</div>
@@ -25,8 +25,8 @@
 					<div class="form-column">
 						<div class="form-cell">
 							<%= label_tag(nil, "") %><br>
-							<%= submit_tag "Search", :class => "standard-button", :id => "search-btn", :name => nil %>
-							<div title="Searching..." class="loading-icon" id="searching-wait-indicator"></div>
+							<%= submit_tag "Search", :class => "standard-button", :id => "search-btn", :name => nil, :tabindex => "30" %>
+							<div title="Searching..." class="with-tooltip loading-icon" id="searching-wait-indicator"></div>
 						</div>
 					</div>
 					
@@ -42,8 +42,6 @@
 		<%= render 'jobs/search_results' %>
 	</div>
 </div>
-
-<%=render :partial=>"layouts/bottom_stripe", :locals => {:include_summary => false} %>
 
 <script type="text/javascript">
    	$("#search-form").submit(function(){
@@ -96,7 +94,7 @@
 	});
 	
 	$( "#wantedposition" ).cachedautocomplete({
-		url: "/autocomplete/positions",
+		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
 	}).keydown(function(e){

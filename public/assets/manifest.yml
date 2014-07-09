@@ -395,6 +395,10 @@ shared/arrow-down.png: shared/arrow-down-b02c2460361c6a946752e0d785b1ebde.png
 shared/arrow-down/index.png: shared/arrow-down-b02c2460361c6a946752e0d785b1ebde.png
 shared/arrow.gif: shared/arrow-852d1822005fcab3d683a5f25560a479.gif
 shared/arrow/index.gif: shared/arrow-852d1822005fcab3d683a5f25560a479.gif
+shared/bell-off.png: shared/bell-off-4c55ade14ec8a83d9269201b8b449755.png
+shared/bell-off/index.png: shared/bell-off-4c55ade14ec8a83d9269201b8b449755.png
+shared/bell-on.png: shared/bell-on-0ce89014bffd7e8135e415cb5a4c2164.png
+shared/bell-on/index.png: shared/bell-on-0ce89014bffd7e8135e415cb5a4c2164.png
 shared/blog.png: shared/blog-a34c8515f0647561024e4ea78df63dac.png
 shared/blog/index.png: shared/blog-a34c8515f0647561024e4ea78df63dac.png
 shared/blue-bg.jpg: shared/blue-bg-c8f55505ebdfb91b549b0e9acaa2c13b.jpg
@@ -489,6 +493,8 @@ shared/no-avatar-56x56.png: shared/no-avatar-56x56-6c4119a3cce10557dcb7fc9ea8f65
 shared/no-avatar-56x56/index.png: shared/no-avatar-56x56-6c4119a3cce10557dcb7fc9ea8f65fcd.png
 shared/no-avatar-semi-transparent-56x56.png: shared/no-avatar-semi-transparent-56x56-df135792bdbde876fc5c8a02d98964d4.png
 shared/no-avatar-semi-transparent-56x56/index.png: shared/no-avatar-semi-transparent-56x56-df135792bdbde876fc5c8a02d98964d4.png
+shared/play-button.png: shared/play-button-82089dfd8b7d36c614dbcbef8d1e9f0f.png
+shared/play-button/index.png: shared/play-button-82089dfd8b7d36c614dbcbef8d1e9f0f.png
 shared/plus.png: shared/plus-7cef3cdfe40895c77a1960f3bcf9e7b5.png
 shared/plus/index.png: shared/plus-7cef3cdfe40895c77a1960f3bcf9e7b5.png
 shared/rating-off.png: shared/rating-off-a831e2b2295cd87c1433b573c718fff6.png
@@ -503,6 +509,8 @@ shared/rightjoin-eng.png: shared/rightjoin-eng-576a867a32e8977fd35bc1113c5e2359.
 shared/rightjoin-eng/index.png: shared/rightjoin-eng-576a867a32e8977fd35bc1113c5e2359.png
 shared/ruller.png: shared/ruller-a6b9ec7895b26a515bd0cb2d6ec0da14.png
 shared/ruller/index.png: shared/ruller-a6b9ec7895b26a515bd0cb2d6ec0da14.png
+shared/semi-transparent-dark.png: shared/semi-transparent-dark-1824ce9d70940d702fb95e7e619f5487.png
+shared/semi-transparent-dark/index.png: shared/semi-transparent-dark-1824ce9d70940d702fb95e7e619f5487.png
 shared/semi-transparent.png: shared/semi-transparent-9773a1d484dc912cb1a1157115d9ceb6.png
 shared/semi-transparent/index.png: shared/semi-transparent-9773a1d484dc912cb1a1157115d9ceb6.png
 shared/social/facebook.png: shared/social/facebook-19c85d345812c059458f9202355058a2.png
@@ -525,6 +533,8 @@ shared/warning-triangle.png: shared/warning-triangle-560a495b0b63edd8d2ecf39db45
 shared/warning-triangle/index.png: shared/warning-triangle-560a495b0b63edd8d2ecf39db45e16f1.png
 shared/widget-outline.png: shared/widget-outline-9aebf7a3379396ae8e23ab5dd482a060.png
 shared/widget-outline/index.png: shared/widget-outline-9aebf7a3379396ae8e23ab5dd482a060.png
+shared/x-16x16.gif: shared/x-16x16-b461af1e37aca040763256e88778d0c8.gif
+shared/x-16x16/index.gif: shared/x-16x16-b461af1e37aca040763256e88778d0c8.gif
 shared/x.png: shared/x-b812b26c6260ef412e45c09c65242c6e.png
 shared/x/index.png: shared/x-b812b26c6260ef412e45c09c65242c6e.png
 shared/yellow-dot.png: shared/yellow-dot-f97018703eb40e51f08dad5363819a24.png
@@ -633,12 +643,12 @@ widget/x.png: widget/x-c33773695cd945c828c9c049c5a4f1e8.png
 widget/x/index.png: widget/x-c33773695cd945c828c9c049c5a4f1e8.png
 ZeroClipboard.min.map: ZeroClipboard.min-737cee8623d783c84c21546ca4edc279.map
 ZeroClipboard/index.min.map: ZeroClipboard.min-737cee8623d783c84c21546ca4edc279.map
-application.js: application-50b49c285cffc39b025f3e79c2a68695.js
-application/index.js: application-50b49c285cffc39b025f3e79c2a68695.js
+application.js: application-11364b485ebc86c1c5dbdc1e2750b45a.js
+application/index.js: application-11364b485ebc86c1c5dbdc1e2750b45a.js
 Jcrop.gif: Jcrop-aededb5593856fed1e870874c80c2064.gif
 Jcrop/index.gif: Jcrop-aededb5593856fed1e870874c80c2064.gif
-application.css: application-d472d06c7ce8febf367dd9f6cb3b851a.css
-application/index.css: application-d472d06c7ce8febf367dd9f6cb3b851a.css
+application.css: application-6db73fcac970e5beae1a3b6a2a9d04bf.css
+application/index.css: application-6db73fcac970e5beae1a3b6a2a9d04bf.css
 images/ui-bg_flat_0_aaaaaa_40x100.png: images/ui-bg_flat_0_aaaaaa_40x100-4b26fbeea3d3461edfba4b3f45c4759f.png
 images/ui-bg_flat_0_aaaaaa_40x100/index.png: images/ui-bg_flat_0_aaaaaa_40x100-4b26fbeea3d3461edfba4b3f45c4759f.png
 images/ui-bg_flat_0_acacac_40x100.png: images/ui-bg_flat_0_acacac_40x100-a835e9927288b25f17ff01e00082cb51.png

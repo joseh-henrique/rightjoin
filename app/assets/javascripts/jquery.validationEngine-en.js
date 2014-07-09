@@ -105,6 +105,14 @@
                     "regex": /linkedin.com/i,
                     "alertText": "* Not a valid linkedin.com URL"
                 },
+                "youtubeUrl": {
+                    "regex": /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/i,
+                    "alertText": "* YouTube ID is missing in URL"
+                },
+                "youtubeSanity": {
+                    "regex": /you/i,
+                    "alertText": "* Not a valid YouTube URL"
+                },                   
                 "nonEmpty": {
                     "regex": /\S+/i,
                     "alertText": "* Not a valid field value"

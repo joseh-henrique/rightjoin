@@ -21,11 +21,14 @@ class Job < ActiveRecord::Base
   validates :position_id, :presence => true
   validates :locale, :presence => true # like en, en-IL
   
-  validates :benefit1, :allow_blank => true, :length => { :maximum => 40 }
-  validates :benefit2, :allow_blank => true, :length => { :maximum => 40 }
-  validates :benefit3, :allow_blank => true, :length => { :maximum => 40 }
-  validates :benefit4, :allow_blank => true, :length => { :maximum => 40 }
-    
+  validates :benefit1, :allow_blank => true, :length => { :maximum => 60 }
+  validates :benefit2, :allow_blank => true, :length => { :maximum => 60 }
+  validates :benefit3, :allow_blank => true, :length => { :maximum => 60 }
+  validates :benefit4, :allow_blank => true, :length => { :maximum => 60 }
+  validates :video_url, :allow_blank => true, :format => { :with => URI.regexp }, :length => { :maximum => 255 }
+  validates :video_url, :allow_blank => true, :format => { :with => /you/i }
+  validates :video_url, :allow_blank => true, :format => { :with => /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/i }
+
   default_scope :order => 'jobs.created_at DESC'
   
   LIVE = 1    # for :status
@@ -425,6 +428,27 @@ class Job < ActiveRecord::Base
     end
     
     return photos.compact
+  end
+  
+  def video_preview_url
+    url = nil
+    
+    unless self.video_url.blank?
+      youtube_id = Utils.extract_youtube_id(self.video_url)
+      url = "http://img.youtube.com/vi/#{youtube_id}/mqdefault.jpg" unless youtube_id.blank? 
+    end
+    
+    return url
+  end
+  
+  def video_id
+    video_id = nil
+    
+    unless self.video_url.blank?
+      video_id = Utils.extract_youtube_id(self.video_url)
+    end
+    
+    return video_id
   end
   
   def inspect

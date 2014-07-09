@@ -33,7 +33,7 @@
 					<%= text_field_tag(:email, nil, :id=>"forgot-pw-email", :maxlength=>255, :spellcheck =>false, :autocomplete => "off", :class=>"validate[required,custom[email]]")%>
 					&nbsp;
 					<%= submit_tag "Reset password",:id=>"submit-forgot-pw", :class=>"standard-button forgot-pw-form-elem" %>
-					<img title="Sending new password" alt="Sending new password" style="visibility: hidden;" id="forgot-pw-wait-indicator" src="<%= asset_path('shared/loading.gif') %>" />
+					<img title="Sending new password" alt="Sending new password" style="visibility: hidden;" id="forgot-pw-wait-indicator" class="with-tooltip" src="<%= asset_path('shared/loading.gif') %>" />
 				</div>
 			</div>
 			<div id="forgot-pw-msg">If your email is in the system, a message with a new password was sent.</div>

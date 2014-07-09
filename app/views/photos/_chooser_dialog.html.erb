@@ -30,6 +30,8 @@
 					<%= f.text_field :title %>
 					&nbsp;
 					<%= f.submit "Submit", :id=>"submit_photo", :class => "standard-button"  %>
+					&nbsp;
+					<%= link_to "Reset", "#", :class => "cancel-button"  %>					
 				</div>
 			</div>
 			
@@ -93,7 +95,7 @@ function bindImgToJCrop(x2, y2, scaling){
     });
   });
 }
- 
+
 function resetForm() {
 	$(".browse_state").show();
 	$(".upload_state").hide();
@@ -117,6 +119,11 @@ function resetForm() {
 	$(".preview_for_cropping").html("");
 	$(".preview_for_cropping").css('visibility', 'hidden');
 }
+
+$(".cancel-button").click (function(e){
+	resetForm();
+	return false;
+});
 
 <%#Returns an array of preview_window_w, preview_window_h, scale.
 # Destructuring Assignment is in ECMAScript 6 but not supported yet in most browsers.

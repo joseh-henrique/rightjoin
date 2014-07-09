@@ -245,6 +245,11 @@ class Utils
       return noun
     end
   end
+  
+  # http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
+  def self.extract_youtube_id(any_youtube_url)
+    /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/i.match(any_youtube_url)[1]
+  end
 end
 
 
