@@ -1,7 +1,7 @@
 class Ambassador < ActiveRecord::Base
   serialize :profile_links_map, JSON
   
-  attr_accessible :avatar, :email, :employer_id, :first_name, :last_name, :profile_links_map, :status, :title
+  attr_accessible :avatar, :email, :employer_id, :first_name, :last_name, :profile_links_map, :status, :title, :reminder_sent_at
   
   # TODO: remove uid and provider columns, but only after production DB is migrated!!!
   
@@ -57,6 +57,14 @@ class Ambassador < ActiveRecord::Base
       resource, link = self.profile_links_map.first
     end
     return link
+  end
+  
+  def should_remind(period)
+    # last_reminder_at = self.reminder_sent_at.nil? ? self.created_at : self.reminder_sent_at
+    # last_reminder_days_ago = (Time.zone.now - last_reminder_at).to_i / 1.day
+#     
+    # return last_reminder_days_ago > period
+    return true
   end
   
   def init_from_oauth!(auth)
