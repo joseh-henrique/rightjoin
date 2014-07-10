@@ -42,7 +42,7 @@ class InterviewsController < ApplicationController
       job.increment(:invites_counter)
       job.save!
       
-      flash_now_message(:notice, "We'll ping the candidate so they can  get in touch with you.")
+      flash_now_message(:notice, "We'll ping the candidate so they can get in touch with you.")
       partial_path = 'interviews/create'
     else 
       @interview.status = Interview::CLOSED_BY_EMPLOYER

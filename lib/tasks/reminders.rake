@@ -37,9 +37,8 @@ namespace :cron do
   
   # sent every Wednsday, once a week
   task :send_jobs_update_to_employers => :environment do
-    if Time.now.thursday?
-      Reminder.send_jobs_update_to_employers do |employer,all_jobs, open_jobs, unused_param|
- 
+    if Time.now.wednesday?
+      Reminder.send_jobs_update_to_employers do |employer,all_jobs, open_jobs, unused_param| 
         new_msg = FyiMailer.create_employer_update_email(employer, all_jobs, open_jobs, unused_param)
         Utils.deliver new_msg
       end
