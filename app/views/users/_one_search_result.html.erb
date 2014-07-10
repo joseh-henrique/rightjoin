@@ -47,7 +47,7 @@
 			    					<% if allow_ignore %>
 			    						<input type="button" onclick="pitch_position('#message-to-<%=user.id%>', 'no');" class="no-msg-btn standard-button" value="Ignore" />
 			    					<% end %>
-			    					<img title="Sending..." alt="Sending..." class="with-tooltip wait-indicator" src="<%= asset_path('shared/loading.gif') %>" />
+			    					<img title="Sending..." alt="Sending..." class="wait-indicator" src="<%= asset_path('shared/loading.gif') %>" />
 			    				<% end %>
 			    				<div class="ajax-error-message"></div>
 		    				</div>

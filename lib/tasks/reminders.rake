@@ -27,7 +27,7 @@ namespace :cron do
   
   # sent twice in a week, Monday and Thursday
   task :send_jobs_update_to_engineers => :environment do
-    if Time.now.monday? || Time.now.thursday?  || Time.now.wednesday?
+    if Time.now.monday? || Time.now.thursday?
        Reminder.send_jobs_update_to_engineers do |invites|
         new_msg = FyiMailer.create_engineer_update_email(invites.first.user, invites)
         Utils.deliver new_msg
@@ -37,9 +37,10 @@ namespace :cron do
   
   # sent every Wednsday, once a week
   task :send_jobs_update_to_employers => :environment do
-    if Time.now.wednesday?
-      Reminder.send_jobs_update_to_employers do |jobs, just_expired_jobs|
-        new_msg = FyiMailer.create_employer_update_email(jobs.first.employer, jobs, just_expired_jobs)
+    if Time.now.thursday?
+      Reminder.send_jobs_update_to_employers do |employer,all_jobs, open_jobs, unused_param|
+ 
+        new_msg = FyiMailer.create_employer_update_email(employer, all_jobs, open_jobs, unused_param)
         Utils.deliver new_msg
       end
     end

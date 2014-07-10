@@ -112,7 +112,7 @@
 				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
 					<% if infointerviews.count >= i + 1%>
 						<% infointerview = infointerviews[i] %>
-						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => h("#{infointerview.first_name} #{infointerview.last_name}").to_str,  class: "with-tooltip lead-avatar"), 
+						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => "#{infointerview.first_name} #{infointerview.last_name}",  class: "lead-avatar"), 
 							leads_employer_job_path(current_user, infointerview.job, :locale => infointerview.job.country_code, anchor: "lead-#{infointerview.id}") %>
 					<% else %>
 						<%=image_tag(asset_path("shared/no-avatar-semi-transparent-56x56.png"), class: "lead-placeholder")%>
@@ -228,7 +228,7 @@
 			<div class="form-row">
 				<div class="form-cell">
 					<%= submit_tag "Save", :id => "configure-reminder-button", :class=>"standard-button" %>
-					<div title="Saving..." class="with-tooltip loading-icon" id="configure-reminder-sending-icon"></div>
+					<div title="Saving..." class="loading-icon" id="configure-reminder-sending-icon"></div>
 				</div>
 			</div>
 		<%end%>
@@ -240,7 +240,7 @@
 		<% else %>
 			<% ambassadors.each_with_index do |ambassador, i| %>
 				<div class="ambassador-admin-box closable">
-					<%=link_to "Deactivate", employer_ambassador_path(ambassador.employer, ambassador, :locale => nil), :method => :delete, :class => "close with-tooltip", :title => "Deactive team member profile", :confirm => "Are you sure you want to deactivate this team member profile?"%>
+					<%=link_to "Deactivate", employer_ambassador_path(ambassador.employer, ambassador, :locale => nil), :method => :delete, :class => "close", :title => "Deactive team member profile", :confirm => "Are you sure you want to deactivate this team member profile?"%>
 					<%= render :partial => 'ambassadors/ambassador', object: ambassador %>
 					<div class="ambassador-counters-box">
 						<div>Shares: <span class="counter-value"><%=ambassador.shares_counter.to_i%></span></div>
@@ -256,7 +256,7 @@
 						end
 						%>
 						
-						<%=link_to "Send reminder", "#", :class => "with-tooltip send-reminder-link #{due_class}", :title => title_str, :data => {:ambassador_id => ambassador.id, :ambassador_first_name => escape_javascript(ambassador.first_name)}%>
+						<%=link_to "Send reminder", "#", :class => "send-reminder-link #{due_class}", :title => title_str, :data => {:ambassador_id => ambassador.id, :ambassador_first_name => ambassador.first_name}%>
 					</div>
 				</div>
 			<% end %>
@@ -265,7 +265,7 @@
 			reminder_link_class = current_user.reminder[:period] == 0 ? "off" : "on" 
 			reminder_link_title = current_user.reminder[:period] == 0 ? "Set a reminder" : "Reminder is set" 
 			%>
-			<%=link_to("Configure reminders", "#", :class => "with-tooltip configure-reminder-link #{reminder_link_class}", :title => "#{reminder_link_title}")%>
+			<%=link_to("Configure reminders", "#", :class => "configure-reminder-link #{reminder_link_class}", :title => "#{reminder_link_title}")%>
 		<% end %>
 	</div>
 </div>
@@ -329,10 +329,10 @@
 	$(".send-reminder-link").click(function(){
 		$("#ambassador_id").val($(this).data("ambassador-id"));
 		var body = "<%=escape_javascript current_user.reminder[:body]%>";
-		body = body.replace("[first-name]", $(this).data("ambassador-first-name"));
+		body = body.replace("[first-name]", escapeHTML($(this).data("ambassador-first-name")));
 		body = body.replace("[team-page-url]", "<%=ambassadors_signin_url(current_user.reference_num, :locale => nil)%>");
 		$("#reminder_body").html(body);
-		$("#send-reminder-dialog").dialog('option', 'title', "Send a reminder to " + $(this).data("ambassador-first-name"));
+		$("#send-reminder-dialog").dialog('option', 'title', "Send a reminder to " + escapeHTML($(this).data("ambassador-first-name")));
 		$("#send-reminder-dialog").dialog("open");
 		return false;
 	});

@@ -60,11 +60,10 @@ class Ambassador < ActiveRecord::Base
   end
   
   def should_remind(period)
-    # last_reminder_at = self.reminder_sent_at.nil? ? self.created_at : self.reminder_sent_at
-    # last_reminder_days_ago = (Time.zone.now - last_reminder_at).to_i / 1.day
-#     
-    # return last_reminder_days_ago > period
-    return true
+    last_reminder_at = self.reminder_sent_at.nil? ? self.created_at : self.reminder_sent_at
+    last_reminder_days_ago = (Time.zone.now - last_reminder_at).to_i / 1.day
+    
+    return last_reminder_days_ago > period
   end
   
   def init_from_oauth!(auth)

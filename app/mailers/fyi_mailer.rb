@@ -158,8 +158,8 @@ class FyiMailer < ActionMailer::Base
     return create_message to_email, subj, html_body, text_body    
   end
   
-  
-  def create_employer_update_email(employer, all_jobs, open_jobs, just_expired_jobs)#TODO: Last param not used. Remove
+  #[TODO] all_jobs and open_jobs are the same now. So, remove open_jobs param. And remove unused_param
+  def create_employer_update_email(employer, all_jobs, open_jobs, unused_param) 
        @intended_for = :employer
        
        to_email = employer.email
@@ -214,7 +214,6 @@ class FyiMailer < ActionMailer::Base
 
        
       
-      #Asking them to invite candidates is a distraction 
       # counters 
       total_invites_counter = all_jobs.inject(0){|sum,job| sum + job.invites_counter} 
       counters_s =""

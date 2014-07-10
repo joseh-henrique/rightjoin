@@ -262,11 +262,11 @@
 <script type="text/javascript">
 	<% user_job_qualifiers = @user.new_record? && !@defaults.nil? ? @defaults[:reqirements] : @user.user_job_qualifiers.collect {|one_qualifier| one_qualifier.job_qualifier_tag.name} %>
 	<% user_job_qualifiers.each do |one_qualifier| %>
-		writeTag("<%=escape_javascript(one_qualifier).html_safe%>", "data-job-qualifier", "1", "#job-qualifier-tags-list", null, false, "<%="Job offers must include #{one_qualifier}" %>");
+		writeTag("<%=escape_javascript(one_qualifier).html_safe%>", "data-job-qualifier", "1", "#job-qualifier-tags-list", null, false, "<%=escape_javascript("Job offers must include #{one_qualifier}").html_safe %>");
 	<% end %>
 
 	<% @user.user_skills.each do |one_skill| %>
-		writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, "#skills-tags-list", null, false, "<%="Know #{one_skill.skill_tag.name} at #{seniority_s(one_skill.seniority)} level"%>");
+		writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, "#skills-tags-list", null, false, "<%=escape_javascript("Know #{one_skill.skill_tag.name} at #{seniority_s(one_skill.seniority)} level").html_safe%>");
 	<% end %>
 </script>
 

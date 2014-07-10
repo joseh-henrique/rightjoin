@@ -34,8 +34,7 @@
 				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
 					<% if leads.count >= i + 1%>
 						<% infointerview = leads[i].infointerview %>
-						<%tt_title = ERB::Util.html_escape( "#{infointerview.first_name} #{infointerview.last_name}")%>
-						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => h("#{infointerview.first_name} #{infointerview.last_name}").to_str,  class: "with-tooltip lead-avatar"), 
+						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => "#{infointerview.first_name} #{infointerview.last_name}",  class: "lead-avatar"), 
 							followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, anchor: "followup-#{infointerview.id}") %>
 					<% else %>
 						<div class="lead-avatar"></div>

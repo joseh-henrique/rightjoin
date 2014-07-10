@@ -194,13 +194,14 @@ class AdminController < ApplicationController
 
   def send_jobs_update_to_employers
     counter = 0
-  	Reminder.send_jobs_update_to_employers do |all_jobs, open_jobs, just_expired_jobs|
-       new_msg = FyiMailer.create_employer_update_email(all_jobs.first.employer, all_jobs, open_jobs, just_expired_jobs)
+  	Reminder.send_jobs_update_to_employers do |empr, all_jobs, open_jobs, just_expired_jobs|
+       new_msg = FyiMailer.create_employer_update_email(empr, all_jobs, open_jobs, just_expired_jobs)
        Utils.deliver new_msg
        counter += 1
      end
     flash_message(:notice, "#{counter} updates were sent to employers")
   rescue Exception => e
+    puts e.backtrace
      logger.error(e)
     flash_message(:error, e.message)
   ensure

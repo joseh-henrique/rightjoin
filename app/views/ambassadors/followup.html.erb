@@ -28,7 +28,7 @@
 									<em><%=infointerview.first_name%></em> was referred by <em><%=amb_name%></em> and might be interested in the <em><%=infointerview.job.position_name%></em> position.
 								<% end %>
 							</div>
-							<%=link_to("Close", close_followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, :followup_id => lead.id), method: :post, :class => "close with-tooltip", :title => "Mark as completed and remove from the list")%>	
+							<%=link_to("Close", close_followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil, :followup_id => lead.id), method: :post, :class => "close", :title => "Mark as completed and remove from the list")%>	
 			  				
 							<%=render :partial => 'infointerviews/infointerview', :object => infointerview, :locals => {:exclude => [:salary]}%>
 						</div>

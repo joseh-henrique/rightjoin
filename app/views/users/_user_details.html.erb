@@ -58,7 +58,7 @@ end
 			</div>
 			<script type="text/javascript">
 				<% user_details.user_skills.each do |one_skill| %>
-					writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, ".tags-list", "#user-<%=user_details.id%>", true, "Knows <%= "#{one_skill.skill_tag.name} at the #{seniority_s(one_skill.seniority)} level"%>");
+					writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, ".tags-list", "#user-<%=user_details.id%>", true, "<%= escape_javascript("Knows #{one_skill.skill_tag.name} at the #{seniority_s(one_skill.seniority)} level").html_safe%>");
 				<% end %>
 			</script>
 		</div>	

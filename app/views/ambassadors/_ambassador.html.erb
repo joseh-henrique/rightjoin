@@ -1,7 +1,7 @@
 <div class="ambassador-box">
 	<div class="avatar-box">
 		<% resource, link = ambassador.profile_links_map.first %>
-		<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :target => "_blank", :rel => "nofollow", :title => h("#{ambassador.first_name}'s #{resource}").to_str, :class => "with-tooltip avatar-link" %>
+		<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :target => "_blank", :rel => "nofollow", :title => "#{ambassador.first_name}'s #{resource}", :class => "avatar-link" %>
 	</div>
 	<div class="details">
 		<div class="name-box"><%=ambassador.first_name%>&nbsp;<%=ambassador.last_name%></div>

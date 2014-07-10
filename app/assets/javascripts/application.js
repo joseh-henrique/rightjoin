@@ -135,7 +135,7 @@ function writeTag(newTagTxt, newTagDataKey, newTagDataVal, olId, idContext, read
 		return $insertAfterElem;
 	};
 	
-	var newTag = $('<li title="'+escapeAttr(escapeHTML(title))+'" class="with-tooltip onetag ' + buildTagTypeClassName(newTagDataKey, newTagDataVal) + '" />').text(newTagTxt);
+	var newTag = $('<li title="'+escapeAttr(escapeHTML(title))+'" class="onetag ' + buildTagTypeClassName(newTagDataKey, newTagDataVal) + '" />').text(newTagTxt);
 	newTag.attr(newTagDataKey, newTagDataVal);
 	
 	if(!readOnly){			
@@ -182,10 +182,6 @@ function writeTag(newTagTxt, newTagDataKey, newTagDataVal, olId, idContext, read
   	if(!readOnly){
   		newTag.slideDown('fast');
   	}
-  	
-  	newTag.tooltip({ 
-		position: { my: "left top+3", at: "left bottom" } 
-	});
 }
 
 function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPrompt, titleFmt, text_for_add_more_plchldr) {
@@ -200,7 +196,7 @@ function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPromp
 				  return $(this).text() == value;
 				}).remove();
 				var title= titleFmt.replace("%s", value);//no stringf in JS, so workaround 
-				writeTag(value, newTagDataKey, newTagDataVal, olId, null, false, escapeHTML(title));
+				writeTag(value, newTagDataKey, newTagDataVal, olId, null, false, title);
 
 				$(inputId).attr("placeholder",text_for_add_more_plchldr);
 			  	$(inputId).validationEngine('hidePrompt');

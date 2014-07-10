@@ -15,7 +15,7 @@
 		<% end %>
 		<div class="job-ad-box closable">
 			<div class="above-buttons">
-				<%=link_to("Close", employer_job_path(current_user, job, :locale => job.country_code), :method => :delete, :class => "close with-tooltip", :title => "Close position",
+				<%=link_to("Close", employer_job_path(current_user, job, :locale => job.country_code), :method => :delete, :class => "close", :title => "Close position",
 												:confirm => "Are you sure you want to close this job posting?")%>
 				
 				<%= render :partial => 'jobs/ad_with_counters', :locals => {:job => job} %>

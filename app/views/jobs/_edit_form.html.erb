@@ -21,7 +21,7 @@
 				$('<div class="photo-title">' + photo_title + '</div>').appendTo(target_box);
 			}
 			
-			$('<div class="photo-close with-tooltip" title="Remove"></div>').click(function(e) {
+			$('<div class="photo-close" title="Remove"></div>').click(function(e) {
 				box.empty();
 				field.val("");
 				
@@ -31,9 +31,7 @@
 	            e.preventDefault();
 	            event.cancelBubble = true;
 	            return false;
-			}).appendTo(target_box).tooltip({ 
-				position: { my: "left top+3", at: "left bottom" } 
-			});
+			}).appendTo(target_box);
 		});
 	}
 	

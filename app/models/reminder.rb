@@ -81,12 +81,15 @@ class Reminder < ActiveRecord::Base
     return ret
   end
   
+  #[TODO] all_jobs and open_jobs are the same now. So, remove open_jobs. Also, remove the unused_param that used to be just_expired jobs. 
+  #(open_jobs used to represent those jobs which remained open in the current action-- in other words, excluding just_expired_jobs )
+  #
   def self.send_jobs_update_to_employers(&block)
      max_employer_emails = FyiConfiguration.fetch_with_default("max_employer_emails", 30).to_i
      counter = 0
      all_jobs = []
      open_jobs = []
-     just_expired_jobs = [] #TODO not used, remove
+     unused_param = []  
   
     # Here we query for all open jobs. However, before generating each mail, we close any expired jobs (see 13 lines down). 
     # So fyi_mailer will receive some closed jobs, all of which are recently expired.
@@ -99,10 +102,10 @@ class Reminder < ActiveRecord::Base
        end
        
        if all_jobs.any? && all_jobs.last.employer_id != job.employer_id
-         send_jobs_update_to_one_employer(all_jobs, open_jobs, just_expired_jobs, block)
+         send_jobs_update_to_one_employer(all_jobs, open_jobs, unused_param, block)
          all_jobs = []
          open_jobs = []
-         just_expired_jobs = []
+         unused_param = []
          counter += 1
        end
        
@@ -111,19 +114,23 @@ class Reminder < ActiveRecord::Base
      end
      
      if all_jobs.any?
-       send_jobs_update_to_one_employer(all_jobs, open_jobs, just_expired_jobs, block)
+       send_jobs_update_to_one_employer(all_jobs, open_jobs, unused_param, block)
        counter += 1
      end
 
      puts "Jobs update sent to #{counter} employers"    
   end
   
-  def self.send_jobs_update_to_one_employer(all_jobs, open_jobs, just_expired_jobs, block)
+  def self.send_jobs_update_to_one_employer(all_jobs, open_jobs, unused_param, block)
     begin
-      block.call all_jobs, open_jobs, just_expired_jobs
+ 
+      empr = all_jobs.first.employer
+ 
+      block.call(empr, all_jobs, open_jobs, unused_param)
       
-      puts "Update sent to employer: #{all_jobs.first.employer.email}"
+      puts "Update sent to employer: #{empr.email}"
     rescue Exception => e
+      puts e.backtrace
       # We swallow the exception so that one failure does not cause failure in all
       logger.error e
     end

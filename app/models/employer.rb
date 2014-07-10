@@ -116,7 +116,7 @@ class Employer < ActiveRecord::Base
     default_subject = "Take a break and share!"
     default_body = "Hi [first-name],\n\n"\
               "This is a friendly reminder to share our job postings and find us some good colleagues.\n\n" <<
-               "The message gets through better if it's sent periodically. It takes 2 clicks and no more than 30 seconds of your time.\n\n"\
+               "The message gets noticed better after you share it a few times. It takes two clicks and no more than 30 seconds of your time.\n\n"\
               "[team-page-url]\n\n"\
               "Regards,\n\n"\
               "#{self.first_name}"#[TODO]Escape this. a name like <script>1/0</script> is stripped out in email clients, so this is not a huge problel

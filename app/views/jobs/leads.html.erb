@@ -31,13 +31,13 @@
 					<% end %>
 					
 					<a id="lead-<%=infointerview.id%>"></a>
-					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post, :class => "close with-tooltip", :title => "Close the lead. You can reopen it later.")%>	
+					<%=link_to("Close", infointerview_close_path(infointerview, :locale => nil), method: :post, :class => "close", :title => "Close the lead. You can reopen it later.")%>	
 	  				
 					<%=render :partial => 'infointerviews/infointerview', :object => infointerview%>
 					
 					<% unless @job.closed? %>
 					    <div class="contact-candidate-box">
-					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id, {"data-firstname" => escape_javascript(ambassador.first_name)}] } %>
+					    	<% ambassador_select_opts = current_user.ambassadors.only_active.map { |ambassador| ["#{ambassador.first_name} #{ambassador.last_name}", ambassador.id, {"data-firstname" => ambassador.first_name}] } %>
 							<% if ambassador_select_opts.empty?%>
 								Want your team members to talk to the candidate? <%= link_to("Ask them", employer_path(current_user, :anchor=>"team")) %> to join as ambassadors.
 				    		<% else %>
@@ -48,7 +48,7 @@
 			    						<%= select(:ambassador, :id, options_for_select(ambassador_select_opts, infointerview.referred_by), {}, {:class=>"validate[required] standard-select ambassadors-list", :data => {"infointerview-path" => infointerview_delegate_path(infointerview.id)}}) %>&nbsp;
 			    						<%=button_tag("Delegate", :class => "delegate-to-ambassador standard-button")%>
 			    						&nbsp;
-			    						<div title="Sending..." class="with-tooltip loading-icon"></div>
+			    						<div title="Sending..." class="loading-icon"></div>
 			    						<div class="results-box"></div>
 			    					</div>
 					    		</div>
@@ -116,7 +116,7 @@
 			
 			$.post($(select).attr('data-infointerview-path'), { ambassador_id: $(selected_option).val() } )
 			.done(function(data) {
-				$(results_box).html("<div class='success'>We've passed on your follow-up request to " + ambassador_firstname + ".</div>");
+				$(results_box).html("<div class='success'>We've passed on your follow-up request to " + escapeHTML(ambassador_firstname) + ".</div>");
 			})
 			.fail(function() {
 				$(results_box).html("<div class='error'><%=Constants::ERROR_FLASH%></div>");

@@ -4,6 +4,3 @@ $("#location").val("<%=@search_location.nil? ? '' : @search_location.name.html_s
 $("#flash-ajax-box").html("<%= escape_javascript(render(:partial => 'layouts/flash_content')) %>");
 $("#search-results-ajax-box").html("<%= escape_javascript(render("search_results")) %>");
 $(".search-results-box").fading_highlight();
-$(".with-tooltip, .field-tooltip").tooltip({ 
-	position: { my: "left top+3", at: "left bottom" } 
-});
