@@ -45,12 +45,17 @@ namespace :cron do
     end
   end   
 
-  task :send_personal_welcome_message => :environment do
+  task :send_personal_welcome_employer_messages => :environment do
     Reminder.send_personal_welcome_message(Employer) do |employer|
         new_msg = FyiMailer.create_personal_welcome_employer_email(employer)
         Utils.deliver new_msg
         puts "Personal welcome message sent to employer #{employer.email}"
     end
+   
+    puts "All relevant personal welcome messages  to employers were sent."
+  end
+  
+  task :send_personal_welcome_candidate_messages => :environment do
     
     Reminder.send_personal_welcome_message(User) do |user|
         new_msg = FyiMailer.create_personal_welcome_candidate_email(user)
@@ -58,7 +63,7 @@ namespace :cron do
         puts "Personal welcome message sent to candidate #{user.email}"
     end
     
-    puts "All relevant personal welcome messages were sent."
+    puts "All relevant personal welcome messages to candidates were sent."
   end
   
   # call it like this: rake cron:send_admin_summary["production"]

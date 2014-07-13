@@ -126,6 +126,7 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rack-timeout (0.0.4)
     rails (3.2.11)
       actionmailer (= 3.2.11)
       actionpack (= 3.2.11)
@@ -220,6 +221,7 @@ DEPENDENCIES
   omniauth-linkedin-oauth2
   omniauth-twitter
   pg
+  rack-timeout
   rails (= 3.2.11)
   rinku
   rspec-rails (= 2.6.1)

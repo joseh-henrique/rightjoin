@@ -1,11 +1,87 @@
-<%#><h1>
-#	Welcome page [TODO]
-#</h1>
-#%>
-<script>
-location.replace('http://launch.rightjoin.io');
+<div class="full-width-stripe">
+	<div class="root-header">
+		<div class="content">
+			<div class="rightjoin-logo-box">
+				<a href="#" class="logo">Logo</a>
+			</div>
+			<div class="signin-box">
+				<%= form_for(:session, url: employee_signin_path, :html=>{:id=>"signin-form"} ) do |f| %>
+					<div class="form-box">
+						<%= f.text_field :email, :id=>"email-input", :maxlength=>255, :spellcheck =>false, :autocomplete => "off", :tabindex => "10", :class=>"signin-input validate[required]", "data-prompt-position" => "bottomLeft"%>
+						&nbsp;
+						<%= f.password_field :password, :maxlength=>50, :class=>"signin-input validate[required, custom[nonEmpty]]", :tabindex => "20", :autocomplete => "off", :id=>"pw-input", "data-prompt-position" => "bottomLeft"%>
+						&nbsp;			
+						<%= f.submit "Sign in", :id=>"submit-signin", :tabindex => "30" %>
+					</div>
+					<%= hidden_field_tag("error-path", root_path) %>
+				<% end %>
+			</div>
+		</div>
+		
+		<div class="beta"></div> 
+	</div>
+</div>
+
+<div class="full-width-stripe employers-box">
+	<%=link_to "Employers", employer_welcome_path, :class =>" section-label", :tabindex => "40"%>
+	<div class="content">
+		
+		<%= render :partial => 'layouts/flash_box' %>
+		<h1>Peer-to-peer recruiting<br> at its best</h1>
+		<h2>Bring &ldquo;stealth candidates&rdquo; out of the woodwork.</h2>
+ 
+		
+		<div class="buttons-box">
+			<div class="button-wrapper">
+				<%=link_to employer_welcome_path, :class=>"flat-button", :tabindex => "50" do%>
+					<span class="caption">Product tour</span>
+				<% end %>
+			</div>
+	
+			<div class="button-wrapper">
+				<%=link_to employer_get_started_path, :class=>"flat-button", :tabindex => "55" do%>
+					<span class="caption"><span>Get Started</span><br><span class="subtext">Free trial. No credit card needed.</span></span>
+				<% end %>			
+			</div>
+		</div>		
+	</div>
+</div>		
+		
+<div class="full-width-stripe engineers-box">
+	<%=link_to "Engineers", jobs_path, :class =>" section-label", :tabindex => "60"%>
+	<div class="content">
+		<h1>Find out what it's like<br>to work at <em>other</em> companies.</h1>
+		<h2>Talk to your fellow software developers.</h2>
+		
+		<div class="buttons-box">
+			<div class="button-wrapper">
+				<%=link_to jobs_path, :class=>"flat-button", :tabindex => "70" do%>
+					<span class="caption">Ping companies</span>
+				<% end %>
+			</div>
+	
+			<div class="button-wrapper">
+				<%=link_to register_path, :class=>"flat-button", :tabindex => "80" do%>
+					<span class="caption"><span>Get offers</span><br><span class="subtext">No resumé needed. Stay anonymous.</span></span>
+				<% end %>			
+			</div>
+		</div>		
+	</div>		
+</div>
+
+<script type="text/javascript">
+	$(window).scroll(function() {
+		if($(window).scrollTop() == 0) { 
+			$(".root-header").removeClass("opaque"); 
+		} else {
+			$(".root-header").addClass("opaque");	
+		}
+	});	
+	
+	$(document).ready(function() {
+		$("#signin-form").validationEngine({
+	    	binded: false,
+	    	validationEventTrigger: false
+	   	});
+	});	
 </script>
-<meta http-equiv="refresh" content="0; url=http://launch.rightjoin.io" />
-<%= link_to "For employers", employer_welcome_path %>
-<br>
-<%= link_to "For engineers", jobs_path %>

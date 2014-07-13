@@ -77,6 +77,10 @@ FiveYearItch::Application.configure do
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
+  
+  # Add HTTP Request IDs to log
+  # see https://devcenter.heroku.com/articles/http-request-id and https://github.com/heroku/rack-timeout
+  config.log_tags = [ :uuid ]  
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store

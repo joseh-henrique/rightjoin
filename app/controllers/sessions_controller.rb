@@ -6,6 +6,8 @@ class SessionsController < ApplicationController
 
   def employee_signin
     email, pw = init_signin_params
+    error_path = params["error-path"]
+    error_path ||= jobs_path
     
     user = User.find_by_email(email)
     user ||= Employer.find_by_email(email) 
@@ -22,13 +24,13 @@ class SessionsController < ApplicationController
       end
     else
       flash_message(:error, "Invalid email/password combination. Please try again.") if flash[:error].blank?
-      redirect_to jobs_path 
+      redirect_to error_path 
     end    
     
   rescue Exception => e
     logger.error e
     flash_message(:error, Constants::ERROR_FLASH)
-    redirect_to root_path 
+    redirect_to error_path 
   end
   
   def employee_signout
@@ -37,6 +39,8 @@ class SessionsController < ApplicationController
   
   def employer_signin
     email, pw = init_signin_params
+    error_path = params["error-path"]
+    error_path ||= employer_welcome_path
     
     user = Employer.find_by_email(email)
     user ||= User.find_by_email(email)
@@ -53,13 +57,13 @@ class SessionsController < ApplicationController
       end
     else
       flash_message(:error, "Invalid email/password combination. Please try again.") if flash[:error].blank?
-      redirect_to employer_welcome_path 
+      redirect_to error_path 
     end  
     
   rescue Exception => e
     logger.error e
     flash_message(:error, Constants::ERROR_FLASH)   
-    redirect_to employer_welcome_path 
+    redirect_to error_path 
   end
   
   def employer_signout

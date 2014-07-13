@@ -179,14 +179,13 @@ class Reminder < ActiveRecord::Base
   def self.send_rightjoin_migration_announcement_to_engineers
     num_to_send  = FyiConfiguration.fetch_with_default("max_engineer_emails", 20).to_i
     date_migration_rj = Time.new(2014, 6, 30)
-    users = User.where("status = ? and created_at < ? and (sample = ? or sample is null)", UserConstants::VERIFIED, date_migration_rj, false).where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc").limit(num_to_send)
+    users = User.where("status = ? and created_at < ? and email like '%savage%' and (sample = ? or sample is null)", UserConstants::VERIFIED, date_migration_rj, false).where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc").limit(num_to_send)
     users.each do |user|
       begin
         yield user
         user.add_reminder!(nil, Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT)
       rescue Exception => e
         logger.error(e)
-
       end
     end
     return users.count
@@ -197,13 +196,22 @@ class Reminder < ActiveRecord::Base
      max_employer_emails = FyiConfiguration.fetch_with_default("max_employer_emails", 30).to_i
      counter = 0
      
+     ts = ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP")
+     
      # in the employers array below, each employer object has an additional field which is not in the Employer class, namely employer.contacts_count.
      employers = Employer.count_infointerviews(Infointerview::NEW)
      employers.each do |employer|
        if counter < max_employer_emails
-         yield employer
+         begin
+            yield employer
+            counter += 1
+         
+            # update statuses of all infoinerviews we just reported about to ACTIVE
+            Infointerview.joins(:job => :employer).where("infointerviews.status = ? and infointerviews.created_at < ?", Infointerview::NEW, ts).where("jobs.employer_id = ?", employer.id).update_all(:status => Infointerview::ACTIVE_LEAD)
+          rescue Exception => e
+            logger.error(e)
+          end
        end
-       counter += 1
      end
   end
 end

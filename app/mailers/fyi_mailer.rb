@@ -257,7 +257,7 @@ class FyiMailer < ActionMailer::Base
       return create_message to_email, subj, html_body, text_body   
   end
 
-   
+ 
   def create_rightjoin_migration_announcement_for_candidates_email(candidate) 
       @intended_for = :employee
       
@@ -269,12 +269,11 @@ class FyiMailer < ActionMailer::Base
       salutation =  "Hi, #{fn}it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
    
        content =
-          "We've been working on the best way to get better new jobs for developers.<br><br>"<<
-          "We spoke with our  developer members, we spoke with dev team leaders, and we've decided to pivot to \"peer-to-peer\" recruiting: "+
-          "We help developers outside a company connect with developers inside it for a chat, bypassing recruiters and HR.<br><br>" << 
-          "A new direction needs a new name. So, we're moving  from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}.<br><br>" <<
-          "Right now, the new #{Constants::SITENAME} is  in closed beta, but as an  existing user you can login at <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>.<br><br>" << 
-          "If you have any  questions, just hit Reply.<br>"
+          "It's been a while since you've heard from us. We didn't want to bother you. But now, after a lot of discussions with developers, we've come up with a new way to get them into better jobs.<br><br>"<<
+          "We're pivoting to \"peer-to-peer\" recruiting: We help developers outside a company connect with developers inside it for a chat, bypassing recruiters and HR.<br><br>" << 
+          "A new direction needs a new name. So, we're moving from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}. " << 
+          "The new #{Constants::SITENAME} is in closed beta, but as a long-term member you can still sign in at <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>.<br><br>" << 
+          "If you have any questions, just hit Reply.<br>"
    
       signature = "" + CRM_SIGNATURE
       signature << "<br><br><br>P.S. Not interested anymore?  " << 
@@ -296,7 +295,7 @@ class FyiMailer < ActionMailer::Base
 
     content =
       "I'm #{RJ_CRM_NAME}, co-founder at  #{Constants::SHORT_SITENAME}. I'm writing to tell you what comes next.<br><br>" <<
-      "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to apply to jobs.<br><br>" <<
+      "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to be in touch. " <<
       "We keep you spam-free by letting employers ping you only when they have jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
       "Go ahead and browse the specialized job listings, and ping the employers who interest you.<br><br>" <<
       "And don't hesitate to contact me with any questions.<br>"

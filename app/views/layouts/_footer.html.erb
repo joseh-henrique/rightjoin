@@ -1,33 +1,29 @@
-<%if @current_page_info[:intended_for] == :all%>
-	<%#[TODO]%>
-<%else%>
-	<div class="full-width-stripe" id="footer-menu-box">
-		<div class="content">
-			<div class="clearfix">
-				<div class="menu-list">
-					<span class="list-heading">Navigation</span>
-					<%= render :partial => 'layouts/footer_menu'%>
-				</div>			
-				
-				<div class="menu-list">
-					<span class="list-heading">Follow us</span>
-					<%= render :partial => 'layouts/follow_us'%>
-				</div>
-				
-				<div class="menu-list">
-					<span class="list-heading"><%=Constants::SHORT_SITENAME%> press</span>
-					<%= render :partial=>'layouts/in_press'%>
-				</div>
+<div class="full-width-stripe" id="footer-menu-box">
+	<div class="content">
+		<div class="clearfix">
+			<div class="menu-list">
+				<span class="list-heading">Navigation</span>
+				<%= render :partial => 'layouts/footer_menu'%>
+			</div>			
+			
+			<div class="menu-list">
+				<span class="list-heading">Follow us</span>
+				<%= render :partial => 'layouts/follow_us'%>
 			</div>
 			
-			<%= render :partial=>'layouts/logo'%>
+			<div class="menu-list">
+				<span class="list-heading"><%=Constants::SHORT_SITENAME%> press</span>
+				<%= render :partial=>'layouts/in_press'%>
+			</div>
 		</div>
+		
+		<%= render :partial=>'layouts/logo'%>
 	</div>
-	
-	<div class="full-width-stripe" id="footer-share-box">	
-		<div class="content">
-			<span class="copyright">&copy; <%=Time.now.year %> <%=Constants::SHORT_SITENAME%></span>
-			<%= render partial: 'widgets/addthis_buttons' %>
-		</div>
+</div>
+
+<div class="full-width-stripe" id="footer-share-box">	
+	<div class="content">
+		<span class="copyright">&copy; <%=Time.now.year %> <%=Constants::SHORT_SITENAME%></span>
+		<%= render partial: 'widgets/addthis_buttons' %>
 	</div>
-<% end %>
+</div>

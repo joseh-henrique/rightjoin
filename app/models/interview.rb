@@ -11,15 +11,15 @@ class Interview < ActiveRecord::Base
   
   # Run in cron script
   def self.close_expired
-    recent_interviews = Interview.all(:conditions =>
-       ["contacted_at > ? and status = ?",
+    older_interviews = Interview.all(:conditions =>
+       ["contacted_at < ? and status = ?",
          7.days.ago, Interview::CONTACTED_BY_EMPLOYER])
 
-    recent_interviews.each do |interview|
+    older_interviews.each do |interview|
       interview.close_expired!
     end
     
-    puts "Closed #{recent_interviews.count} expired interviews"
+    puts "Closed #{older_interviews.count} expired interviews"
   end
   
   def close_expired!

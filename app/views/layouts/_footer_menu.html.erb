@@ -29,7 +29,7 @@
 			</li>
 			<li class="n_get_started">
 				<%= link_to "Get Started", employer_get_started_path %>
-			</li>					
+			</li>
 		<%end%>
 		<li class="n_search">
 			<%= link_to "Candidates", employer_search_path %>
@@ -40,6 +40,34 @@
 		<li class="n_privacy">
 			<%= link_to "Terms & Privacy", employer_privacy_path %>
 		</li>
+	<% elsif @current_page_info[:intended_for] == :all %>
+		<li class="n_employers">
+			<%= link_to("Employers", employer_welcome_path)  %>
+		</li>
+			<li class="indented n_welcome">
+				<%= link_to("Product tour", employer_welcome_path)  %>
+			</li>
+			<li class="indented n_get_started">
+				<%= link_to "Get Started", employer_get_started_path %>
+			</li>
+			<li class="indented n_search">
+				<%= link_to "Candidates", employer_search_path %>
+			</li>			
+			<li class="indented n_faq">
+				<%= link_to "FAQ", employer_faq_path %>
+			</li>
+		<li class="n_engineers">
+			<%= link_to("Engineers", jobs_path)  %>
+		</li>
+			<li class="indented n_jobs">
+				<%= link_to("Jobs", jobs_path)  %>
+			</li>		
+			<li class="indented n_register">
+				<%= link_to("Register", register_path)  %>
+			</li>
+			<li class="indented n_faq">
+				<%= link_to "FAQ", faq_path %>
+			</li>	
 	<% end %>
 	<li class="n_contact">
 		<%=uservoice_contact_link("Contact")%>
