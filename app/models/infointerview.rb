@@ -64,7 +64,7 @@ class Infointerview < ActiveRecord::Base
     "** Position: #{self.job.position_name} in #{self.job.all_location_parts.join(' / ')}"
     ]
     
-    parts << "** Resume file: #{Cloudinary::Utils.cloudinary_url(self.resume_doc_id, :resource_type => :raw)}" unless self.resume_doc_id.nil?
+    parts << "** Resume file: #{Cloudinary::Utils.cloudinary_url(self.resume_doc_id, :resource_type => :raw, :secure => true )}" unless self.resume_doc_id.nil?
     
     parts.join("\n").concat("\n")
     
