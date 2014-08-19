@@ -1,11 +1,11 @@
 require 'net/http'
 
 class AmbassadorsController < ApplicationController
-  before_filter :strip_params, :only => [:update, :create, :share, :close_followup, :remind]
+  before_filter :strip_params, :only => [:update, :create, :share, :close_followup, :remind, :self_destroy]
   before_filter :init_employer_user, :only => [:destroy, :remind]
   before_filter :correct_employer, :only => [:destroy, :remind]
   
-  before_filter :set_ambassador_check_valid, :only => [:edit, :show, :update, :share, :followup, :close_followup]
+  before_filter :set_ambassador_check_valid, :only => [:edit, :show, :update, :share, :followup, :close_followup, :self_destroy]
 
   layout "team_layout" 
    
@@ -23,12 +23,15 @@ class AmbassadorsController < ApplicationController
     redirect_to employer_welcome_path
   end  
   
+  # by employer
   def destroy
     @ambassador = Ambassador.find params[:id]
     raise "Wrong parameter" if @ambassador.employer.id != current_user.id
   
     @ambassador.status = Ambassador::CLOSED
     @ambassador.save!
+    
+    @ambassador.followups.only_active.update_all(:status => Followup::CLOSED)
     
     fn = ERB::Util.html_escape  @ambassador.first_name 
     flash_message(:notice, "#{fn}'s team member profile is now inactive.")
@@ -39,6 +42,23 @@ class AmbassadorsController < ApplicationController
       logger.error e
       flash_message(:error, Constants::ERROR_FLASH)
       redirect_to employer_path current_user
+  end
+  
+  # by the ambassador himself
+  def self_destroy
+    @ambassador.status = Ambassador::CLOSED
+    @ambassador.save!
+    store_auth(nil, Constants::REMEMBER_TOKEN_AMBASSADOR)
+    
+    @ambassador.followups.only_active.update_all(:status => Followup::CLOSED)
+
+    flash_message(:notice, "Your team member profile has been closed.") 
+    
+    rescue Exception => e
+      logger.error e
+      flash_message(:error, Constants::ERROR_FLASH)
+    ensure
+      redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
   end
   
   def serve_avatar
@@ -124,6 +144,7 @@ class AmbassadorsController < ApplicationController
   
   def update
     update_params
+    
     @ambassador.save!
     
     redirect_to employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil) 
@@ -183,13 +204,13 @@ class AmbassadorsController < ApplicationController
   end
   
   def show
-    @current_page_info = PageInfo::AMBASSADOR_CREATE
-    
+    @current_page_info = PageInfo::AMBASSADOR_SHOW
+
     @job = nil
     unless params[:job].blank?
-      @job = @ambassador.employer.active_jobs.find_by_id(params[:job])
+      @job = @ambassador.employer.published_jobs.find_by_id(params[:job])
     end
-    @job ||= @ambassador.employer.active_jobs.first if @ambassador.employer.active_jobs.any?
+    @job ||= @ambassador.employer.published_jobs.first if @ambassador.employer.published_jobs.any?
     
     render 'ambassadors/show'
     
@@ -241,6 +262,14 @@ private
       @ambassador.title = params[:title]
       @ambassador.email = params[:email]
       
+      if Utils.to_bool(params[:import_avatar])
+        @ambassador.avatar = @auth.avatar
+        @ambassador.avatar_content_type = @auth.avatar_content_type
+      else
+        @ambassador.avatar = nil
+        @ambassador.avatar_content_type = ""
+      end
+      
       raise "Missing first name" if @ambassador.first_name.blank?
       raise "Missing last name" if @ambassador.last_name.blank?
       raise "Missing title" if @ambassador.title.blank?
@@ -277,7 +306,7 @@ private
         redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
       elsif @ambassador.status == Ambassador::CLOSED
         flash_message(:error, "The team member profile is closed.") 
-        redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)
+        redirect_to ambassadors_signin_path(@ambassador.employer.reference_num, :locale => nil)        
       end
     end
   rescue Exception => e

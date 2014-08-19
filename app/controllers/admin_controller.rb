@@ -27,7 +27,7 @@ class AdminController < ApplicationController
   def locations
     @locale = params[:locale]
     locations = User.find_all_by_northmost(nil).find_all{|o| o.location != nil && o.status==UserConstants::VERIFIED && o.locale == @locale}.map{|o| [o.location.name, o.location.id]}
-    locations.concat Job.find_all_by_northmost(nil).find_all{|o| o.location != nil && o.status==Job::LIVE && o.locale == @locale}.map{|o| [o.location.name, o.location.id]}
+    locations.concat Job.find_all_by_northmost(nil).find_all{|o| o.location != nil && o.status == Job::PUBLISHED && o.locale == @locale}.map{|o| [o.location.name, o.location.id]}
 
     @locations = locations.uniq {|l|l[0]}
 
@@ -65,32 +65,57 @@ class AdminController < ApplicationController
   end
 
   def positions
-    positions = User.select{|u| u.wanted_position.family_id == nil && u.status == UserConstants::VERIFIED}.map{|u| [u.wanted_position.name, u.wanted_position.id]}
-    positions.concat Job.select{|j| j.position.family_id == nil && j.status == Job::LIVE}.map{|j| [j.position.name, j.position.id]}
-
-    @positions = positions.uniq {|l|l[0]}
+    positions = PositionTag.joins("RIGHT JOIN users ON users.wanted_position_id = position_tags.id").where("position_tags.family_id is null").select("position_tags.name, position_tags.id").map {|pos| [pos.name, pos.id]}
+    positions.concat PositionTag.joins("RIGHT JOIN jobs ON jobs.position_id = position_tags.id").where("position_tags.family_id is null").select("position_tags.name, position_tags.id").map {|pos| [pos.name, pos.id]}
+    
+    sorted_by_frequencey_positions = positions.each_with_object(Hash.new(0)) { |pos, hash| hash[pos] += 1 }.sort_by {|k, v| v}
+    @positions = sorted_by_frequencey_positions.map {|pos| pos[0]}.reverse
 
     render 'admin/positions', :layout => "admin"
   end
 
   def attach_position
     invalid_pos_id = params[:invalid_position]
-    wanted_pos_name = params[:wantedposition]
-    add_to_autocomplete = params[:autocomplete] == "1"
+    fixed_pos_name = params[:fixed_position]
+    family_pos_name = params[:family_position]
+    add_to_autocomplete = params[:autocomplete] == "1" # also freezes capitlization
 
-    raise "invalid parameters" if invalid_pos_id.blank? || wanted_pos_name.blank?
-
-    family_pos = PositionTag.find_by_name(wanted_pos_name)
-    raise "Position #{wanted_pos_name} doesn't exist" if family_pos.blank?
-
-    invalid_pos = PositionTag.find(invalid_pos_id)
+    raise "invalid parameters" if invalid_pos_id.blank? || fixed_pos_name.blank?
+    
+    invalid_pos = PositionTag.find_by_id(invalid_pos_id)
     raise "Position #{invalid_pos_id} doesn't exist" if invalid_pos.blank?
 
-    family_id = family_pos.family_id
-    family_id ||= family_pos.id
+    new_attrs = Hash.new
+    family_set = false
 
-    invalid_pos.update_attribute(:family_id, family_id)
-    invalid_pos.update_attribute(:priority, 1) if add_to_autocomplete
+    unless family_pos_name.blank?
+      if fixed_pos_name.downcase == family_pos_name.downcase
+        new_attrs[:family_id] = invalid_pos.id
+        family_set = true
+      else
+        family_pos = PositionTag.find_by_name_case_insensitive(family_pos_name)
+        raise "Position #{family_pos_name} doesn't exist" if family_pos.blank?
+        
+        if family_pos.family_id.nil?
+          family_pos.update_attributes(family_id: family_pos.id)
+        end
+        
+        new_attrs[:family_id] = family_pos.family_id
+        family_set = true
+      end
+    end
+    
+    if add_to_autocomplete
+      if family_set
+        new_attrs[:priority] = 1
+      else
+        flash_message(:error, "Position must be assigned to a family to be used for autocomplete")
+      end
+    end
+    
+    new_attrs[:name] = fixed_pos_name
+    
+    invalid_pos.update_attributes(new_attrs)
     flash_message(:notice, "The positions has been updated")
   rescue Exception => e
     flash_message(:error, e.message)
@@ -253,6 +278,21 @@ class AdminController < ApplicationController
   ensure
     redirect_to admin_path
   end
+  
+  def send_update_employers_about_new_comments
+    counter = 0
+    Reminder.update_employers_about_new_comments do |comment|
+      new_msg = FyiMailer.update_employer_about_new_comment(comment)
+      Utils.deliver new_msg
+      counter += 1
+    end
+    flash_message(:notice, "#{counter} new-comments emails were sent to employers")
+  rescue Exception => e
+    logger.error(e)
+    flash_message(:error, e.message)
+  ensure
+    redirect_to admin_path
+  end  
 
   def send_update_to_admin
     Reminder.send_admin_summary do |events|

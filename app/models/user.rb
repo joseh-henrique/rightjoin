@@ -14,8 +14,8 @@ class User < ActiveRecord::Base
 
   validates :current_position_id, :presence=> true
   validates :wanted_position, :presence=> true
-  validates :first_name, :presence=> true
-  validates :last_name, :presence=> true
+  validates :first_name, :presence=> true, :if => Proc.new { |user| user.new_record? }
+  validates :last_name, :presence=> true, :if => Proc.new { |user| user.new_record? }
   validate :check_valid_location
   validates :locale, :presence => true # like en, en-IL
   

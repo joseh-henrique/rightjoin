@@ -4,28 +4,31 @@ active_interviews = current_user.interviews.select {|interview| interview.status
 %>
 
 <% if active_interviews.blank? %>
-	<div id="no-contacts-box">
+	<p>
 		No pings yet? <%= link_to "Take a look", jobs_path%> at some escape-worthy opportunities
 		and ping companies to talk to potential colleagues. 
-	</div>
+	</p>
 <% else %>
 	<% active_interviews.each do |interview| %>
 		<div id="interview-<%=interview.id%>" class="user-interviews-box">
-			<div class="message candidate-facing-ad">
+			<div class="candidate-facing-ad">
 				<div class="job-ad-box">
 					<% job = interview.job %>
 					<%=render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL}%>
 					<div class="buttons-box">
 						<% old_infointerview = @infointerviews.find {|ii| ii.job.id == job.id } %>
 						<% if old_infointerview.nil? %>
-							<% unless interview.job.ad_url.blank? %>
-					    		<%=link_to "Learn more", job.ad_url, :target => "_fyi_ad_target", :posid => "#{job.id}", :class=>"learn-more-button" %>
-					    		&nbsp;&nbsp;
-					    	<% end %>
+			    			<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+					    	&nbsp;or&nbsp;
 					    	
-					    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
-								<%= submit_tag "Ping back", :class => "ping-button", :name => nil%>
+					    	<%if job.employer.enable_ping%>
+						    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
+									<%= submit_tag "Ping back", :class => "ping-button", :name => nil%>
+								<% end %>
+							<% else %>
+								<%=link_to "Apply...", job.ad_url, :target => "_fyi_ad_target", :class=>"ping-button" %>
 							<% end %>
+							
 						<% else %>
 							<span>You pinged back <%=distance_of_time_in_days_ago(old_infointerview.created_at).downcase%>.</span>
 						<% end %>
@@ -33,5 +36,12 @@ active_interviews = current_user.interviews.select {|interview| interview.status
 				</div>
 			</div>
 		</div>
+		
+		<%=render :partial => 'jobs/embedded_ad'%>
 	<% end %>
+	
+	<p>
+		<%= link_to "Take a look", jobs_path%> at more escape-worthy opportunities
+		and ping companies to talk to potential colleagues. 
+	</p>
 <% end %>

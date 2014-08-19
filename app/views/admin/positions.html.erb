@@ -1,27 +1,28 @@
-<p class="headline">
+<h1>
 	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
 	Attach positions to groups
-</p>
+</h1>
 
-<div class="white-box">
+<div>
 	<% if @positions.blank? %>
 		All positions are fine.
 	<% else %>
 		<%= form_tag admin_attach_position_path, :id => "fix_position_form" do %>  
-		
-			<div class="clearfix user-attr-row">
-				<div class="left-col">
-					<%= label_tag(nil, "Position", :class=>"mandatory") %><br>
-					<%=select_tag 'invalid_position', options_for_select(@positions), :class => "half-row-width"%>
-				</div>
-				<div class="right-col">
-					<%= label_tag(nil, "Attach to", :class=>"mandatory") %>
-					<%= text_field_tag(:wantedposition, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false, :class => "half-row-width") %>						
-				</div>	
-			</div>
-			<%= check_box_tag :autocomplete, '1', false%> <%= label_tag(:autocomplete, "Add to autocomplete") %>
-			<br><br>
-			<%=link_to "Attach", "#", :id => "attach", :class => "blue-inline-button" %>&nbsp;
+			<br>
+			<%= label_tag(nil, "Position", :class=>"mandatory") %><br>
+			<%=select_tag 'invalid_position', options_for_select(@positions)%><br>
+			<br>
+			
+			<%= label_tag(nil, "Fixed position name (fix capialization and typos)", :class=>"mandatory") %><br>
+			<%= text_field_tag(:fixed_position, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false) %><br>
+			<br>
+
+			<%= label_tag(nil, "Attach to (to start a new family put here the fixed position name)") %><br>
+			<%= text_field_tag(:family_position, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false) %><br>
+			<%= check_box_tag :autocomplete, '1', false%> <%= label_tag(:autocomplete, "Add to autocomplete and freeze capitalization") %><br>
+			<br>
+			
+			<%=link_to "Submit", "#", :id => "attach", :class => "blue-inline-button" %>&nbsp;
 		<% end %>
 		
 		<script type="text/javascript">
@@ -30,10 +31,21 @@
 				return false;
 			});
 		
-			$( "#wantedposition" ).cachedautocomplete({
+			$( "#family_position" ).cachedautocomplete({
 				url: "<%=autocomplete_positions_path(:locale => nil)%>",
+				forceLowerCase: false,
 				sequentialMatching: false
 			});
+			
+			$("#invalid_position").change(function () {
+				var str = $(this).find("option:selected").text();
+				str = str.replace(/[^\s]+/g, function(word) {
+				  return word.replace(/^./, function(first) {
+				    return first.toUpperCase();
+				  });
+				});
+			    $("#fixed_position").val(str);
+			}).change();
 		</script>
 	<%end%>
 </div>

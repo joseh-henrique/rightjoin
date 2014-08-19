@@ -1,30 +1,30 @@
 <% content_for :more_style do %> 
   	<style>
-  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style1'].blank? %>
+  	<% unless [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style1']) %>
 	.bg-style1 {
 	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style1']%> !important;
 	}
 	<%end%>
 	
-  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style2'].blank? %>
+  	<% unless [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style2']) %>
 	.bg-style2 {
 	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style2']%> !important;
 	}
 	<%end%>
 	
-  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style3'].blank? %>
+  	<% unless [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style3']) %>
 	.bg-style3 {
 	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style3']%> !important;
 	}
 	<%end%>
 	
-  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style4'].blank? %>
+  	<% unless [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style4']) %>
 	.bg-style4 {
 	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style4']%> !important;
 	}
 	<%end%>
 	
-  	<% unless @job.effective_join_us_widget_params_map['chooser-bg-style5'].blank? %>
+  	<% unless [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style5']) %>
 	.bg-style5 {
 	  background-color: <%=@job.effective_join_us_widget_params_map['chooser-bg-style5']%> !important;
 	}
@@ -36,8 +36,9 @@
 <% content_for :more_meta do %> 
 	<% 
 	  # See ambassadors/show.html.erb for similar metas
-	   title_for_metas = @job.share_title
-	   desc_for_metas =  @job.share_description   
+	   share_display_texts = @job.share_display_texts
+	   title_for_metas = share_display_texts[:title]
+	   desc_for_metas =  share_display_texts[:description]
   	   img_url_for_metas =  presentation_image_url(@job) 
   	   company_name_for_metas = @job.employer.company_name
     %>
@@ -57,10 +58,9 @@
 	<%# Twitter cards: https://dev.twitter.com/docs/cards/validation/validator %>
 	<meta name="twitter:card" content="summary">
 	<meta name="twitter:title" content="<%="Looking for a #{@job.position.name} at #{@job.company_name}"%>">    <%#Truncated to 70 chars. Including title, this can be 75 chars for us. Let Twitter truncate if needed.%>
-	
-	<meta name="twitter:description" content="<%=@job.description %>"><%#Truncated to 200 chars. This can be 318 chars for us. Let Twitter truncate if needed.%>
-	<meta name="twitter:site" content="#{Constants::TWITTER_USER}" ><%# @username of website %>
-	<meta name="twitter:site:id" content="#{Constants::TWITTER_USER}" ><%#   Same as twitter:site, but the user's Twitter ID  %>
+	<meta name="twitter:description" content="<%=Utils.truncate(Utils.html_to_formatted_plaintext(@job.description), Job::SHORT_DESCRIPTION_LEN) %>"><%#Truncated to 200 chars. This can be 318 chars for us. Let Twitter truncate if needed.%>
+	<meta name="twitter:site" content="<%=Constants::TWITTER_USER%>" ><%# @username of website %>
+	<meta name="twitter:site:id" content="<%=Constants::TWITTER_USER%>" ><%#   Same as twitter:site, but the user's Twitter ID  %>
     <%# Optional twitter:creator, @username of content creator	 %>
  	<%# Optional twitter:creator:id, Twitter user ID of content creator %>
  	<meta name="twitter:domain" content="<%=Constants::SITENAME_LC%>" > 
@@ -74,17 +74,21 @@
  
 <% end %>
 
-<%=link_to Constants::SHORT_SITENAME, root_url, :id=>"rightjoin-label", :target => "_blank"%>
+<%=link_to Constants::SHORT_SITENAME, jobs_url, :id=>"rightjoin-label", :target => "_blank"%>
+
+<% tags = @job.tech_stack_list.split(",") %>
+<% full_plain_text = Utils.html_to_formatted_plaintext(@job.full_description) %>
+<% truncated_plain_text = Utils.truncate(full_plain_text, tags.blank? ? Job::SHORT_DESCRIPTION_LEN + 50 : Job::SHORT_DESCRIPTION_LEN) %>
 
 <div id="we-are-hiring-widget-box" class="inner animation-common fadeIn">
 	<div id="submit-success" style="display:none !important;">
 		<div class="submit-results">
-			<div class="message success">Thanks. We'll ping <%= @job.company_name %> for you.</div> 
-			<div class="submit-success-icon animation-common"></div>				
+			<div class="message success">Thanks. If it's a match, we'll set you up to talk directly with one of your peers in <%=@job.company_name%>.</div> 
+			<div class="submit-success-icon animation-common"></div>
 		</div>
 	</div>
 	
-	<div id="submit-error"  style="display:none !important;">
+	<div id="submit-failure"  style="display:none !important;">
 		<div class="submit-results">
 			<div class="message failure"><%=Constants::ERROR_FLASH%></div>
 		</div>
@@ -101,18 +105,9 @@
 				</div>
 			</div>
 		<%end%>	
-	 
-		<%fixed_texts = ["talk to your fellow developers", "click RightJoin, GitHub or LinkedIn buttons to send a ping"]%> 
-		<% fixed_texts.each_with_index do |label, i| %>
-			<div id="fixed-text<%=i%>" class="for-blurb">
-				<div class="title">
-					<%=label%>
-				</div>
-			</div>
-		<%end%>
 		
 		<%#ask about%>
-		<%ask_about = @job.benefits%>
+		<%ask_about = @job.benefits_list.to_a%>
 		<% ask_about.each_with_index do |label, i| %>
 			<div id="contel-ask-about-<%=i%>" class="for-blurb">
 				<div class="title">
@@ -137,7 +132,7 @@
 				<% unless photo.title.blank? %>
 					<div class="title"><%=photo.title%></div>
 				<% end %>
-				<div class="clickable-indicator"></div>
+				<div class="clickable-indicator blink-twice"></div>
 			</div>
 		<% end %>
 					
@@ -205,12 +200,15 @@
 	<div class="tile-row clearfix">
 		<div class="tile swappable blurb cell-21 bg-style3"></div>
 		
-		<div id="description-box" class="tile double-len cell-description bg-style4">
+		<div id="description-box" class="tile double-len cell-description bg-style4">			
 			<div class="description">
-				<%= Utils.truncated_plaintext(@job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
+				<% if full_plain_text == truncated_plain_text %>
+					<%= truncated_plain_text%>
+				<% else %>
+					<%= truncated_plain_text%>&nbsp;&nbsp;<%=link_to "Learn&nbsp;more".html_safe, "#", :id => "full-description-link"%>
+				<% end %>
 			</div>
 			
-			<% tags = @job.tech_stack_list.split(",") %>
 			<% unless tags.blank? %>
 				<div class="tags-box">
 					<% tags.each do |tag| %>
@@ -219,7 +217,7 @@
 				</div>
 			<%end%>
 			
-			<div class="clickable-indicator"></div>
+			<div class="clickable-indicator blink-twice"></div>
 		</div>
 		
 		<% if @job.get_photos.any? %>
@@ -231,19 +229,41 @@
 	
 	<%# ==== row 3 ====== %>
 	<div class="tile-row clearfix">
-		<div id="signin-box" class="tile double-len cell-signin bg-style5">
-			<div class="title">Ping <%=@job.company_name%></div>
-			<div class="sub-title">Click a button to be in touch</div>
-			<div class="buttons-box">
-				<div class="button-box github"><%= image_tag("widget/social/github46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
-				&nbsp;
-				<div class="button-box linkedin"><%= image_tag("widget/social/linkedin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
-				&nbsp;
-				<div class="button-box rightjoin"><%= image_tag("widget/social/rightjoin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "RightJoin", "#", {id: 'rightjoin-button', class: 'signin-button', method: :post} %></div>
+		<% if params[:mode] == "embedded" %>
+			<div class="tile swappable blurb cell-31 bg-style5"></div>
+			<div class="tile swappable blurb cell-32 bg-style1"></div>
+		<% else %>
+			<div id="funnel-box" class="tile double-len bg-style5">
+				<%if @job.employer.enable_ping%>
+					<div id="funnel-step1">
+						<div class="title">Join our amazing team</div>
+						<div class="sub-title">Ping us if you think this might be for you.</div>
+						<div class="buttons-box">
+							<%= link_to "Ping...", "#", {id: 'ping-button'} %>
+						</div>
+					</div>
+					<div id="funnel-step2">
+						<div class="title">Please sign in or <%=link_to "upload", "#", {id: 'upload-resume-link'}%> a resum&eacute;.</div>
+						<div class="sub-title">We'll get a link to your public profile. That's all that's needed to start the conversation.</div>
+						<div class="buttons-box">
+							<div class="button-box github"><%= image_tag("widget/social/github46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "GitHub", ominauth_login_with_path("github", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
+							&nbsp;
+							<div class="button-box linkedin"><%= image_tag("widget/social/linkedin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "LinkedIn", ominauth_login_with_path("linkedin", :locale => nil, :type => Constants::OAUTH_TYPE_CONTACT, :token => @job.id), {class: 'signin-button', method: :post} %></div>
+							&nbsp;
+							<div class="button-box rightjoin"><%= image_tag("widget/social/rightjoin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "RightJoin", "#", {id: 'rightjoin-button', class: 'signin-button', method: :post} %></div>
+						</div>
+					</div>
+				<% else %>
+					<div class="title">Join our amazing team</div>
+					<div class="sub-title">Click the button to learn more about <%=@job.company_name%></div>
+					<div class="buttons-box">
+						<%= link_to "Learn more and apply...", @job.ad_url, {target: "_blank", id: 'learn-more-button'} %>
+					</div>
+				<% end %>
 			</div>
-		</div>
+		<% end %>
 		
-		<%if @other_jobs.any?%>
+		<%if @job.status == Job::PUBLISHED && params[:mode] != "embedded" && @other_jobs.any? %>
 			<div class="tile cell-otherjobs">
 				<div id="other-ads">
 					<div class="title">
@@ -262,8 +282,8 @@
 		
 		<% if @job.address && @job.address_lat && @job.address_lng %>
 			<div class="tile map clickable cell-34 bg-style2">
-				<%= image_tag("http://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
-				<div class="clickable-indicator"></div>
+				<%= image_tag("https://maps.google.com/maps/api/staticmap?size=210x165&sensor=false&zoom=12&markers=#{@job.address_lat}%2C#{@job.address_lng}&key=AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY", class: "map-img") %>
+				<div class="clickable-indicator blink-twice"></div>
 			</div>
 		<% else %>
 			<div class="tile swappable blurb cell-34 bg-style2"></div>
@@ -359,75 +379,132 @@
 		</script>
 	<% end %>
 	
-	<% unless @infointerview.nil? %>
-		<div id="contact-form-box" class="popup-form-box tile cell-form bg-style5">
+	<div id="full-desription-box" class="popup-form-box tile bg-style4">
+		<a class="close-form" href="#"></a>
+		<div class="scrollable-wrapper">
+			<%=@job.full_description.html_safe%>
+			
+			<% unless @job.ad_url.blank? %>
+				<%=link_to "Learn even more...", @job.ad_url, :target => "_blank"%>
+			<% end %>
+		</div>
+	</div>		
+	
+	<% unless params[:mode] == "embedded" %>
+		<% unless @infointerview.nil? %>
+			<div id="contact-form-box" class="popup-form-box tile bg-style5">
+				<a class="close-form" href="#"></a>
+				<div class="more-padding">
+					<div class="title">Almost there. Just tell us how we can contact you. We'll keep it private.</div>
+				
+					<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-oauth") do |f| %>  
+						<div class="form-row clearfix">
+							<div class="left-col column">
+								<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
+								<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false, :tabindex => "10") %>
+							</div>
+							<div class="right-col column">
+								<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
+								<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false, :tabindex => "20") %>
+							</div>
+						</div>
+	
+						<div class="form-row">
+							<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
+							<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "30") %>			
+						</div>						
+						
+						<div class="button-box">
+							<%= submit_tag "GO!", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "40"%>
+						</div>
+					<% end %>
+					
+				</div>
+			</div>
+		<% end %>
+		
+		<div id="ping-with-rightjoin-form-box" class="popup-form-box tile bg-style5">
 			<a class="close-form" href="#"></a>
 			<div class="more-padding">
-				<div class="title">Let the folks at <%=@job.company_name%> know that you'd like to hear from them.</div>
+				<div class="title">Ping <%=@job.company_name%> with your <%=Constants::SHORT_SITENAME%> account.</div>
+				<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-rightjoin") do |f| %>  
+					<div class="form-row clearfix">
+						<div class="left-col column">
+							<%= label_tag(nil, "Email address", :class=>"mandatory") %><br>
+							<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "10") %>
+						</div>	
+						<div class="right-col column">
+							<%= label_tag(nil, "") %><br>
+							<%= submit_tag "GO!", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "30"%>
+						</div>												
+					</div>
+					
+					<div class="form-row">
+						<%= label_tag(nil, "Password", :class=>"mandatory") %><br>
+						<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false, :tabindex => "20") %>	
+					</div>
+				<% end %>
+			</div>
+			<div class="bottom-box">
+				Not registered on <%=Constants::SHORT_SITENAME%> yet? 
+				RightJoin is a disruptive service that lets you talk with your fellow software professionals and gets you job offers that meet your requirements. 
+				Go ahead and <%=link_to "sign up now", register_path, :target => "_blank", :tabindex => "40"%>. 
+			</div>
+		</div>
+		
+		<div id="ping-with-resume-form-box" class="popup-form-box tile bg-style5">
+			<a class="close-form" href="#"></a>
+			<div class="more-padding">
+				<div class="title">Choose a resum&eacute; file (pdf, doc, docx, txt, odt) and tell us how we can contact you. We'll keep it private.</div>
 			
-				<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-oauth") do |f| %>  
+				<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-with-resume") do |f| %>  
 					<div class="form-row clearfix">
 						<div class="left-col column">
 							<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
-							<%= text_field_tag(:firstname, @infointerview.first_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false, :tabindex => "10") %>
+							<%= text_field_tag(:firstname, "", :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Charles", :spellcheck => false, :tabindex => "10") %>
 						</div>
 						<div class="right-col column">
 							<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
-							<%= text_field_tag(:lastname, @infointerview.last_name, :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false, :tabindex => "20") %>
+							<%= text_field_tag(:lastname, "", :autocomplete => "on", :maxlength => 35, :class=>"validate[required,custom[nonEmpty]]", :placeholder => "Babbage", :spellcheck => false, :tabindex => "20") %>
 						</div>
 					</div>
-
-					<div class="form-row">
-						<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
-						<%= text_field_tag(:email, @infointerview.email, :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "30") %>			
+	
+					<div class="form-row clearfix">
+						<div class="left-col column">
+							<%= label_tag(nil, "Email", :class=>"mandatory") %><br>
+							<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "30") %>
+						</div>
+						<div class="right-col column">
+							<%= label_tag(nil, "Choose a resum&eacute; file".html_safe, :class=>"mandatory") %><br>
+							<span id="resume-upload-fake-button">
+							    <span>Browse</span>
+							    <%= cl_image_upload_tag(:document_id, :resource_type => :raw, :tags => "resume", :html => {:class => "file-upload"}) %>
+							</span>
+							<span id="resume-upload-status-msg">No file chosen</span>
+						</div>
 					</div>						
 					
 					<div class="button-box">
-						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "40"%>
+						<%= submit_tag "GO!", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "40"%>
 					</div>
 				<% end %>
 				
 			</div>
+		</div>	
+		
+		<div id="direct-ping-form-box">
+			<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id=>"direct-ping-form") %>  
 		</div>
 	<% end %>
-	
-	<div id="ping-with-rightjoin-form-box" class="popup-form-box tile cell-form bg-style5">
-		<a class="close-form" href="#"></a>
-		<div class="more-padding">
-			<div class="title">Ping <%=@job.company_name%> with your <%=Constants::SHORT_SITENAME%> account.</div>
-			<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id => "create-infointerview-via-rightjoin") do |f| %>  
-				<div class="form-row clearfix">
-					<div class="left-col column">
-						<%= label_tag(nil, "Email address", :class=>"mandatory") %><br>
-						<%= text_field_tag(:email, "", :autocomplete => "on", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required,custom[email]]", :spellcheck => false, :tabindex => "10") %>
-					</div>	
-					<div class="right-col column">
-						<%= label_tag(nil, "") %><br>
-						<%= submit_tag "Ping", :id=>"submit", :class => "submit-button", :name => nil , :autocomplete=>"off", :tabindex => "30"%>
-					</div>												
-				</div>
-				
-				<div class="form-row clearfix">
-					<div class="left-col column">
-						<%= label_tag(nil, "Password", :class=>"mandatory") %><br>
-						<%= password_field_tag(:password, "", :autocomplete => "off", :maxlength => Constants::MAX_STRING_LENGTH, :class=>"validate[required]", :spellcheck => false, :tabindex => "20") %>	
-					</div>									
-				</div>
-				<div class="form-row" id="ping-with-rightjoin-error">						
-				</div>
-			<% end %>
-		</div>
-		<div class="bottom-box">
-			Not registered on <%=Constants::SHORT_SITENAME%> yet? Go ahead and <%=link_to "sign up now", register_path, :target => "_blank", :tabindex => "40"%>.
-		</div>
-	</div>
-	
-	<div id="direct-ping-form-box">
-		<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id=>"direct-ping-form") %>  
-	</div>
 </div>
 
 <%= render :partial => 'layouts/flash_content' %>
+
+<%if @job.status == Job::DRAFT%>
+	<div class="draft">Preview</div>
+<%end%>
+
+<%= cloudinary_js_config %>
 
 <script type="text/javascript">
 var hash = $(location).attr('hash');
@@ -538,53 +615,125 @@ function updateOneAvatar() {
 	}
 }
 
-function doSubmitForm(form) {
-	var res = form.validationEngine('validate');
-	if (res) {
-		// prevent double submit
-		if($('.submit-button').attr("disabled") != "disabled") {
-			$('.submit-button').focus();
-			$('.submit-button').prop("disabled", true);
-		}
-	}
-
-	return res;
-}
-   
-$("#create-infointerview-via-oauth, #create-infointerview-via-rightjoin").submit(function(){
-	$("#ping-with-rightjoin-error").html("");
-	
-	var form = $(this);
-	if(doSubmitForm(form)) {
-		trackEvent("developer", "request for infointerview submitted");
-	} else {
-		trackEvent("developer", "error submitting request for infointerview");
-		return false;
-	}
-	
-	return true;
-});
-
-$("#rightjoin-button").click(function(event){
-	<% if @candidate.nil? || @candidate.pending? %>
-		$('.submit-button').prop("disabled", false);
-		$("#ping-with-rightjoin-error").html("");
-		$("#ping-with-rightjoin-form-box").fadeIn();
-	<% else %>
-		$("#direct-ping-form").submit();
-	<% end %>
-	
+$("#full-description-link").click(function(event) {
+	$("#full-desription-box").fadeIn();
     event.preventDefault(); 
-    return false;	
+    return false;
 });
 
-function showSubmitResults (resultsElem) {
-	$(".popup-form-box").fadeOut("slow");
-	$("#signin-box").html($(resultsElem).html());	
-}
+<% unless params[:mode] == "embedded" %>
+	function doSubmitForm(form) {
+		var res = form.validationEngine('validate');
+		
+		// validate file upload field
+		if(form[0].id == "create-infointerview-with-resume") {
+			if(!$("#create-infointerview-with-resume input[name='document_id']").val()) { // empty or whitespace
+				if ($(".cloudinary-fileupload").fileupload("progress").loaded > 0) {
+					$("#resume-upload-status-msg").validationEngine('showPrompt', "* Please wait until the file is fully loaded", 'error', 'topLeft', true);
+				} else {
+					$("#resume-upload-status-msg").validationEngine('showPrompt', "* Please choose a file", 'error', 'topLeft', true);
+				}
+				res = false;
+			}
+		}
+		
+		if (res) {
+			// prevent double submit
+			if($('.submit-button').attr("disabled") != "disabled") {
+				$('.submit-button').focus();
+				$('.submit-button').prop("disabled", true);
+			}
+		}
+	
+		return res;
+	}
+	   
+	$("#create-infointerview-via-oauth, #create-infointerview-via-rightjoin, #create-infointerview-with-resume").submit(function(){
+		var form = $(this);
+		if(doSubmitForm(form)) {
+			trackEvent("developer", "sending ping-" + this.id);
+		} else {
+			trackEvent("developer", "error sending ping");
+			return false;
+		}
+		
+		return true;
+	});
+	
+	$("#rightjoin-button").click(function(event) {
+		<% if @candidate.nil? || @candidate.pending? %>
+			$('.submit-button').prop("disabled", false);
+			$("#ping-with-rightjoin-form-box").fadeIn();
+		<% else %>
+			$("#direct-ping-form").submit();
+			trackEvent("developer", "sending ping-direct-ping-form");
+		<% end %>
+		
+	    event.preventDefault(); 
+	    return false;	
+	});
+	
+	$("#upload-resume-link").click(function(event) {
+		$('.submit-button').prop("disabled", false);
+		$("#ping-with-resume-form-box").fadeIn();
+		
+	    event.preventDefault(); 
+	    return false;	
+	});
+	
+	$("#ping-button").click(function(event) {
+		$("#funnel-step1").fadeOut("slow", function() {
+	    	$("#funnel-step2").fadeIn();
+	  	});
+		
+	    event.preventDefault(); 
+	    return false;	
+	});
+	
+	function showSubmitResults (resultsElem) {
+		$(".popup-form-box").validationEngine('hideAll');
+		$(".popup-form-box").fadeOut();
+		$("#funnel-box").html($(resultsElem).html());
+		$('.submit-success-icon').addClass("pendulum");
+	}
+	
+	$(function() {
+	    $(".cloudinary-fileupload")
+	      .fileupload({ 
+	        disableImageResize: true,
+	        disableImageHead: true,
+	        acceptFileTypes: /(\.|\/)(doc|docx|pdf|txt|odf)$/i,
+	        maxFileSize: 3*1000*1000,  <%#in bytes%>
+	        dropZone: null,
+	        start: function (e) {
+	        	$("#resume-upload-status-msg").validationEngine('hideAll');
+	        	$("#resume-upload-status-msg").html("Uploading...");
+	        	$("input[name='document_id']").val("");
+	        },
+	        done: function (e, data) {
+	            $("#resume-upload-status-msg").html(data.files[0].name);
+	        },
+	        progress: function (e, data) {
+	            var upload_progress = Math.round((data.loaded * (100.0 - 1)) / data.total); // -1 to ensure never reaches 100%
+	            $("#resume-upload-status-msg").text("Uploading... " + upload_progress + "%");
+	        },
+	        processfail: function (e, data) {
+				$("#resume-upload-status-msg").validationEngine('showPrompt', data.files[data.index].error, 'error', 'topLeft', true);
+				$("#resume-upload-status-msg").html("No file chosen");
+				$("input[name='document_id']").val("");
+	        },
+	        fail: function (e, data) {
+				$("#resume-upload-status-msg").validationEngine('showPrompt', 'Upload failed', 'error', 'topLeft', true);
+				$("#resume-upload-status-msg").html("No file chosen");
+				$("input[name='document_id']").val("");
+	        }
+	      });		
+	});
+<% end %>
 
-<% unless @job.ad_url.blank? %>
+<% if !@job.ad_url.blank? && full_plain_text == truncated_plain_text %>
 $("#description-box").addClass("clickable");
+$("#description-box").attr("title", "Click here to learn more");
 $("#description-box").click(function(event) {
 	window.open("<%=@job.ad_url%>"); 
     event.preventDefault(); 
@@ -723,21 +872,21 @@ $(document).ready(function(){
 	
 	window.setTimeout(updateOneTile, 2000);
 	
-   	$('#create-infointerview-via-oauth, #direct-ping-form').on('ajax:success',function(data, status, xhr){
+   	$('#create-infointerview-via-oauth, #direct-ping-form, #create-infointerview-with-resume').on('ajax:success',function(data, status, xhr){
       showSubmitResults ("#submit-success");
-      $('.submit-success-icon').addClass("pendulum");
+      trackEvent("developer", "infointerview created - from widget");
     }).on('ajax:error',function(xhr, status, error){
-      showSubmitResults ("#submit-error");
+      showSubmitResults ("#submit-failure");
     });	
     
    	$('#create-infointerview-via-rightjoin').on('ajax:success',function(data, status, xhr){
       showSubmitResults ("#submit-success");
-      $('.submit-success-icon').addClass("pendulum");
+      trackEvent("developer", "infointerview created - from widget");
     }).on('ajax:error',function(xhr, status, error){
       if (status.responseText != "") {
-      	$("#ping-with-rightjoin-error").hide().html(status.responseText).fadeIn("slow");
+      	$("#submit").validationEngine('showPrompt', status.responseText, 'error', 'topLeft', true);
       } else {
-      	showSubmitResults ("#submit-error");
+      	showSubmitResults ("#submit-failure");
       }
       
       $('.submit-button').prop("disabled", false);
@@ -749,4 +898,5 @@ $(document).keyup(function(e) {
 		$(".viewer .close-viewer").click();
 	}
 });
+
 </script>

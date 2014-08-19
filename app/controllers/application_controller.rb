@@ -7,7 +7,16 @@ class ApplicationController < ActionController::Base
   before_filter :check_secret_param
   
   def check_uri
+    #Note: To get SSL redirect,  Could do this in a 'before; filter. redirect_to :protocol => "https://" unless request.ssl?
+     protocol =  switch_to_https(request)
+    if Rails.env.staging?
+      if protocol!=request.protocol.downcase
+          redirect_to :protocol =>  protocol, :status => 301
+      end
+    end
+    
 		if Rails.env.production?
+		  protocol = switch_to_https(request)
       host = request.host.downcase
       from = params["from"].to_s		  
 		  
@@ -20,13 +29,13 @@ class ApplicationController < ActionController::Base
         flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and sign in." )
       end  
  
-      if request.subdomain.blank? || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC)
+      if request.subdomain.blank?  || request.subdomain!="www"  || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC) || protocol!=request.protocol.downcase
         port_str = (request.port==80 ? "" : ":"+request.port.to_s)
         redir_host  ="www." + Constants::SITENAME_LC
         orig_path= request.fullpath
         param_char = orig_path.include?("?") ? "&" : "?"
         redir_path = "#{orig_path}#{param_char}from=#{host}"
-        url_with_www = request.protocol + redir_host + port_str +redir_path 
+        url_with_www = protocol + redir_host + port_str +redir_path 
         
         redirect_to url_with_www, :status => 301
       end
@@ -150,7 +159,7 @@ class ApplicationController < ActionController::Base
     latitude = params[:lat]
     longitude = params[:lng]
 
-    pos_obj= pos.blank? ? nil : PositionTag.find_by_name(pos)
+    pos_obj= pos.blank? ? nil : PositionTag.find_by_name_case_insensitive(pos)
     loc_obj = loc.blank? ? nil : LocationTag.find_by_name(loc)
     loc_obj ||= LocationTag.new(:name => loc, :latitude => latitude.to_f, :longitude => longitude.to_f) if !loc.blank? && !latitude.blank? && !longitude.blank?
     
@@ -295,7 +304,7 @@ class ApplicationController < ActionController::Base
       loc = job_obj.location_name
     end  
     
-    pos_obj= pos.blank? ? nil : PositionTag.find_by_name(pos)
+    pos_obj= pos.blank? ? nil : PositionTag.find_by_name_case_insensitive(pos)
     loc_obj = loc.blank? ? nil : LocationTag.find_by_name(loc)
     loc_obj ||= LocationTag.new(:name => loc, :latitude => latitude.to_f, :longitude => longitude.to_f) if !loc.blank? && !latitude.blank? && !longitude.blank?
     
@@ -424,5 +433,9 @@ private
        :value => val,
        :expires => 24.hour.from_now
     } unless val.blank?
+  end
+  
+  def switch_to_https(request)
+    return request.protocol.downcase == "http://" ? "https://" : request.protocol
   end
 end

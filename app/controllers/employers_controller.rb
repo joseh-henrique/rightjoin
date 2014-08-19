@@ -1,9 +1,9 @@
 class EmployersController < ApplicationController
   include UsersControllerCommon
     
-  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe, :configure_reminder]
+  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :unsubscribe, :configure_reminder, :invite_team_member, :update_settings]
   before_filter :init_employer_user, :except => [:we_are_hiring, :ping, :join_us_tab, :join_us_test]
-  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab, :configure_reminder]
+  before_filter :correct_user, :only => [:show, :edit, :update, :configure_join_us_tab, :configure_reminder, :invite_team_member, :settings, :update_settings]
   before_filter :add_verif_flash, :only =>[:edit]
   before_filter :init_join_us_widget, :only =>[:we_are_hiring, :ping]
   after_filter :minimize_js_response, :only => :join_us_tab
@@ -80,7 +80,7 @@ class EmployersController < ApplicationController
     
     if current_user.pending?
       country_code = I18n.t(:country_code, I18n.locale) 
-      url = employer_welcome_url(:locale => country_code) #TODO This should be the employer dashbaord URL. But this welcome URL works 
+      url = employer_welcome_url(:locale => country_code) #TODO This should be the employer dashboard URL. But this welcome URL works  because of redirect for loggedin users
       new_msg = FyiMailer.create_welcome_message(current_user.email, current_user.password, I18n.locale, Employer.reason_to_verify, Employer.homepage_description, url, :employer)
       Utils.deliver(new_msg)
     else
@@ -93,6 +93,26 @@ class EmployersController < ApplicationController
       logger.error e
       flash_message(:error,Constants::ERROR_FLASH)
       redirect_to edit_employer_path(current_user)
+  end
+  
+  def settings
+    @current_page_info = PageInfo::EMPLOYER_SETTINGS
+    @employer = current_user
+  end
+  
+  def update_settings
+    enable_ping = Utils.to_bool(params[:enable_ping])
+    
+    employer = current_user
+    employer.enable_ping = enable_ping
+    employer.save!
+    
+    flash_message(:notice, "Configuration settings have been updated.")
+  rescue Exception => e
+    logger.error e
+    flash_message(:error, Constants::ERROR_FLASH)
+  ensure
+    redirect_to employer_path(current_user)
   end
  
   def change_pw
@@ -172,7 +192,7 @@ class EmployersController < ApplicationController
     
     if locale != :unknown_locale
       I18n.locale = locale
-      @activeJobsCount = geotarget ? @employer.active_jobs.where(locale: I18n.locale).count : @employer.active_jobs.count
+      @activeJobsCount = geotarget ? @employer.published_jobs.where(locale: I18n.locale).count : @employer.published_jobs.count
       tab_expires_in = 15.minutes
     end
     
@@ -229,6 +249,49 @@ class EmployersController < ApplicationController
   ensure
     redirect_to employer_path(current_user)            
   end
+  
+  def invite_team_member
+    employer = current_user
+    
+    recipient_email_str = params[:invitation_recipient_email] # may contain comma separated list of addresses
+    recipient_emails = recipient_email_str.split(",").reject(&:empty?)
+    
+    subject = params[:invitation_subject]
+    salutation = params[:invitation_salutation]
+    recipient_name = recipient_emails.length > 1 ? "" : params[:invitation_recipient_name]
+    body = params[:invitation_body]
+    
+    raise "Missing invitation attributes" if subject.blank? || body.blank? || recipient_emails.blank?
+    
+    save_as_template = Utils.to_bool(params["save-as-template"])
+    if save_as_template
+      salutation ||= "" # can be empty
+      
+      employer.invitation_subject = subject
+      employer.invitation_salutation = salutation
+      employer.invitation_body = body
+      employer.save!
+    end
+    
+    full_salutation = "#{salutation} #{recipient_name}".strip
+    full_salutation = "#{full_salutation},\n\n" unless full_salutation.blank?
+    full_body = "#{full_salutation}#{body}"
+    
+    recipient_emails.each do |email| 
+      begin
+        new_msg = FyiMailer.create_message(email, subject, full_body.gsub("\n", "<br>"), full_body)
+        Utils.deliver new_msg
+      rescue  Exception => e
+        logger.error "Sending ambasador invitation to #{email} failed."
+        logger.error e
+      end
+    end
+    
+    render :nothing => true, status: :ok
+  rescue  Exception => e
+    logger.error e
+    render :nothing => true, status: :internal_server_error
+  end
    
   private
   
@@ -239,6 +302,7 @@ class EmployersController < ApplicationController
       @colors = params[:colors] || ""
       
       employer = Employer.find_by_ref_num(params[:refnum])
+      # search in all active jobs (including DRAFT) to allow preview
       @job = employer.active_jobs.find_by_id(params[:job]) unless params[:job].blank?
       
       @candidate = get_employee_user_by_session_cookie
@@ -254,7 +318,7 @@ class EmployersController < ApplicationController
       end
       
       # is locale presents in the URL the request is for local jobs
-      local_active_jobs = params[:locale].nil? ? employer.active_jobs : employer.active_jobs.where(locale: I18n.locale)
+      local_active_jobs = params[:locale].nil? ? employer.published_jobs : employer.published_jobs.where(locale: I18n.locale)
       
       if @job.nil?
         @other_jobs = local_active_jobs

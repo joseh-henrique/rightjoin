@@ -51,30 +51,38 @@
 				<% is_new = job.created_at > 3.day.ago && new_ads_counter < 2 && (request.parameters[:page].nil? || request.parameters[:page] == "1") %>
 				<% if is_new %>
 					<% new_ads_counter += 1 %>
-					<div class="new-tab">New!</div>
+					<div class="job-tab new-tab">New</div>
 				<%end%>
 				<div class="job-ad-box">
 					<%=render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_FULL}%>
 					<div class="buttons-box">
-						<% employee = get_employee_user_by_session_cookie %>
-						<% if employee.nil? %>
-							<%=link_to "Sign in", "#", :class => "sign-in-link" %> or <%=link_to "Register", register_path %> to ping the company.
-						<% elsif employee.status == UserConstants::PENDING %>
-							<span>To ping companies, please <%=link_to "verify", user_path(current_user, :locale => current_user.country_code) %> your account.</span>
-						<% else %>
-							<% old_infointerview =  @infointerviews[job.id] %>
-							<% if old_infointerview.nil? %>
-								<% unless job.ad_url.blank? %>
-						    		<%=link_to "Learn more", job.ad_url, :target => "_fyi_ad_target", :posid => "#{job.id}", :class=>"learn-more-button" %>
-						    		&nbsp;&nbsp;
-						    	<% end %>
-						    	
-						    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
-									<%= submit_tag "Ping the company", :class => "ping-button", :name => nil%>
-								<% end %>
+						<% if job.employer.enable_ping %>
+							<% employee = get_employee_user_by_session_cookie %>
+							<% if employee.nil? %>
+					    		<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+					    		&nbsp;or&nbsp;
+					    		
+								<%=link_to "Sign in", "#", :class => "sign-in-link" %> to ping the company.
+							<% elsif employee.status == UserConstants::PENDING %>
+								<span>To ping companies, please <%=link_to "verify", user_path(current_user, :locale => current_user.country_code) %> your account.</span>
 							<% else %>
-								<span>You pinged this company <%=distance_of_time_in_days_ago(old_infointerview.created_at).downcase%>.</span>
+								<% old_infointerview =  @infointerviews[job.id] %>
+								<% if old_infointerview.nil? %>
+							    	<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+							    	&nbsp;or&nbsp;
+							    	
+							    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
+										<%= submit_tag "Ping the company", :class => "ping-button", :name => nil%>
+									<% end %>
+								<% else %>
+									<span>You pinged this company <%=distance_of_time_in_days_ago(old_infointerview.created_at).downcase%>.</span>
+								<% end %>
 							<% end %>
+						<% else %>
+							<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+					    	&nbsp;or&nbsp;
+					    	
+							<%=link_to "Apply...", job.ad_url, :target => "_fyi_ad_target", :class=>"ping-button" %>
 						<% end %>
 					</div>					
 				</div>

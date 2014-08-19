@@ -12,9 +12,9 @@
 //= require fyi-autocomplete 
 //= require colpick
 //= require jquery.colorPicker
-//= require cycle.min
 //= require jquery.sparkline.min
 //= require jquery.raty.min
+//= require jquery.appear
 //= require cloudinary
 //= require jquery.jcrop.min
 //= require cloudinary/processing  
@@ -27,6 +27,7 @@ if (!window.console) var console = { log: function() {} };
 // validation engine globals
 $.validationEngine.defaults.scroll = false;
 $.validationEngine.defaults.autoHidePrompt = true;
+$.validationEngine.defaults.validationEventTrigger = false;
 
 // popups
 $('a[data-popup]').live('click', function(event) { 
@@ -41,21 +42,26 @@ $(".flash-x").live('click', function(event) {
 });
 
 // textarea maxlength
-$('textarea[counterid], input[counterid]').live('focus keyup blur', function() {
+$('textarea[counterid], input[counterid], .editable-box').live('focus keyup blur', function() {
     // Store the maxlength and value of the field.
     var maxlength = $(this).attr('maxlength');
-    var val = $(this).val();
-
-    // Trim the field if it has content over the maxlength.
-    if (val.length > maxlength) {
-        $(this).val(val.slice(0, maxlength));
+    var val = 0;
+    if($(this).hasClass("editable-box")) {
+    	val = $.trim($(this).text());
+    } else {
+    	val = $(this).val();
+    	
+	    // Trim the field if it has content over the maxlength.
+	    if (val.length > maxlength) {
+	        $(this).val(val.slice(0, maxlength));
+	    }    	
     }
     
     var counterId = $(this).attr('counterId');
     if (counterId != null) {
     	var counterElem = $('#' + counterId);
     	
-    	counterElem.show();
+    	counterElem.fadeIn("slow");
     	counterElem.html(maxlength - val.length);
     	
     	if(maxlength - val.length <= 0) {
@@ -66,25 +72,58 @@ $('textarea[counterid], input[counterid]').live('focus keyup blur', function() {
     }
 });
 
-$('textarea[counterid], input[counterid]').live('blur', function() {
+$('textarea[counterid], input[counterid], .editable-box').live('blur', function() {
     var counterId = $(this).attr('counterId');
     if (counterId != null) {
-    	$('#' + counterId).hide();
+    	$('#' + counterId).fadeOut("slow");
     }
+});
+
+$('.editable-box').live('focus', function() {
+	var reset_link = $(this).siblings(".reset-link");
+	reset_link.fadeIn("slow");
+});
+
+$('.editable-box').live('blur', function() {
+	var reset_link = $(this).siblings(".reset-link");
+	reset_link.fadeOut("slow");
+});
+
+$('.editable-box.single-line').live('keypress', function(event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+    }
+});
+
+$('.reset-link').live("click", function(event) {
+	var editable_box = $(this).siblings(".editable-box");
+	var default_content = $(this).children(".default-content");
+	if(editable_box.length > 0 && default_content.length > 0) {
+		editable_box.html(default_content.html());
+	}
 });
 
 // accordion
 $('.fyi-accordion .standard-section-header').live('click', function(event) { 
 	var panel = $(this).next();
 	var header = $(this);
-	if (panel.is(":visible")) {		
+
+	if (panel.is(":visible")) {
+			//close open panel
 		panel.slideToggle("fast", function () {
 			header.removeClass("expanded");
 			header.addClass("collapsed");			
 		});
 	} else {
-		// close what's already open
-		var accordion = $(this).closest('.fyi-accordion');
+		//open closed panel
+		openAccordionPanel(header,panel);
+ 	}
+
+	return false;
+});
+
+function openAccordionPanel(header, panel) {
+		var accordion = header.closest('.fyi-accordion');
 		if(accordion.hasClass("toggle-panels")) {
 			accordion.find(".accordion-panel").slideUp("fast", function () {
 				accordion.find(".accordion-header").removeClass("expanded").addClass("collapsed");	
@@ -95,10 +134,7 @@ $('.fyi-accordion .standard-section-header').live('click', function(event) {
 			header.removeClass("collapsed");
 			header.addClass("expanded");
 		});
-	}
-
-	return false;
-});
+}
 
 $('.sign-in-link').live('click', function(event) {
 	$("#email-input").focus();
@@ -185,10 +221,17 @@ function writeTag(newTagTxt, newTagDataKey, newTagDataVal, olId, idContext, read
 }
 
 function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPrompt, titleFmt, text_for_add_more_plchldr) {
+	var ret = true;
+	var isMultiValue = $(inputId).cachedautocomplete( "option", "multiValue" );
+	
 	var newTagTxt = $(inputId).val();
-	newTagTxt = $.trim(newTagTxt).toLowerCase();
+	newTagTxt = $.trim(newTagTxt);
 	if(newTagTxt != ""){
-		var terms = newTagTxt.split( /,\s*/ );
+		var terms = [newTagTxt];
+		if(isMultiValue) {
+			terms = newTagTxt.split( /,\s*/ );
+		}
+		
 		$.each(terms, function(index, value) {
 			value = $.trim(value);
 			if(value != ""){		
@@ -206,9 +249,12 @@ function createNewTag(inputId, newTagDataKey, newTagDataVal, olId, suppressPromp
 		if (!suppressPrompt){
 			$(inputId).validationEngine('showPrompt', "Please enter a new tag.", 'error', 'topRight', true);
 		}
+		ret = false;
 	}
 	
 	$(inputId).val("");
+	
+	return ret;
 }
 
 function tagsToParams(olId, newTagDataKey) {
@@ -232,6 +278,9 @@ jQuery.fn.fading_highlight = function() {
             .width(el.outerWidth())
             .height(el.outerHeight())
             .addClass("fading_highlight")
+            .css({
+	            "margin": el.css("margin")
+        	})
             .fadeOut(500);
     });
 };
@@ -306,13 +355,23 @@ $(function() {
 	});
 	
 	// compound input box
-	$('.free-text-input').focus(function() {
+	$('.compound-input-box textarea, .compound-input-box input[type=text]').focus(function() {
 		$(this).closest(".compound-input-box").removeClass("inactive").addClass("active");
 	});
 	
-	$('.free-text-input').blur(function() {
+	$('.compound-input-box textarea, .compound-input-box input[type=text]').blur(function() {
 		$(this).closest(".compound-input-box").removeClass("active").addClass("inactive");
-	});		
+	});
+
+	$(".see-older-comments-link").click(function(event){
+		var hidden_comments = $(this).siblings(".lead-comment.hidden");
+		$(this).fadeOut("slow", function(){
+			hidden_comments.slideDown("fast");
+		});
+		
+		event.preventDefault(); 
+	    return false;
+	});	
 });
 
 // direct ping button //
@@ -323,6 +382,7 @@ $( ".job-ad-box .direct-ping-form" ).live("submit", function( event ) {
 
 $('.job-ad-box .direct-ping-form').live('ajax:success',function(data, status, xhr){
 	var resp_box = $(this).closest(".buttons-box");
+	trackEvent("developer", "infointerview created - from board");
   	resp_box.fadeOut("fast", function() {
     	resp_box.html("<span class='success'>Thanks. We'll ping the company for you.</span>");
   		resp_box.fadeIn("slow");
@@ -338,8 +398,47 @@ $('.job-ad-box .direct-ping-form').live('ajax:success',function(data, status, xh
   		resp_box.fadeIn("slow");
   	});
 });
-/////////////////////
 
+function refreshComments(comments_box, data) {
+	var all_comments_html = $.parseHTML(data);
+	var all_comments = $(all_comments_html).children(".lead-comment");
+	
+	var new_comments = [];
+	
+	all_comments.each(function() {
+	  var old_comment = comments_box.children("#" + this.id);
+	  if (old_comment.size() == 0) {
+	  	new_comments.push($(this).hide());
+	  }
+	});
+	
+	// iterate in reveser order
+	for (var i = new_comments.length - 1; i >= 0; i--) {
+	   new_comments[i].hide();
+	   new_comments[i].insertAfter(comments_box.children(".new-comment-form-box").first());
+	   new_comments[i].slideDown("fast", function(){
+	   		$(this).fading_highlight();
+	   });
+	}	
+}
+
+$('.lead-comments-box .new_comment').live('ajax:success', function(evt, data){
+	var body_input = $(this).children(".comment-body");
+	body_input.val("");
+	
+	var comments_box = $(this).parents(".lead-comments-box");
+	refreshComments(comments_box, data);
+	
+}).on('ajax:error',function(xhr, status, error){
+  	var error_text = "Oops! Something went wrong, we'll be on it right away.";
+  	if(status.responseText != "") {
+  		error_text = status.responseText;
+  	}
+  	var submit_btn = $(this).children("input[type='submit']");
+ 	submit_btn.validationEngine('showPrompt', error_text, 'error', 'topLeft', true);
+});
+
+/////////////////////
 // This method supports window sizing and centering, 
 // which in Chrome  does NOT work if you do a simple  window.open(..... 'width=800...'...
 // Note that FF requires "1" rather than "yes" or "on". 

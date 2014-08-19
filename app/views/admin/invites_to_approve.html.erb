@@ -1,7 +1,7 @@
-<p class="headline">
+<h1>
 	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
 	Approve invitation
-</p>
+</h1>
 
 <% unless @invites_to_approve.blank? %>
 	<% @invites_to_approve.each_with_index do |invite, i| %>

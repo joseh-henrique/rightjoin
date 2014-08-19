@@ -1,10 +1,14 @@
-<div id="photo-chooser">
+<div id="photo-chooser">	
 	<div id="tabs">
 	  <ul>
 	    <li><a href="#upload-tab">Upload</a></li>
 	    <li><%=link_to("Already uploaded", photos_path(:locale => nil, :image_set => image_set))%></li>
 	  </ul>
 	  <div id="upload-tab">
+		<div class="form-row">
+			<h2 class="help-box form-cell">
+			</h2>
+		</div>		  	
 		<%= form_for(Photo.new, :url => photos_path, :remote=>true) do |f| %>
 			<div id="drop_box">
 				<div id="browse_box" class="browse_state">
@@ -79,16 +83,16 @@ function setCoordsInHiddenFields(c,scaling) {
     setScaledVal('#crop_h', c.h, scaling);
 };	 
   
-function bindImgToJCrop(x2, y2, scaling){ 
+function bindImgToJCrop(x2, y2, scaling, ratio){ 
   jQuery(function($){
     var jcrop_api;
     
     $('.preview_for_cropping img').Jcrop({
       bgColor: '#eee',
-   	  aspectRatio: <%=Photo::ASPECT_RATIO_FOR_CROP_WINDOW%>,
+   	  aspectRatio: ratio,
       onChange:   setCoords(scaling),
       onSelect:   setCoords(scaling),
-      minSize: [40, 40],
+      minSize: [40, 30],
       setSelect: [ 0, 0, x2, y2 ]  <%#  in the form x, y, x2, y2 %>
     },function(){
       jcrop_api = this;
@@ -185,11 +189,15 @@ $.widget( "custom.imageChooser", $.ui.dialog, {
 	  resizable: false,	  
 	  autoOpen: false,
 	  title: "<%=title%>",
+	  helpString: "",
+	  aspectRatio: 1,
 	  onChoose: null
     },
     
     open: function() {
         resetForm();
+        var help_box = $(this.element[0]).find(".help-box")[0];
+        $(help_box).html(this.option("helpString"));
         return this._super();
     }
 });  
@@ -263,7 +271,8 @@ $(function() {
       	var preview_window_w = sz[0];
       	var preview_window_h = sz[1];
       	var scale = sz[2];
-        bindImgToJCrop(preview_window_w, preview_window_h, scale );
+      	var aspectRatio = $( "#photo-chooser" ).imageChooser("option", "aspectRatio");
+        bindImgToJCrop(preview_window_w, preview_window_h, scale, aspectRatio);
     });
       
 	$('#new_photo').on('ajax:success',function(data, status, xhr){

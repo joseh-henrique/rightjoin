@@ -68,12 +68,20 @@ class Employer < ActiveRecord::Base
   end
   
   def active_jobs
-    self.jobs.where("status = ?", Job::LIVE)
+    self.jobs.where("status <> ?", Job::CLOSED)
+  end
+  
+  def published_jobs
+    self.jobs.where("status = ?", Job::PUBLISHED)
+  end
+  
+  def has_active_jobs_with_empty_ad_url?
+    active_jobs.where("ad_url is null or ad_url = ''").count > 0
   end
   
   def self.employer_ids_for_ambassador_reminder
     # have active jobs, active ambassadors and reminder period > 0
-    Employer.joins(:jobs,:ambassadors).where("employers.reminder_period > ? and jobs.status = ? and ambassadors.status = ?", 0, Job::LIVE, Ambassador::ACTIVE).pluck("distinct employers.id")
+    Employer.joins(:jobs,:ambassadors).where("employers.reminder_period > ? and jobs.status = ? and ambassadors.status = ?", 0, Job::PUBLISHED, Ambassador::ACTIVE).pluck("distinct employers.id")
   end
   
   # Returns array of Employers, where each employer object has an additional field which is not in the Employer class--employer.contacts_count.
@@ -81,15 +89,25 @@ class Employer < ActiveRecord::Base
     Employer.joins(:jobs => :infointerviews).select("count(infointerviews.id) as contacts_count, employers.*").where("infointerviews.status in (#{statuses.join(', ')})").group("employers.id")
   end
   
-  def all_generated_leads_count(job_statuses = [Job::LIVE, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
+  def all_generated_leads_count(job_statuses = [Job::PUBLISHED, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
     Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status in (?) and infointerviews.status in (?)", 
                                     id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
   end
   
   def last_active_leads(count)
-    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status in (?) and infointerviews.status in (?)", 
-                                    id, [Job::LIVE], [Infointerview::NEW, Infointerview::ACTIVE_LEAD]).order("created_at DESC").limit(count)
-  end  
+    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status = ? and infointerviews.status in (?)", 
+                                    id, Job::PUBLISHED, [Infointerview::NEW, Infointerview::ACTIVE_LEAD]).order("created_at DESC").limit(count)
+  end
+  
+  def new_leads
+    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status = ? and infointerviews.status = ?", 
+                                    id, Job::PUBLISHED, Infointerview::NEW).order("infointerviews.created_at DESC")
+  end
+  
+  def leads_with_unseen_comments
+    Infointerview.select("infointerviews.*, count(infointerviews.id) as new_comments_count").joins(:job, :comments).where("jobs.employer_id = ? and jobs.status = ? and infointerviews.status = ? and comments.ambassador_id is not null and comments.status in (?)", 
+                          id, Job::PUBLISHED, Infointerview::ACTIVE_LEAD, [Comment::STATUS_NEW, Comment::STATUS_NOT_SEEN]).group("infointerviews.id").order("infointerviews.created_at DESC")
+  end
   
   def shares_statistics
     Share.joins(:ambassador).where("ambassadors.employer_id = ?", id).group("shares.network").select("shares.network, count(*) as shares_count, sum(shares.click_counter) as clicks_count, sum(shares.lead_counter) as leads_count")
@@ -100,7 +118,7 @@ class Employer < ActiveRecord::Base
   end
   
   def active_jobs_with_share_statistics
-    jobs_with_share_statistics_by_status(Job::LIVE)
+    jobs_with_share_statistics_by_status(Job::DRAFT, Job::PUBLISHED)
   end
   
   def jobs_with_share_statistics_by_status(*status)
@@ -119,11 +137,27 @@ class Employer < ActiveRecord::Base
                "The message gets noticed better after you share it a few times. It takes two clicks and no more than 30 seconds of your time.\n\n"\
               "[team-page-url]\n\n"\
               "Regards,\n\n"\
-              "#{self.first_name}"#[TODO]Escape this. a name like <script>1/0</script> is stripped out in email clients, so this is not a huge problel
+              "#{self.first_name}"# TODO Escape this. But a name like <script>1/0</script> is stripped out in email clients, so this is not a huge problel
 
    {:subject => self.reminder_subject.blank? ? default_subject : self.reminder_subject,
     :body => self.reminder_body.blank? ? default_body : self.reminder_body,
     :period => self.reminder_period}
+  end
+  
+  def team_invitation_template
+    default_subject = "Talking with potential future colleagues"
+    default_salutation = "Hi"
+    default_body = "We're looking for some smart developers to work with us at #{self.company_name}.\n\n" <<
+          "#{Constants::SHORT_SITENAME} gives us a beautiful ad in which our current developers are the highlight. " << 
+          "It has social sharing tools to help you spread it.\n\n" << 
+          "Experienced developers then ping us through this ad. We may connect a few developers with you for a chat about working here.\n\n" <<
+          "Please sign in at [team-page-url]\n\n" <<
+          "Regards,\n" <<
+          "#{self.first_name}"
+          
+   {:subject => self.invitation_subject.blank? ? default_subject : self.invitation_subject,
+    :salutation => self.invitation_salutation.nil? ? default_salutation : self.invitation_salutation,
+    :body => self.invitation_body.blank? ? default_body : self.invitation_body}
   end
   
   def self.send_pending_reminders_to_all_ambassadors
@@ -133,22 +167,34 @@ class Employer < ActiveRecord::Base
     employer_ids.each do |id|
       employer = Employer.find(id)
       period = employer.reminder_period
+      now = Time.parse(ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP"))
+      
       employer.ambassadors.each do |ambassador|
         if ambassador.should_remind(employer.reminder[:period])
           begin
             new_msg = FyiMailer.create_ambassador_reminder_message(ambassador, employer.reminder[:subject], employer.reminder[:body])
             Utils.deliver new_msg
             counter += 1
+            
+            ambassador.update_attributes(:reminder_sent_at => now)
           rescue Exception => e
             # We swallow the exception so that one failure does not cause failure in all
             logger.error e
-          end          
+          end
         end
       end
     end
     
     return counter
   end    
+  
+  def create_comment!(infointerview_id, body)
+    c = Comment.new
+    c.infointerview_id = infointerview_id
+    c.body = body
+    c.created_by = Comment::CREATED_BY_EMPLOYER
+    c.save!
+  end
 
   def inspect
     jobs_str = jobs.collect {|job| "#{job.id}"}.compact.join(", ")
@@ -158,6 +204,7 @@ class Employer < ActiveRecord::Base
     "** Created at #{self.created_at} (#{((Time.now - self.created_at)/(3600 * 24)).to_i} days ago), status = #{self.status}, tier = #{self.current_plan.name}, sample = #{self.sample}",
     "** #{self.company_name}",
     "** #{self.first_name} #{self.last_name} #{self.email}",
+    "** Enable ping: #{self.enable_ping}",
     "** Job ids: #{jobs_str}"
     ]
     parts.join("\n").concat("\n")

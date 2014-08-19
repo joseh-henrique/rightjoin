@@ -12,9 +12,10 @@
 			<% company_name = @ambassador.employer.company_name %>
 	
 			<div class="update-profile">
-				Connect to potential colleagues about working together at <%=@ambassador.employer.company_name%>. 
+				<span>Personalize your shares.</span>
+				<div class="team-subtext">Your email address is kept private and only used for updating you on the recruiting process.</div>
 			</div>
-			
+	 
 			<div class="form-panel">
 				<%= form_for([@ambassador.employer, @ambassador], :html=>{:id=>"update_ambassador"}) do |f| %>
 					<div class="attr-row">
@@ -37,6 +38,10 @@
 						<%= text_field_tag(:email, @ambassador.email, :placeholder=> "example@example.com" , :autocomplete => "on", :maxlength => 255, :class=>"validate[required, custom[email],maxSize[255]] half-row-width input-attr", :spellcheck => false) %>		
 					</div>
 					
+					<div class="attr-row">
+						<%= check_box_tag 'import_avatar', '1', true %>&nbsp;<%= label_tag "import_avatar", "Import your #{@ambassador.auth.provider.capitalize} profile image" %>
+					</div>
+					
 					<div class="button-box">
 						<% if @ambassador.new_record? %>
 							<%= submit_tag "Submit", :id=>"submit", :class => "submit-button inline-button", :name => nil %>
@@ -44,6 +49,9 @@
 							<%= submit_tag "Update", :id=>"submit", :class => "submit-button inline-button", :name => nil %>
 							&nbsp;&nbsp;&nbsp;
 							<%= button_tag "Cancel", :id=>"cancel", :class => "cancel-button inline-button", :name => nil, :type => 'button' %>
+							
+							<div class="optout">Don't want to be an ambassador? <%=link_to "Click here", self_destroy_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil), 
+								method: :post,	:confirm => "Are you sure you want to close your team-member account?"%> to opt-out.</div>
 						<% end %>
 					</div>
 				<% end %>

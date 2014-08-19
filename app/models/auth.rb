@@ -87,7 +87,7 @@ class Auth < ActiveRecord::Base
           response = connection.request_get("#{uri.path}?#{uri.query}")  
           
           if response.code != '200'
-             raise "Error retrieving avatar image"
+             raise "Error retrieving profile image"
           end
               
         end

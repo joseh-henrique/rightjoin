@@ -22,6 +22,7 @@ namespace :db do
      make_job_ads
      make_system_users
      set_free_plan_for_all_employers
+     fix_position_tags_case
      puts "Finished db:populate" 
   end
   
@@ -31,6 +32,14 @@ namespace :db do
   
   task :make_demo_employers => :environment do
     make_sample_employers("demo")
+  end
+  
+  task :fix_position_tags_case => :environment do
+    fix_position_tags_case
+  end
+  
+  task :make_job_description_long => :environment do
+    make_job_description_long
   end
   
   #task :prioritize_real_jobs => :environment do
@@ -468,7 +477,7 @@ def make_sample_jobs(emplr, type)
       job.location_id =  loc.id
       job.company_name =  emplr.company_name
       job.ad_url= "http://www.someadshere.com/jobadid=#{idx}"
-      job.status =  UserConstants::VERIFIED
+      job.status =  Job::PUBLISHED
       age_in_seconds = hash["age_in_seconds"]
  
       job.created_at = age_in_seconds ? age_in_seconds.to_i.seconds.ago  : emplr.created_at + rand(3).seconds  
@@ -877,6 +886,232 @@ def set_free_plan_for_all_employers
     if plan.nil?
       plan = e.employer_plans.build(:tier => Constants::TIER_BASIC, :monthly_price => 0)
       plan.save!
+    end
+  end
+end
+
+def set_published_time_for_jobs
+  Job.all.each do |job|
+    begin
+      if job.status != Job::DRAFT && job.published_at.nil?
+        job.published_at = job.created_at
+        job.save!(:validate => false)
+      end
+    rescue Exception => exc
+      puts "Failed to set_published_time_for_jobs #{exc.message}, job id = #{job.id}"
+    end
+  end
+end
+
+def make_job_description_long
+  Job.all.each do |job|
+    begin
+      job.update_attribute(:full_description, job.description)
+    rescue Exception => exc
+      puts "Failed to make_job_description_long #{exc.message}, job id = #{job.id}"
+    end
+  end  
+end
+
+def fix_position_tags_case
+  ["Project Manager",
+  "Technical Writer",
+  "BI Developer",
+  "Continuous Integration Engineer",
+  "Software Test Developer",
+  "Mobile Applications Developer",
+  "DevOps Engineer",
+  "Lead Dev Ops Engineer",
+  "Staff Software Engineer",
+  "AutoCAD Developer",
+  "Front-End Developer",
+  "CTO",
+  "Product Manager",
+  "Integration Consultant",
+  "Information Architect",
+  "Business Intelligence Specialist",
+  "Data Warehousing Engineer",
+  "Reporting Analyst",
+  "Dev Lead",
+  "Development Manager",
+  "Release Engineer",
+  "Build Engineer",
+  "CIO",
+  "Chief Information Officer",
+  "Director of Software Development",
+  "Chief Technology Officer",
+  "Associate Technical Director",
+  "Director of Engineering",
+  "Technology Manager",
+  "Technology Director",
+  "DBA",
+  "Senior Database Administrator",
+  "Field Engineer",
+  "Pre-Sales Field Engineer",
+  "Hardware Engineer",
+  "Android Developer",
+  "iOS Developer",
+  "Lead Android Developer",
+  "Lead iOS Developer",
+  "Senior Android Developer",
+  "Senior iOS Developer",
+  "Mobile App Developer",
+  "Senior Product Manager",
+  "Software Development Manager",
+  "Team Lead",
+  "Operations Engineer",
+  "DevOps",
+  "QA Team Lead",
+  "Senior QA Engineer",
+  "QA Manager",
+  "Researcher",
+  "Chief Data Scientist",
+  "Research Engineer",
+  "Senior Research Scientist",
+  "Systems Engineer",
+  "Technical Lead",
+  "Technical Architect",
+  "Technical Evangelist",
+  "Performance Architect",
+  "Senior System Architect",
+  "Principal Software Architect",
+  "Solution Architect",
+  "Senior Software Architect",
+  "Software Consultant",
+  "Software Architect",
+  "Chief Technologist",
+  "Product Architect",
+  "Software Design Engineer",
+  "System Architect",
+  "Senior Java Developer",
+  "Kernel Software Engineer",
+  "Senior Developer",
+  "Principal Software Engineer",
+  "Lead PHP Developer",
+  "Senior Applications Developer",
+  "Senior C# Developer",
+  "Senior C++ Developer",
+  "Senior UI Developer",
+  "Development Engineer",
+  "Software Engineer",
+  ".NET/C# Developer",
+  "Senior Perl Developer",
+  "Senior Python Developer",
+  "Programmer",
+  "Full-Stack Engineer",
+  "Applications Developer",
+  "C# Developer",
+  "C++ Developer",
+  "Java Developer",
+  "Lead .NET/C# Developer",
+  "Lead Application Developer",
+  "Lead C# Developer",
+  "Lead C++ Developer",
+  "Lead Developer",
+  "Lead Java Developer",
+  "Lead Perl Developer",
+  "Lead Python Developer",
+  "Lead Software Developer",
+  "Lead Software Engineer",
+  "Perl Developer",
+  "Python Developer",
+  "Senior .NET/C# Developer",
+  "Senior Software Engineer",
+  "Software Developer",
+  "Senior Software Developer",
+  "Back-End Engineer",
+  "Game Developer",
+  "System Administrator",
+  "Data Scientist",
+  "Senior Test Engineer",
+  "QA Engineer",
+  "Test Engineer",
+  "Lead Test Engineer",
+  "Software Engineer in Test",
+  "UX/UI Engineer",
+  "Senior Designer",
+  "UX/UI Designer",
+  "Lead UX/UI Designer",
+  "Designer",
+  "UX Architect",
+  "UI Developer",
+  "Senior UX/UI Designer",
+  "Lead UI Developer",
+  "UX Designer",
+  "Lead Django Developer",
+  "Web App Developer",
+  "Lead Frontend Developer",
+  "Senior Web Developer",
+  "Senior RoR Developer",
+  "Senior Rails Engineer",
+  "Front-End Engineer",
+  "Full-Stack Web Developer",
+  "Django Developer",
+  "Frontend Developer",
+  "Joomla Developer",
+  "PHP Developer",
+  "RoR Developer",
+  "Senior JavaScript Developer",
+  "Senior Django Developer",
+  "Senior Frontend Developer",
+  "JavaScript Developer",
+  "Lead RoR Developer",
+  "Lead Joomla Developer",
+  "Lead JavaScript",
+  "WordPress Developer",
+  "Senior PHP Developer",
+  "Senior Joomla Developer",
+  "Graphic Designer",
+  "Web Developer",
+  ".NET Developer",
+  "Sysadmin",
+  "C++ Software Engineer",
+  "C#/.NET Developers",
+  "Research and Development Manager",
+  "Android Software Engineer",
+  "Mobile Development Lead",
+  "Associate Software Developer",
+  "Android App Developer",
+  "Principal Software Developer",
+  "Senior Backend Developer",
+  "Cloud Developer",
+  "Bioinformatics Analyst",
+  "Linux Administrator",
+  "Sr. Quality Assurance Engineer",
+  "Linux System Engineer",
+  "QA Automation Engineer",
+  "Computer Vision Developer",
+  "Junior Software Engineer",
+  "Enterprise Software Engineer",
+  "Senior Java Software Engineer",
+  "VP of Engineering",
+  "Data Science Software Engineer",
+  "Application Engineer",
+  "Android Application Developer",
+  ".NET Software Engineer",
+  "iOS Application Developer",
+  "C# Software Developer",
+  "Expert Software Developer",
+  "Android Mobile Development Engineer",
+  "Senior Ruby Developer",
+  "Database Architect",
+  "Software Test Engineer",
+  "Software Developer in Test",
+  "Senior .NET Developer",
+  "Ruby on Rails Engineer",
+  "Computer Vision Scientist",
+  "User Interface Software Engineer",
+  "Senior Software Tester",
+  "Mobile Developer",
+  "Senior Quality Software Engineer",
+  "Computer Vision  Engineer",
+  "Big Data Analyst",
+  "Bioinformatics Developer"].each do |name|
+    tag = PositionTag.where("lower(name) = ?", name.downcase).limit(1).first
+    if tag.nil?
+      puts "Tag not found #{name.downcase}"
+    else
+      tag.update_attributes(name: name)
     end
   end
 end

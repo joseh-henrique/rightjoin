@@ -97,16 +97,20 @@ a, .ui-dialog-content a {
   right: 3px;
 }
 
-.fading_highlight {
-  position: absolute;
-  background-color: white;
-  @include opacity(90);
-  z-index: 99999;
+.with-alert-sign {
+    padding-left: 12px;
+    background: transparent image-url("shared/yellow-dot.png") no-repeat center left;
+}
+
+.shifted-anchor {
+  display: block;
+  position: relative;
+  top: -30px;
 }
 
 #pg-search, #pg-jobs {
   .fading_highlight {
-    margin-top: 18px;
+    background-color: white;
   }
 }
 
@@ -228,6 +232,11 @@ a, .ui-dialog-content a {
 // empoyer style
 ////////////////////////////////////////////////////////
 .employer {
+  .add-tag-button {
+    @include inline-button(#d35400, 14px, 35px, 15px, white, 500);
+    text-transform: none;
+  }  
+  
   .founder {
     .picture {
       border: 1px solid $employer-color;
@@ -256,6 +265,7 @@ a, .ui-dialog-content a {
     .buttons-box {
       .standard-button {
         @include inline-button(#d35400, 18px, 40px, 40px, white, normal);
+        word-spacing: 4px;
       }
     }
   }
@@ -277,6 +287,7 @@ a, .ui-dialog-content a {
   
   .ui-autocomplete,
   .pac-container, 
+  .editable-box:focus,
   input[type=text]:focus, 
   input[type=password]:focus, 
   textarea:focus, 
@@ -323,7 +334,7 @@ a, .ui-dialog-content a {
     @include inline-button(#d35400, 14px, 35px, 28px, white, 500);
   }  
   
-  textarea[disabled], input[disabled][type="text"], input[disabled][type="password"], input[readonly], select[disabled] {
+  textarea[disabled], input[disabled][type="text"], input[disabled][type="password"], input[readonly], select[disabled], .editable-box[disabled] {
     &:focus {
       border: 1px solid #e2f0f1;
     }
@@ -366,6 +377,11 @@ a, .ui-dialog-content a {
 // engineer style
 ///////////////////////////////////////////////////////////
 .employee {
+  .add-tag-button {
+    @include inline-button(#11a8ab, 14px, 35px, 15px, white, 500);
+    text-transform: none;
+  }  
+  
   .founder {
     .picture {
       border: 1px solid $engineer-color;
@@ -394,6 +410,7 @@ a, .ui-dialog-content a {
     .buttons-box {
       .standard-button {
         @include inline-button(#11a8ab, 18px, 40px, 40px, white, normal);
+        word-spacing: 4px;
       }
     }
   }  
@@ -415,6 +432,7 @@ a, .ui-dialog-content a {
   
   .ui-autocomplete,
   .pac-container,
+  .editable-box:focus,
   input[type=text]:focus, 
   input[type=password]:focus, 
   textarea:focus, 
@@ -833,7 +851,7 @@ a, .ui-dialog-content a {
   padding: 20px;
 }
 
-input[type=text], input[type=password], textarea, select {
+input[type=text], input[type=password], textarea, select, .editable-box {
   font-size: $default-font-size !important;
   @include normal-font;
   height: 2.5em;
@@ -860,7 +878,7 @@ select {
   padding-top: 0.5em;
 }
 
-textarea[disabled], input[disabled][type="text"], input[disabled][type="password"], input[readonly], select[disabled] {
+textarea[disabled], input[disabled][type="text"], input[disabled][type="password"], input[readonly], select[disabled], .editable-box[disabled] {
   border: 1px solid #e2f0f1 !important;
   background-color: #EFF4F7 !important;
   outline: none; 
@@ -1013,6 +1031,7 @@ label {
     
     .cancel-button {
       @include inline-button(#b3bec5, 18px, 40px, 40px, white, normal);
+      word-spacing: 4px;
     }
   }
 }
@@ -1032,6 +1051,7 @@ label {
   font-size: 19px;
   position: relative;
   line-height: 19px;
+  background: #65394B;
   
   .header-buttons-box {
     position: absolute;
@@ -1063,16 +1083,32 @@ label {
   width: 17px;
   position: absolute;
   right: 0px;
-  margin-top: -11px;
+  margin-top: -13px;
   color: white;
   font-size: 9px;
-  line-height: 12px;
-  height: 12px;
+  line-height: 15px;
+  height: 13px;
   text-align: center;
   display: none;
   
   &.length-exceeded-alert {
     background: #c00852;
+  }
+}
+
+// appears on the left of .message-counter
+.reset-link {
+  display: none;
+  position: absolute;
+  height: 12px;
+  font-size: 12px;
+  right: 19px;
+  cursor: pointer;
+  top: 6px;
+  color: #0999e6;
+  
+  .default-content {
+    display: none;
   }
 }
 
@@ -1093,15 +1129,24 @@ label {
 }
 
 #job-edit {
+  #benefits_input {
+    width: 400px;
+  }
+  
   #tech_stack_list {
     width: 500px;
   }
   
   #description-text {
     width: 824px;
-    height: 5em;
+    height: 7em;
     resize: none;
   }
+  
+  #full-description-text {
+    width: 835px;
+    height: 14em;
+  }  
   
   #map-canvas {
       height: 400px;
@@ -1125,10 +1170,10 @@ label {
       margin: 0;
       padding: 0;
       list-style: none;
-      width: 500px;
+      width: 600px;
       
       li {
-        width: 45%;
+        width: 30%;
         display: block;
         position: relative;
         float: left;      
@@ -1136,12 +1181,12 @@ label {
   }  
   
   #company-logo-box {
-    width: 8em;
+    width: 14em;
     height: 6em;
     
     img {
-      width: 8em;
-      height: 6em;
+      max-width: 14em;
+      max-height: 6em;
     }    
   }
   
@@ -1151,7 +1196,7 @@ label {
     right: 0;
     left: 0;
     bottom: 0;
-    background: #DCE6EC;
+    background: #E5F5FF image-url("shared/gray-light-pattern.png") repeat;
     
     .loading {
       position: absolute;
@@ -1244,6 +1289,10 @@ label {
       }
     }
   }
+  
+  #sharing-description {
+    height: 2.8em;
+  }
 }
 
 #photo-chooser {
@@ -1282,7 +1331,7 @@ label {
   }  
   
   .ui-tabs-panel {
-      height: 480px;
+      height: 500px;
       overflow-y: auto; // show vertical scroll if necessary
       overflow-x: hidden; // hide horizontal scroll
       padding: 30px;
@@ -1349,8 +1398,8 @@ label {
   position: relative;
   
   img {
-    width: 12em;
-    height: 9em;
+    max-width: 12em;
+    max-height: 9em;
   }
   
   .photo-title {
@@ -1454,7 +1503,6 @@ label {
     position: relative;
     display: inline-block;
     padding: 0px 30px 0px 10px;
-    text-transform: lowercase;
     color: white;
     font-size: 15px;
     margin-left: 3px;
@@ -1546,19 +1594,27 @@ label {
   padding: 40px 30px;
 }
 
-.new-tab {
+.job-tab {
   height: 18px;
   line-height: 18px;
-  background: #8e44ad;
   text-transform: uppercase;
   color: white;
   font-size: 13px;
   font-weight: 500;
   margin-top: -21px;
-  width: 40px;
+  width: 50px;
   text-align: center;
+  border-bottom: none !important;  
+}
+
+.new-tab {
+  background: #8e44ad;
   border: 3px solid #8e44ad;
-  border-bottom: none;
+}
+
+.draft-tab {
+  background: #586877;
+  border: 3px solid #586877;  
 }
 
 #jobs-search-list {
@@ -1759,8 +1815,8 @@ label {
           margin-top: 5px;
           
           .logo-img {
-            width: 60px;
-            height: 45px;
+            max-width: 200px;
+            max-height: 45px;            
           }
         }
       }
@@ -1848,7 +1904,7 @@ label {
       color: #34495e;
       text-align: center;
       float: left;
-      width: 75px;
+      width: 80px;
       
       .counter-value {
         font-size: 36px;
@@ -1864,10 +1920,10 @@ label {
   .buttons-box {
     text-align: right;
     font-size: 13px;
-    line-height: 24px;
+    line-height: 22px;
     
     .ping-button {
-      @include inline-button(#2980b9, 13px, 24px, 8px, white, normal);
+      @include inline-button(#2980b9, 13px, 22px, 8px, white, normal);
       text-transform: none;
     }
     
@@ -1992,12 +2048,16 @@ label {
     }
   }
   
-  .recent-leads-box {
+  .new-leads-box, .leads-with-unseen-comments-box {
+    display: inline-block;
     margin-top: 30px;
     
     .leads-list {
+      position: relative;
+      width: 370px;
       height: 40px;
       padding: 10px;
+      padding-right: 50px;
       background: #e9f0f4;
       overflow: hidden;
     }
@@ -2010,7 +2070,7 @@ label {
         height: 40px;
         margin-left: 5px;
         margin-right: 5px;
-        @include border-radius(50%);
+        @include border-radius(30%);
       }
     }
     
@@ -2020,6 +2080,17 @@ label {
         margin-left: 5px;
         margin-right: 5px;
         @include opacity(40);
+    }
+    
+    .plus-x {
+      position: absolute;
+      right: 7px;
+      top: 16px;
+      width: 40px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 14px;
+      color: #B4C4CF;
     }
   }
   
@@ -2032,11 +2103,11 @@ label {
     }
     
     .job-ad {
-      width: 620px;
+      width: 600px;
     }
     
     .job-counters {
-      left: 620px;
+      left: 600px;
     }
     
     .above-buttons {
@@ -2139,11 +2210,6 @@ label {
       }
     }
   }
-  
-  .send-reminder-link.due {
-    padding-left: 12px;
-    background: transparent image-url("shared/yellow-dot.png") no-repeat center left;
-  } 
 }
 
 .employer-dialog {
@@ -2162,13 +2228,15 @@ label {
   .loading-icon {
     left: 6px;
     bottom: 18px;
-  }  
-}
-
-#invite-team-member-dialog {
-   textarea {
-    height: 240px;
   }
+  
+  .success {
+    color: #1C9E85;
+  }
+  
+  .error {
+    color: #e74c3c;
+  }  
 }
 
 #users-search-list {
@@ -2274,11 +2342,11 @@ label {
     min-height: 130px;
     
     .job-ad {
-      width: 620px;
+      width: 600px;
     }
     
     .job-counters {
-      left: 620px;
+      left: 600px;
     }
   }
   
@@ -2292,9 +2360,9 @@ label {
   
   .infointerview-outer-box {
     border-top: 3px solid #2D3E50;
-    padding: 20px;
+    padding: 25px 20px 20px;
     background: #E8F0F3;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     position: relative;
     
     &:last-child {
@@ -2604,7 +2672,7 @@ $tab-border-radius: 4px;
   }
   
   #code-input {
-    height: 220px;
+    height: 240px;
     width: 814px;
     overflow-y: scroll;
   }
@@ -2624,6 +2692,16 @@ $tab-border-radius: 4px;
   }
 }
 
+.group-box {
+  .tags-list {
+    margin-top: 10px;
+    
+    &:empty {
+      margin-top: 0;
+    }
+  }
+}
+
 #user-edit {
   .free-text,
   .professional-profiles {
@@ -2635,21 +2713,8 @@ $tab-border-radius: 4px;
     padding-top: 5px;
   }
   
-  .add-tag-button {
-    @include inline-button(#11a8ab, 14px, 35px, 15px, white, 500);
-    text-transform: none;
-  }
-  
   #skilltag, #jobqualifiertag {
     width: 420px;
-  }
-  
-  .tags-list {
-    margin-top: 10px;
-    
-    &:empty {
-      margin-top: 0;
-    }
   }
   
   .only-sign-up {
@@ -2862,10 +2927,10 @@ $tab-border-radius: 4px;
 
 #employee-dashboard {
   .interviews-box, .rating-box {
-    min-height: 160px;
+    min-height: 100px;
   }  
   
-  .interviews-box, .rating-box {
+  .interviews-box, .rating-box, .tell-friends {
     padding: 30px;
     margin-bottom: 40px;
   }
@@ -2902,6 +2967,11 @@ $tab-border-radius: 4px;
       }      
     }    
   }
+  
+  .job-ad-box {
+    border-top: 3px solid #586877;
+    margin-bottom: 30px;
+  }
 }
 
 #pg-edit.employee {
@@ -2911,7 +2981,7 @@ $tab-border-radius: 4px;
   }
 }
 
-#account-verification-panel {
+.custom-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -2923,17 +2993,56 @@ $tab-border-radius: 4px;
   background: transparent image-url("shared/semi-transparent-dark.png") repeat;
   display: table;
   
+  &.hidden {
+    display: none;
+  }
+  
   &:focus {
     outline: none;    
   }
 
-  
   .center-wrapper {
     height: 100%;
     vertical-align: middle;
     display: table-cell;
+  }  
+}
+
+#embedded-ad-overlay {
+  .frame-box {
+    position: relative;
+    width: 900px;
+    height: 580px;
+    margin: 0 auto; 
+    border: 1px solid #5A5A5A;
+    background: #464849;
   }
   
+  .embedded-ad-frame {
+      width: 100%;
+      height: 100%;
+      display: none;
+  }
+  
+  .close-ad {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: #777 image-url("shared/x.png") no-repeat 5px 4px;
+    width: 19px;
+    height: 19px;
+    z-index: 999;
+    text-indent: -9999px;
+    cursor: pointer;
+    
+    &:hover {
+      background: black image-url("shared/x.png") no-repeat 5px 4px;
+    }
+  }    
+}
+
+#account-verification-panel { 
   .close {
     position: absolute;
     display: block;
@@ -3241,6 +3350,7 @@ $tab-border-radius: 4px;
 }
 
 #pg_index {
+  background-color: #555555;
   background-image: image-url("shared/root-bg.jpg");
   background-repeat: no-repeat;
   background-position: center center;
@@ -3266,10 +3376,9 @@ $tab-border-radius: 4px;
     left: 0;
     right: 0;
     background: transparent image-url("shared/semi-transparent.png") repeat;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     z-index: 999;
-    border-bottom: 1px solid #1A3341;
     
     .signin-box {
       position: absolute;
@@ -3315,38 +3424,38 @@ $tab-border-radius: 4px;
     .beta {
       position: absolute;
       background: transparent image-url("shared/beta.png") no-repeat;
-      margin-top: 16px;
-      width: 136px;
-      height: 137px;
+      margin-top: 20px;
+      width: 160px;
+      height: 161px;
     }    
   }
   
   .employers-box, .engineers-box {
     text-align: center;
-    border-bottom: 1px solid #1A3341;    
     
     h1 {
       font-size: 52px;
       text-transform: uppercase;
       color: #fff;
-      text-shadow: 0 0 3px rgba(0, 0, 2, 0.4);
-      padding-top: 160px;
+      text-shadow: 0 0 60px rgba(0,0,2,.5);
+      padding-top: 150px;
       padding-bottom: 120px;
+      word-spacing: 3px;
     }
     
     h2 {
       font-size: 24px;
       color: #fff;
-      text-shadow: 0 0 3px rgba(0, 0, 2, 0.4);
+      text-shadow: 1px 1px 32px rgba(0,0,2,.3);
     }    
     
     .section-label {
       position: absolute;
       text-transform: uppercase;
-      background: #1A3341;
-      padding: 10px 20px;
+      background: transparent image-url("shared/transp-black-50.png") repeat;
+      padding: 15px 25px;
       width: 150px;
-      font-size: 18px;
+      font-size: 22px;
       right: 0;
       color: white;
       text-decoration: none;
@@ -3358,7 +3467,7 @@ $tab-border-radius: 4px;
   }
   
   .employers-box {
-    padding-top: 65px;
+    padding-top: 75px;
     background: transparent image-url("shared/root-top-bg.png") repeat center center;
     
     .flat-button {
@@ -3375,7 +3484,7 @@ $tab-border-radius: 4px;
   }
   
   .buttons-box {
-    margin: 20px 0 120px;
+    padding: 20px 0 150px;
     
     .button-wrapper {
       display: inline-block;
@@ -3390,7 +3499,7 @@ $tab-border-radius: 4px;
         outline: none;
         border: none;
         text-align: center;
-        font-size: 18px;
+        font-size: 19px;
         font-weight: 500;
         text-transform: uppercase;
         text-decoration: none;
@@ -3409,7 +3518,7 @@ $tab-border-radius: 4px;
         }
         
         &:hover, &:focus {
-          background: #1BB0FF;
+          background: #394d84;
         }
       }
     }
@@ -3421,26 +3530,58 @@ $tab-border-radius: 4px;
   }  
 }
 
-/* 
- :-ms-input-placeholder must come after the definitions for the input fields, otherwise the definitions for the input field 
- will override the placeholder definitions. We want to keep placeholder definitions together. 
- So, we are copying all the placeholder definitions into the end of team.css.scss
- and the end of rightjoin.css.scss.
- */
-input, textarea, select {
-  &::-webkit-input-placeholder  { 
-    color:#DBDBDB; 
+.compound-input-box {
+  background-color: white;
+  outline: 0;
+
+  &.active {
+    border: 1px solid #0999E6;
   }
   
-  &:-moz-placeholder { 
-    color:#DBDBDB; 
+  &.inactive {
+    border: 1px solid #CED6DB;
   }
   
-  &::-moz-placeholder {  /* Firefox 19+ */
-     color:#BBBBBB; 
-  }  
+  textarea, input[type=text] {
+    border: 0;
+    outline: 0;
+    
+    &:focus {
+      border: 0;
+      outline: 0;
+    }
+  }
   
-  &:-ms-input-placeholder {  
-     color:#DBDBDB !important;
+  .input-field {
+    border-bottom: 1px dotted #CED6DB !important;
+    padding: 0;
+    height: 1.1em;
+    
+    &:focus {
+      border-bottom: 1px dotted #CED6DB !important;      
+    }
   }
 }
+
+.editable-box {
+  width: auto;
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+  
+  &.single-line {
+    height: 1.7em !important;
+    line-height: 1.7em;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .fixed-field {
+    display: inline-block;
+    background: #E8EEF1;
+    padding-left: .2em;
+    padding-right: .2em;
+    margin-left: .2em;
+    margin-right: .2em;
+  }
+}
+

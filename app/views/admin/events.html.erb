@@ -1,22 +1,22 @@
 <% require 'rinku' %>
 
-<p class="headline">
+<h1>
 	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
 	Review events
-</p>
+</h1>
 
-<p>
+<h2>
 	<%=link_to "<", admin_events_path(:days_ago => @days_ago + 1), :class => "blue-inline-button" %>&nbsp;&nbsp;
 	<%=(Date.today - @days_ago.days).strftime("%d %b, %Y")%>&nbsp;&nbsp;
 	<% if @days_ago > 0 %>
 		<%=link_to ">", admin_events_path(:days_ago => @days_ago - 1), :class => "blue-inline-button" %>&nbsp;&nbsp;
 		<%=link_to ">>", admin_events_path(:days_ago => 0), :class => "blue-inline-button" %>
 	<% end %>
-</p>
+</h2>
 
 <div class="fyi-accordion">
 	<% unless @new_candidates.blank? %>
-	<h3 class="accordion-header expanded clearfix"><span>New candidates</span></h3>
+	<h3 class="standard-section-header expanded">New candidates</h3>
 	<div class="accordion-panel">
 		<% @new_candidates.each_with_index do |candidate, i| %>
 			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
@@ -30,7 +30,7 @@
 	<%end%>
 	
 	<% unless @new_employers.blank? %>
-	<h3 class="accordion-header expanded clearfix"><span>New employers</span></h3>
+	<h3 class="standard-section-header expanded">New employers</h3>
 	<div class="accordion-panel">
 		<% @new_employers.each_with_index do |employer, i| %>
 			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
@@ -41,12 +41,12 @@
 	<%end%>
 	
 	<% unless @created_jobs.blank? %>
-	<h3 class="accordion-header expanded clearfix"><span>Created jobs</span></h3>
+	<h3 class="standard-section-header expanded">Created jobs</h3>
 	<div class="accordion-panel">
 		<% @created_jobs.each_with_index do |job, i| %>
 			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
 				<%=Rinku.auto_link(html_inspect(job), :all, 'target="_ad_window"').html_safe%>
-				<% if job.status == Job::LIVE %>
+				<% if job.status == Job::PUBLISHED %>
 					<br><%=link_to "Recommend candidates", admin_recommend_candidates_path(:id => job.id), :class => "blue-inline-button" %>
 					&nbsp;&nbsp;<%=link_to "Close", admin_close_job_path(:id => job.id, :days_ago => @days_ago), :class => "red-inline-button" %>
 				<% end %>
@@ -56,7 +56,7 @@
 	<%end%>	
 	
 	<% unless @companies_rated.blank? %>
-	<h3 class="accordion-header expanded clearfix"><span>Company ratings</span></h3>
+	<h3 class="standard-section-header expanded">Company ratings</h3>
 	<div class="accordion-panel">
 		<% @companies_rated.each_with_index do |rating, i| %>
 			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">

@@ -80,34 +80,44 @@ namespace :cron do
   
   #sent every day to X people until all updated
   task :send_rj_migration_announcement_to_engineers => :environment do
-          if Time.now < Time.new(2014,6,30)
-           puts "#{Constants::SITENAME} not yet released; not sending migration announcements"
-           return
-          end
-      		count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
-      		  begin
-       				new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
-				  		Utils.deliver new_msg
-            rescue Exception => e
-                puts e
-            end
-       		end
-     puts "RJ migration announcements processed" #sent: #{count}."#TODO: THis number always comes out zero 
+    if Time.now < Time.new(2014,6,30)
+     puts "#{Constants::SITENAME} not yet released; not sending migration announcements"
+     return
+    end
+  	count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
+  	  begin
+  			new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
+    		Utils.deliver new_msg
+      rescue Exception => e
+          puts e
+      end
+  	end
+    puts "RJ migration announcements processed" #sent: #{count}."#TODO: THis number always comes out zero 
   end
   
   # send update to employers about new contact
   task :update_employers_about_new_contacts => :environment do
-     counter=0
-    if !Time.now.sunday? && !Time.now.saturday? 
-      count = Reminder.update_employers_about_new_contacts do |employer|
-        new_msg = FyiMailer.update_employers_about_new_contacts(employer)
-        Utils.deliver new_msg
-        counter += 1
-      end
-      
-      puts "New contacts updates sent to employers: #{counter}."
+    counter=0
+    count = Reminder.update_employers_about_new_contacts do |employer|
+      new_msg = FyiMailer.update_employers_about_new_contacts(employer)
+      Utils.deliver new_msg
+      counter += 1
     end
+    
+    puts "New contacts updates sent to employers: #{counter}."
   end
+  
+  # send update to employers about new contact
+  task :update_employers_about_new_comments => :environment do
+    counter=0
+    count = Reminder.update_employers_about_new_comments do |comment|
+      new_msg = FyiMailer.update_employer_about_new_comment(comment)
+      Utils.deliver new_msg
+      counter += 1
+    end
+    
+    puts "New comments updates sent to employers: #{counter}."
+  end  
   
   task :send_scheduled_reminders_to_ambassadors => :environment do
     counter = Employer.send_pending_reminders_to_all_ambassadors

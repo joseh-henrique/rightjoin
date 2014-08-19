@@ -14,25 +14,25 @@
     
     <div class="contact-candidate-box">
     	<% if signed_in? && current_user.employer? %>
-			<% active_jobs = current_user.jobs.where(status: Job::LIVE).includes([:location, :position]).all %>
+			<% published_jobs = current_user.published_jobs.includes([:location, :position]).all %>
 			<% if not current_user.verified?%>
 				<div>To ping candidates, please <%=link_to "verify", employer_path(current_user)%> your account.</div>
-    		<% elsif active_jobs.empty? %>
+    		<% elsif published_jobs.empty? %>
     			<div>
     				Please <%=link_to("create", new_employer_job_path(current_user, :refid => user.reference_num))%> 
     				a relevant job posting to ping this candidate.
     			</div>
     		<% else %>
-    			<% active_jobs.select! {|job| job.locale == user.locale } %>
+    			<% published_jobs.select! {|job| job.locale == user.locale } %>
 	    		<% past_interviews = Interview.find_all_by_employer_id_and_user_id(current_user, user) %>
 	    		<% past_interviews.select! {|interview| interview.status != Interview::RECOMMENDED } %>
 	    		<% past_interviews.each do |interview| %>
-	    			<% active_jobs.select! {|job| job.id != interview.job.id } %>
+	    			<% published_jobs.select! {|job| job.id != interview.job.id } %>
 	    		<% end %>
 	    		
-				<% if active_jobs.count > 0 %>
-    				<% include_blank = active_jobs.count > 1 && (job.nil? || !active_jobs.include?(job)) %>
-	    			<% job_opts = active_jobs.map { |job| ["#{job.position.name} - #{job.location.name}", job.id] } %>
+				<% if published_jobs.count > 0 %>
+    				<% include_blank = published_jobs.count > 1 && (job.nil? || !published_jobs.include?(job)) %>
+	    			<% job_opts = published_jobs.map { |job| ["#{job.position.name} - #{job.location.name}", job.id] } %>
 	    			
 	    			<div id="send-message-box-<%=user.id%>">
 	    				<div class="send-message-title-box">Contact</div>

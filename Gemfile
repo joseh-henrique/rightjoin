@@ -16,6 +16,7 @@ gem 'omniauth-github'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-linkedin-oauth2'
 gem 'uglifier', '>= 1.0.3'
+gem 'sanitize'
  
 group :development do
   gem 'rspec-rails', '2.6.1'

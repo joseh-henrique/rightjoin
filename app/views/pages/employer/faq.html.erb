@@ -3,30 +3,24 @@
 
 	<div id="faq-box" class="content-box">
 		<h1>
-			Why <%= Constants::SHORT_SITENAME%>?
+			Why choose <%= Constants::SHORT_SITENAME%>?
 		</h1>
 		<p>
 			<%= Constants::SHORT_SITENAME%> helps development teams connect and engage with top engineers in a comfortable and informal way.
-			It's peer-to-peer recruiting combined with the world's best job ad.
-			Our solution attracts &ldquo;stealth&rdquo; candidates, the ones who <em>don't</em> talk to  recruiters.
+			It's peer-to-peer recruiting combined with the world's best job ad.&nbsp;
+			Our solution attracts &ldquo;stealth&rdquo; candidates, the ones who <em>don't</em> talk to recruiters.
 		</p>
 		
 		<div id="faq-accordion" class="fyi-accordion faq-accordion">
-			<h3 class="standard-section-header collapsed">How is <%= Constants::SHORT_SITENAME%> different?</h3>
+			<h3 class="standard-section-header collapsed">What does the name mean?</h3>
 			<div class="accordion-panel">
 				<p>
-					Opening a dialog with employed, experienced software engineers through normal channels is almost impossible.
-					Think how many great engineers  don’t read ads and don’t pay attention to sourcing spam.
-					They never talk with recruiters unless they absolutely have to.
+					In software development, a &ldquo;right join&rdquo; is a way of linking together the data  from 
+					two database tables. 
 				</p>
 				<p>
-					These engineers  stick to their own networks for future jobs, just as you plumb your networks for future hires.
-					Meanwhile you mostly talk to candidates churned out by your staffing front-end.
-					A  gainfully employed software engineer is not going to want to test your waters
-					if the only option is to endure the bureauratic gantlet.
-				</p>
-				Why can’t engineers talk to each other without involving recruiters? Of course they do, and
-				we are extending the personal relationship dialog outside of your existing network.
+					The &ldquo;<%= Constants::SHORT_SITENAME%>&rdquo; recruiting service is called that because it helps
+					the <em>right</em> developers <em>join</em> the <em>right</em> companies.
 				</p>
 			</div>
 
@@ -99,6 +93,33 @@
 				</p>
 
 			</div>
+			
+			<h3 class="standard-section-header collapsed" id="sample_job_blurb">What goes into a good, attractive  job description?</h3> 
+			<div class="accordion-panel">
+				<p>
+				The goal here is to attract top professionals, in contrast to normal job ads that list requirements. The first <%=Job::SHORT_DESCRIPTION_LEN%>
+				characters of the description are shown inline in the ad, so these should be short attractive blurbs. Here are some samples 
+				attractive opening paragraphs. 
+				</p>
+				<ul>
+					<li>
+						&ldquo;We are developing a next-gen analytics platform aimed squarely at Web devs 
+						who need high-powered analytics. 
+						It's a thrill to live on the border between the JavaScript and Big Data. 
+						We enjoy our work and will do what it takes to make sure you do too. 
+						Ping us and we'll talk!&rdquo;
+					</li>
+					<li>
+						&ldquo;Do you love creating new Rails apps, each one building on what you know, 
+						and each teaching you something new? 
+						That's us. We're the go-to-experts for RoR in Boston; 
+						every one of our developers is known as a leader in the field. 
+						If you're not there already, we'll help you get there.
+						We're serious about career growth.&rdquo;
+					</li>
+				</ul>
+			</div>
+
 
 			<h3 class="standard-section-header collapsed">Why don't you provide resum&eacute;s or LinkedIn profiles in the candidate listings?</h3>
 			<div class="accordion-panel">
@@ -167,3 +188,18 @@
 		</p>
 	</div>
 </div>
+<script>
+	$(document).ready(function() {
+		var anchor = $(location).attr('hash');
+		if (anchor != null) {
+ 			var hdrs =$(anchor);
+ 			if (hdrs.length){
+ 				var header = $(hdrs[0]);
+ 				var panel = header.next();
+				
+				openAccordionPanel(header, panel);
+				
+			}
+		}
+	});	
+</script>

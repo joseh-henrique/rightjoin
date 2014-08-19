@@ -39,9 +39,8 @@ class PagesController < ApplicationController
     else
       @user = User.new
       @current_page_info = PageInfo::REGISTER
-      @user.can_telecommute = true
       
-      fyiscore = params[:fyiscore]# [TODO] The following is for the quiz and can be deleted
+      fyiscore = params[:fyiscore]# TODO The following is for the quiz and can be deleted
       if !fyiscore.nil? && fyiscore.to_i.between?(0, 5)
         flash_now_message(:notice, "We've filled out some of the form for you, using your quiz answers.")
         

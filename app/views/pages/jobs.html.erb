@@ -10,7 +10,7 @@
 						<div class="form-cell">
 							<%= label_tag(:wantedposition, "The job position that will scratch your itch") %><br>
 							<a class="field-tooltip" title="To find jobs more effectively, please use standard job titles, provided automatically."></a>
-							<%= text_field_tag(:wantedposition, @search_position.nil? ? '' : @search_position.name.html_safe, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"half-row-width", :spellcheck => true, :tabindex => "10") %>	
+							<%= text_field_tag(:wantedposition, @search_position.nil? ? '' : @search_position.name.html_safe, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Senior Software Engineer", :class=>"half-row-width", :spellcheck => true, :tabindex => "10") %>	
 						</div>
 					</div>
 					<div class="form-column">
@@ -41,6 +41,8 @@
 	<div id="search-results-ajax-box">
 		<%= render 'jobs/search_results' %>
 	</div>
+	
+	<%=render :partial => 'jobs/embedded_ad'%>
 </div>
 
 <script type="text/javascript">
@@ -95,6 +97,7 @@
 	
 	$( "#wantedposition" ).cachedautocomplete({
 		url: "<%=autocomplete_positions_path(:locale => nil)%>",
+		forceLowerCase: false,
 		sequentialMatching: false,
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
 	}).keydown(function(e){

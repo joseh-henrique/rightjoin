@@ -318,9 +318,11 @@ $.widget("ui.cachedautocomplete", $.ui.autocomplete, {
 			}
 		});
 		
-		this.element.blur(function() {
-	        $(this).val($(this).val().toLowerCase());
-    	});
+		if(this.option('forceLowerCase')) {
+			this.element.blur(function() {
+		        $(this).val($(this).val().toLowerCase());
+	    	});
+    	}
     	
     	this.element.keypress(function(e) {
 	     	if(e.keyCode == 13) {
@@ -370,6 +372,7 @@ $.widget("ui.cachedautocomplete", $.ui.autocomplete, {
     	multiValue: false,
     	sequentialMatching: true,
     	numOfOpts: 8,
+    	forceLowerCase: true,
     	defaultListTitle: "Type or choose from the list:",
     	extraParam: "", // keeps element Id which value is sent as an extra parameter with each request
 		source: function(request, response) {

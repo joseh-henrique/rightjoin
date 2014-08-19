@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140706095513) do
+ActiveRecord::Schema.define(:version => 20140815191938) do
 
   create_table "ads", :force => true do |t|
     t.integer  "job_id"
@@ -71,6 +71,18 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.string   "developer_text"
   end
 
+  create_table "comments", :force => true do |t|
+    t.text     "body"
+    t.integer  "infointerview_id"
+    t.integer  "created_by"
+    t.integer  "ambassador_id"
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.integer  "status",           :default => 0
+  end
+
+  add_index "comments", ["infointerview_id"], :name => "index_comments_on_infointerview_id"
+
   create_table "company_ratings", :force => true do |t|
     t.integer  "user_id"
     t.string   "company_name"
@@ -114,6 +126,10 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.string   "reminder_subject"
     t.text     "reminder_body"
     t.integer  "reminder_period",           :default => 0
+    t.string   "invitation_subject"
+    t.string   "invitation_salutation"
+    t.text     "invitation_body"
+    t.boolean  "enable_ping",               :default => true
   end
 
   add_index "employers", ["email"], :name => "index_employers_on_email", :unique => true
@@ -143,11 +159,12 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.integer  "job_id"
     t.integer  "user_id"
     t.text     "profiles"
-    t.integer  "status",      :default => 0
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.integer  "status",        :default => 0
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
     t.integer  "auth_id"
     t.integer  "referred_by"
+    t.string   "resume_doc_id"
   end
 
   add_index "infointerviews", ["job_id"], :name => "index_infointerviews_on_job_id"
@@ -187,8 +204,8 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "locale",                                                    :default => "en"
-    t.boolean  "allow_telecommuting",                                       :default => true
-    t.boolean  "allow_relocation",                                          :default => true
+    t.boolean  "allow_telecommuting",                                       :default => false
+    t.boolean  "allow_relocation",                                          :default => false
     t.string   "ad_url"
     t.decimal  "northmost",                 :precision => 15, :scale => 12
     t.decimal  "southmost",                 :precision => 15, :scale => 12
@@ -196,10 +213,6 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.decimal  "eastmost",                  :precision => 15, :scale => 12
     t.integer  "invites_counter",                                           :default => 0
     t.integer  "display_order",                                             :default => 0
-    t.string   "benefit1"
-    t.string   "benefit2"
-    t.string   "benefit3"
-    t.string   "benefit4"
     t.text     "tech_stack_list",                                           :default => ""
     t.integer  "image_1_id"
     t.integer  "image_2_id"
@@ -211,6 +224,13 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.decimal  "address_lng",               :precision => 15, :scale => 12
     t.text     "join_us_widget_params_map"
     t.string   "video_url"
+    t.integer  "image_4_id"
+    t.text     "benefits_list",                                             :default => ""
+    t.datetime "published_at"
+    t.text     "full_description"
+    t.text     "share_title"
+    t.text     "share_description"
+    t.text     "share_short_description"
   end
 
   add_index "jobs", ["display_order"], :name => "index_jobs_on_display_order"
@@ -231,22 +251,6 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
   end
 
   add_index "location_tags", ["name"], :name => "index_location_tags_on_name", :unique => true
-
-  create_table "messages", :force => true do |t|
-    t.string   "sender_auth_token"
-    t.string   "sender_auth_provider"
-    t.integer  "user_id"
-    t.text     "body"
-    t.integer  "status",               :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "sender_first_name"
-    t.string   "sender_last_name"
-    t.string   "email"
-    t.boolean  "viewed"
-  end
-
-  add_index "messages", ["user_id"], :name => "index_messages_on_user_id"
 
   create_table "photos", :force => true do |t|
     t.string   "title"
@@ -270,8 +274,6 @@ ActiveRecord::Schema.define(:version => 20140706095513) do
     t.datetime "updated_at"
     t.integer  "family_id"
   end
-
-  add_index "position_tags", ["name"], :name => "index_position_tags_on_name", :unique => true
 
   create_table "reminders", :force => true do |t|
     t.string   "recipient_type"

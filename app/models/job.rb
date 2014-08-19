@@ -1,7 +1,7 @@
 class Job < ActiveRecord::Base
- 
     
   serialize :join_us_widget_params_map, JSON
+  serialize :benefits_list, JSON
   
   belongs_to :employer
   belongs_to :location, :class_name => "LocationTag"
@@ -15,27 +15,25 @@ class Job < ActiveRecord::Base
   
   validates :employer_id, :presence => true
   validates :position_id, :presence => true
-  validates :description, :presence => true
+  validates :full_description, :presence => true
   validates :location_id, :presence => true
   validates :company_name, :presence => true
   validates :position_id, :presence => true
   validates :locale, :presence => true # like en, en-IL
   
-  validates :benefit1, :allow_blank => true, :length => { :maximum => 60 }
-  validates :benefit2, :allow_blank => true, :length => { :maximum => 60 }
-  validates :benefit3, :allow_blank => true, :length => { :maximum => 60 }
-  validates :benefit4, :allow_blank => true, :length => { :maximum => 60 }
   validates :video_url, :allow_blank => true, :format => { :with => URI.regexp }, :length => { :maximum => 255 }
   validates :video_url, :allow_blank => true, :format => { :with => /you/i }
   validates :video_url, :allow_blank => true, :format => { :with => /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/i }
+  validates_presence_of :ad_url, :if => :ad_url_mandatory?
 
   default_scope :order => 'jobs.created_at DESC'
   
-  LIVE = 1    # for :status
   CLOSED = 0 # for :status  
+  DRAFT = 1    # for :status  
+  PUBLISHED = 10    # for :status  
   
   NORMAL_JOB_DISPLAY_RANK = 100
-  DESCRIPTION_MAX_LEN = 320
+  SHORT_DESCRIPTION_LEN = 340
 
   def position_name
     res = ""
@@ -63,6 +61,10 @@ class Job < ActiveRecord::Base
     unless self.location.nil?
       res = self.location.longitude
     end
+  end
+  
+  def ad_url_mandatory?
+    !self.employer.enable_ping
   end
   
   def assign_all_location_attrs(new_location, telecommuting, relocation)
@@ -98,21 +100,20 @@ class Job < ActiveRecord::Base
         interview.status = interview_status
         interview.save!
       rescue Exception => e
-   
         logger.error e
       end
     end
     
-    # delete all associated ads
-    self.ads.each do |ad|
+    self.infointerviews.each do |infointerview|
       begin
-        ad.destroy
+        infointerview.followups.only_active.update_all(:status => Followup::CLOSED)
       rescue Exception => e
         logger.error e
-      end      
+      end
     end
     
-    update_attributes(:status => CLOSED)
+    self.status = Job::CLOSED
+    self.save!
   end
   
   # returns true if all ads were expired
@@ -169,17 +170,8 @@ class Job < ActiveRecord::Base
     return ret
   end
   
-  def benefits
-    res = []
-    res << self.benefit1 unless self.benefit1.blank?
-    res << self.benefit2 unless self.benefit2.blank?
-    res << self.benefit3 unless self.benefit3.blank?
-    res << self.benefit4 unless self.benefit4.blank?
-    return res
-  end
-  
   def active_boards
-    Board.joins(:ads => :job).select("boards.*").where("jobs.id = ? and jobs.status = ?", self.id, Job::LIVE)
+    Board.joins(:ads => :job).select("boards.*").where("jobs.id = ? and jobs.status = ?", self.id, Job::PUBLISHED)
   end
   
   # throws exception if can't
@@ -194,7 +186,7 @@ class Job < ActiveRecord::Base
     return true
   end
   
-  def all_generated_leads_count(job_statuses = [Job::LIVE, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
+  def all_generated_leads_count(job_statuses = [Job::PUBLISHED, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
     Infointerview.joins(:job).where("jobs.id = ? and jobs.status in (?) and infointerviews.status in (?)", 
                                     id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
   end
@@ -304,9 +296,8 @@ class Job < ActiveRecord::Base
   
   # The CSV file must have the following columns:
   # description, country-code, location, latitude, longitude, title, company, relocation, job-ad-url, kegerator, meaningful-jobs, bleeding-edge-tech, startup, open-source 
-  # TODO this method will only work when you create jennifer@rightjoin.io. 
-  # Per current plans we
-  # are not going to use this method and it can be deleted.
+  # TODO this method will only work after you create jennifer@rightjoin.io, since she is the "employer" for this purpose.
+  # Per current plans we are not going to use this method and it can be deleted.
   def self.import_fyi_jobs(url_to_csv)
     new_jobs = []
 
@@ -340,19 +331,21 @@ class Job < ActiveRecord::Base
             loc_obj = LocationTag.find_or_create_by_params({:location => location.downcase, :lat => row["latitude"], :lng => row["longitude"]})
             raise ActiveRecord::RecordInvalid.new(loc_obj) if loc_obj.errors.any?
             
-            pos_obj = PositionTag.find_or_create_by_name(title.downcase)
+            pos_obj = PositionTag.find_or_create_by_name_case_insensitive(title.downcase)
             raise ActiveRecord::RecordInvalid.new(pos_obj) if pos_obj.errors.any?
             
             job = Job.new
-            job.status = Job::LIVE
+            job.status = Job::PUBLISHED
             job.locale = locale
+            job.published_at = Time.now
             
             job.employer = fyi_recruiter
             
             job.position = pos_obj
             job.assign_all_location_attrs(loc_obj, Utils.to_bool(row["work-from-home"]) || location.include?(Constants::TELECOMMUTE), Utils.to_bool(row["relocation"]))
         
-            job.description = Utils.truncate(row["description"], DESCRIPTION_MAX_LEN)
+            # never use long descriptions for improted jobs
+            job.full_description = Utils.truncate(Utils.html_to_formatted_plaintext(row["description"]), SHORT_DESCRIPTION_LEN)
             job.company_name = company_name
             job.ad_url = ad_url
         
@@ -386,7 +379,7 @@ class Job < ActiveRecord::Base
     select_str = self.to_conditions_str(array_of_selects, ", ")    
     
     array_of_conditions = []
-    array_of_conditions << ["status = ?", Job::LIVE]
+    array_of_conditions << ["status = ?", Job::PUBLISHED]
     array_of_conditions += filter_conditions 
     conditions_str = self.to_conditions_str(array_of_conditions, " and ")
     
@@ -403,8 +396,8 @@ class Job < ActiveRecord::Base
     jobs
   end
   
-  def self.active_with_share_statistics
-    self.jobs_with_share_statistics_by_status(Job::LIVE)
+  def self.published_with_share_statistics
+    self.jobs_with_share_statistics_by_status(Job::PUBLISHED)
   end
   
   def self.jobs_with_share_statistics_by_status(*status)
@@ -423,7 +416,7 @@ class Job < ActiveRecord::Base
   def get_photos
     photos = []
     
-    (1..3).each do |i|
+    (1..4).each do |i|
       photos << self.get_photo(i)
     end
     
@@ -451,6 +444,27 @@ class Job < ActiveRecord::Base
     return video_id
   end
   
+  def share_raw_texts
+    texts = {}
+    
+    texts[:title] = self.share_title.blank? ? Constants::SHARE_PROPERTIES[:title] : self.share_title.html_safe
+    texts[:description] = self.share_description.blank? ? Constants::SHARE_PROPERTIES[:description] : self.share_description.html_safe
+    texts[:short_description] = self.share_short_description.blank? ? Constants::SHARE_PROPERTIES[:short_description] : self.share_short_description.html_safe
+    
+    return texts
+  end
+  
+  def share_display_texts
+    raw_texts = share_raw_texts
+    texts = {}
+    
+    texts[:title] = Utils.html_to_text(raw_texts[:title]).gsub("[company]", self.company_name).gsub("[position]", self.position_name).html_safe
+    texts[:description] = Utils.html_to_text(raw_texts[:description]).gsub("[company]", self.company_name).gsub("[position]", self.position_name).html_safe
+    texts[:short_description] = Utils.html_to_text(raw_texts[:short_description]).gsub("[company]", self.company_name).gsub("[position]", self.position_name).html_safe
+    
+    return texts
+  end  
+  
   def inspect
     recommended_users_str = interviews.select {|i| i.status == Interview::RECOMMENDED}.map{|i|i.user.id}.compact.join(", ")
     
@@ -459,10 +473,10 @@ class Job < ActiveRecord::Base
     "** Created at #{self.created_at} (#{((Time.now - self.created_at)/(3600 * 24)).to_i} days ago), status = #{self.status}, \"#{self.locale}\"",
     "** #{self.company_name} (id:#{self.employer_id}) ==== #{position.name} ==== #{all_location_parts.join(' / ')}",
     "** URL: #{self.ad_url.to_s}",
-    "** #{Utils.truncated_plaintext(self.description, :length => DESCRIPTION_MAX_LEN)}",
+    "** #{Utils.truncate(Utils.html_to_formatted_plaintext(self.full_description), SHORT_DESCRIPTION_LEN)}",
     "** Techstack: #{self.tech_stack_list}",
     "** Boards: #{self.ads.map{|ad|ad.board.title}.join(', ')}",
-    "** Benefits #{self.benefits.join(', ')}",
+    "** Benefits: #{self.benefits_list.to_a.join('; ')}",
     "** Invites #: #{self.invites_counter}",
     "** Recommended users: #{recommended_users_str}"
     ]
@@ -472,16 +486,4 @@ class Job < ActiveRecord::Base
     logger.error "Inspect failed for #{self.class}: #{e}"
     super.inspect    
   end  
-  
-  def share_short_description
-   "Come work with me at #{ employer.company_name}: See the #{position_name} job posting and ping us."
-  end
- 
-  def share_description()
-      "Come work with me at #{ employer.company_name}: See the #{position_name} job posting and ping us to talk with me or another member of the dev team."
-  end
- 
-  def share_title()
-    "Come work with me at #{self.company_name}"
-  end
 end

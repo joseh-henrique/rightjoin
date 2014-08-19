@@ -12,16 +12,25 @@ end
 		
 		<div class="basic-info">
 			<div class="candidate-name"><%=infointerview.first_name%> <%=infointerview.last_name%></div>
-			<div class=""><%=Rinku.auto_link(CGI::escapeHTML(infointerview.email), :all, 'target="_blank"').html_safe%></div>
+			<div><%=Rinku.auto_link(CGI::escapeHTML(infointerview.email), :all, 'target="_blank"').html_safe%></div>
 			
 			<%if infointerview.user.nil?%>
 				<%profiles = infointerview.profiles || ""%>
 			<%else%>
 				<%profiles = infointerview.user.resume || ""%>
 			<%end%>
-			<div class="">
-				<%=Rinku.auto_link(CGI::escapeHTML(profiles), :all, 'target="_blank"').html_safe%>
-			</div>
+			
+			<% unless profiles.blank? %>
+				<div>
+					<%=Rinku.auto_link(CGI::escapeHTML(profiles), :all, 'target="_blank"').html_safe%>
+				</div>
+			<% end %>
+			
+			<% unless infointerview.resume_doc_id.nil? %>
+				<div>
+					<%=link_to "See resum&eacute;...".html_safe	, cloudinary_url(infointerview.resume_doc_id, :resource_type => :raw), :target => "_blank"%>
+				</div>
+			<% end %>
 		</div>
 		
 		<%unless infointerview.user.nil?%>

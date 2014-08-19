@@ -1,0 +1,50 @@
+<%# locals: lead (Infointerview), display_for (Ambassador or Employer)%>
+<div class="lead-comments-box" id="lead-comments-box-<%=lead.id%>">
+	<div class="comments-title">Comments</div>
+	<label>Share comments on the candidate with team members.</label>
+	
+	<div class="new-comment-form-box">
+		<%= form_for([lead, Comment.new], remote: true, html: { :'data-type' => 'html', :id => "new-comment-#{lead.id}"} ) do |f| %>
+		   <%= f.text_area :body, class: "comment-body validate[required, custom[nonEmpty]]", id: "comment-body-#{lead.id}" %>&nbsp;&nbsp;
+		   <%= hidden_field_tag 'employer_id', display_for.kind_of?(Employer) ? display_for.id : nil %>
+		   <%= hidden_field_tag 'ambassador_id', display_for.kind_of?(Ambassador) ? display_for.id : nil  %>
+		   <%= f.submit "Add", class: "standard-button" %>
+	  	<%end%>
+  	</div>
+	
+	<% best_num_to_show = 6 %>
+	<% actually_shown = 0 %>
+	<%lead.comments.each_with_index do |comment, i| %>
+		<% new_class = "" %>
+		<% hidden_comment_class = "" %>
+		
+		<% if [Comment::STATUS_NEW, Comment::STATUS_NOT_SEEN].include?(comment.status) %>
+			<% new_class = "new" %>
+			<% actually_shown += 1 %>
+		<% else  %>
+			<% if actually_shown >= best_num_to_show %>
+				<% hidden_comment_class = "hidden" %>
+			<% else %>
+				<% actually_shown += 1 %>
+			<% end %>
+		<% end %>
+	
+		<div id="lead-comment-<%=lead.id%>-<%=comment.id%>" class="lead-comment <%=new_class%> <%=hidden_comment_class%>" data-seen-path="<%=infointerview_comment_set_seen_path(lead.id, comment.id)%>">
+			<div class="comment-header">
+				<span class="created_by"><%=comment.author_display_name%></span>
+				<span class="created_at"><%=comment.created_at.strftime("%A, %d %b %Y")%></span>
+			</div>
+			<div class="comment-body">
+				<%=comment.body%>
+			</div>
+			<%=image_tag(comment.author_avatar_path, class: "author-avatar")%>
+			<% if [Comment::STATUS_NEW, Comment::STATUS_NOT_SEEN].include?(comment.status) && display_for.kind_of?(Employer) %>
+				<div class="new-message">New</div>
+			<% end %>
+		</div>
+	<%end%>
+		
+	<% if lead.comments.count > best_num_to_show %>
+		<%=link_to "See #{pluralize((lead.comments.count - actually_shown), "older comment")}...", "#", :class => "see-older-comments-link"%>
+	<% end %>
+</div>

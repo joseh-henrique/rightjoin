@@ -1,16 +1,31 @@
 class PositionTag < ActiveRecord::Base  
-  validates :name, :presence => true, :uniqueness => true, :length => { :maximum => 60 }
-  has_many :users, :dependent => :destroy, :foreign_key => 'current_position_id'
-  has_many :users, :dependent => :destroy, :foreign_key => 'wanted_position_id'
+  validates :name, :presence => true, :length => { :maximum => 60 }
+  validates_uniqueness_of :name, :case_sensitive => false
+  has_many :users_with_current_pos, :dependent => :destroy, :foreign_key => 'current_position_id'
+  has_many :users_with_wanted_pos, :dependent => :destroy, :foreign_key => 'wanted_position_id'
   has_many :jobs, :dependent => :destroy
   belongs_to :family_position, :class_name => 'PositionTag', :dependent => :destroy, :foreign_key => 'family_id'
-  before_save { |tag| tag.name = tag.name.downcase.strip }  
   
   @@autocomplete = nil
   
+  def self.find_or_create_by_name_case_insensitive(name)
+    obj = PositionTag.where("lower(name) = ?", name.downcase).limit(1).first
+    if obj.nil?
+      obj = PositionTag.create(name: name)
+    elsif obj.name != name && obj.priority == 0
+      obj.update_attributes(name: name)
+    end
+    
+    return obj
+  end
+  
+  def self.find_by_name_case_insensitive(name)
+    PositionTag.where("lower(name) = ?", name.downcase).limit(1).first
+  end
+  
   def self.popular_for_role(role_tag_name = "", limit = 8)
     Rails.cache.fetch("role_popular_for_role#{role_tag_name}#{limit}", :expires_in => 3.days) do
-      position_condition = role_tag_name.blank? ? "" : "and users.current_position_id = (select position_tags.id from position_tags where " + sanitize_sql(["position_tags.name = '%s'", role_tag_name]) + ")"
+      position_condition = role_tag_name.blank? ? "" : "and users.current_position_id = (select position_tags.id from position_tags where " + sanitize_sql(["lower(position_tags.name) = '%s'", role_tag_name.downcase]) + ")"
       PositionTag.find_by_sql( 
         "  select position_tags.id, position_tags.name, position_tags.priority, count(position_tags.id) as resnum
         from position_tags
@@ -44,8 +59,8 @@ class PositionTag < ActiveRecord::Base
   end  
   
   def self.add_position_to_group(what_position_name, to_position_name)
-    what_position = PositionTag.find_by_name(what_position_name)
-    to_position = PositionTag.find_by_name(to_position_name)
+    what_position = PositionTag.where("lower(name) = '?'", what_position_name.downcase)
+    to_position = PositionTag.where("lower(name) = '?'", to_position_name.downcase)
   
     if what_position.nil?
       raise "Unknown position \"#{what_position_name}\""

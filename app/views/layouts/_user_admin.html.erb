@@ -17,6 +17,9 @@
 		    <li class="selected"><a href="#" class="selected"></a>
 				<ul class="drop-down">
 					<li><a href="<%= @current_page_info[:intended_for] == :employee ? edit_user_path(current_user) : edit_employer_path(current_user) %>">Edit profile</a></li>
+					<%if @current_page_info[:intended_for] == :employer%>
+						<li><a href="<%= settings_employer_path(current_user) %>">Settings</a></li>
+					<%end%>
 					<li><a id="change-pwd-link" href="#">Change password</a></li>
 					<li><a href="<%= @current_page_info[:intended_for] == :employee ? employee_signout_path : employer_signout_path %>">Sign out</a></li>
 				</ul>

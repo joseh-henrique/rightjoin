@@ -170,7 +170,7 @@ FIN
 					letterElems.push("<span class='rightjoin-letter'>" + label_text.charAt(i) + "</span>");
 				}
 			}
-			res = "<div class='rightjoin-label-box'>" + letterElems.join("") + "</div><div class='rightjoin-counter rightjoin-animation rightjoin-pendulum'><%=@activeJobsCount%></div>";
+			res = "<div class='rightjoin-label-box'>" + letterElems.join("") + "</div><div class='rightjoin-counter rightjoin-pendulum'><%=@activeJobsCount%></div>";
 			
 			return res;
 		}
@@ -178,20 +178,7 @@ FIN
 		var createStyle = function() {
 			<%
 				shift = "10%"
-				css = <<-FIN
-					.rightjoin-animation {
-					  -webkit-animation-fill-mode: both;
-					  -moz-animation-fill-mode: both;
-					  -ms-animation-fill-mode: both;
-					  -o-animation-fill-mode: both;
-					  animation-fill-mode: both;
-					  
-					  -webkit-animation-duration: .8s;
-					  -moz-animation-duration: .8s;
-					  -ms-animation-duration: .8s;
-					  -o-animation-duration: .8s;
-					  animation-duration: .8s;    
-					}
+				css = <<-FIN			
 					@-webkit-keyframes pendulum { 
 					    10% { -webkit-transform: rotate(45deg) }
 					    30% { -webkit-transform: rotate(-30deg) }
@@ -232,6 +219,23 @@ FIN
 					    -moz-animation-name: pendulum;
 					    -o-animation-name: pendulum;
 					    animation-name: pendulum;
+					    
+						-webkit-animation-fill-mode: both;
+						-moz-animation-fill-mode: both;
+						-ms-animation-fill-mode: both;
+						-o-animation-fill-mode: both;
+						animation-fill-mode: both;
+						
+						-webkit-animation-duration: .8s;
+						-moz-animation-duration: .8s;
+						-ms-animation-duration: .8s;
+						-o-animation-duration: .8s;
+						animation-duration: .8s;    
+						
+						-webkit-animation-delay: .5s;
+						-moz-animation-delay: .5s;
+						-o-animation-delay: .5s;
+						animation-delay: .5s;					
 					}
 					##{tab_element_id} {
 						color: #{color};
@@ -267,6 +271,12 @@ FIN
 				      font-size: 10px;
 				      line-height: 19px;
 				      text-align: center;
+					}
+					
+					@media(max-width: 1200px) {
+					  ##{tab_element_id} {
+				      	font-size: 12px;
+				      }
 					}
 				FIN
 				

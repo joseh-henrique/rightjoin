@@ -1,3 +1,8 @@
+<% content_for :more_js do %>
+	<script src="/ckeditor/ckeditor.js"></script>
+	<script src="/ckeditor/adapters/jquery.js"></script>
+<% end %>
+
 <%# must go before the form below%>
 <%=render :partial=>"photos/chooser_dialog", :locals => {:title => "Choose an image", :image_set => Photo.get_group_name(@job.employer, "jobs")} %>
 <script type="text/javascript">
@@ -85,7 +90,7 @@
 				<%= label_tag(:position, "The position you need to fill", :class => "mandatory") %><br>
 				<a class="field-tooltip" title="To find candidates more effectively, please use standard job titles. The autocomplete will help.">
 				</a>
-				<%= text_field_tag(:position, @job.position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change", :spellcheck => true, :tabindex => "40") %>
+				<%= text_field_tag(:position, @job.position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Senior Software Engineer", :class=>"validate[required, custom[nonEmpty]] input-attr half-row-width monitor-change", :spellcheck => true, :tabindex => "40") %>
 			</div>
 			<div class="form-cell">
 				<%= label_tag(:location, "Where?", :class => "mandatory") %><br>
@@ -99,27 +104,29 @@
 				<%= hidden_field_tag(:lng, @job.longitude) %>
 	
 				<div class="location-options-box">
-					<%= check_box_tag :allow_telecommuting, 'yes', @job.allow_telecommuting, :tabindex => "70"%> <%= label_tag(:allow_telecommuting, "Telecommuting is a possibility.") %>
+					<%= check_box_tag :allow_telecommuting, 'yes', @job.allow_telecommuting, :tabindex => "70", :class => "monitor-change"%> <%= label_tag(:allow_telecommuting, "Telecommuting is a possibility.") %>
 					<br>
-					<%= check_box_tag :allow_relocation, 'yes', @job.allow_relocation, :tabindex => "80"%> <%= label_tag(:allow_relocation, "We'll consider relocating a new hire.") %>
+					<%= check_box_tag :allow_relocation, 'yes', @job.allow_relocation, :tabindex => "80", :class => "monitor-change"%> <%= label_tag(:allow_relocation, "We'll consider relocating a new hire.") %>
 				</div>		
 			</div>		
 		</div>
 	
 		<div class="form-column">
 			<div class="form-cell">
-				<%= label_tag(nil, "URL to full job description") %><br>
-				<a class="field-tooltip" title="An optional link to a job description (at your own site, an applicant tracking system, or a job board)."></a>	
-				<%= text_field_tag :ad_url, @job.ad_url.to_s, :maxlength=>500, :spellcheck =>false, :class=>"validate[custom[url]] half-row-width input-attr monitor-change", :tabindex => "50" %>								
+				<%= label_tag(nil, "URL to full job spec", :class => @job.ad_url_mandatory? ? "mandatory" : "") %><br>
+				<a class="field-tooltip" title="<%=@job.ad_url_mandatory? ? "A" : "An optional"%> link to a full job description <%=@job.ad_url_mandatory? ? "or application form" : ""%> (at your own site, an applicant tracking system, or a job board)."></a>	
+				<%= text_field_tag :ad_url, @job.ad_url.to_s, :maxlength=>500, :spellcheck =>false, :class=>"validate[#{@job.ad_url_mandatory? ? 'required, ' : ''}custom[url]] half-row-width input-attr monitor-change", :tabindex => "50" %>								
 			</div>
 		</div>
 	</div>
 	
 	<a id="listings"></a>
-	<%= label_tag(:company_logo, "To include the job in our listings, choose any special features it has to offer.	") %>
+		<div class="form-row">
+	<%= label_tag(:company_logo, "Select some of these special benefits, and the job will appear in our boards.") %><br>
+	<a class="field-tooltip" title="Your ad can appear in a tab on your site, in social shares, and other channels. To feature it in our job listings, one or more of the following must be checked."></a>
 	<div class="form-row group-box clearfix">
 		<div class="form-cell">
-			<ul class="checkbox-grid">
+			<ul class="checkbox-grid clearfix">
 				<% Board.all.each_with_index do |board, i| %>
 					<li class="with-tooltip" title="<%=board.description.html_safe%>">
 						<%
@@ -133,36 +140,24 @@
 							end
 						%>
 						
-						<%= check_box_tag "board[#{board.name}]", '1', checked, :id => "board_#{board.id}", :tabindex => "#{80 + i}"%>&nbsp;<%= label_tag("board_#{board.id}", board.title_case, :tabindex => "#{80 + i}") %>
+						<%= check_box_tag "board[#{board.name}]", '1', checked, :id => "board_#{board.id}", :class => "monitor-change", :tabindex => "#{80 + i}"%>&nbsp;<%= label_tag("board_#{board.id}", board.title_case, :tabindex => "#{80 + i}") %>
 					</li>
 				<% end %>
 			</ul>	
 		</div>
 	</div>
-	
+	</div>
 	<%benefit_field_len = 60%>
-	<%= label_tag(:company_logo, "More &ldquo;escape-worthy&rdquo; extras.".html_safe) %>
-	<div class="form-row group-box clearfix">
-		<div class="form-column">
-			<div class="form-cell">
-				<div id="benefit-counter1" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit1, @job.benefit1, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., our famous gourmet lunches", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter1", :tabindex => "90" %>
-			</div>
-			<div class="form-cell">
-				<div id="benefit-counter2" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit2, @job.benefit2, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., hackathons & programming challenges", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter2", :tabindex => "110" %>	
-			</div>
+	<div class="form-row">
+		<%= label_tag(nil, "More great benefits, or anything else you want to show to candidates in your ad".html_safe) %>
+		<a class="field-tooltip" title="<p>See autocomplete for some nice examples.</p>"></a>
+		<div class="form-row group-box">
+			<%= text_field_tag(:benefits_input, nil, :name => nil, :autocomplete => "off", 
+					:placeholder => "e.g., Fun office events", :maxlength => benefit_field_len, :class => "", :spellcheck => true, :tabindex => "90") %>&nbsp;&nbsp;
+			<a id="add-benefit-btn" class="add-tag-button" tabindex = "110">Add&nbsp;+</a>
+			<ol id="benefit-tags-list" class="tags-list"></ol>
+			<%= hidden_field_tag(:benefits) %>
 		</div>
-		<div class="form-column">
-			<div class="form-cell">
-				<div id="benefit-counter3" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit3, @job.benefit3, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., 1+ paid conference yearly", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter3", :tabindex => "100" %>
-			</div>
-			<div class="form-cell">
-				<div id="benefit-counter4" class="message-counter"><%=benefit_field_len%></div>
-				<%= text_field_tag :benefit4, @job.benefit4, :maxlength=>benefit_field_len, :spellcheck =>true, :placeholder => "e.g., flexible work schedules", :class=>"half-row-width input-attr monitor-change", :counterId=>"benefit-counter4", :tabindex => "120" %>
-			</div>
-		</div>		
 	</div>
 	
 	<div class="form-row">
@@ -176,9 +171,10 @@
 	<div class="form-row clearfix">
 		<div class="form-column">
 			<div class="form-cell">
-				<%= label_tag(nil, "Why would a talented professional want to take this job?", :class => "mandatory")%><br>
-				<div id="free-text-counter" class="message-counter"><%=Job::DESCRIPTION_MAX_LEN%></div>
-				<%= text_area_tag(:description, @job.description, :maxlength => Job::DESCRIPTION_MAX_LEN, :spellcheck=>true, :id=>"description-text", :class=>"validate[required, custom[nonEmpty]] monitor-change", :counterId=>"free-text-counter", :tabindex => "140")%>			
+				<%= label_tag(nil, "An attractive description of the job and your company", :class => "mandatory")%>  
+				<label>(<%= link_to("See some sample text.",employer_faq_path(:anchor => "sample_job_blurb"), :target => "_faq_popup") %>)</label><br>
+					<a class="field-tooltip" title="The job description should be designed to get skilled	  engineers interested and excited about your opportunities.<br><br>The first <%=Job::SHORT_DESCRIPTION_LEN%> characters will appear inline in the ad, so make sure to start with an attention-grabbing opening paragraph."></a>
+				<%= text_area_tag(:full_description, @job.full_description, :spellcheck=>true, :id=>"full-description-text", :tabindex => "135")%>			
 			</div>
 		</div>
 	</div>
@@ -201,7 +197,7 @@
 		<div class="form-cell">
 			<%= label_tag(nil, "Images of your awesome office space, ping-pong table, kegerator, whatever.")%><br>
 				<div class="images-list clearfix">
-				<% (1..3).each do |i| %>
+				<% (1..4).each do |i| %>
 					<div id="image-box-<%=i%>" class="custom-image image-box" data-index="<%=i%>" tabindex = "<%=160 + i%>"></div>
 					<%= hidden_field_tag("image_#{i}_id") %>
 					
@@ -237,11 +233,20 @@
 		</div>
 		
 		<%
-		loaded_style1 = @job.effective_join_us_widget_params_map['chooser-bg-style1'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style1']}"
-		loaded_style2 = @job.effective_join_us_widget_params_map['chooser-bg-style2'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style2']}"
-		loaded_style3 = @job.effective_join_us_widget_params_map['chooser-bg-style3'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style3']}"
-		loaded_style4 = @job.effective_join_us_widget_params_map['chooser-bg-style4'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style4']}"
-		loaded_style5 = @job.effective_join_us_widget_params_map['chooser-bg-style5'].blank? ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style5']}"
+		loaded_style1 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style1']) ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style1']}"
+		loaded_color1 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style1']) ? "transparent" : @job.effective_join_us_widget_params_map['chooser-bg-style1']
+		
+		loaded_style2 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style2']) ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style2']}"
+		loaded_color2 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style2']) ? "transparent" : @job.effective_join_us_widget_params_map['chooser-bg-style2']
+		
+		loaded_style3 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style3']) ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style3']}"
+		loaded_color3 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style3']) ? "transparent" : @job.effective_join_us_widget_params_map['chooser-bg-style3']
+		
+		loaded_style4 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style4']) ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style4']}"
+		loaded_color4 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style4']) ? "transparent" : @job.effective_join_us_widget_params_map['chooser-bg-style4']
+		
+		loaded_style5 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style5']) ? "" : "background-color: #{@job.effective_join_us_widget_params_map['chooser-bg-style5']}"
+		loaded_color5 = [nil, "", "false"].include?(@job.effective_join_us_widget_params_map['chooser-bg-style5']) ? "transparent" : @job.effective_join_us_widget_params_map['chooser-bg-style5']
 		%>
 		
 		<div class="form-column">
@@ -250,16 +255,16 @@
 				<div id="join-us-config-box" class="<%=@job.effective_join_us_widget_params_map['join-us-style'].blank? ? 'join-us-style1' : @job.effective_join_us_widget_params_map['join-us-style']%>">
 					<div class="tiles-row clearfix">
 						<div class="tile double-len bg-transparent"></div>
-						<div class="tile bg-style1" style="<%=loaded_style1%>"><input id="chooser-bg-style1" type="text" name="join-us-config[chooser-bg-style1]" value="transparent" class="bg-style-input" /></div>
-						<div class="tile bg-style2" style="<%=loaded_style2%>"><input id="chooser-bg-style2" type="text" name="join-us-config[chooser-bg-style2]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile bg-style1" style="<%=loaded_style1%>"><input id="chooser-bg-style1" type="text" name="join-us-config[chooser-bg-style1]" value="<%=loaded_color1%>" class="bg-style-input" /></div>
+						<div class="tile bg-style2" style="<%=loaded_style2%>"><input id="chooser-bg-style2" type="text" name="join-us-config[chooser-bg-style2]" value="<%=loaded_color2%>" class="bg-style-input" /></div>
 					</div>
 					<div class="tiles-row clearfix">
-						<div class="tile bg-style3" style="<%=loaded_style3%>"><input id="chooser-bg-style3" type="text" name="join-us-config[chooser-bg-style3]" value="transparent" class="bg-style-input" /></div>
-						<div class="tile double-len bg-style4" style="<%=loaded_style4%>"><input id="chooser-bg-style4" type="text" name="join-us-config[chooser-bg-style4]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile bg-style3" style="<%=loaded_style3%>"><input id="chooser-bg-style3" type="text" name="join-us-config[chooser-bg-style3]" value="<%=loaded_color3%>" class="bg-style-input" /></div>
+						<div class="tile double-len bg-style4" style="<%=loaded_style4%>"><input id="chooser-bg-style4" type="text" name="join-us-config[chooser-bg-style4]" value="<%=loaded_color4%>" class="bg-style-input" /></div>
 						<div class="tile bg-style3" style="<%=loaded_style3%>"></div>
 					</div>
 					<div class="tiles-row clearfix">
-						<div class="tile double-len bg-style5" style="<%=loaded_style5%>"><input id="chooser-bg-style5" type="text" name="join-us-config[chooser-bg-style5]" value="transparent" class="bg-style-input" /></div>
+						<div class="tile double-len bg-style5" style="<%=loaded_style5%>"><input id="chooser-bg-style5" type="text" name="join-us-config[chooser-bg-style5]" value="<%=loaded_color5%>" class="bg-style-input" /></div>
 						<div class="tile bg-style1" style="<%=loaded_style1%>"></div>
 						<div class="tile bg-style2" style="<%=loaded_style2%>"></div>
 					</div>
@@ -272,12 +277,61 @@
 	</div>
 </div>
 
+<div class="standard-section-header">Sharing on social networks</div>
+<% share_texts = @job.share_raw_texts %>
+<div class="section-box">
+	<p>
+		Edit text templates to be used as suggestions for social-network sharing. 
+		Your team members will be able to edit the text before each share. 
+		The [company] and [position] tags will be automatically replaced with actual values.
+	</p>
+	
+	<div class="form-row clearfix">
+		<%= label_tag(nil, "Title", :class=>"mandatory") %><br>
+		<div id="sharing-title-counter" class="message-counter"><%=Constants::SHARE_PROPERTIES[:title_length_limit]%></div>
+		<div class="reset-link" title="Revert text to default"><span>Reset</span><div class="default-content"><%=Constants::SHARE_PROPERTIES[:title]%></div></div>
+		<div id="sharing-title" class="editable-box single-line monitor-change" contentEditable="true" spellcheck = 'true' counterid="sharing-title-counter" maxlength="<%=Constants::SHARE_PROPERTIES[:title_length_limit]%>" tabindex = "193">
+		    <%=share_texts[:title]%>
+		</div>
+		<%= hidden_field_tag("share_title") %>
+	</div>
+	
+	<div class="form-row clearfix">
+		<%= label_tag(nil, "For LinkedIn, Facebook and Google", :class=>"mandatory") %><br>
+		<div id="sharing-description-counter" class="message-counter"><%=Constants::SHARE_PROPERTIES[:description_length_limit]%></div>
+		<div class="reset-link" title="Revert text to default"><span>Reset</span><div class="default-content"><%=Constants::SHARE_PROPERTIES[:description]%></div></div>
+		<div id="sharing-description" class="editable-box monitor-change" contentEditable="true" spellcheck = 'true' counterid="sharing-description-counter" maxlength="<%=Constants::SHARE_PROPERTIES[:description_length_limit]%>" tabindex = "194">
+		    <%=share_texts[:description]%>
+		</div>
+		<%= hidden_field_tag("share_description") %>
+	</div>
+	
+	<div class="form-row clearfix">
+		<%= label_tag(nil, "For Twitter", :class=>"mandatory") %><br>
+		<div id="sharing-short-description-counter" class="message-counter"><%=Constants::SHARE_PROPERTIES[:short_description_length_limit]%></div>
+		<div class="reset-link" title="Revert text to default"><span>Reset</span><div class="default-content"><%=Constants::SHARE_PROPERTIES[:short_description]%></div></div>
+		<div id="sharing-short-description" class="editable-box single-line monitor-change" contentEditable="true" spellcheck = 'true' counterid="sharing-short-description-counter" maxlength="<%=Constants::SHARE_PROPERTIES[:short_description_length_limit]%>" tabindex = "195">
+		    <%=share_texts[:short_description]%>
+		</div>
+		<%= hidden_field_tag("share_short_description") %>
+	</div>	
+</div>	
+
 <div class="buttons-box">
 	<%if @job.new_record? %>
-		<%= submit_tag "Create", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "200" %>
+		<%# IMPORTANT: button captions are sent as form values to let server site know what button submitted the form. Any change should be reflected in jobs_controller.rb %>
+		<%= submit_tag "Save draft", :id=>"submit", :class=>"standard-button", :tabindex => "200" %>
+		&nbsp;&nbsp;
+		<%= submit_tag "Publish", :id=>"publish", :class=>"standard-button", :tabindex => "205" %>
 	<%else%>
-		<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "200" %>
-	<%end%>	
+		<%if @job.status == Job::DRAFT %>
+			<%= submit_tag "Update draft", :id=>"submit", :class=>"standard-button", :tabindex => "200" %>
+			&nbsp;&nbsp;
+			<%= submit_tag "Publish", :id=>"publish", :class=>"standard-button", :tabindex => "205" %>
+		<% else %>
+			<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :tabindex => "200" %>
+		<% end %>
+	<%end%>
 	&nbsp;&nbsp;
 	<%= link_to "Cancel", employer_path(current_user), :id => "cancel-link", :class=>"cancel-button", :tabindex => "210" %>
 </div>
@@ -288,7 +342,33 @@
 	$.fn.colorPicker.defaults.colors = ['16A085', '27AE60', '7AB700', '1EB1FF', '2980B9', '8E44AD', '2C3E50', 'F39C12', 'FF6D54', 'D35400', 'C0392B', 'AD153E'];
 	$.fn.colorPicker.defaults.showHexField = false;
 	
+	<% @job.benefits_list.to_a.each do |one_benefit| %>
+		writeTag("<%=escape_javascript(one_benefit).html_safe%>", "data-benefit", "1", "#benefit-tags-list", null, false, "");
+	<% end %>
+	
 	 $(function() {
+	 	CKEDITOR.disableAutoInline = true;
+		$( '#full-description-text' ).ckeditor({
+			uiColor: '#E9F0F4',
+			width: '832px',
+			height: '14em',
+			contentsCss: ['<%=stylesheet_path "reset_unreset"%>', 'https://fonts.googleapis.com/css?family=Ubuntu:400,500,700', '/ckeditor/contents.css?1'],
+			format_tags: 'p;h1;h2;h3;h4'
+		}).on('instanceReady.ckeditor', function (e) {
+			$('.cke_top, .cke_bottom, .cke_inner').css('background','#E9F0F4');
+			$('.cke_chrome').css('border-color','#CED6DB');
+			$('.cke_chrome').css('border-radius','0');
+			$('.cke_contents').css('border-color','#CED6DB');
+			$('.cke_contents').css('border-radius','0');	  
+			
+			var editor = $(this).ckeditorGet();
+			editor.on('change', function() { 
+				if(editor.checkDirty()) {
+					dirty_form_fields = true;
+				}
+			});
+		});
+	 	
 	 	function init_style_preview(style_class) {
 	    	$("#join-us-config-box").attr("class", style_class);
 	    	$(".tile").css("background-color", "");
@@ -297,19 +377,19 @@
 	    	dirty_form_fields = true;
 	 	}
 	 	
-		$(".monitor-change").on("input", function() {
+		$(".monitor-change").on("input change", function() {
 			dirty_form_fields = true;
 		});
 		
-		$('.new_job :checkbox, .edit_job :checkbox').change(function() {
-		    dirty_form_fields = true;
-		});
-
 		$(window).bind('beforeunload', function(){
 			if (dirty_form_fields) {
 				return "<%=page_leaving_warning_s%>";
 			}
 		});
+		
+		$('#copy-job-settings-form').submit(function() {
+			dirty_form_fields = false;
+	    });
 		
 		$('.join-us-style-preview').click(function() {
 			var rb = $(this).children("input[type=radio]");
@@ -349,6 +429,7 @@
 	$( "#position" ).cachedautocomplete({
 		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
+		forceLowerCase: false,
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
 	});
 	
@@ -359,44 +440,63 @@
 		extraParam: "#position"
 	});	
 	
-	$(".custom-image").click(function (){
-		var image_index = $(this).data("index");
+	$( "#benefits_input" ).cachedautocomplete({
+		multiValue: false,
+		sequentialMatching: false,
+		forceLowerCase: false,
+		url: "<%=autocomplete_benefits_path(:locale => nil)%>",
+		defaultOpts: <%=ActiveSupport::JSON.encode(Constants::BENEFITS.first(13).map {|struct| struct.marshal_dump}).html_safe%>
+	}).keypress(function(e) {
+		if(e.which == 13) {
+			$( "#add-benefit-btn" ).click();
+		}
+	});	
+	
+	$( "#add-benefit-btn" ).click(function() {
+    	if(createNewTag("#benefits_input", "data-benefit", "1", "#benefit-tags-list", false, "",  "You can add more benefits")) {
+    		dirty_form_fields = true;
+    	}
+    	return false;
+    });	
+	
+	function open_custom_image_chooser(image_index) {
 		$('#photo-chooser').imageChooser({
 			onChoose: function(id, path, title) {
 				load_photo(image_index, id, escapeHTML(path), escapeHTML(title));
-			}
+			},
+			helpString: "Upload a picture. You'll be able to crop it.",
+			aspectRatio: <%=Photo::ASPECT_RATIO_FOR_CROP_WINDOW%>
 		}).imageChooser( 'open' );
+	}
+	
+	function open_logo_chooser() {
+		$('#photo-chooser').imageChooser({
+			onChoose: function(id, path, title) {
+				load_image("#company_logo_image_id", "#company-logo-box", id, path, "");
+			},
+			helpString: "Upload your company logo file. The recommended size is 80x60 pixels. You can crop images after upload.",
+			aspectRatio: undefined
+		}).imageChooser( 'open' );
+	}	
+	
+	$(".custom-image").click(function (){
+		open_custom_image_chooser($(this).data("index"));
 	});
 
 	$(".custom-image").keypress(function (e){
 		if(e.which == 13 || e.which == 32) {
-			var image_index = $(this).data("index");
-			$('#photo-chooser').imageChooser({
-				onChoose: function(id, path, title) {
-					load_photo(image_index, id, escapeHTML(path), escapeHTML(title));
-				}
-			}).imageChooser( 'open' );
-			
+			open_custom_image_chooser($(this).data("index"));
 			return false;
 		}
 	});
 	
 	$(".logo-image").click(function (){
-		$('#photo-chooser').imageChooser({
-			onChoose: function(id, path, title) {
-				load_image("#company_logo_image_id", "#company-logo-box", id, path, "");
-			}
-		}).imageChooser( 'open' );
+		open_logo_chooser();
 	});	
 	
 	$(".logo-image").keypress(function (e){
 		if(e.which == 13 || e.which == 32) {
-			$('#photo-chooser').imageChooser({
-				onChoose: function(id, path, title) {
-					load_image("#company_logo_image_id", "#company-logo-box", id, path, "");
-				}
-			}).imageChooser( 'open' );
-			
+			open_logo_chooser();
 			return false;
 		}
 	});	
@@ -406,19 +506,20 @@
 		createValidUrl($("#company_url"));
 		$("form.new_job, form.edit_job").validationEngine('hideAll');
 		
-		if($("#verify-account-form").length > 0) {
-			$("#verification-pw").validationEngine('showPrompt', 'To post jobs, please verify your account with the password we sent you.', 'error', 'topLeft', true);
-			$("#verification-pw").focus();
-			
-			return false;
-		}
-		
 		var res = $("form.new_job, form.edit_job").validationEngine('validate');
 		
 		if(!$.trim($("#location").val()) || !$.trim($("#lat").val()) || !$.trim($("#lng").val())){
 			res = false;
 			$("#location").validationEngine('showPrompt', "We couldn't recognize the location entered. Please use the auto-complete.", 'error', 'topRight', true);
 			$("#location").focus();
+		}
+
+		var full_description = $('#full-description-text').val();
+		if(!$.trim(full_description)) {
+			res = false;
+			$("#cke_full-description-text").validationEngine('showPrompt', "Please fill in the full job description", 'error', 'bottomRight', true);
+			$("#cke_full-description-text").get(0).scrollIntoView();
+			$('#full-description-text').ckeditorGet().focus(); 
 		}
 		
 		if($.trim($("#address").val()) && (!$.trim($("#address_lat").val()) || !$.trim($("#address_lng").val()))){
@@ -427,12 +528,44 @@
 			$("#address").focus(); 
 		}
 		
+		if($.trim($("#sharing-title").text())) {
+			$("#share_title").val($.trim($("#sharing-title").html()));
+		} else {
+			res = false;
+			$("#sharing-title").validationEngine('showPrompt', "This field is required", 'error', 'topRight', true);
+			$("#sharing-title").focus();
+		}
+		
+		if($.trim($("#sharing-description").text())) {
+			$("#share_description").val($.trim($("#sharing-description").html()));
+		} else {
+			res = false;
+			$("#sharing-description").validationEngine('showPrompt', "This field is required", 'error', 'topRight', true);
+			$("#sharing-description").focus();
+		}
+		
+		if($.trim($("#sharing-short-description").text())) {
+			$("#share_short_description").val($.trim($("#sharing-short-description").html()));
+		} else {
+			res = false;
+			$("#sharing-short-description").validationEngine('showPrompt', "This field is required", 'error', 'topRight', true);
+			$("#sharing-short-description").focus();
+		}		
+		
 		if(res) {
+			var benefit_val =  $.trim($("#benefits_input").val());
+			if (benefit_val !=""){
+				createNewTag("#benefits_input", "data-benefit", "1", "#benefit-tags-list", false, "",  "");//last param not significant since we are submitting
+			}
+			$("#benefits").val(tagsToParams("#benefit-tags-list", "data-benefit"));
+			
 			// prevent double submit
 	 		if($('#submit').attr("disabled") != "disabled") {
-	 			$('#submit').focus();
-				$('#submit').attr('disabled','disabled');
-			}				
+	 			setTimeout(function(){
+		 			$('#submit').focus();
+					$('#submit, #publish').attr('disabled','disabled');	 				
+	 			}, 1);
+			}
 		}
 	
 		return res;

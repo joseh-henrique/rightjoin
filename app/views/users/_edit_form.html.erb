@@ -9,7 +9,7 @@
 					<%= label_tag(nil,  current_job_s(:employee), :class=>"mandatory") %><br>
 				  	<a class="field-tooltip" title="The job title you now have."></a>
 			 		<% current_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:current_job] : @user.current_position_name %>
-					<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "10") %>			
+					<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Software Engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "10") %>			
 				</div>
 				<div class="form-cell">
 					<%= label_tag(nil, city_s(:employee)) %><br>
@@ -35,7 +35,7 @@
 					<%= label_tag(nil, wanted_job_s(:employee), :class=>"mandatory") %><br>
 					<a class="field-tooltip" title="The dream job you'd like to move to. To help employers find you, please use a standard job title."></a>
 					<% wanted_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:wanted_job] : @user.wanted_position_name %>
-					<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., senior software engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "20") %>						
+					<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Senior Software Engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "20") %>						
 				</div>
 			</div>
 		</div>
@@ -147,7 +147,7 @@
 		
 		<div class="form-row">
 			<div class="form-cell">
-				<%= label_tag(nil, "Your professional profiles (LinkedIn, GitHub, etc.)") %><br>
+				<%= label_tag(nil, "Links to your professional profiles (LinkedIn, GitHub, personal site, blog, etc.)") %><br>
 				<div id="resume-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH * 2%></div>
 				<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :class=>"professional-profiles", :counterId=>"resume-text-counter", :tabindex => "150")%>			
 			</div>
@@ -210,12 +210,14 @@
 	$( "#currentposition" ).cachedautocomplete({
 		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
+		forceLowerCase: false,
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(PositionTag, 8)).html_safe%>
 	});	
 	
 	$( "#wantedposition" ).cachedautocomplete({
 		url: "<%=autocomplete_positions_path(:locale => nil)%>",
 		sequentialMatching: false,
+		forceLowerCase: false,
 		extraParam: "#currentposition"
 	});
 
@@ -231,6 +233,10 @@
 		sequentialMatching: false,
 		url: "<%=autocomplete_jobqualifiers_path(:locale => nil)%>",
 		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(JobQualifierTag, 8)).html_safe%>
+	}).keypress(function(e) {
+		if(e.which == 13) {
+			$( "#add-job-qualifier-btn" ).click();
+		}
 	});	
 </script>
 
@@ -349,11 +355,11 @@
 	});
 	
 	function checkLocationOptionsValid() {
-		var suggested = $("#location").googleAddressPicker("selected_info");
+		var location = $.trim($("#location").val());
 		var can_relocate = $("#can_relocate").is(':checked');
 		var can_telecommute = $("#can_telecommute").is(':checked');
-		return suggested || can_relocate || can_telecommute;
-	}	
+		return location != "" || can_relocate || can_telecommute;
+	}
 
 	function doSubmitForm() {
 		var res = $("form.new_user, form.edit_user").validationEngine('validate');
@@ -368,7 +374,7 @@
 				res = false;
 			} else {
 				$("#skills").val(tagsToParams("#skills-tags-list", "data-skill"));
-				var job_qual_val =  $.trim($("#jobqualifiers").val());
+				var job_qual_val =  $.trim($("#jobqualifiertag").val());
 				if (job_qual_val !=""){
 					createNewTag("#jobqualifiertag", "data-job-qualifier", "1", "#job-qualifier-tags-list", true, "Job offers must include %s","");//last param not significant since we are submitting
 				}

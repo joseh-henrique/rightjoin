@@ -24,6 +24,7 @@
 
 <% active_jobs = current_user.active_jobs_with_share_statistics.order("created_at DESC").to_a %>
 <% ambassadors = current_user.active_ambassadors_with_share_statistics.to_a %>
+<% basic_plan = current_user.current_plan.tier == Constants::TIER_BASIC %>
 
 <div class="content" id="employer-dashboard">
 	<%= render :partial => 'layouts/flash_box' %>
@@ -57,20 +58,24 @@
 				<script type="text/javascript">load_chart("#chart-clickback", [<%=clicks_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=clicks_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">  
-				Clicks
+				Impressions
 			</div>
 		</div>
 		<div class="counter-box">
 			<div class="counter-top">
-				<span><%=leads_all%></span>
-				<div id="chart-leads" class="chart"></div>
-				<% leads_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}   # set up map with 0-values for all keys
-				   leads_map.merge!({Constants::SOCIAL_NETWORK_OTHER => leads_all - leads_share})  # add 'other to include all shares not otherwise idenntified
-				%> 
-				
-				<% share_info.each{|share| leads_map[share.network] = share.leads_count.to_i} %>
- 
- 				<script type="text/javascript">load_chart("#chart-leads", [<%=leads_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=leads_map.values.map{|value|value}.join(",")%>]);</script>
+				<% if current_user.enable_ping %>
+					<span><%=leads_all%></span>
+					<div id="chart-leads" class="chart"></div>
+					<% leads_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}   # set up map with 0-values for all keys
+					   leads_map.merge!({Constants::SOCIAL_NETWORK_OTHER => leads_all - leads_share})  # add 'other to include all shares not otherwise idenntified
+					%> 
+					
+					<% share_info.each{|share| leads_map[share.network] = share.leads_count.to_i} %>
+	 
+	 				<script type="text/javascript">load_chart("#chart-leads", [<%=leads_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=leads_map.values.map{|value|value}.join(",")%>]);</script>
+				<% else %>
+					<span>...</span>
+				<% end %>
 			</div>
 			<div class="counter-bottom">
 				Leads
@@ -92,8 +97,8 @@
 					<% else %>
 						<% unless current_user.join_us_widget_running? %>
 							<li class="warning">
-								<%=link_to("Enable", configure_join_us_tab_employer_path(current_user, :job => nil, :locale => nil)) %> 
-								the &ldquo;Join Us&rdquo; tab for your site. <%#TODO Review page%>
+								<%=link_to("Add", configure_join_us_tab_employer_path(current_user, :job => nil, :locale => nil)) %> 
+								the &ldquo;Join Us&rdquo; tab to your site.  
 							</li>
 						<% end %>
 						<li class="warning">
@@ -101,25 +106,72 @@
 						</li>
 					<% end %>
 				<% end %>
+				<% unless current_user.enable_ping %>
+					<li class="warning">
+						<%=link_to("Enable", settings_employer_path(current_user))%> the Ping feature to activate the Leads counters. 
+					</li>
+				<% end %>
+				
+				<% if basic_plan %>
+		 			<% if active_jobs.count > 1 %>
+		 				<li class="warning">
+							The <%=EmployerPlan::BASIC%> plan allows only one job posting. Please  
+							<%=link_to("upgrade", edit_employer_path(current_user,:anchor=>"plans-and-pricing"))%>
+							to  <%=EmployerPlan::PRO %> or  <%=EmployerPlan::ENTERPRISE %>. 
+						</li>
+						
+						<% if ambassadors.count > 1 %>
+							<li class="warning">
+								The <%=EmployerPlan::BASIC%> plan allows only one team member.
+								Please <%=link_to("upgrade", edit_employer_path(current_user, :anchor=>"plans-and-pricing"))%>
+								to  <%=EmployerPlan::PRO %> or <%=EmployerPlan::ENTERPRISE %>. 
+							</li>
+						<% end %>
+					<% end %>
+				<% end %>
 			</ul>
 		</div>
 		
-		<div class="recent-leads-box">
-			<span>Active leads</span>
-			<div class="leads-list">
-				<%max_leads_to_show = 16%>
-				<% infointerviews = current_user.last_active_leads(max_leads_to_show) %>
-				<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
-					<% if infointerviews.count >= i + 1%>
-						<% infointerview = infointerviews[i] %>
-						<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => "#{infointerview.first_name} #{infointerview.last_name}",  class: "lead-avatar"), 
-							leads_employer_job_path(current_user, infointerview.job, :locale => infointerview.job.country_code, anchor: "lead-#{infointerview.id}") %>
-					<% else %>
-						<%=image_tag(asset_path("shared/no-avatar-semi-transparent-56x56.png"), class: "lead-placeholder")%>
+		<% if current_user.enable_ping %>
+			<%max_leads_to_show = 7%>
+			<div class="new-leads-box">
+				<span>New leads</span>
+				<div class="leads-list">
+					<% infointerviews = current_user.new_leads.to_a %>
+					<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
+						<% if infointerviews.count >= i + 1%>
+							<% infointerview = infointerviews[i] %>
+							<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => "#{infointerview.first_name} #{infointerview.last_name}",  class: "lead-avatar"), 
+								leads_employer_job_path(current_user, infointerview.job, :locale => infointerview.job.country_code, anchor: "lead-#{infointerview.id}") %>
+						<% else %>
+							<%=image_tag(asset_path("shared/no-avatar-semi-transparent-56x56.png"), class: "lead-placeholder")%>
+						<% end %>
 					<% end %>
-				<% end %>	
+					<% if infointerviews.count > max_leads_to_show %>
+						<div class="plus-x"><em>+<%=infointerviews.count - max_leads_to_show%><br>more</em></div>
+					<% end %>
+				</div>
 			</div>
-		</div>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<div class="leads-with-unseen-comments-box">
+				<span>New comments</span>
+				<div class="leads-list">
+					<% infointerviews = current_user.leads_with_unseen_comments.to_a %>
+					<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
+						<% if infointerviews.count >= i + 1%>
+							<% infointerview = infointerviews[i] %>
+							<%=link_to image_tag(lead_avatar_path(infointerview.reference_num, :timestamp => infointerview.updated_at.to_i.to_s(16)),  :title => "#{infointerview.first_name} #{infointerview.last_name}",  class: "lead-avatar"), 
+								leads_employer_job_path(current_user, infointerview.job, :locale => infointerview.job.country_code, anchor: "lead-#{infointerview.id}") %>
+						<% else %>
+							<%=image_tag(asset_path("shared/no-avatar-semi-transparent-56x56.png"), class: "lead-placeholder")%>
+						<% end %>
+					<% end %>	
+					<% if infointerviews.count > max_leads_to_show %>
+						<div class="plus-x"><em>+<%=infointerviews.count - max_leads_to_show%><br>more</em></div>
+					<% end %>
+				</div>
+			</div>			
+		<% end %>
 	</div>
 	
 	<div class="standard-section-header"><span>Job postings</span><div class="header-buttons-box"><%=link_to("Add new", new_employer_job_path(current_user), :class => "standard-button")%></div></div>	
@@ -138,40 +190,44 @@
 	</div>
 	
 	<div id="invite-team-member-dialog" title="Invite a team member" class="employer-dialog">
-		<% 	  
-		subject = "Talking with potential future colleagues"
-		body_text = "Hi,\n\n" <<
-			"We're looking for some smart developers to work with us at #{current_user.company_name}.\n\n" <<
-			"#{Constants::SHORT_SITENAME} gives us a beautiful ad in which our current developers are the highlight. " << 
-			"It has social sharing tools to help you spread it.\n\n" << 
-			"Experienced developers then ping us through this ad. We may connect a few developers with you for a chat about working here.\n\n" <<
-			"Please sign in at #{ambassadors_signin_url(current_user.reference_num, :locale => nil)}\n\n" <<
-			"Regards,\n\n" <<
-			"#{current_user.first_name}"
-		%>		
-		<div class="form-row">
-			<div class="form-cell">
-				Copy the  text below into an email. 
-				You can then modify it to suit your company culture and the people you're sending it to. 
+		<%= form_tag invite_team_member_employer_path(current_user), :remote => true, :id => 'invite-team-member-form' do %>
+			<div class="form-row">
+				<div class="form-cell">
+					Send an email to some team members inviting them to join the ambassador team.
+				</div>
+			</div>		
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag(nil, "Subject", :class=>"mandatory") %><br>
+					<%= text_field_tag(:invitation_subject, current_user.team_invitation_template[:subject], :spellcheck => true, :class => "validate[required,custom[nonEmpty]]") %>
+				</div>
 			</div>
-		</div>		
-		<div class="form-row">
-			<div class="form-cell">
-				<%= label_tag(nil, "Subject") %><br>
-				<%= text_field_tag(:subject, subject, :spellcheck => true) %>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag(nil,  "Body", :class=>"mandatory") %><br>
+					<div class="compound-input-box inactive" style="width: 654px;">
+						<%= text_field_tag(:invitation_salutation, current_user.team_invitation_template[:salutation], :spellcheck => true, :style => "width: 50px;")%>
+						<%= text_field_tag(:invitation_recipient_name, "", :maxlength => 25, :spellcheck => false, :placeholder => "John", :class => "input-field", :style => "width: 180px;") %>&nbsp;&nbsp;<span>,</span>
+						<%= text_area_tag(:invitation_body, current_user.team_invitation_template[:body].gsub("[team-page-url]", ambassadors_signin_url(current_user.reference_num, :locale => nil)), :spellcheck => true, :class => "validate[required,custom[nonEmpty]]", :style => "height: 200px;")%><br>
+					</div>
+					<%= check_box_tag "save-as-template", '1', false%>&nbsp;<%= label_tag("save-as-template", "Save as a template for future invitations") %>
+				</div>
 			</div>
-		</div>
-		<div class="form-row">
-			<div class="form-cell">
-				<%= label_tag(nil,  "Body") %><br>
-				<%= text_area_tag(:body, body_text, :spellcheck => true)%>
+			<div class="form-row">
+				<div class="form-cell">
+					<%= label_tag(nil, "Recipient email address or a list of comma-separated addresses", :class=>"mandatory") %><br>
+					<%= text_field_tag(:invitation_recipient_email, "", :spellcheck => false, :placeholder => "abc@company.com, xyz@company.com", :class => "validate[required,funcCall[validateMultipleEmails]]") %>
+				</div>
+			</div>		
+			
+			<div class="form-row">
+				<div class="form-cell">
+					<%= submit_tag "Send", :id => "send-via-rightjoin", :class=>"standard-button" %>&nbsp;&nbsp;&nbsp;
+					<div title="Sending..." class="loading-icon" id="sending-invitation-icon"></div>
+					&nbsp;&nbsp;&nbsp;&nbsp;<span id="invitation-sending-msg"></span>
+				</div>
 			</div>
-		</div>
-		<div class="form-row">
-			<div class="form-cell">
-				<%= submit_tag "Open in email client...", :id => "launch-email-client-button", :class=>"launch-email-client standard-button" %>
-			</div>
-		</div>
+		<% end %>
 	</div>
 	
 	<div id="send-reminder-dialog" title="Send a reminder" class="employer-dialog">
@@ -244,14 +300,14 @@
 					<%= render :partial => 'ambassadors/ambassador', object: ambassador %>
 					<div class="ambassador-counters-box">
 						<div>Shares: <span class="counter-value"><%=ambassador.shares_counter.to_i%></span></div>
-						<div>Clicks: <span class="counter-value"><%=ambassador.clickback_counter.to_i%></span></div>
-						<div>Leads: <span class="counter-value"><%=ambassador.leads_counter.to_i%></span></div>
+						<div>Impressions: <span class="counter-value"><%=ambassador.clickback_counter.to_i%></span></div>
+						<div>Leads: <span class="counter-value"><%=current_user.enable_ping ? ambassador.leads_counter.to_i : "..."%></span></div>
 					</div>
 					<div class="ambassador-controls-box">
 						<% 
 						remind_every_days = 10
 						if ambassador.should_remind(remind_every_days)
-							due_class = "due"
+							due_class = "with-alert-sign"
 							title_str = "The last reminder was sent more than #{remind_every_days} days ago."
 						end
 						%>
@@ -271,6 +327,24 @@
 </div>
 
 <script type="text/javascript">
+	function validateMultipleEmails(field, rules, i, options){
+		var errorMsg = "* Invalid email address or list of addresses";
+		
+		var emailsVal = field.val().replace(/,(\s+)?$/, '').trim();
+		if (emailsVal == ""){
+			return errorMsg;
+		}
+		
+		var emails = emailsVal.split(',');
+		var pattern = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i;
+
+		for(i = 0; i < emails.length; i++) {
+		  if(!emails[i].trim().match(pattern)){
+		    return errorMsg;
+		  }
+		}
+	}
+
 	$("#configure-reminder-dialog").dialog({
 	  autoOpen: false,
 	  width: 750,
@@ -290,24 +364,56 @@
 	  $("#configure-reminder-sending-icon").css("visibility", "visible");
 	});
 
+	$("#invite-team-member-form").submit(function(){
+		$("#invitation-sending-msg").html("");
+		
+	 	var is_valid = $(this).validationEngine('validate');
+	 	if (is_valid){
+			$("#send-via-rightjoin").prop('disabled', true);
+			$("#sending-invitation-icon").css("visibility", "visible");
+		}
+		return is_valid;
+	});	
+	
+	$("#invitation_recipient_email").bind("keyup change", function( event ) {
+	  if ($(this).val().indexOf(",") > -1) {
+	    $("#invitation_recipient_name").hide();
+	  } else {
+	  	$("#invitation_recipient_name").show();
+	  }
+	});
+	
+	$('#invite-team-member-form').on('ajax:success',function(data, status, xhr){
+		$("#invitation_recipient_name").val("");
+		$("#invitation_recipient_email").val("");
+		
+		$("#send-via-rightjoin").prop('disabled', false);
+		$("#sending-invitation-icon").css("visibility", "hidden");    	
+		
+		$("#save-as-template").prop('checked', false);
+		
+		$("#invitation_recipient_name").show();
+		$("#invitation_recipient_name").focus();
+
+    	fadeInMessage($("#invitation-sending-msg"), "<span class='success'>The invitation has been sent. Anyone else to invite?</span>");
+    }).on('ajax:error',function(xhr, status, error){
+		$("#send-via-rightjoin").prop('disabled', false);
+		$("#sending-invitation-icon").css("visibility", "hidden");
+
+		fadeInMessage($("#invitation-sending-msg"), "<span class='error'><%=Constants::ERROR_FLASH%></span>");
+    });
+	
 	$("#invite-team-member-dialog").dialog({
 	  autoOpen: false,
 	  width: 750,
-	  height: 580,
+	  height: 640,
 	  resizable: false,
 	  modal: true
 	});
 
 	$(".invite-team-member-link").click(function(){
+		$("#invitation-sending-msg").html("");
 		$("#invite-team-member-dialog").dialog( "open" );
-		return false;
-	});
-	
-	$(".launch-email-client").click(function(e){
-		launchMailTo("[recipient]", $("#subject").val(), $("#body").html());
-		e.stopPropagation();
-        e.preventDefault();
-        event.cancelBubble = true;
 		return false;
 	});
 	
@@ -336,14 +442,6 @@
 		$("#send-reminder-dialog").dialog("open");
 		return false;
 	});
-	
-	$(".launch-email-client").click(function(e){
-		launchMailTo("[recipient]", $("#subject").val(), $("#body").html());
-		e.stopPropagation();
-        e.preventDefault();
-        event.cancelBubble = true;
-		return false;
-	});	
 </script>
 
 <%=render :partial => 'sessions/verification_form'%>

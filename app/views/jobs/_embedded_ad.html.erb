@@ -1,0 +1,41 @@
+<div id="embedded-ad-overlay" class="custom-popup-overlay hidden" tabindex="0"><%# tab index for escape http://stackoverflow.com/questions/1717897/jquery-keydown-on-div-not-working-in-firefox%>
+	<div class="center-wrapper">
+		<div class="frame-box">
+			<a class="close-ad" href="#"></a>
+			<iframe class="embedded-ad-frame" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		$(document).on("click", ".embedded-ad-launcher", function(){
+			var adUrl = $(this).data("ad-url");
+			showEmbeddedAd(adUrl);
+			return false;
+		});
+	});
+	
+	$(".close-ad").click(function(){
+		hideEmbeddedAd();
+		return false;
+	});
+	
+	$("#embedded-ad-overlay").click(function(e){
+		hideEmbeddedAd();
+		return false;
+	});
+	
+	function showEmbeddedAd(adUrl) {
+		$('#embedded-ad-overlay .embedded-ad-frame').attr('src', adUrl);
+		$("#embedded-ad-overlay").removeClass("hidden");
+		$('#embedded-ad-overlay .embedded-ad-frame').fadeIn("slow");
+	}
+	
+	function hideEmbeddedAd() {
+		$('#embedded-ad-overlay .embedded-ad-frame').fadeOut("fast", function() {
+			$("#embedded-ad-overlay").addClass("hidden");
+			$('#embedded-ad-overlay .embedded-ad-frame').attr('src', "");
+		});
+	}
+</script>

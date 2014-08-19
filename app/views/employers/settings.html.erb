@@ -1,0 +1,46 @@
+<a name="form" style="visibility: hidden"></a>
+
+<div class="content">
+	<%= render :partial => 'layouts/flash_box' %>
+	
+	<div class="content-box">
+		<div class="page-heading-box">
+			<h1>
+				Edit configuration settings
+			</h1>
+	 	</div>
+	 	
+	 	<div id="employer-settings">
+			<%= form_tag(update_settings_employer_path(:employer_id => @employer.id, :locale => nil)) do |f| %>  
+				<div class="standard-section-header">Advanced</div>
+				<div class="section-box">
+
+					<%= label_tag "enable_ping", "Peer-to-peer recruiting" %>
+					<div class="form-row group-box">
+						<% if @employer.enable_ping && @employer.has_active_jobs_with_empty_ad_url?%>
+							<p>
+									<em>Note:</em> To disable the ping feature, first specify a URL to a full job description for all positions.
+							</p>
+						<% end %>
+						
+						<p>
+							By pinging you, engineers ask to talk to their peers in your company. 
+							If you disable the ping feature, it is replaced with a link that you provide,  
+							for example to a job description or application form. 
+						</p>
+						
+					
+													
+						<%= check_box_tag 'enable_ping', '1', @employer.enable_ping, disabled: @employer.enable_ping && @employer.has_active_jobs_with_empty_ad_url?, tabindex: "40" %>&nbsp;<%= label_tag "enable_ping", "Enable Ping feature" %>
+					</div>
+				</div>
+				
+				<div class="buttons-box">
+					<%= submit_tag "Update", :id=>"submit", :class=>"standard-button", :name => nil, :tabindex => "80" %>
+					&nbsp;&nbsp;
+					<%= link_to "Cancel", employer_path(@employer), :class=>"cancel-button", :tabindex => "90" %>
+				</div>	
+			<% end %>			
+		</div>
+	</div>
+</div>

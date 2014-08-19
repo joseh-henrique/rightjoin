@@ -1,7 +1,8 @@
 class InfointerviewsController < ApplicationController
-  before_filter :strip_params, :only => [:create, :close, :reopen, :delegate]
+  before_filter :strip_params, :only => [:create, :close, :reopen, :delegate, :set_seen]
   before_filter :init_employee_user, :except => [:close, :reopen, :serve_avatar, :delegate]
   before_filter :init_infointerview_with_redirect, :only => [:close, :reopen]
+  before_filter :init_infointerview, :only => [:set_seen]
   
   # ajax call
   def create
@@ -22,31 +23,41 @@ class InfointerviewsController < ApplicationController
     end
     
     auth = nil
+    resume = nil
     if candidate.nil?
-      # 2nd - see if user pings via oauth providers, i.e. provides firstname and lastname
       if !first_name.blank? && !last_name.blank?
-        auth = current_auth(Constants::REMEMBER_TOKEN_INFOINTERVIEW)
+        # 2nd - see if user pings with resume
+        if params[:document_id].present?
+           preloaded = Cloudinary::PreloadedFile.new(params[:document_id])
+           resume = preloaded.identifier
+        else 
+          # 3nd - see if user pings via oauth providers, i.e. provides firstname and lastname
+          auth = current_auth(Constants::REMEMBER_TOKEN_INFOINTERVIEW)
+        end
       end
       
-      if auth.nil? && signed_in?
-        # 3rd - user might happen to be logged in (either direct ping in the widget, or ping button in the board)
+      if auth.nil? && resume.nil? && signed_in?
+        # 4rd - user might happen to be logged in (either direct ping in the widget, or ping button in the board)
         candidate = current_user
       end
     end
     
-    if auth.nil? && candidate.nil?
+    employer = Employer.find(params[:employer_id])
+    job = employer.jobs.find(params[:job_id])
+    
+    if auth.nil? && candidate.nil? && resume.nil?
       render :nothing => true, status: :unauthorized
     elsif !candidate.nil? && candidate.status == UserConstants::PENDING
       render :text => "Please verify your #{Constants::SHORT_SITENAME} account and retry.", status: :unauthorized
     elsif !candidate.nil? && (candidate.first_name.blank? || candidate.last_name.blank?)
       render :text => "Ping failed. Your #{Constants::SHORT_SITENAME} account is incomplete. Please fill out and retry.", status: :unauthorized
+    elsif job.status != Job::PUBLISHED
+      # silently ignore pings to closed or not published ads
+      # is this correct behavior?
+      # it's fine for drafts, but might be problematic for closed jobs
+      render :nothing => true, status: :ok
     else
       infointerview = Infointerview.new
-
-      employer = Employer.find(params[:employer_id])
-      infointerview = Infointerview.new
-
-      job = employer.jobs.find(params[:job_id])
       infointerview.job_id = job.id  
       
       infointerview.email = email
@@ -66,6 +77,10 @@ class InfointerviewsController < ApplicationController
         infointerview.last_name ||= candidate.last_name
       end
       
+      unless resume.nil?
+        infointerview.resume_doc_id = resume
+      end
+      
       older_infointerviews = Infointerview.find_by_job_id_and_email(infointerview.job_id, infointerview.email)
       
       if older_infointerviews.nil? # silently ignore repeating pings from the same user to the same job
@@ -79,7 +94,27 @@ class InfointerviewsController < ApplicationController
             share.increment!(:lead_counter)
             infointerview.referred_by = share.ambassador_id
             infointerview.save!
+            
+            Comment.create_system_comment!(infointerview.id, "#{infointerview.first_name} was referred by #{infointerview.referred_by_ambassador.first_name} #{infointerview.referred_by_ambassador.last_name} via #{share.network.capitalize}.", share.created_at) 
           end
+          
+          # generate system comments
+          was_pinged_by_company = false
+          unless candidate.nil?
+            # did company pinged this candidate?
+            interview = Interview.find_by_user_id_and_job_id(candidate.id, job.id)
+            if !interview.nil? && interview.status != Interview::RECOMMENDED
+              was_pinged_by_company = true
+            end
+          end
+          
+          if was_pinged_by_company
+            Comment.create_system_comment!(infointerview.id, "#{infointerview.first_name} was pinged by #{employer.company_name} regarding the #{job.position_name} position.", interview.created_at)
+            Comment.create_system_comment!(infointerview.id, "#{infointerview.first_name} pinged you back.")
+          else
+            Comment.create_system_comment!(infointerview.id, "#{infointerview.first_name} pinged #{employer.company_name} regarding the #{job.position_name} position.")
+          end
+          
         rescue Exception => e # report and ignore
           logger.error e
         end
@@ -97,6 +132,10 @@ class InfointerviewsController < ApplicationController
   def close
     @infointerview.status = Infointerview::CLOSED_BY_EMPLOYER
     @infointerview.save!
+    
+    Comment.create_system_comment!(@infointerview.id, "The lead was closed.")
+    
+    @infointerview.followups.only_active.update_all(:status => Followup::CLOSED)
     
     flash_message(:notice, "You have closed a lead.")
     
@@ -130,7 +169,9 @@ class InfointerviewsController < ApplicationController
     @infointerview.status = Infointerview::ACTIVE_LEAD
     @infointerview.save!
     
-    flash_message(:notice, "You have reopened a lead.")
+    Comment.create_system_comment!(@infointerview.id, "The lead was reopened.")
+    
+    flash_message(:notice, "You have reopened the lead.")
     
     redirect_to leads_employer_job_path(current_user, @infointerview.job, :locale => @infointerview.job.country_code)
   rescue Exception => e
@@ -142,17 +183,36 @@ class InfointerviewsController < ApplicationController
   def delegate
     init_infointerview
     ambassador = Ambassador.find(params[:ambassador_id])
-    followup = ambassador.followups.build(:infointerview => @infointerview)
-    followup.save!
+    
+    # don't create a Followup object if already delegated and still NEW
+    followup = ambassador.followups.only_active.find_by_infointerview_id(@infointerview.id)
+    if followup.nil?
+      followup = ambassador.followups.build(:infointerview => @infointerview) 
+      followup.save!
+    end
+    
+    Comment.create_system_comment!(@infointerview.id, "Delegated to #{ambassador.first_name} #{ambassador.last_name}.")
     
     msg = FyiMailer.create_delegate_infointerview_email(followup)
     Utils.deliver msg
     
-    render :nothing => true, status: :ok
+    render :partial => "comments/lead_comments", :locals => { :lead => @infointerview, :display_for => ambassador }, :layout => false
     
   rescue Exception => e
     render :nothing => true, status: :forbidden
   end  
+  
+  # seen by employer
+  def set_seen
+    @infointerview.status = Infointerview::ACTIVE_LEAD
+    @infointerview.save!
+    
+    render :nothing => true, status: :ok
+    
+  rescue  Exception => e
+    logger.error e
+    render :nothing => true, status: :forbidden
+  end    
   
 private
   def init_infointerview_with_redirect

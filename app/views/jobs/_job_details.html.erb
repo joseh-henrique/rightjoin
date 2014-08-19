@@ -32,12 +32,12 @@
 			</div>
 		</div>	
 
-		<% unless job_details.description.blank? %>
+		<% unless job_details.full_description.blank? %>
 			<div class="user-attr-row">
 				<%#This field is apparently never shown to an employer. The text is employee-facing.%>
 				<%= label_tag(:description, "Would you rather be doing this?") %>
 				<div class="user-attr-ro-box">
-					<div class="formatted-text-box"><%= job_details.description.html_safe %></div>
+					<div class="formatted-text-box"><%= Utils.html_to_formatted_plaintext(job_details.full_description).html_safe %></div>
 				</div>
 			</div>
 		<%end%>

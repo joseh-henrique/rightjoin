@@ -4,7 +4,7 @@
 		<div class="form-row clearfix">
 			<div class="form-column">
 				<div class="form-cell">
-					<%= label_tag(nil, "Contact person first name", :class=>"mandatory") %><br>
+					<%= label_tag(nil, "First name", :class=>"mandatory") %><br>
 					<%= text_field_tag(:first_name, @employer.first_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :tabindex => "10") %>
 				</div>
 				<div class="form-cell">
@@ -16,7 +16,7 @@
 			
 			<div class="form-column">
 				<div class="form-cell">
-					<%= label_tag(nil, "Contact person last name", :class=>"mandatory") %><br>
+					<%= label_tag(nil, "Last name", :class=>"mandatory") %><br>
 					<%= text_field_tag(:last_name, @employer.last_name, :spellcheck =>false, :maxlength => 60, :class=>"validate[required,custom[nonEmpty]] half-row-width input-attr", :tabindex => "20") %>
 				</div>
 				<div class="form-cell">

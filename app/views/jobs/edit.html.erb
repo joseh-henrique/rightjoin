@@ -4,7 +4,11 @@
 	<div class="content-box">
 		<div class="page-heading-box">
 			<h1>
-				Edit your job posting.
+				<% if @job.status == Job::PUBLISHED %>
+					Edit your job posting
+				<% else %>
+					Edit your draft and publish
+				<% end %>
 			</h1>
 		</div>
 		

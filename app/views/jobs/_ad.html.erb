@@ -7,7 +7,9 @@
 		    <span class="separator">at</span>
 		    <span class="company"><%=job.company_name %></span>
 		    
-		    <div class="time-distance separator"><%=distance_of_time_in_days_ago(job.created_at)%></div>
+		    <% unless job.status == Job::DRAFT %>
+		    	<div class="time-distance separator"><%=distance_of_time_in_days_ago(job.published_at.nil? ? job.created_at : job.published_at)%></div>
+		    <% end %>
 		</div>
 		
 		<div class="location-box">
@@ -27,7 +29,10 @@
 					<% end %>
 				</div>
 			<% end %>
-			<%= Utils.truncated_plaintext(job.description, :length => Job::DESCRIPTION_MAX_LEN).html_safe%>
+			
+			<% full_plain_text = Utils.html_to_formatted_plaintext(job.full_description) %>
+			<% truncated_plain_text = Utils.truncate(full_plain_text, Job::SHORT_DESCRIPTION_LEN) %>
+			<%= truncated_plain_text%>
 		</div>
 		<div style="clear:left"></div>
 		
@@ -56,7 +61,7 @@
 					<div class="team">
 						<% job.employer.ambassadors.only_active.shuffle.first(3).each_with_index do |ambassador, i| %>
 							<% resource, link = ambassador.profile_links_map.first %>
-							<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title} in #{job.company_name}", :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
+							<%= link_to image_tag(ambassador.avatar_path, class: "avatar-img"), link, :title => "#{ambassador.first_name} #{ambassador.last_name} - #{ambassador.title}", :target => "_blank", :rel => "nofollow", :class => "avatar-link" %>
 						<% end %>
 					</div>
 				<% end %>

@@ -1,24 +1,21 @@
-<p class="headline">
+<h1>
 	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
 	Non-standard locations: <%=@locale%>
-</p>
+</h1>
 
-<div class="white-box">
+<div>
 	<% if @locations.blank? %>
 		All locations are fine.
 	<% else %>
 		<%= form_tag admin_manage_location_path(:locale => @locale), :id => "fix_location_form" do %>  
+			<br>
+			<%= label_tag(nil, "Invalid position", :class=>"mandatory") %><br>
+			<%=select_tag 'invalid_location', options_for_select(@locations)%><br>
+			<br>
 			
-			<div class="clearfix user-attr-row">
-				<div class="left-col">
-					<%= label_tag(nil, "Invalid position", :class=>"mandatory") %><br>
-					<%=select_tag 'invalid_location', options_for_select(@locations), :class => "half-row-width"%>
-				</div>
-				<div class="right-col">
-					<%= label_tag(nil, "Replacement", :class=>"mandatory") %>
-					<%= text_field_tag(:location, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false, :class => "half-row-width") %>					
-				</div>	
-			</div>
+			<%= label_tag(nil, "Replacement", :class=>"mandatory") %><br>
+			<%= text_field_tag(:location, "", :autocomplete => "off", :maxlength => 60,  :spellcheck => false) %><br>
+			<br>
 			
 			<%= hidden_field_tag(:what) %>
 			<%= hidden_field_tag(:lat) %>

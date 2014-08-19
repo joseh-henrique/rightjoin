@@ -73,10 +73,14 @@ module SessionsHelper
   end
   
   def store_obj_id_cookie(obj, remember_token, params = {})
-    cookie = {
-       :value => [obj.id, obj.created_at.to_i]
-    }.merge(params)
-    cookies.signed[remember_token] = cookie
+    if obj.nil?
+      cookies.delete(remember_token)
+    else
+      cookie = {
+         :value => [obj.id, obj.created_at.to_i]
+      }.merge(params)
+      cookies.signed[remember_token] = cookie      
+    end
   end
   
   def get_obj_id_cookie(model, remember_token)

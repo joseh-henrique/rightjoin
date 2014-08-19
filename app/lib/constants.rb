@@ -1,3 +1,5 @@
+require 'ostruct'
+
 class Constants 
   
   SHORT_SITENAME ="RightJoin"
@@ -12,11 +14,11 @@ class Constants
   
   LEAD_REFERRAL_COOKIE = ":lead_referral_share_id"
   
-  ERROR_FLASH = "Oops! Something went wrong, we'll be on it right away."
+  ERROR_FLASH = "Oops! Something went wrong. We'll be on it right away."
   NOT_AUTHORIZED_FLASH = "Access to that page needs authorization."
 
   EMPLOYER_TAGLINE = "Connect to Stealth Candidates" 
-  CANDIDATE_TAGLINE = "Chat with your professional peers about their workplace"
+  CANDIDATE_TAGLINE = "Engineers recruiting each other"
   AMBASSADOR_TAGLINE = "Find some great future colleagues" 
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -109,4 +111,79 @@ class Constants
   REPRESENTATIVE_LOGO = "misc/all_14_with_bg.png"
   
   GOOGLE_MAPS_API_KEY = "AIzaSyDyahJvNDCBGb_IOg1dygchRrAb-uhsrNY"  #this  key is not in use AIzaSyDEQYS0hqC7Gyw0KDgmWBf95U_WLeS7q2E
+  
+  SHARE_PROPERTIES = {
+    :title => "Come work with me at <span class='fixed-field' contentEditable='false'>[company]</span>".html_safe,
+    :title_length_limit => "60",
+    :description => "I'm looking for good people to join me at <span class='fixed-field' contentEditable='false'>[company]</span>: See the <span class='fixed-field' contentEditable='false'>[position]</span> job posting and ping to talk with me or another member of the dev team.".html_safe,
+    :description_length_limit => "200",
+    :short_description => "Come work with me at <span class='fixed-field' contentEditable='false'>[company]</span>: See the <span class='fixed-field' contentEditable='false'>[position]</span> job posting and ping us.".html_safe,
+    :short_description_length_limit => "100"
+  }
+  
+  BENEFITS = ["Flexible working hours",
+              "Fruit & free drinks",
+              "Friendly, informal work environment",
+              "Fun office events",
+              "Competitive salary",
+              "Company trips",
+              "Gym reimbursement",
+              "Internal and external training",
+              "Stock options",
+              "Conference sponsorship",
+              "Dog-friendly office",
+              "Flat organization",
+              "Parties and social activities!",
+              "Team lunches",
+              "Free, unlimited drinks & snacks",
+              "Happy hour!",
+              "Best dev tools money can buy",
+              "Unlimited sick days",
+              "Top health care policy",
+              "Diverse workforce",
+              "Help with work visa",
+              "Public transit & shuttle",
+              "Free lunch daily onsite",
+              "100% fully-paid benefits",
+              "Work-life balance",
+              "Career development",
+              "Pay-for-performance",
+              "Monthly attendance bonus",
+              "Your birthday off",
+              "Discounted gym memberships",
+              "Private healthcare",
+              "Paid time off",
+              "Standup desks",
+              "Casual dress",
+              "Fast growth",
+              "Free catered lunches daily",
+              "Open vacation",
+              "In the heart of the city",
+              "Company-paid parking",
+              "401k with match",
+              "No vacation policy",
+              "Health insurance",
+              "Medical, dental & vision insurance",
+              "Tuition reimbursement",
+              "Pet-care assistance",
+              "Public transit pass",
+              "Quarterly bonuses",
+              "Fitness classes & massages",
+              "Free gourmet food",
+              "On-site fitness classes and gym",
+              "Childcare vouchers",
+              "Pension scheme",
+              "Ergonomic assessments",
+              "Creative & ambitious team",
+              "Generous benefit package",
+              "Relocation support",
+              "Choose your own equipment",
+              "Work from anywhere",
+              "Exciting development projects",
+              "Unlimited vacation",
+              "Game night",
+              "Awesome workstations",
+              "Unique corporate culture",
+              "Innovative and dynamic environment",
+              "Social events every week"].each_with_index.map { |benefit, i| OpenStruct.new({:id => i, :label => benefit, :name => benefit, :priority => 1, :resnum => 1})}
 end

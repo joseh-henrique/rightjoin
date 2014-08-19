@@ -1,9 +1,9 @@
-<p class="headline">
+<h1>
 	Admin console
-</p>
+</h1>
 
 <div class="fyi-accordion">
-	<h3 class="accordion-header expanded clearfix"><span>Maintenance</span></h3>
+	<h3 class="standard-section-header expanded">Maintenance</h3>
 	<div class="accordion-panel"> 
 		<% #TODO Change the button color for any item that needs  admin input %>
 		<%=link_to "Events", admin_events_path, :class => "green-inline-button" %>&nbsp;
@@ -12,7 +12,7 @@
 		<%=link_to "Skills", admin_skills_path, :class => "green-inline-button" %>&nbsp;
 	</div>
 	
-	<h3 class="accordion-header expanded clearfix"><span>Locations</span></h3>
+	<h3 class="standard-section-header expanded">Locations</h3>
 	<div class="accordion-panel">
 	  <% Constants::COUNTRIES.each_key do |country_code|#us,uk,ca,au
 	     locale = Constants::COUNTRIES[country_code]# locale_ like en-GB %>
@@ -20,7 +20,7 @@
 	  <% end %>	
 	</div>
 	
-	<h3 class="accordion-header collapsed clearfix"><span>Import jobs</span></h3>
+	<h3 class="standard-section-header collapsed">Import jobs</h3>
 	<div class="accordion-panel">
 		<%= form_tag admin_import_jobs_path do %>  
 		
@@ -33,7 +33,7 @@
 		<% end %>
 	</div>	
 	
-	<h3 class="accordion-header collapsed clearfix"><span>Diagnostics</span></h3>
+	<h3 class="standard-section-header collapsed">Diagnostics</h3>
 	<div class="accordion-panel">
 		<%unless Rails.env.production?%>
 			<%=link_to "Send welcome email to engineers", admin_welcome_engineers_path, :class => "green-inline-button" %>&nbsp;
@@ -42,6 +42,7 @@
 			<%=link_to "Send update email to employers", admin_update_employers_path, :class => "green-inline-button" %>&nbsp;<br><br>
 			<%=link_to "Send admin update", admin_update_admin_path, :class => "green-inline-button" %>&nbsp;
 			<%=link_to "Update employers about new contacts", admin_update_employers_about_new_contacts_path, :class => "green-inline-button" %>&nbsp;
+			<%=link_to "Update employers about new comments", admin_update_employers_about_new_comments_path, :class => "green-inline-button" %>&nbsp;
 			<br><br>
 		<%end%>
 		<%=link_to "Inspect", admin_report_statistics_path, :class => "green-inline-button" %>&nbsp;

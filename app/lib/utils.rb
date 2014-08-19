@@ -1,5 +1,6 @@
 require 'digest'
 require 'htmlentities'
+require 'sanitize'
 
 class Utils 
   def self.format_date(date)
@@ -55,6 +56,10 @@ class Utils
     ret 
   end
   
+  # doesn't separate blockin elements by new line or space. see Sanitize for another way
+  def self.html_to_text(txt)
+    self.html_unescape(ActionController::Base.helpers.strip_tags(txt))
+  end
   
   def self.last_word_emphatic(sentence)
     words = sentence.split
@@ -62,7 +67,7 @@ class Utils
     return ret.html_safe
   end
   
-  def self.html_to_txt(txt)
+  def self.html_email_to_txt(txt)
     txt = txt.gsub("</p>","\n\n").gsub("<br>" ,"\r\n").gsub("<br/>","\n\n")
     txt = txt.gsub(/<a\s+href\s*=\s*["'](.+?)["']>(.+?)<\/a>/, "\\2 ( \\1 )")
     txt = txt.gsub("<hr>", "________________________________________")
@@ -82,6 +87,8 @@ class Utils
       truncated = t.truncate(desc, :length => length, :separator => ' ')
       truncated = t.truncate(desc, :length => length) if truncated == "..."
     end
+    
+    truncated = truncated.html_safe if desc.html_safe?
     return truncated
   end
 
@@ -249,6 +256,24 @@ class Utils
   # http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
   def self.extract_youtube_id(any_youtube_url)
     /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/i.match(any_youtube_url)[1]
+  end
+  
+  # https://github.com/rgrove/sanitize
+  def self.html_to_formatted_plaintext(html_str)
+    txt = Sanitize.fragment(html_str, :whitespace_elements => {
+      'br'  => { :before => "\n", :after => "" },
+      'div' => { :before => "\n", :after => "\n" },
+      'p'   => { :before => "\n", :after => "\n" },
+      'h1'   => { :before => "", :after => ": " },
+      'h2'   => { :before => "", :after => ": " },
+      'h3'   => { :before => "", :after => ": " },
+      'h4'   => { :before => "", :after => ": " },
+      'h5'   => { :before => "", :after => ": " },
+      'h6'   => { :before => "", :after => ": " },
+      'li' => { :before => "\n- ", :after => "\n" }
+    })
+    
+    txt.gsub(/[\n]+/, "\n").gsub(/::/,":").gsub(/&nbsp;/i," ").strip.html_safe
   end
 end
 

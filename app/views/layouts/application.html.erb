@@ -5,16 +5,16 @@
 	<head>
 		<title><%= title %></title>
 		<!--[if lt IE 9]>
-		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
 		<%= stylesheet_link_tag 'application', :media => "all"%>
 		
 		 
 		<%#Note that sensor param is no longer used.%>
-		<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=<%=Constants::GOOGLE_MAPS_API_KEY%>"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=<%=Constants::GOOGLE_MAPS_API_KEY%>"></script><%# for hebrew support see https://developers.google.com/maps/faq#languagesupport%>
 	  	<%= javascript_include_tag :application %>
-	  
+	  	
 		<%= yield :more_js %>		
 		<%= csrf_meta_tags %>
 		<%= favicon_link_tag '/favicon.ico?v=5' %>

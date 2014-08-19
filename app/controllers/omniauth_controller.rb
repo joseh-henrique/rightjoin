@@ -75,8 +75,9 @@ class OmniauthController < ApplicationController
         if ambassador.nil?
           redirect_to new_employer_ambassador_path(:employer_id => employer.id, :locale => nil) # new
         elsif ambassador.status == Ambassador::CLOSED
-          flash_message(:error, "The employee profile has been closed.")
-          redirect_to ambassadors_signin_path(token, :locale => nil) # profile was closed
+          ambassador.reactivate!
+          flash_message(:notice, "Your team-member account has been re-activated") 
+          redirect_to employer_ambassador_path(employer, ambassador, :locale => nil) # view
         else
           redirect_to employer_ambassador_path(employer, ambassador, :locale => nil) # view
         end

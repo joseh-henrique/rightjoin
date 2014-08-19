@@ -1,5 +1,5 @@
 class JobsController < ApplicationController
-  before_filter :strip_params, :only => [:create, :update, :search, :copy_properties, :leads_set_seen]
+  before_filter :strip_params, :only => [:create, :update, :search, :copy_properties]
   before_filter :init_employee_user, :only => [:search]
   before_filter :init_employer_user, :except => [:search]
   before_filter :correct_employer, :except => [:search]
@@ -11,6 +11,10 @@ class JobsController < ApplicationController
     @job.locale = I18n.locale.to_s
     @job.employer = current_user
     @job.join_us_widget_params_map = current_user.join_us_widget_params_map
+    
+    if @job.employer.enable_ping
+      @job.benefits_list = ["Talk to your fellow developers.", "Click the ping button if you might be interested."]
+    end
   end
   
   def copy_properties
@@ -21,6 +25,7 @@ class JobsController < ApplicationController
     raise "Not authorized" if @base_job.employer.id != current_user.id
     
     @job = Job.new
+    @job.status = Job::DRAFT
     @job.company_name = @base_job.company_name
     @job.locale = @base_job.locale
     @job.employer = current_user
@@ -44,23 +49,25 @@ class JobsController < ApplicationController
         @job.address_lng = @base_job.address_lng
     end
     
-    @job.description = @base_job.description
+    @job.full_description = @base_job.full_description
     # copy all except url, which is always different
     
-    @job.benefit1 = @base_job.benefit1
-    @job.benefit2 = @base_job.benefit2
-    @job.benefit3 = @base_job.benefit3
-    @job.benefit4 = @base_job.benefit4
+    @job.benefits_list = @base_job.benefits_list
     
     @job.image_1_id = @base_job.image_1_id
     @job.image_2_id = @base_job.image_2_id
     @job.image_3_id = @base_job.image_3_id
+    @job.image_4_id = @base_job.image_4_id
     
     @job.video_url = @base_job.video_url
   
     @job.join_us_widget_params_map = @base_job.join_us_widget_params_map
     
     @job.tech_stack_list = @base_job.tech_stack_list
+    
+    @job.share_title = @base_job.share_title
+    @job.share_description = @base_job.share_description
+    @job.share_short_description = @base_job.share_short_description
     
     flash_now_message(:notice, "Job posting copied. You can now edit it.")
     
@@ -76,20 +83,16 @@ class JobsController < ApplicationController
     raise "Email must be verified to create a job posting" if current_user.status != UserConstants::VERIFIED
     
     job = Job.new
-    job.status = Job::LIVE
     job.locale = I18n.locale.to_s
     job.display_order = Job::NORMAL_JOB_DISPLAY_RANK
+    job.status = Job::DRAFT
     update_attrs(job)
     update_boards(job)
     update_global_join_us_style(job)
 
     Reminder.create_event!(job.id, Reminder::JOB_CREATED)
     
-    if current_user.has_active_ambassadors?
-      flash_message(:notice, "You've created a new job posting.")
-    else 
-      flash_message(:notice, "You've created a new job posting. Please invite team members to join and connect to potential colleagues.")
-    end
+    add_flash_on_update_or_create
     
     redirect_to employer_path(current_user)
     
@@ -143,7 +146,7 @@ class JobsController < ApplicationController
   
   def leads
     @current_page_info = PageInfo::EMPLOYER_LEADS
-    @job = current_user.jobs_with_share_statistics_by_status(Job::LIVE, Job::CLOSED).order("created_at DESC").find_by_id(params[:id])
+    @job = current_user.jobs_with_share_statistics_by_status(Job::PUBLISHED, Job::CLOSED).order("created_at DESC").find_by_id(params[:id])
     
     raise "Job position not found" if @job.nil?
     
@@ -156,26 +159,15 @@ class JobsController < ApplicationController
     redirect_to employer_path(current_user)        
   end
   
-  def leads_set_seen
-    @job = current_user.jobs.find(params[:id])
-    @job.infointerviews.update_all("status = #{Infointerview::ACTIVE_LEAD}", "status = #{Infointerview::NEW}")
-    
-    render :nothing => true, status: :ok
-    
-  rescue  Exception => e
-    logger.error e
-    render :nothing => true, status: :forbidden
-  end  
-  
   def update
     job = current_user.jobs.find(params[:id])
     update_attrs(job)
     update_boards(job)
     update_global_join_us_style(job)
-   
-    flash_message(:notice, "Job position updated")
     
-    redirect_to employer_path(current_user)
+    add_flash_on_update_or_create
+    
+    redirect_to employer_path(current_user, :anchor => "job#{job.id}")
     
     rescue Exception => e
       logger.error e
@@ -210,6 +202,24 @@ class JobsController < ApplicationController
   end
   
 private
+  
+  def add_flash_on_update_or_create
+    case params[:commit].to_s.downcase
+    when "save draft"
+      flash_message(:notice, "You've saved a draft of your new job posting.")
+    when "update draft"
+      flash_message(:notice, "You've updated a draft of your job posting.")
+    when "publish"
+      if current_user.has_active_ambassadors?
+        flash_message(:notice, "You've published your new job posting.")
+      else 
+        flash_message(:notice, "You've published your posting. Please invite team members to join you in connecting  to potential colleagues.")
+      end
+    when "update"
+      flash_message(:notice, "You've updated your job posting.")
+    end
+  end
+
   def update_global_join_us_style(job)
     if Utils.to_bool(params["use-style-for-all"])
       job.employer.join_us_widget_params_map = params["join-us-config"]
@@ -220,31 +230,36 @@ private
   end
 
   def update_attrs(job)
+    if params[:commit].to_s.downcase == "publish"
+      job.status = Job::PUBLISHED
+      job.published_at = Time.now
+    end
+    
     location_obj = LocationTag.find_or_create_by_params(params)
     raise ActiveRecord::RecordInvalid.new(location_obj) if location_obj.errors.any?
     
     position_str = params["position"]
-    position_obj = PositionTag.find_or_create_by_name(position_str)
+    position_obj = PositionTag.find_or_create_by_name_case_insensitive(position_str)
     raise ActiveRecord::RecordInvalid.new(position_obj) if position_obj.errors.any?
     
     job.position = position_obj
     job.employer = current_user
     job.assign_all_location_attrs(location_obj, params["allow_telecommuting"] == "yes", params["allow_relocation"] == "yes")
 
-    job.description = params["description"]
+    job.full_description = params["full_description"]
     job.company_name = params["company_name"]
     job.ad_url = params["ad_url"]
     job.company_url = params["company_url"]
     job.logo_image_id = params["company_logo_image_id"]
     
-    job.benefit1 = params["benefit1"]
-    job.benefit2 = params["benefit2"]
-    job.benefit3 = params["benefit3"]
-    job.benefit4 = params["benefit4"]
+    benefits_param = params["benefits"]
+    benefits_hash = Hash.from_url_params(benefits_param)
+    job.benefits_list = benefits_hash.keys
     
     job.image_1_id = params["image_1_id"]
     job.image_2_id = params["image_2_id"]
     job.image_3_id = params["image_3_id"]
+    job.image_4_id = params["image_4_id"]
     
     job.video_url = params["video_url"]
     
@@ -255,6 +270,10 @@ private
     job.tech_stack_list = params["tech_stack_list"]
     
     job.join_us_widget_params_map = params["join-us-config"]
+    
+    job.share_title = params["share_title"]
+    job.share_description = params["share_description"]
+    job.share_short_description = params["share_short_description"]
     
     job.save!
   end

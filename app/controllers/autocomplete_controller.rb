@@ -46,11 +46,11 @@ class AutocompleteController < ApplicationController
       popular_tags_for_all ||= []
             
       suggests = []
-      suggests = [{:label => for_role, :id => -1}] unless for_role.blank? # id left -1 as it's not currently in use, but be careful, it's a time bobm
+      suggests = [{:label => for_role, :id => -1}] unless for_role.blank? # id left -1 as it's not currently in use, but be careful, it's a time bomb
       
       popular_tags = (popular_tags + popular_tags_for_all).uniq.first(num - suggests.size)
       
-      suggests += popular_tags.select{|v| v.name != for_role}.collect do |tag| 
+      suggests += popular_tags.select{|v| v.name.downcase != for_role.downcase}.collect do |tag| 
         {:label => tag.name, :id => tag.id}
       end
       
@@ -75,6 +75,17 @@ class AutocompleteController < ApplicationController
       format.js { render :json => LocationTag.autocomplete.suggest(params[:term], params[:num].to_i) }
     end
   end  
+  
+  @@benefits_autocomplete = nil
+  def benefits
+    if @@benefits_autocomplete.nil?
+      @@benefits_autocomplete = Autocomplete.new(Constants::BENEFITS)
+    end
+    
+    respond_to do |format|
+      format.js { render :json => @@benefits_autocomplete.suggest(params[:term], params[:num].to_i) }
+    end    
+  end
   
 private
 #  def render_autocomplete(model)

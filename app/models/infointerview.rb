@@ -13,6 +13,7 @@ class Infointerview < ActiveRecord::Base
   belongs_to :referred_by_ambassador, :class_name => :Ambassador, :foreign_key => :referred_by
   
   has_many :followups, :dependent => :destroy
+  has_many :comments, :dependent => :destroy
   
   # for :status
   NEW = 0
@@ -20,7 +21,7 @@ class Infointerview < ActiveRecord::Base
   #CLOSED_EXPIRED = 12
   ACTIVE_LEAD = 15
   #ACTIVE_LEAD_INVOLVING_AMBASSADOR = 20
-  CLOSED_BY_FYI = 100
+  CLOSED_BY_FYI = 100 # not in use any more??? 1 record in production still has status 100
   CLOSED_BY_EMPLOYER = 110
   #ACTIVE_LEAD_AMBASSADOR_NOTIFIED = 200
   
@@ -34,6 +35,7 @@ class Infointerview < ActiveRecord::Base
   
   def close_by_fyi!
     self.update_attribute(:status, Infointerview::CLOSED_BY_FYI)
+    self.followups.only_active.update_all(:status => Followup::CLOSED)
   end
   
   def status_one_of?(*statuses)
@@ -61,6 +63,8 @@ class Infointerview < ActiveRecord::Base
     "** Company: #{self.job.company_name}",
     "** Position: #{self.job.position_name} in #{self.job.all_location_parts.join(' / ')}"
     ]
+    
+    parts << "** Resume file: #{Cloudinary::Utils.cloudinary_url(self.resume_doc_id, :resource_type => :raw)}" unless self.resume_doc_id.nil?
     
     parts.join("\n").concat("\n")
     

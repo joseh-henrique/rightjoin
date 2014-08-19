@@ -158,11 +158,11 @@ class UsersController < ApplicationController
       raise ActiveRecord::RecordInvalid.new(location_obj) if location_obj && location_obj.errors.any?
 
       currentposition_str = params["currentposition"]
-      currentposition_obj = PositionTag.find_or_create_by_name(currentposition_str)
+      currentposition_obj = PositionTag.find_or_create_by_name_case_insensitive(currentposition_str)
       raise ActiveRecord::RecordInvalid.new(currentposition_obj) if currentposition_obj.errors.any?
       
       wantedposition_str = params["wantedposition"]
-      wantedposition_obj = PositionTag.find_or_create_by_name(wantedposition_str)
+      wantedposition_obj = PositionTag.find_or_create_by_name_case_insensitive(wantedposition_str)
       raise ActiveRecord::RecordInvalid.new(wantedposition_obj) if wantedposition_obj.errors.any?
       
       user.current_position = currentposition_obj

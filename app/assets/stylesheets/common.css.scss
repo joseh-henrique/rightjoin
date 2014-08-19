@@ -150,9 +150,16 @@ input[type="radio"], input[type="checkbox"], label {
     }
     
     &.notice {
-      background: #16A085;
+      background: #16A074;
     }
   }
+}
+
+.fading_highlight {
+  position: absolute;
+  background-color: #ffff99;
+  @include opacity(70);
+  z-index: 99999;
 }
 
 .link-x {
@@ -264,6 +271,87 @@ input[type="radio"], input[type="checkbox"], label {
   }
 }
 
+.lead-comments-box {
+  line-height: 1.35em;
+  margin-top: 20px;
+  border-top: 1px solid #DBE3E6;
+  margin-right: -20px;
+  margin-left: -20px;
+  padding: 20px 30px 5px;
+  
+  .new-comment-form-box {
+    textarea {
+      width: 700px;
+    }
+    
+    input[type='submit'] {
+      vertical-align: top;
+    }
+  }
+  
+  .comments-title {
+    font-size: 19px;
+    color: #354A5F;
+  }
+  
+  .lead-comment {
+    position: relative;
+    margin-top: 15px;
+    padding-left: 44px;
+    
+    &.hidden {
+      display: none;
+    }
+    
+    .comment-header {
+      padding-bottom: 3px;
+      
+      .created_by {
+        font-size: 15px;
+        font-weight: 500;
+        color: #354A5F;
+        padding-right: 10px;
+      }
+      
+      .created_at {
+        color: #B4C4CF;
+      }
+    }
+    
+    .comment-body {
+      color: #777777;
+    }
+    
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      position: absolute;
+      @include border-radius(30%);
+      top: 2px;
+      left: 0;
+    }
+    
+    .new-message {
+      background: #8E44AD;
+      position: absolute;
+      display: inline-block;
+      line-height: 12px;
+      font-size: 9px;
+      color: #FFF;
+      padding: 0 2px;
+      font-weight: 500;
+      top: 31px;
+      left: -4px;
+      @include border-radius(3px);    
+    }
+  }
+  
+  .see-older-comments-link {
+    display: block;
+    padding-top: 15px;
+  }
+}
+
 .user-details {
   .attr-box {
     margin-bottom: 15px;
@@ -319,6 +407,10 @@ input[type="radio"], input[type="checkbox"], label {
   
   .data-job-qualifier1, .defined-salary {
     background-color: #27AE60;
+  }
+  
+  .data-benefit1 {
+    background-color: #0999E6;
   }
   
   .data-skill1{

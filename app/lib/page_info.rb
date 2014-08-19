@@ -21,6 +21,7 @@
   EMPLOYER_NEW_POSTING = {:id => "pg-new-posting", :title => "New job posting", :intended_for => :employer}
   EMPLOYER_EDIT_POSTING = {:id => "pg-edit-posting", :title => "Edit job posting", :intended_for => :employer}
   EMPLOYER_EDIT = {:id => "pg-edit", :title => "Edit profile", :intended_for => :employer}
+  EMPLOYER_SETTINGS = {:id => "pg-settings", :title => "Edit settings", :intended_for => :employer}
   EMPLOYER_FAQ = {:id => "pg-faq", :title => "Employer FAQ", :intended_for => :employer }  
   EMPLOYER_ABOUT = {:id => "pg-about", :title => "About our services for employers", :intended_for => :employer } 
   EMPLOYER_SEARCH = {:id => "pg-search", :title => "Search candidates", :intended_for => :employer}  

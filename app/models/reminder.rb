@@ -81,7 +81,7 @@ class Reminder < ActiveRecord::Base
     return ret
   end
   
-  #[TODO] all_jobs and open_jobs are the same now. So, remove open_jobs. Also, remove the unused_param that used to be just_expired jobs. 
+  # TODO all_jobs and open_jobs are the same now. So, remove open_jobs. Also, remove the unused_param that used to be just_expired jobs. 
   #(open_jobs used to represent those jobs which remained open in the current action-- in other words, excluding just_expired_jobs )
   #
   def self.send_jobs_update_to_employers(&block)
@@ -91,11 +91,9 @@ class Reminder < ActiveRecord::Base
      open_jobs = []
      unused_param = []  
   
-    # Here we query for all open jobs. However, before generating each mail, we close any expired jobs (see 13 lines down). 
-    # So fyi_mailer will receive some closed jobs, all of which are recently expired.
     # This code does not account for employrs in   state  DEACTIVATED who still have open jobs. However, deactivation
     # can only be done manually for now, so that is unlikely.
-     Job.active_with_share_statistics.order('employer_id, created_at asc').each do |job| 
+     Job.published_with_share_statistics.order('employer_id, created_at asc').each do |job| 
        if counter >= max_employer_emails 
            logger.error "The limit of max #{max_employer_emails} send_jobs_update_to_employers emails exceeded! Bug or grand success???"
            break
@@ -179,7 +177,7 @@ class Reminder < ActiveRecord::Base
   def self.send_rightjoin_migration_announcement_to_engineers
     num_to_send  = FyiConfiguration.fetch_with_default("max_engineer_emails", 20).to_i
     date_migration_rj = Time.new(2014, 6, 30)
-    users = User.where("status = ? and created_at < ? and email like '%savage%' and (sample = ? or sample is null)", UserConstants::VERIFIED, date_migration_rj, false).where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc").limit(num_to_send)
+    users = User.where("status = ? and created_at < ? and (sample = ? or sample is null)", UserConstants::VERIFIED, date_migration_rj, false).where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc").limit(num_to_send)
     users.each do |user|
       begin
         yield user
@@ -208,6 +206,29 @@ class Reminder < ActiveRecord::Base
          
             # update statuses of all infoinerviews we just reported about to ACTIVE
             Infointerview.joins(:job => :employer).where("infointerviews.status = ? and infointerviews.created_at < ?", Infointerview::NEW, ts).where("jobs.employer_id = ?", employer.id).update_all(:status => Infointerview::ACTIVE_LEAD)
+          rescue Exception => e
+            logger.error(e)
+          end
+       end
+     end
+  end
+  
+  # update employers about new comments
+  def self.update_employers_about_new_comments
+     max_employer_emails = FyiConfiguration.fetch_with_default("max_employer_emails", 30).to_i
+     counter = 0
+     
+     new_comments = Comment.get_new_comments_from_ambassadors.to_a
+
+     new_comments.each do |comment|
+       if counter < max_employer_emails
+         begin
+            yield comment
+            counter += 1
+         
+            # from STATUS_NEW to STATUS_NOT_SEEN
+            comment.status = Comment::STATUS_NOT_SEEN
+            comment.save!
           rescue Exception => e
             logger.error(e)
           end

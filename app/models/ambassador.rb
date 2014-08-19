@@ -24,6 +24,7 @@ class Ambassador < ActiveRecord::Base
   has_many :shares, :dependent => :nullify
   has_many :infointerviews, :dependent => :nullify, :foreign_key => :referred_by
   has_many :followups, :dependent => :destroy
+  has_many :comments, :dependent => :destroy
   
   INVITED = 10 # not used
   ACTIVE = 20
@@ -51,12 +52,23 @@ class Ambassador < ActiveRecord::Base
     Rails.application.routes.url_helpers.ambassador_avatar_path(self.reference_num, :timestamp => self.updated_at.to_i.to_s(16)) 
   end
   
+  def reactivate!
+    if self.status == Ambassador::CLOSED
+      self.status = Ambassador::ACTIVE
+      self.save!
+    end
+  end
+  
   def profile_link
     link = ""
     unless self.profile_links_map.blank?
       resource, link = self.profile_links_map.first
     end
     return link
+  end
+  
+  def full_name
+    "#{self.first_name} #{self.last_name}"
   end
   
   def should_remind(period)
@@ -86,8 +98,14 @@ class Ambassador < ActiveRecord::Base
     
     self.auth = auth
   end
-  
 
- 
-   
+  def create_comment!(infointerview_id, body)
+    c = Comment.new
+    c.infointerview_id = infointerview_id
+    c.body = body
+    c.created_by = Comment::CREATED_BY_AMBASSADOR
+    c.status = Comment::STATUS_NEW
+    c.ambassador_id = self.id
+    c.save!
+  end
 end

@@ -15,43 +15,44 @@
 }
 
 @-webkit-keyframes fadeIn {
-    0% {
-        opacity: 0
-    }
-
-    100% {
-        opacity: 1
-    }
+    0% { opacity: 0 }
+    100% { opacity: 1 }
 }
 
 @-moz-keyframes fadeIn {
-    0% {
-        opacity: 0
-    }
-
-    100% {
-        opacity: 1
-    }
+    0% { opacity: 0 }
+    100% { opacity: 1 }
 }
 
 @-o-keyframes fadeIn {
-    0% {
-        opacity: 0
-    }
-
-    100% {
-        opacity: 1
-    }
+    0% { opacity: 0 }
+    100% { opacity: 1 }
 }
 
 @keyframes fadeIn {
-    0% {
-        opacity: 0
-    }
+    0% { opacity: 0 }
+    100% { opacity: 1 }
+}
 
-    100% {
-        opacity: 1
-    }
+@-webkit-keyframes blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 1.0; }
+    100% { opacity: 0.3; }
+}
+@-moz-keyframes blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 1.0; }
+    100% { opacity: 0.3; }
+}
+@-o-keyframes blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 1.0; }
+    100% { opacity: 0.3; }
+}
+@keyframes blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 1.0; }
+    100% { opacity: 0.3; }
 }
 
 @-webkit-keyframes pendulum { 
@@ -235,4 +236,11 @@
     -o-animation-name: pendulum;
     animation-name: pendulum;
   }
+}
+
+.blink-twice {
+  -webkit-animation:blink .5s 2;
+  -moz-animation:blink .5s 2;
+  -o-animation:blink .5s 2;
+  animation:blink .5s 2;  
 }

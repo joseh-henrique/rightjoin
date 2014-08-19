@@ -6,6 +6,26 @@
 		<%=render :partial => 'interviews'%>
 	</div>
 	
+	<% unless current_user.created_at < 1.day.ago %>
+		<div class="standard-section-header"><span>Spread the word</span></div>	
+		<div class="section-box tell-friends">
+			<p>
+				It's amazing how software engineers, the most innovative people in the world, use clumsy and old-fashioned techniques to find 
+				their next job.
+				<em><%=Constants::SHORT_SITENAME%> is different.</em> 
+				It lets software engineers learn about the companies directly from their professional peers,
+				and it lets development teams bring in their own future colleagues.  
+			</p>
+			<p>
+				Who needs recruiters? <em>Let engineers recruit each other!</em>
+			</p>
+			<p>
+				See these little round share buttons right here? You know what to do! 
+			</p>
+			<%=render :partial => 'widgets/addthis_buttons'%>
+		</div>
+	<%end%>		
+	
 	<% unless current_user.company_ratings.any? %>	
 		<div class="standard-section-header"><span>Rate your company</span></div>	
 		<div class="section-box rating-box">

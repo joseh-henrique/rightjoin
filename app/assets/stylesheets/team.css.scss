@@ -86,6 +86,13 @@ label {
   }
 }
 
+textarea {
+  padding: 0.5em;
+  font-size: 14px !important;
+  line-height: 1.35em;
+  height: 2.7em !important;
+}
+
 #body {
   padding-bottom: 36px;
 }
@@ -117,6 +124,15 @@ label {
     line-height: 1.35em;
   }
   
+  .team-subtext {
+      font-size: $default-font-size - 2;
+      width:800px;
+      padding-top:30px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #B48888;
+  }
+
   #signin-box {
     .signin-with{
       font-size: 36px;
@@ -187,7 +203,11 @@ label {
   }
 }
 
-#profile-edit { 
+.standard-button {
+  @include inline-button(#FF754D, $default-font-size * 0.8, $default-font-size * 2, $default-font-size * 1.5, $default-font-color, 500);
+}
+
+#profile-edit {
   #center-box {
     padding-top: 40px;
     padding-bottom: 100px;
@@ -196,6 +216,16 @@ label {
       font-size: 34px;
       line-height: 1.35em;
       padding: 60px 0 60px;
+    }
+    
+    .team-subtext {
+      font-size: $default-font-size - 2;
+      width: 430px;
+      padding-top: 10px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #F3D4D4;
+      line-height: 1.4em; 
     }
     
     .form-panel {
@@ -220,6 +250,20 @@ label {
   
   .cancel-button {
     @include inline-button(#b3bec5, $default-font-size, $default-font-size * 2.3, $default-font-size * 2.3, $default-font-color, normal);
+  }
+  
+  .optout {
+    font-size: 12px;
+    margin-top: 13px;
+    color: #979797;
+    
+    a {
+      color: #979797;
+      
+      &:hover {
+        color: #e8643e;
+      }
+    }
   }
 }
 
@@ -332,12 +376,12 @@ label {
    
   .lead-avatar {
     display: inline-block;
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
     margin-left: 10px;
     margin-right: 10px;
     margin-top: 20px;
-    @include border-radius(50%);
+    @include border-radius(30%);
   }
   
   div.lead-avatar {
@@ -437,7 +481,7 @@ label {
       font-size: 14px;
       border-top: 3px solid #7C575B;
       padding: 20px;
-      background: #FCF4F2;
+      background: #FDF7F5;
       margin-bottom: 60px;
       position: relative;
       
@@ -476,26 +520,5 @@ label {
   }
 }
 
-/* 
- :-ms-input-placeholder must come after the definitions for the input fields, otherwise the definitions for the input field 
- will override the placeholder definitions. We want to keep placeholder definitions together. 
- So, we are copying all the placeholder definitions into the end of team.css.scss
- and the end of rightjoin.css.scss.
- */
-input, textarea, select {
-  &::-webkit-input-placeholder  { 
-    color:#DBDBDB; 
-  }
-  
-  &:-moz-placeholder { 
-    color:#DBDBDB; 
-  }
-  
-  &::-moz-placeholder {  /* Firefox 19+ */
-     color:#BBBBBB; 
-  }  
-  
-  &:-ms-input-placeholder {  
-     color:#DBDBDB !important;
-  }
-}
+// must come after the definitions for the input fields, otherwise the definitions for the input field 
+@import "placeholder";

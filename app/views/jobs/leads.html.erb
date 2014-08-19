@@ -17,11 +17,11 @@
 	<% closed_by_employer_leads = @infointerviews.select {|lead| lead.status == Infointerview::CLOSED_BY_EMPLOYER} %>
 
 	<div class="standard-section-header"><span>Active leads</span></div>
-	<div class="section-box">	
+	<div class="section-box" id="all-open-leads">	
 		<% if active_leads.any? %>
 			<% active_leads.each do |infointerview| %>
   				<% if infointerview.status == Infointerview::NEW %>
-  					<div class="new-tab">New!</div>
+  					<div class="job-tab new-tab" data-seen-path="<%=set_seen_infointerview_path(infointerview.id)%>">New</div>
   				<% end %>
 	  			<div class="infointerview-outer-box">
 					<% unless infointerview.referred_by.nil? %>
@@ -55,6 +55,8 @@
 					    	<% end %>	
 					    </div>
 				    <%end%>
+				    
+				    <%=render :partial => 'comments/lead_comments', :locals => {:lead => infointerview, :display_for => current_user}%>
 				</div>
 			<% end %>
 		<% else %>
@@ -97,10 +99,35 @@
 	
 	<%# set new leads for this job to seen%>
 	<script type="text/javascript">
-		setTimeout( function() {
-			$.post("<%=leads_set_seen_employer_job_path(@job.employer_id, @job.id)%>");
-		}, <%=Random.new.rand(3000..6000) %>);	// don't send all together
-		
+		$(function(){
+			$(".new_comment").validationEngine();
+				
+			$('#all-open-leads').on('appear', '.job-tab.new-tab', function(event, $all_appeared_elements) {
+		    	$all_appeared_elements.each(function(){
+			    	var post_path = $(this).data("seen-path");
+			    	if(post_path != "") {
+			    		$.post($(this).data("seen-path"));
+			    		$(this).data("seen-path", "");
+			    	}
+		    	});
+		    });
+		    
+		    $(".job-tab.new-tab").appear({ force_process: true });
+		    
+			$('#all-open-leads').on('appear', '.lead-comment.new', function(event, $all_appeared_elements) {
+		    	$all_appeared_elements.each(function(){
+			    	var post_path = $(this).data("seen-path");
+			    	if(post_path != "") {
+			    		$.post($(this).data("seen-path"));
+			    		$(this).data("seen-path", "");
+			    		$(this).fading_highlight();
+			    	}
+		    	});
+		    });
+		    
+		    $(".lead-comment.new").appear({ force_process: true });
+		});
+	
 		$(".delegate-to-ambassador").click(function(){
 			var select = $(this).siblings(".ambassadors-list").first();
 			var selected_option = select.find(":selected");
@@ -116,7 +143,10 @@
 			
 			$.post($(select).attr('data-infointerview-path'), { ambassador_id: $(selected_option).val() } )
 			.done(function(data) {
-				$(results_box).html("<div class='success'>We've passed on your follow-up request to " + escapeHTML(ambassador_firstname) + ".</div>");
+				//$(results_box).html("<div class='success'>We've passed on your follow-up request to " + escapeHTML(ambassador_firstname) + ".</div>");
+				var infointerview_box = $(results_box).parents(".infointerview-outer-box");
+				var comments_box = infointerview_box.children(".lead-comments-box");
+				refreshComments(comments_box, data);
 			})
 			.fail(function() {
 				$(results_box).html("<div class='error'><%=Constants::ERROR_FLASH%></div>");
@@ -130,16 +160,16 @@
 		});
 	</script>
 	
-	<% other_active_jobs = current_user.jobs.select {|job| job.id != @job.id && job.status != Job::CLOSED} %>
+	<% other_published_jobs = current_user.jobs.select {|job| job.id != @job.id && job.status == Job::PUBLISHED} %>
 	<% other_closed_jobs = current_user.jobs.select {|job| job.id != @job.id && job.status == Job::CLOSED} %>
-	<% if other_active_jobs.any? || other_closed_jobs.any? %>	
+	<% if other_published_jobs.any? || other_closed_jobs.any? %>	
 		<div class="standard-section-header"><span>See leads for other jobs</span></div>
 		<div class="section-box clearfix">
-			<% if other_active_jobs.any? %>
+			<% if other_published_jobs.any? %>
 				<div class="job-links-list">
 					<div class="job-links-list-title">Active jobs</div>
 					<ul>
-						<% other_active_jobs.each do |job| %>
+						<% other_published_jobs.each do |job| %>
 							<li><%=link_to("#{job.position_name} - #{job.location_name}", leads_employer_job_path(current_user, job, :locale => job.country_code))%></li>
 						<% end %>
 					</ul>

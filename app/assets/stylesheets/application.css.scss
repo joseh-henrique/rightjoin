@@ -19,3 +19,6 @@
 @import "common";
 @import "widget-colors";
 @import "rightjoin";
+
+// must come after the definitions for the input fields, otherwise the definitions for the input field 
+@import "placeholder";

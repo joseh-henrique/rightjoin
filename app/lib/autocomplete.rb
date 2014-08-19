@@ -48,7 +48,7 @@ class Autocomplete
   private
   
   def index_one_tag(tag, i, trie)
-    words = tag.name.split
+    words = tag.name.downcase.split
     prev_word = nil
     words.each do |word|
       trie.insert("#{prev_word} #{word} ", i) unless prev_word.nil?

@@ -7,6 +7,7 @@ FiveYearItch::Application.routes.draw do
   match 'admin/welcome_employers', :to => 'admin#send_welcome_email_to_employers'
   match 'admin/welcome_engineers', :to => 'admin#send_welcome_email_to_engineers'
   match 'admin/update_employers_about_new_contacts', :to => 'admin#send_update_employers_about_new_contacts'
+  match 'admin/update_employers_about_new_comments', :to => 'admin#send_update_employers_about_new_comments'
  
   match 'admin/update_admin', :to => 'admin#send_update_to_admin'
   match 'admin/events', :to => 'admin#events'
@@ -45,6 +46,16 @@ FiveYearItch::Application.routes.draw do
   match "/infointerview/:id/close" => "infointerviews#close", :via => :post, :as => :infointerview_close
   match "/infointerview/:id/reopen" => "infointerviews#reopen", :via => :post, :as => :infointerview_reopen
   match "/infointerview/:id/delegate" => "infointerviews#delegate", :via => :post, :as => :infointerview_delegate
+  
+  # comments scoped to infointerview
+  resources :infointerviews, :only => [] do
+    member do
+      post 'set_seen', :defaults => { :locale => nil }
+    end
+    resources :comments, :only => [:create] do
+      post 'set_seen', :defaults => { :locale => nil }
+    end
+  end
   
   resources :photos, :only => [:index, :create] 
    
@@ -100,6 +111,9 @@ FiveYearItch::Application.routes.draw do
         get  'unsubscribe'
         get  'configure_join_us_tab'
         post 'configure_reminder'
+        post 'invite_team_member'
+        get  'settings'
+        post 'update_settings'
       end
       
       collection do
@@ -113,7 +127,6 @@ FiveYearItch::Application.routes.draw do
        	member do
           get 'recommended'
           get 'leads'
-          post 'leads_set_seen'
         end
       end
       
@@ -121,6 +134,7 @@ FiveYearItch::Application.routes.draw do
         member do
           post 'share'
           post 'close_followup'
+          post 'self_destroy'
           get 'followup'
         end
         collection do
@@ -136,6 +150,7 @@ FiveYearItch::Application.routes.draw do
     match 'autocomplete/skills' => 'autocomplete#skills',  :via => :get
     match 'autocomplete/positions' => 'autocomplete#positions',  :via => :get
     match 'autocomplete/jobqualifiers' => 'autocomplete#jobqualifiers',  :via => :get
+    match 'autocomplete/benefits' => 'autocomplete#benefits',  :via => :get
     
     #interviews
     resources :interviews, only: [:create, :destroy]

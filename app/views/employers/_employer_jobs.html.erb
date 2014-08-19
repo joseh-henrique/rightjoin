@@ -10,8 +10,11 @@
 		all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
 		%>
 
-		<% if Time.now - job.created_at < 1.hour %>
-			<div class="new-tab">New!</div>
+		<a class="shifted-anchor" name="job<%=job.id%>"></a>
+		<% if job.status == Job::DRAFT %>
+			<div class="job-tab draft-tab">Draft</div>
+		<% elsif job.status == Job::PUBLISHED && Time.now - job.published_at < 10.hours %>
+			<div class="job-tab new-tab">New</div>
 		<% end %>
 		<div class="job-ad-box closable">
 			<div class="above-buttons">
@@ -23,27 +26,45 @@
 			
 			<div class="job-control-panel clearfix">
 				<div class="float-left">
-					<% if recommended.blank? %>
-						<%=link_to("Find candidates", employer_search_path(:locale => job.country_code, :for => job.id))%>
-					<% else %>
-						<%=link_to(recommended_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
-							Recommended candidates<span class="counter animation-common bounce"><%=recommended.length%></span>
+					<% if job.status == Job::PUBLISHED %>
+						<% employer_ambassador = nil %>
+						<% employer_auth = current_auth(Constants::REMEMBER_TOKEN_AMBASSADOR) %>
+						<% employer_ambassador = employer_auth.ambassadors.find_by_employer_id(current_user.id) unless employer_auth.nil? %>
+						<% if !employer_ambassador.nil? && employer_ambassador.employer_id == current_user.id && employer_ambassador.status == Ambassador::ACTIVE %>
+							<%=link_to("Share", employer_ambassador_path(current_user, employer_ambassador, :locale => nil, :job => job.id), :target => "_blank")%>
+							&nbsp;
+						<% else %>
+							<%=link_to("Share", ambassadors_signin_path(current_user.reference_num, :locale => nil), :target => "_blank")%>
+							&nbsp;
+						<% end %>
+						
+						<% if recommended.blank? %>
+							<%=link_to("Find candidates", employer_search_path(:locale => job.country_code, :for => job.id))%>
+							&nbsp;
+						<% else %>
+							<%=link_to(recommended_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
+								Recommended candidates<span class="counter animation-common bounce"><%=recommended.length%></span>
+							<%end%>
+							&nbsp;
+						<% end %>
+						
+						<% if current_user.enable_ping %>
+							<%=link_to(leads_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
+								Review leads
+								<% new_infointerviews_count = all_infointerviews_for_this_job.to_a.count { |x| x.status == Infointerview::NEW } %>
+								<% if new_infointerviews_count > 0 %>
+									<span class="counter animation-common bounce">+<%=new_infointerviews_count%></span>
+								<% end %>
+							<%end%>
+							&nbsp;
 						<%end%>
 					<% end %>
-					&nbsp;
-					<%=link_to(leads_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
-						Review leads
-						<% new_infointerviews_count = all_infointerviews_for_this_job.to_a.count { |x| x.status == Infointerview::NEW } %>
-						<% if new_infointerviews_count > 0 %>
-							<span class="counter animation-common bounce"><%=new_infointerviews_count%></span>
-						<% end %>
-					<%end%>
-					&nbsp;
 				</div>
 				<div class="float-right">
-					<%=link_to("Edit", edit_employer_job_path(current_user, job, :locale => job.country_code))%>
+					<%=link_to(job.status == Job::DRAFT ? "Edit and publish" : "Edit", edit_employer_job_path(current_user, job, :locale => job.country_code))%>
+					&nbsp;
 					<a href="<%=we_are_hiring_employer_path(current_user.reference_num, :job => job.id)%>" 
-						onclick="return openDialogWindow(this.href, 1000, 650);">Preview</a>
+						onclick="return openDialogWindow(this.href, 1000, 650);"><%=job.status == Job::DRAFT ? "Preview ad" : "View ad"%></a>
 				</div>	
 			</div>			
 		</div>

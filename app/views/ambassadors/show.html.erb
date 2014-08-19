@@ -26,7 +26,7 @@
 	</div>
 	
 	<%max_leads_to_show = 8%>
-	<% leads = @ambassador.followups.where({ status: Followup::NEW}).limit(max_leads_to_show).order("created_at DESC") %>
+	<% leads = @ambassador.followups.only_active.limit(max_leads_to_show).order("created_at DESC") %>
 	<% if leads.any? %>
 		<div class="navigation-strip semitransparent">
 			<%=link_to "Follow up on requests", followup_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>
@@ -67,7 +67,7 @@
 				<h1>Share the ad and get yourself some good colleagues.</h1>
 				
 				<div class="position-chooser">
-					<% active_jobs_ = @ambassador.employer.active_jobs %>
+					<% active_jobs_ = @ambassador.employer.published_jobs %>
 					<% if active_jobs_.size > 1 %>
 						<% options = active_jobs_.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id]} %>
 						<%= label_tag(nil, "Choose position") %>&nbsp;
@@ -80,15 +80,14 @@
 				<div class="all-buttons-box">
 					<%networks.each do |network, setid| %>
 						<div class="share-button-box">
+
+							<% share_display_texts = @job.share_display_texts %>
 							
-  							<% title = @job.share_title %> 
-							<% description = @job.share_description  %> 
-							<% short_desc = @job.share_short_description  %> 
 							<%case network%>
 							<%when Constants::SOCIAL_NETWORK_LINKEDIN%>
 								<div class="share-button linkedin addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%=title%>"
-											addthis:description="<%=description%>">
+											addthis:title="<%=share_display_texts[:title]%>"
+											addthis:description="<%=share_display_texts[:description]%>">
 											<%# LI in fact uses title and desc as title and desc of posting%>
 									<a class="addthis_button_linkedin">
 										<%= image_tag "team/share/linkedin-small.png", size: "82x82", alt: "Share" %>
@@ -96,8 +95,8 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_FACEBOOK%>
 								<div class="share-button facebook addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%=title%>"
-											addthis:description="<%=description%>">		
+											addthis:title="<%=share_display_texts[:title]%>"
+											addthis:description="<%=share_display_texts[:description]%>">		
 											<%# Facebook does not use this title and desc, but rather uses meta tags%>			
 									<a class="addthis_button_facebook" fb:like:href="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>">
 										<%= image_tag "team/share/facebook-small.png", size: "82x82", alt: "Share" %>
@@ -105,17 +104,16 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_TWITTER%>
 								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%=short_desc%>" <%#The addthis:title is the only field that allows long text; that is why we are reversing the fields here.%>
-											addthis:description="<%=title%>">
-											<%# Twitter in fact uses title and desc as title and desc of posting%>
+											addthis:title="<%=share_display_texts[:short_description]%>" <%#Note that  :short_description is used for the  addthis:title field, since this is the field where the tweet actually comes from.%>
+											addthis:description="<%=share_display_texts[:title]%>"> <%#Apparently not used%>
 									<a class="addthis_button_twitter">
 										<%= image_tag "team/share/twitter-small.png", size: "82x82", alt: "Share" %>
 									</a>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_GOOGLE%>
 								<div class="share-button google-plus addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
-											addthis:title="<%=title%>"
-											addthis:description="<%=description%>">
+											addthis:title="<%=share_display_texts[:title]%>"
+											addthis:description="<%=share_display_texts[:description]%>">
 											<%#Google does not use this title and desc, but rather uses meta tags%>	
 									<a class="addthis_button_google_plusone_share">
 										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
@@ -123,8 +121,8 @@
 								</div>
 							<%when Constants::SOCIAL_NETWORK_EMAIL%>
 								<div class="share-button email" title="Email">
-									<%msg_txt= "#{description}\n\n#{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
-									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: title, body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
+									<%msg_txt= "#{share_display_texts[:description]}\n\n#{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: share_display_texts[:title], body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
 								</div>
 							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
 								<div class="share-button copy-to-clipboard" >
@@ -140,7 +138,7 @@
 											onShare(evt);
 								 			
 								 			//this is a constant function
-				 				 			<%msg_txt= ERB::Util.html_escape "#{description} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+				 				 			<%msg_txt= ERB::Util.html_escape "#{share_display_texts[:description]} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
 								 			var ret= unescapeHTML("<%= msg_txt%>");
 			 						 		
 			 						 		return ret;
@@ -157,7 +155,7 @@
 							
 				<a href="<%=we_are_hiring_employer_path(@ambassador.employer.reference_num, job: @job.id)%>" class="preview-link" 
 						onclick="return openDialogWindow(this.href, 1000, 650);">
-					See your ad ...
+					See your personalized ad ...
 				</a>
 			
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f26afde78345d26&async=1"></script>
@@ -184,7 +182,9 @@
 					});
 					
 					$("#select_job").change(function(evt){
-						window.location.href = "<%=employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>" + "?job=" + $( this ).val();
+						<% orig_path = employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil) %>
+				        <% param_char = orig_path.include?("?") ? "&" : "?" %>
+						window.location.href = "<%=orig_path%>" + "<%=param_char.html_safe%>" + "job=" + $( this ).val();
 					});
 				</script>				
 			<% end %>

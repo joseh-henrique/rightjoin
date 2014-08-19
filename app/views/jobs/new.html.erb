@@ -7,12 +7,12 @@
 				Create a job posting.
 			</h1>
 			<h2>
-				It will go out on multiple channels.	
+				You can create a draft now and publish it later. 
 			</h2>
 			
 			<% if @job.employer.jobs.any? && @base_job.nil? %>
 				<div id="copy-job-settings">
-					<%= form_tag copy_properties_employer_jobs_path(@job.employer) do %>  
+					<%= form_tag copy_properties_employer_jobs_path(@job.employer), :id => "copy-job-settings-form" do %>  
 					
 						<% options = @job.employer.jobs.collect {|job| ["#{job.position_name} - #{job.location_name}", job.id, { :class => job.status == Job::CLOSED ? 'closed-job-select-option' : 'live-job-select-option' }]} %>
 	

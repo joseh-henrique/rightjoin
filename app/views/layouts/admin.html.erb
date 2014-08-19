@@ -3,10 +3,11 @@
 	<head>
 		<title><%=Constants::SHORT_SITENAME%> admin console</title>
 
-		<%#= render :partial => 'layouts/stylesheets' %>
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
+		<%= stylesheet_link_tag 'application', :media => "all"%>
 	 
-	 	<%# Google maps JS here is used for locale lookup%> 
-	    <script src="http://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=<%=Constants::GOOGLE_MAPS_API_KEY%>"></script> 
+	 	<%# GoogleMaps JS here is used for locale lookup%> 
+	    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=<%=Constants::GOOGLE_MAPS_API_KEY%>"></script> 
 		<%= javascript_include_tag :application %>
 		
 		<%= yield :more_js %>		

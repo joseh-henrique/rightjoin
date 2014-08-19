@@ -3,9 +3,9 @@
 	<head>
 		<title>Preview  the "Join Us" tab for your company site</title>
 		<!--[if lt IE 9]>
-		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
 		<%= stylesheet_link_tag 'application', :media => "all"%>
 
 		<script>
@@ -19,6 +19,7 @@
 		<div class="message-box">
 			<%#TODO include the relevant company_url in this text%>
 			The  &ldquo;Join Us&rdquo; tab will look like this after you add it to the  <%=@employer.company_name%> website. 
+			If you'd like, you can send the URL of this preview page to your colleagues for comments.
 			<%if params[:geotarget] == "true"%>
 				<br><br>
 				The tab is geo-targeted: It will appear <em>only</em> to visitors from areas where you have open positions.

@@ -2,7 +2,7 @@
 	<% verification_path = current_user.employee? ? verify_user_path(current_user, :locale => current_user.country_code) : verify_employer_path(current_user) %>
 	<% edit_path = current_user.employee? ? edit_user_path(current_user, :locale => current_user.country_code) : edit_employer_path(current_user) %>
 	
-	<div id="account-verification-panel" tabindex="0"><%# tab index for escape http://stackoverflow.com/questions/1717897/jquery-keydown-on-div-not-working-in-firefox%>
+	<div id="account-verification-panel" class="custom-popup-overlay" tabindex="0"><%# tab index for escape http://stackoverflow.com/questions/1717897/jquery-keydown-on-div-not-working-in-firefox%>
 		<div class="center-wrapper">
 			<div class="account-verification-box">
 				<div class="standard-section-header"><span>Verify your account</span><%=link_to "Close", "#", :class => "close"%></div>

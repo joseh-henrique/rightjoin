@@ -81,7 +81,7 @@ class Interview < ActiveRecord::Base
   ######### INTERVIEW STATUSES ##############################################
   RECOMMENDED = 5 # FYI has recommended a candidate to the employer.
   AWAITING_APPROVAL = 7 # The employer invited a candidate, but FYI has not yet approved. 
-  APPROVED = 8 # FYI approved an employer's invitation to a candidate, or else the invitation was a perfect match to the cnadidate and so approval was not needed 
+  APPROVED = 8 # FYI approved an employer's invitation to a candidate, or else the invitation was a perfect match to the candidate and so approval was not needed 
   CONTACTED_BY_EMPLOYER = 10 # The biweekly email to the candidate mentioned the invitation
   CLOSED_BY_EMPLOYER = 1000
   CLOSED_NOT_APPROVED = 1005

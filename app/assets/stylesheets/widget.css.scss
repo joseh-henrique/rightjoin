@@ -22,6 +22,7 @@ $tile-padding: 1em;
 $double-tile-width: $tile-width * 2 + $tile-padding * 2 + $tile-spacing;
 $double-tile-height: $tile-height * 2 + $tile-padding * 2 + $tile-spacing;
 $triple-tile-width: $tile-width * 3 + $tile-padding * 4 + $tile-spacing * 2;
+$triple-tile-height: $tile-height * 3 + $tile-padding * 4 + $tile-spacing * 2;
 $full-width: ($tile-padding + $tile-width + $tile-padding + $tile-spacing) * 4;
 $full-height: ($tile-padding + $tile-height + $tile-padding + $tile-spacing) * 3 + $tile-spacing;
 
@@ -290,13 +291,22 @@ a {
     text-align: justify;
     text-rendering: optimizelegibility;
     font-size: 0.9em;
-    line-height: 1.45em;
+    line-height: 1.4em;
+    
+    // learn more
+    a {
+      @include opacity(80);
+  
+      &:focus, &:hover, &:active {
+        @include opacity(100);
+      }
+    }
   }
   
   .tags-box {
     position: absolute;
     line-height: 1.2em;
-    bottom: $tile-padding;
+    bottom: 0.85em;
     right: $tile-padding;
     left: $tile-padding;    
     
@@ -336,9 +346,9 @@ a {
     bottom: 0;
     
     .logo {
-      margin-right: 1em;
-      margin-left: 1px;
-      height: 3.5em;
+      margin-right: $tile-spacing;
+      max-height: 3.5em;
+      max-width: $tile-width + $tile-padding * 2;
       vertical-align: bottom;
       display: inline-block;
     }
@@ -354,7 +364,8 @@ a {
 }
 
 #other-ads {
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   
   .title {
     font-weight: 500;
@@ -375,7 +386,6 @@ a {
   left: 0;
   
   .position {
-    text-overflow: ellipsis;
     @include opacity(80);
   
     &:focus, &:hover, &:active {
@@ -384,11 +394,12 @@ a {
   }
 }
 
-#signin-box {
+#funnel-box {
   .title {
     font-weight: 500;
-    font-size: 1.4em;
+    font-size: 1.3em;
     line-height: 1.2em;
+    padding-bottom: 0.3em;
   }
   
   .buttons-box {
@@ -459,7 +470,21 @@ a {
       
     .rightjoin {
       background-color: #06376e;
-    } 
+    }
+    
+    #learn-more-button {
+      @include inline-button(#003441, 1em, 2.5em, 2em, $default-font-color, 500);
+      text-transform: none;
+    }
+    
+    #ping-button {
+      @include inline-button(#003441, 1.2em, 2em, 2.5em, $default-font-color, 500);
+      text-transform: none;
+    }
+  }
+  
+  #funnel-step2 {
+    display: none;
   }
 }
 
@@ -541,10 +566,10 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   .close-form {
     display: block;
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 3px;
+    top: 3px;
     background: transparent image-url("shared/x.png") no-repeat top left;
-    @include opacity(50);
+    @include opacity(90);
     width: 10px;
     height: 10px;
     z-index: 999;
@@ -618,7 +643,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   }
   
   .submit-button {
-    @include inline-button(#fd9500, 1.2em, 2em, 2.5em, $default-font-color, normal);
+    @include inline-button(#003441, 1.2em, 2em, 2.5em, $default-font-color, 500);
   }  
   
   .bottom-box {
@@ -632,8 +657,56 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
 
 }
 
-#ping-with-rightjoin-form-box, #direct-ping-form-box {
+#ping-with-rightjoin-form-box, #ping-with-resume-form-box, #direct-ping-form-box, #full-desription-box {
   display: none;
+}
+
+#ping-with-resume-form-box {
+  #resume-upload-fake-button {
+    @include inline-button(#003441, 1.2em, 1.6em, 0.5em, $default-font-color, normal);
+    text-transform: none;
+    margin-top: 0.4em;
+    
+    position: relative;
+    overflow: hidden;
+    
+    input.file-upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      @include opacity(0);
+    }
+  }
+  
+  #resume-upload-status-msg {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 14em;
+    font-size: 0.9em;
+    display: inline-block;
+    padding-left: 0.5em; 
+  }
+}
+
+#full-desription-box {
+  height: $triple-tile-height;
+  
+  .scrollable-wrapper {
+    overflow: auto;
+    padding-right: 4em;
+    font-size: 0.9em;
+    position: absolute;
+    bottom: 16px;
+    top: 16px;
+    right: 0;
+    left: 3em;
+    padding-bottom: 2em;
+  }
 }
 
 .fadeIn {
@@ -782,24 +855,24 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
   height: 18px;
   background: transparent image-url("widget/rightjoin.png") no-repeat center;
   text-indent: -9999px;
+  display: block;
+  z-index: 100;
 }
 
-/* 
- :-ms-input-placeholder must come after the definitions for the input fields
- */
-::-webkit-input-placeholder  { 
-  color:#DBDBDB; 
+.draft {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80px;
+  background: #000;
+  color: #FFF;
+  font-size: 14px;
+  line-height: 26px;
+  text-align: center;
+  font-weight: 500;
+  text-transform: uppercase;
+  z-index: 100;
 }
-
-:-moz-placeholder { 
-  color:#DBDBDB; 
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   color:#BBBBBB; 
-}
-
-:-ms-input-placeholder {  
-   color:#DBDBDB;
-}
-
+ 
+// must come after the definitions for the input fields, otherwise the definitions for the input field 
+@import "placeholder";
