@@ -4,8 +4,8 @@
 	<% else %>
 		<div class="images-list clearfix">
 		    <% @photos.each do |photo| %>
-		   		 <div class="image-box float-left" data-image-url="<%=photo.image.standard.url%>" data-image-title="<%=photo.title%>" data-image-id="<%=photo.id%>">
-				     <%= image_tag(photo.image.standard.url) %>
+		   		 <div class="image-box float-left" data-image-url="<%=photo.image.standard.url(:secure => true)%>" data-image-title="<%=photo.title%>" data-image-id="<%=photo.id%>">
+				     <%= image_tag(photo.image.standard.url(:secure => true)) %>
 				     <% unless photo.title.blank? %>
 				     	<div class="photo-title"><%= photo.title %></div>
 				     <% end %>

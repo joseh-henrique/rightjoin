@@ -20,11 +20,11 @@
 			<% unless job.logo.nil? %>
 				<div class="logo-box">
 					<% if job.company_url.blank? %>
-						<%= image_tag(job.logo.image.standard.url, class: "logo-img") %>
+						<%= image_tag(job.logo.image.standard.url(:secure => true), class: "logo-img") %>
 					<% else %>
 					    <% tt_title =  ERB::Util.html_escape(job.company_name)%>
 						<%# It makes sense to set tt_title as title in next line. But that gives us an unescaped title! Don't know why!  So I use JS, below.%>
-						<%= link_to image_tag(job.logo.image.standard.url,  class: "logo-img"), job.company_url, id: "job-#{job.id}", :target => "_blank", :rel => "nofollow", :class => "logo-link" %>
+						<%= link_to image_tag(job.logo.image.standard.url(:secure => true),  class: "logo-img"), job.company_url, id: "job-#{job.id}", :target => "_blank", :rel => "nofollow", :class => "logo-link" %>
 						<script>$("#<%= "job-#{job.id}" %>").attr('title',"<%=tt_title%>");</script>
 					<% end %>
 				</div>

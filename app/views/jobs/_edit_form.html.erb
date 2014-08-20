@@ -74,7 +74,7 @@
 				<%logo = @job.logo%>
 				<% unless logo.nil? %>
 					<script type="text/javascript">
-						load_image("#company_logo_image_id", "#company-logo-box", <%=logo.id%>, "<%=escape_javascript logo.image.standard.url%>", "");
+						load_image("#company_logo_image_id", "#company-logo-box", <%=logo.id%>, "<%=escape_javascript logo.image.standard.url(:secure => true)%>", "");
 					</script>
 				<% end %>
 			</div>
@@ -204,7 +204,7 @@
 					<%photo = @job.get_photo(i)%>
 					<% unless photo.nil? %>
 						<script type="text/javascript">
-							load_photo(<%=i%>, <%=photo.id%>, "<%=escape_javascript photo.image.standard.url%>", "<%=escape_javascript photo.title%>");
+							load_photo(<%=i%>, <%=photo.id%>, "<%=escape_javascript photo.image.standard.url(:secure => true)%>", "<%=escape_javascript photo.title%>");
 						</script>
 					<% end %>
 				<% end %>

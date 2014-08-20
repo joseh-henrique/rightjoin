@@ -8,9 +8,9 @@ module EmployersHelper
       photos = job.get_photos
       if photos.any?
         photo = photos.sample #Random photo
-        ret = photo.image.standard.url
+        ret = photo.image.standard.url(:secure => true)
       elsif !job.logo.nil?  #No photos, try to use company logo
-        ret = job.logo.image.standard.url
+        ret = job.logo.image.standard.url(:secure => true)
       else # Use RJ logo
         ret = full_image_url(Constants::REPRESENTATIVE_LOGO)
       end

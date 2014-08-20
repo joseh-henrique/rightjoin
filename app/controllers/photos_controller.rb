@@ -9,7 +9,7 @@ class PhotosController < ApplicationController
      @photo = Photo.new(params[:photo])
      @photo.save!
   
-     render json: {id: @photo.id, title: @photo.title, url: @photo.image.standard.url}, content_type: 'text/json', status: :ok
+     render json: {id: @photo.id, title: @photo.title, url: @photo.image.standard.url(:secure => true)}, content_type: 'text/json', status: :ok
      
   rescue Exception => e
     logger.error e

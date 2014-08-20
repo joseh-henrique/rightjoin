@@ -128,7 +128,7 @@
 		<%# photos%>
 		<% @job.get_photos.each_with_index do |photo, i| %>
 			<div id="contel-photo-<%=photo.id%>" class="for-photo">				
-				<%= image_tag(photo.image.standard.url, class: "photo-img") %>
+				<%= image_tag(photo.image.standard.url(:secure => true), class: "photo-img") %>
 				<% unless photo.title.blank? %>
 					<div class="title"><%=photo.title%></div>
 				<% end %>
@@ -152,7 +152,7 @@
 				
 				<div class="logo-location-box">
 					<% unless @job.logo.nil? %>
-						<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
+`						<%= image_tag(@job.logo.image.standard.url(:secure => true), class: "logo") %>
 					<% end %>
 					
 					<div class="location"><%=raw @job.all_location_parts.map{|loc| h(loc)}.join("<br>")%></div>
@@ -298,7 +298,7 @@
 			<div class="title">Loading...</div>
 		</div>
 		<% unless @job.logo.nil? %>
-			<%= image_tag(@job.logo.image.standard.url, class: "logo") %>
+			<%= image_tag(@job.logo.image.standard.url(:secure => true), class: "logo") %>
 		<% end %>
 		<a href="#" class="arrow arrow-right"></a>
 	</div>

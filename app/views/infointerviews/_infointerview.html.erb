@@ -28,7 +28,7 @@ end
 			
 			<% unless infointerview.resume_doc_id.nil? %>
 				<div>
-					<%=link_to "See resum&eacute;...".html_safe	, cloudinary_url(infointerview.resume_doc_id, :resource_type => :raw,:secure => true), :target => "_blank"%>
+					<%=link_to "See resum&eacute;...".html_safe	, cloudinary_url(infointerview.resume_doc_id, :resource_type => :raw, :secure => true), :target => "_blank"%>
 				</div>
 			<% end %>
 		</div>

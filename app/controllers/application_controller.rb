@@ -8,15 +8,16 @@ class ApplicationController < ActionController::Base
   
   def check_uri
     #Note: To get SSL redirect,  Could do this in a 'before; filter. redirect_to :protocol => "https://" unless request.ssl?
-     protocol =  switch_to_https(request)
+    
+    new_protocol =  switch_to_https(request)
     if Rails.env.staging?
-      if protocol!=request.protocol.downcase
-          redirect_to :protocol =>  protocol, :status => 301
+      if new_protocol!=request.protocol.downcase
+          redirect_to :protocol =>  new_protocol, :status => 301
       end
     end
     
 		if Rails.env.production?
-		  protocol = switch_to_https(request)
+		  new_protocol = switch_to_https(request)
       host = request.host.downcase
       from = params["from"].to_s		  
 		  
@@ -29,13 +30,13 @@ class ApplicationController < ActionController::Base
         flash_message(:notice, "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SITENAME}. Please go ahead and sign in." )
       end  
  
-      if request.subdomain.blank?  || request.subdomain!="www"  || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC) || protocol!=request.protocol.downcase
+      if request.subdomain.blank?  || request.subdomain != "www"  || host.include?(Constants::FIVEYEARITCH_SITENAME.downcase) || host.include?(Constants::SITENAME_IL_LC) || new_protocol!=request.protocol.downcase
         port_str = (request.port==80 ? "" : ":"+request.port.to_s)
         redir_host  ="www." + Constants::SITENAME_LC
         orig_path= request.fullpath
         param_char = orig_path.include?("?") ? "&" : "?"
         redir_path = "#{orig_path}#{param_char}from=#{host}"
-        url_with_www = protocol + redir_host + port_str +redir_path 
+        url_with_www = new_protocol + redir_host + port_str +redir_path 
         
         redirect_to url_with_www, :status => 301
       end
