@@ -30,6 +30,7 @@ FiveYearItch::Application.configure do
   
   config.action_mailer.default_url_options = {
     :host => "fyistage.herokuapp.com", 
+     :protocol => 'https',
     Constants::STAGING_SECRET_PARAM_NAME => Constants::STAGING_SECRET_PARAM_VALUE
   }
   Rails.application.routes.default_url_options[Constants::STAGING_SECRET_PARAM_NAME] = Constants::STAGING_SECRET_PARAM_VALUE

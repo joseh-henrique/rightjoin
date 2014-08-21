@@ -29,9 +29,10 @@ FiveYearItch::Application.configure do
   config.action_mailer.raise_delivery_errors = true
   
   config.action_mailer.default_url_options = {
-    :host => "www.rightjoin.io"
+    :host => "www.rightjoin.io",
+     :protocol => 'https'
   }
-  
+ 
   # setting up sendgrid
   ActionMailer::Base.smtp_settings = {
     :user_name => "fyi",
