@@ -7,13 +7,12 @@ class ApplicationController < ActionController::Base
   before_filter :check_secret_param
   
   def check_uri
-    #Note: To get SSL redirect,  Could do this in a 'before; filter. redirect_to :protocol => "https://" unless request.ssl?
-    
+    # Note: Since we are using config.force_ssl = true, czn prob. eliminate protocol switching  
     new_protocol =  switch_to_https(request)
     if Rails.env.staging?
-      if new_protocol!=request.protocol.downcase
-          redirect_to :protocol =>  new_protocol, :status => 301
-      end
+      # if new_protocol!=request.protocol.downcase
+          # redirect_to :protocol =>  new_protocol, :status => 301
+      # end
     end
     
 		if Rails.env.production?

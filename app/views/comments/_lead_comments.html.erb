@@ -1,7 +1,7 @@
 <%# locals: lead (Infointerview), display_for (Ambassador or Employer)%>
 <div class="lead-comments-box" id="lead-comments-box-<%=lead.id%>">
 	<div class="comments-title">Comments</div>
-	<label>Share comments on the candidate with team members.</label>
+	<label>Share thoughts and questions about the candidate with team members.</label>
 	
 	<div class="new-comment-form-box">
 		<%= form_for([lead, Comment.new], remote: true, html: { :'data-type' => 'html', :id => "new-comment-#{lead.id}"} ) do |f| %>
