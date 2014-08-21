@@ -5,14 +5,15 @@ class ApplicationController < ActionController::Base
   before_filter :set_default_locale
   before_filter :check_uri
   before_filter :check_secret_param
-  
-  def check_uri
-    # Note: Since we are using config.force_ssl = true, czn prob. eliminate protocol switching  
-    new_protocol =  switch_to_https(request)
+ 
+   def check_uri
+    #Note: To get SSL redirect,  Could do this in a 'before; filter. redirect_to :protocol => "https://" unless request.ssl?
+    # Should use force_ssl=true and remove the redirect below, but that is only possible after we support https in the root rightjoin.io
+     new_protocol =  switch_to_https(request)
     if Rails.env.staging?
-      # if new_protocol!=request.protocol.downcase
-          # redirect_to :protocol =>  new_protocol, :status => 301
-      # end
+      if new_protocol!=request.protocol.downcase
+          redirect_to :protocol =>  new_protocol, :status => 301
+      end
     end
     
 		if Rails.env.production?
@@ -53,7 +54,8 @@ class ApplicationController < ActionController::Base
   end
 
   def default_url_options(options={})
-    { :locale => I18n.t(:country_code, :locale => I18n.locale) }
+    { :locale => I18n.t(:country_code, :locale => I18n.locale),
+      :secure => true }
   end
   
   # Priority order for setting def.locale
