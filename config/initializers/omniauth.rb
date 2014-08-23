@@ -19,6 +19,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   elsif Rails.env.production?
      #GitHub for  rightjoin.io 
     provider :github, "8a2de1ca6ef401d3e589", "85d13d8a88dea10e5d0f5ffab53ba8a23c7cdb8b"
- 
   end
 end

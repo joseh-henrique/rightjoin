@@ -30,7 +30,12 @@
 		<% end %>
 	
 		<div id="lead-comment-<%=lead.id%>-<%=comment.id%>" class="lead-comment <%=new_class%> <%=hidden_comment_class%>" data-seen-path="<%=infointerview_comment_set_seen_path(lead.id, comment.id)%>">
-			<div class="comment-header">her
+			<div class="comment-header">
+				<span class="created_by"><%=comment.author_display_name%></span>
+				<span class="created_at"><%=comment.created_at.strftime("%A, %d %b %Y")%></span>
+			</div>
+			<div class="comment-body">
+				<%=comment.body%>
 			</div>
 			<%=image_tag(comment.author_avatar_path, class: "author-avatar")%>
 			<% if [Comment::STATUS_NEW, Comment::STATUS_NOT_SEEN].include?(comment.status) && display_for.kind_of?(Employer) %>
