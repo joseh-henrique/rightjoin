@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
         redir_host  ="www." + Constants::SITENAME_LC
         orig_path= request.fullpath
         param_char = orig_path.include?("?") ? "&" : "?"
-        if host.dowcase include? Constants::SITENAME_LC
+        if host.downcase.include? Constants::SITENAME_LC
            redir_path = orig_path
         else
           redir_path = "#{orig_path}#{param_char}from=#{host}"
