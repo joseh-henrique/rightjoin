@@ -35,7 +35,11 @@ class ApplicationController < ActionController::Base
         redir_host  ="www." + Constants::SITENAME_LC
         orig_path= request.fullpath
         param_char = orig_path.include?("?") ? "&" : "?"
-        redir_path = "#{orig_path}#{param_char}from=#{host}"
+        if host.dowcase include? Constants::SITENAME_LC
+           redir_path = orig_path
+        else
+          redir_path = "#{orig_path}#{param_char}from=#{host}"
+        end
         url_with_www = new_protocol + redir_host + port_str +redir_path 
         
         redirect_to url_with_www, :status => 301
