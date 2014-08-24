@@ -54,8 +54,9 @@ class ApplicationController < ActionController::Base
   end
 
   def default_url_options(options={})
-    { :locale => I18n.t(:country_code, :locale => I18n.locale),
-      :protocol => "https://" }
+      ret = { :locale => I18n.t(:country_code, :locale => I18n.locale) }
+      ret[:protocol] = "https://"  unless Rails.env.development?
+      return ret
   end
   
   # Priority order for setting def.locale

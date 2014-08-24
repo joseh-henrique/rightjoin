@@ -51,6 +51,7 @@ class Constants
   EMAIL = "Email"
   OTHER_SHARING_CHANNEL ="Other"
  
+  
   SOCIAL_NETWORK_LINKEDIN = LINKEDIN.downcase
   SOCIAL_NETWORK_FACEBOOK = FACEBOOK.downcase
   SOCIAL_NETWORK_TWITTER = TWITTER.downcase
@@ -59,17 +60,24 @@ class Constants
   SOCIAL_NETWORK_OTHER ="other"
   SOCIAL_NETWORK_SHARE_URL ="share_url"
   
+  
   SHARE_CHANNELS = [SOCIAL_NETWORK_LINKEDIN, SOCIAL_NETWORK_FACEBOOK, SOCIAL_NETWORK_TWITTER, SOCIAL_NETWORK_GOOGLE, SOCIAL_NETWORK_EMAIL]
   
+  #TODO Create a class to handle the various names for AddThis share types,  OAuth, and  display names. 
+  # As-is, we have various constants, lists and hashes here, as  well as literal use of the names in various places.
+  
+  #Maps AddThis  and OAuth name to display name
   SHARE_CHANNEL_DISPLAY_NAMES = {
       SOCIAL_NETWORK_LINKEDIN => LINKEDIN,
       SOCIAL_NETWORK_FACEBOOK =>  FACEBOOK,
       SOCIAL_NETWORK_TWITTER =>TWITTER,
-      SOCIAL_NETWORK_GOOGLE => GOOGLE,
+      SOCIAL_NETWORK_GOOGLE => GOOGLE,#The AddThis name
+      "google_oauth2" =>GOOGLE, #The OAuth name
       SOCIAL_NETWORK_EMAIL => EMAIL,
-      SOCIAL_NETWORK_OTHER => OTHER_SHARING_CHANNEL
+      SOCIAL_NETWORK_OTHER => OTHER_SHARING_CHANNEL,
+      GITHUB.downcase => GITHUB
     }
-  
+ 
   OAUTH_TYPE_INSIDER = "insider"
   OAUTH_TYPE_CONTACT = "contact"
     

@@ -5,8 +5,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   #    LI (user josh@fiveyearitch.com) https://www.linkedin.com/secure/developer
   # 	 Google (user josh@fiveyearitch.com)  https://console.developers.google.com/
   #    GitHub ( user admin@fiveyearitch.com) https://github.com/settings/applications/
-  #    Twitter (user FiveYearItch,admin@fiveyearitch.com) https://apps.twitter.com/
-  #    (Facebook OAuth not used, but we were logging in with (user josh@fiveyearitch.com.)
+  #    Twitter (user FiveYearItch) https://apps.twitter.com/
+  #    (Facebook OAuth not used, but we were  previously logging in with (user josh@fiveyearitch.com.)
    
   provider :google_oauth2, "1042992806296-t0lb9rin0sntfg747ear3jn4ubaarpee.apps.googleusercontent.com", '7kja1cO0nzhw8foTrHrWOTPm'#   should try :access_type => 'online', but this does not work
   provider :twitter, "VJdTZcNLkcPwZv77Ze82Sg","v0Tn4xNAcprh7f5myH5kWPkyKLw2Ei3sVOD5BeHYEb8"

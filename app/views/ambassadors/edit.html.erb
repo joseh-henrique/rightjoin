@@ -39,7 +39,7 @@
 					</div>
 					
 					<div class="attr-row">
-						<%= check_box_tag 'import_avatar', '1', true %>&nbsp;<%= label_tag "import_avatar", "Import your #{@ambassador.auth.provider.capitalize} profile image" %>
+						<%= check_box_tag 'import_avatar', '1', true %>&nbsp;<%= label_tag "import_avatar", "Import your #{Constants::SHARE_CHANNEL_DISPLAY_NAMES[@ambassador.auth.provider]} profile image" %>
 					</div>
 					
 					<div class="button-box">
