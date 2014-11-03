@@ -367,7 +367,7 @@ FIN
 		};
 		
 		var popupWidget = function() {
-			return openDialogWindow("<%=we_are_hiring_employer_url(@employer.reference_num, :job => nil, :locale => geotarget ? I18n.t(:country_code, :locale => I18n.locale) : nil)%>", 1000, 650);
+			return openDialogWindow("<%=we_are_hiring_employer_url(@employer.reference_num, :job => nil, :locale => geotarget ? I18n.t(:country_code, :locale => I18n.locale) : nil, :anchor => Share.build_hash(Share::CHANNEL_TAB))%>", 1000, 650);
 		};	
 	
 	    // public instance methods

@@ -1,5 +1,5 @@
 <h1>
-	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	<%=link_to "<<", admin_path %>
 	Attach positions to groups
 </h1>
 
@@ -22,7 +22,7 @@
 			<%= check_box_tag :autocomplete, '1', false%> <%= label_tag(:autocomplete, "Add to autocomplete and freeze capitalization") %><br>
 			<br>
 			
-			<%=link_to "Submit", "#", :id => "attach", :class => "blue-inline-button" %>&nbsp;
+			<%=link_to "Submit", "#", :id => "attach" %>&nbsp;
 		<% end %>
 		
 		<script type="text/javascript">

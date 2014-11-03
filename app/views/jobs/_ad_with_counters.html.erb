@@ -1,7 +1,7 @@
 <%= render :partial => 'jobs/ad', :locals => {:job => job, :ad_rendering_mode => Ad::RENDERING_MODE_COMPACT} %>
 
 <% 
-all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
+all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_EMPLOYER_NOTIFIED, Infointerview::ACTIVE_SEEN_BY_EMPLOYER, Infointerview::CLOSED_BY_EMPLOYER])
 %>
 
 <div class="job-counters clearfix">

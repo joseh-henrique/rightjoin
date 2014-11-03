@@ -20,13 +20,16 @@ class PagesController < ApplicationController
     end
     
     unless performed?
-      @current_page_info = PageInfo::INDEX
-      render 'pages/index'
+      welcome
     end
   end
   
   def welcome
+    num_of_featured_jobs = 4
+    
     @current_page_info = PageInfo::INDEX
+    @featured_jobs = Job.featured_jobs(4)
+    
     render 'pages/index'
   end  
   
@@ -39,23 +42,6 @@ class PagesController < ApplicationController
     else
       @user = User.new
       @current_page_info = PageInfo::REGISTER
-      
-      fyiscore = params[:fyiscore]# TODO The following is for the quiz and can be deleted
-      if !fyiscore.nil? && fyiscore.to_i.between?(0, 5)
-        flash_now_message(:notice, "We've filled out some of the form for you, using your quiz answers.")
-        
-        @defaults = {}
-        @defaults[:no_years] = params[:yearsinjob].to_i
-        # Get current job from radio buttons, but if "other" radio button was chosen, get value from field. 
-        @defaults[:current_job] = params[:current_job]
-        if @defaults[:current_job] == Constants::OTHER_JOB
-          @defaults[:current_job] = params[:currentposition]
-        end  
-        @defaults[:wanted_job] = params[:wantedposition]
-        @defaults[:wanted_job] ="" if @defaults[:wanted_job] = Constants::OTHER_JOB
-        @defaults[:salary] = params[:wantedsalary].to_i
-        @defaults[:reqirements] = read_requirements_from_quiz
-      end
     end    
   end
 
@@ -152,8 +138,9 @@ private
       is_user_valid = true
       unless signed_in?
         i18n_country_name = I18n.t(:short_country_name )
-        actual_locale = LocationUtils::locale_by_ip(request.remote_ip, :unknown)
-        if actual_locale == :unknown
+        actual_locale = @sliding_session.locale_from_ip
+        actual_locale ||= LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
+        if actual_locale == :unknown_locale
           flash_now_message(:error, 
           "You've hit the #{i18n_country_name} site. Please choose your country at top-left, or  
 				  #{uservoice_contact_link("drop us a line")}, and we'll let you know when we add support for your country.")

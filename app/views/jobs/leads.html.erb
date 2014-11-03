@@ -20,7 +20,7 @@
 	<div class="section-box" id="all-open-leads">	
 		<% if active_leads.any? %>
 			<% active_leads.each do |infointerview| %>
-  				<% if infointerview.status == Infointerview::NEW %>
+  				<% if infointerview.status == Infointerview::NEW || infointerview.status == Infointerview::ACTIVE_EMPLOYER_NOTIFIED %>
   					<div class="job-tab new-tab" data-seen-path="<%=set_seen_infointerview_path(infointerview.id)%>">New</div>
   				<% end %>
 	  			<div class="infointerview-outer-box">
@@ -147,6 +147,7 @@
 				var infointerview_box = $(results_box).parents(".infointerview-outer-box");
 				var comments_box = infointerview_box.children(".lead-comments-box");
 				refreshComments(comments_box, data);
+				trackEvent("employer", "lead delegated");
 			})
 			.fail(function() {
 				$(results_box).html("<div class='error'><%=Constants::ERROR_FLASH%></div>");

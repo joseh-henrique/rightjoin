@@ -17,7 +17,7 @@ $default-font-color: #FFF;
 $default-font-size: 15px;
 $tile-width: 12em;
 $tile-height: 9em;
-$tile-spacing: 0.8em;
+$tile-spacing: 0.6em;
 $tile-padding: 1em;
 $double-tile-width: $tile-width * 2 + $tile-padding * 2 + $tile-spacing;
 $double-tile-height: $tile-height * 2 + $tile-padding * 2 + $tile-spacing;
@@ -117,10 +117,10 @@ a {
   position: absolute;
   top: 0;
   right: 0;
-  width: 1.3em;
-  height: 1.3em;
-  background: black image-url("widget/link.png") no-repeat center;
-  @include opacity(30);
+  width: 20px;
+  height: 20px;
+  background: black image-url("shared/link.png") no-repeat center;
+  @include opacity(50);
 }
 
 .clickable {
@@ -132,8 +132,24 @@ a {
     cursor: pointer;
     
     .clickable-indicator {
-      @include opacity(60);
+      @include opacity(80);
     }
+  }
+}
+
+.question-mark-indicator {
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: black image-url("widget/question-mark.png") no-repeat center;
+  @include opacity(40);  
+  text-indent: -9999px;
+  
+  &:hover {
+    @include opacity(70);
   }
 }
 
@@ -143,13 +159,11 @@ a {
   bottom: 0;
   right: 0;
   left: 0;
+  @include transition(all 1s ease-in-out); 
   
   &.slide-right {
-    @include transition(all 1s); 
-    // defined under photo, blurb and avatar
-    //@include translate(20px);   
-    
-    @include box-shadow(-5px 0px 5px 0px rgba(255, 255, 255, 0.6));   
+    @include translate(90%);
+    @include opacity(0);
   }
 }
 
@@ -205,10 +219,6 @@ a {
     top: $tile-padding;
     right: $tile-padding;
   }  
-  
-  .slide-right {
-    @include translate($tile-width + 2 * $tile-padding);
-  }
 }
 
 .photo {
@@ -232,10 +242,6 @@ a {
     width: $tile-width + $tile-padding * 2;
     height: $tile-height + $tile-padding * 2;    
   }  
-  
-  .slide-right {
-    @include translate($tile-width + 2 * $tile-padding);
-  }
 }
 
 .cell-movie-preview {
@@ -526,11 +532,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
     .no-avatar-img {
       width: $avatar-size;
       height: $avatar-size;
-    }
-    
-    .slide-right {
-      @include translate($avatar-size);
-    }    
+    } 
   }
   
   .overlay {
@@ -650,6 +652,32 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
     position: absolute;
     bottom: 1.5em;
     left: 2em;
+    right: 2em;
+  }
+}
+
+#about-right-join {
+  position: absolute;
+  bottom: 1.5em;
+  left: 2.5em;
+  right: 7.5em;
+  font-size: 0.8em;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  @include opacity(80);
+}
+
+#right-join-logo {
+  position: absolute;
+  display: block;
+  width: 4em;
+  height: 4em;
+  bottom: 1em;
+  right: 1em;
+  
+  img {
+    width: 4em;
+    height: 4em;
   }
 }
 
@@ -657,7 +685,7 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
 
 }
 
-#ping-with-rightjoin-form-box, #ping-with-resume-form-box, #direct-ping-form-box, #full-desription-box {
+#ping-with-rightjoin-form-box, #ping-with-resume-form-box, #direct-ping-form-box, #full-desription-box, #how-it-works-box {
   display: none;
 }
 
@@ -696,13 +724,21 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
 #full-desription-box {
   height: $triple-tile-height;
   
+  .title {
+    font-weight: 500;
+    font-size: 1.6em;
+    padding-bottom: 0;    
+    margin-bottom: 0.6em;
+    margin-top: 0;
+  }
+  
   .scrollable-wrapper {
     overflow: auto;
     padding-right: 4em;
     font-size: 0.9em;
     position: absolute;
-    bottom: 16px;
-    top: 16px;
+    bottom: 22px;
+    top: 22px;
     right: 0;
     left: 3em;
     padding-bottom: 2em;
@@ -849,14 +885,19 @@ $avatar-size: ($tile-width + $tile-padding * 2) / 4;
 
 #rightjoin-label{
   position: fixed;
-  bottom: 5px;
-  right: 5px;
-  width: 112px;
-  height: 18px;
+  bottom: 2px;
+  right: 2px;
+  width: 94px;
+  height: 15px;
   background: transparent image-url("widget/rightjoin.png") no-repeat center;
   text-indent: -9999px;
   display: block;
+  @include opacity(60);
   z-index: 100;
+  
+  &:hover {
+    @include opacity(80);
+  }
 }
 
 .draft {

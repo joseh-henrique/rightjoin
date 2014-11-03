@@ -1,13 +1,12 @@
 <!DOCTYPE html>	
 <html itemscope itemtype="http://schema.org/Article" xmlns="http://www.w3.org/1999/xhtml"  xmlns:fb="http://ogp.me/ns/fb#"><%# Added so that Like and google+ button will work%>
 	<%=render :partial => "layouts/easter_egg"%>
-	  
 	<head>
 		<title><%= title %></title>
 		<!--[if lt IE 9]>
 		<script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,500,700|Oswald:300,400' rel='stylesheet' type='text/css'>
 		<%= stylesheet_link_tag 'application', :media => "all"%>
 		
 		 
@@ -20,18 +19,27 @@
 		<%= favicon_link_tag '/favicon.ico?v=5' %>
 		
 		<%# for Google %>
-		<meta name="description" content="<%=Constants::META_DESC%>. <%=title%>" />
+		<meta name="description" content="<%=Constants::META_DESC%>" />
 		<meta name="keywords"  content="<%=Constants::META_KEYWORDS%>, <%=title%>" />
-		<%# for Google and Facebook%>
+
+		<%# Schema.org markup for Google+ %>
 		<meta itemprop="image" content="<%= full_image_url(Constants::REPRESENTATIVE_LOGO) %>"> 
+		<meta itemprop="name" content="<%=Constants::SITENAME%>">
+		<meta itemprop="description" content="<%=Constants::META_DESC%>">
+
+		<%# Open Graph data %>
+		<meta property="og:title" content="<%=Constants::META_DESC%>" />
+		<meta property="og:type" content="article" />
+		<meta property="og:url" content="<%=root_url%>" />
 		<meta property="og:image" content="<%= full_image_url(Constants::REPRESENTATIVE_LOGO) %>"> 
+		<meta property="og:description" content="<%=Constants::META_DESC%>" />
+		<meta property="og:site_name" content="<%=Constants::SITENAME%>" />	
 		
 		<%= yield :more_meta %>
 		
 	</head>
 	<% body_class = @current_page_info[:intended_for].to_s %>
 	<body id="<%=css_class_for_current_page%>" class="<%=body_class%>">
-		<%=render :partial => "layouts/easter_egg"%>
 		<%= render :partial => 'layouts/header' %>
 		<%= yield %>
 		<%= render :partial => 'layouts/footer' %>

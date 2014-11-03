@@ -11,9 +11,7 @@ class Constants
 
   FIVEYEARITCH_SHORT_SITENAME ="FiveYearItch"
   FIVEYEARITCH_SITENAME  = "#{FIVEYEARITCH_SHORT_SITENAME}.com"
-  
-  LEAD_REFERRAL_COOKIE = ":lead_referral_share_id"
-  
+
   ERROR_FLASH = "Oops! Something went wrong. We'll be on it right away."
   NOT_AUTHORIZED_FLASH = "Access to that page needs authorization."
 
@@ -34,6 +32,8 @@ class Constants
   REMEMBER_TOKEN_INFOINTERVIEW = :remember_token_infointerview
   REMEMBER_TOKEN_AMBASSADOR = :remember_token_ambassador
   
+  VOUCHED_ACCOUNTS_PERCENTAGE = 9
+  
   STAGING_SECRET_PARAM_NAME = "_s"
   STAGING_SECRET_PARAM_VALUE = "red"
    
@@ -42,42 +42,26 @@ class Constants
   ANYWHERE = 'anywhere'
   OTHER_JOB ='other'# Probably not in use; originally used only for signing up from  the 'quiz'
   
-
   GITHUB = "GitHub"
   TWITTER = "Twitter"
   LINKEDIN = "LinkedIn"
   GOOGLE = "Google"
   FACEBOOK = "Facebook"
   EMAIL = "Email"
-  OTHER_SHARING_CHANNEL ="Other"
- 
+  RIGHT_JOIN_TAB = "#{SHORT_SITENAME} Tab"
+  RIGHT_JOIN_BOARD = "#{SHORT_SITENAME} Board"
+  RIGHT_JOIN_REVERSE_BOARD = "#{SHORT_SITENAME} Reverse Board"
+  OTHER ="Other"
   
-  SOCIAL_NETWORK_LINKEDIN = LINKEDIN.downcase
-  SOCIAL_NETWORK_FACEBOOK = FACEBOOK.downcase
-  SOCIAL_NETWORK_TWITTER = TWITTER.downcase
-  SOCIAL_NETWORK_GOOGLE = "google_plusone_share"
-  SOCIAL_NETWORK_EMAIL = "email"
-  SOCIAL_NETWORK_OTHER ="other"
-  SOCIAL_NETWORK_SHARE_URL ="share_url"
+  # OAuth name to display name
+  OAUTH_TO_DISPLAY_NAMES = {
+    "linkedin" => LINKEDIN,
+    "facebook" =>  FACEBOOK,
+    "twitter" => TWITTER,
+    "google_oauth2" => GOOGLE,
+    "github" => GITHUB
+  }
   
-  
-  SHARE_CHANNELS = [SOCIAL_NETWORK_LINKEDIN, SOCIAL_NETWORK_FACEBOOK, SOCIAL_NETWORK_TWITTER, SOCIAL_NETWORK_GOOGLE, SOCIAL_NETWORK_EMAIL]
-  
-  #TODO Create a class to handle the various names for AddThis share types,  OAuth, and  display names. 
-  # As-is, we have various constants, lists and hashes here, as  well as literal use of the names in various places.
-  
-  #Maps AddThis  and OAuth name to display name
-  SHARE_CHANNEL_DISPLAY_NAMES = {
-      SOCIAL_NETWORK_LINKEDIN => LINKEDIN,
-      SOCIAL_NETWORK_FACEBOOK =>  FACEBOOK,
-      SOCIAL_NETWORK_TWITTER =>TWITTER,
-      SOCIAL_NETWORK_GOOGLE => GOOGLE,#The AddThis name
-      "google_oauth2" =>GOOGLE, #The OAuth name
-      SOCIAL_NETWORK_EMAIL => EMAIL,
-      SOCIAL_NETWORK_OTHER => OTHER_SHARING_CHANNEL,
-      GITHUB.downcase => GITHUB
-    }
- 
   OAUTH_TYPE_INSIDER = "insider"
   OAUTH_TYPE_CONTACT = "contact"
     
@@ -97,7 +81,7 @@ class Constants
   COUNTRY_IL = "il"
   COUNTRY_IN = "in"
   
-  #TODO encapsulate these hashes in a function.
+ 
   COUNTRIES = {
     COUNTRY_US => LOCALE_EN, COUNTRY_AU => "en-AU", COUNTRY_CA => "en-CA", 
     COUNTRY_UK => "en-GB",  
@@ -108,8 +92,7 @@ class Constants
  
   TIER_BASIC = 1
   TIER_PRO = 2
-  TIER_ENTERPRISE = 3
-  
+  TIER_ENTERPRISE = 3 # still in DB for some old customers, treated as PRO
 
   FYI_EPOCH = Time.new(2014, 1, 1, 1, 0, 0)
   

@@ -15,7 +15,7 @@ en:
   salary_step: "5000"
   salary_period: ""
   monthly_tier_1_price: "9"
-  monthly_tier_2_price: "79"
+  monthly_tier_2_price: "19"
   monthly_tier_3_price: "199"
   currency_unit: "$" 
   thousands_delimiter: ","

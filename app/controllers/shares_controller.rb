@@ -1,26 +1,35 @@
 class SharesController < ApplicationController
   include ApplicationHelper
 
-  before_filter :strip_params, :only => [:increment_counter]
+  before_filter :strip_params, :only => [:log_impression]
   
-  def increment_counter
-    setid = params[:setid]
-    raise "Missing parameter" if setid.blank?
-    
-    setid.sub!(/^#/, '')
-    
-    share = Share.find_by_setid(setid)
-    raise "Invalid parameter" if share.nil?
-    
-    share.increment!(:click_counter)
-    
-    # remember the share object, e.g. the referer
-    store_obj_id_cookie(share, Constants::LEAD_REFERRAL_COOKIE, params = {:expires => 24.hour.from_now})
-    
+  def log_impression
     res = {}
-    if share.ambassador.status == Ambassador::ACTIVE
-      link = share.ambassador.profile_link
-      res = {:id => share.ambassador.id, :avatar_path => share.ambassador.avatar_path, :first_name => share.ambassador.first_name, :last_name => share.ambassador.last_name, :title => share.ambassador.title, :profile_link => link}
+    
+    job = Job.find(params[:job_id])
+    referred_by = nil
+
+    decoded_hash = Share.parse_hash(params[:hash])
+    unless decoded_hash.nil?
+      @sliding_session.channel = decoded_hash[:channel] if @sliding_session.channel == Share::CHANNEL_OTHER
+
+      ambassador = Ambassador.find_by_id(decoded_hash[:ambassador_id])
+      if ambassador && ambassador.employer_id == job.employer_id
+        referred_by = ambassador
+      end
+    end
+    
+    unless referred_by.nil?
+      @sliding_session.referred_by = referred_by.id if @sliding_session.referred_by.nil?
+      if referred_by.status == Ambassador::ACTIVE
+        res = {:id => referred_by.id, :avatar_path => referred_by.avatar_path, :first_name => referred_by.first_name, :last_name => referred_by.last_name, :title => referred_by.title, :profile_link => referred_by.profile_link}
+      end
+    end
+    
+    unless @sliding_session.visited_job?(job.id)
+      impression_attrs = {:network => @sliding_session.channel, :job_id => job.id, :ambassador_id => @sliding_session.referred_by, :ip => @sliding_session.ip, :referer => @sliding_session.referer, :click_counter => 1}
+      Share.create!(impression_attrs)
+      @sliding_session.add_visited_job(job.id)
     end
     
     render :json => res

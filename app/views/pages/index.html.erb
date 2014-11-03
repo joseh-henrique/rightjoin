@@ -3,8 +3,11 @@
 		<div class="content">
 			<div class="rightjoin-logo-box">
 				<a href="#" class="logo">Logo</a>
+				<div class="tag-line">Escape-worthy opportunities</div>
 			</div>
+			
 			<div class="signin-box">
+				<div class="signin-title">Sign in into your account</div>
 				<%= form_for(:session, url: employee_signin_path, :html=>{:id=>"signin-form"} ) do |f| %>
 					<div class="form-box">
 						<%= f.text_field :email, :id=>"email-input", :maxlength=>255, :spellcheck =>false, :autocomplete => "off", :tabindex => "10", :class=>"signin-input validate[required]", "data-prompt-position" => "bottomLeft"%>
@@ -17,71 +20,242 @@
 				<% end %>
 			</div>
 		</div>
-		
-		<div class="beta"></div> 
 	</div>
 </div>
 
-<div class="full-width-stripe employers-box">
-	<%=link_to "Employers", employer_welcome_path, :class =>" section-label", :tabindex => "40"%>
+<div class="separator"></div>
+
+<div class="full-width-stripe top-box">
 	<div class="content">
-		
 		<%= render :partial => 'layouts/flash_box' %>
-		<h1><em>Peer-to-peer</em> recruiting<br>at its <em>best</em></h1>
-		<h2>Bring &ldquo;stealth candidates&rdquo; out of the woodwork.</h2>
- 
 		
-		<div class="buttons-box">
-			<div class="button-wrapper">
-				<%=link_to employer_welcome_path, :class=>"flat-button", :tabindex => "50" do%>
-					<span class="caption">Product tour</span>
-				<% end %>
+		<h1>Developers talking to developers</h1>
+		<h3>Peer-to-peer recruiting at its best</h3>
+		
+		<div class="tiles-box">
+			<div class="clearfix">
+				<div class="tile featured-job" data-ad-url="<%=we_are_hiring_employer_path(@featured_jobs[0].employer.reference_num, :job => @featured_jobs[0].id, :anchor => Share.build_hash(Share::CHANNEL_BOARD))%>">
+					<%=image_tag(@featured_jobs[0].get_photo(1).image.standard.url(:secure => true), class: "job-img")%>
+					<div class="overlay">
+						<%= image_tag(@featured_jobs[0].logo.image.standard.url(:secure => true), class: "logo") %>
+						<div class="details"><%=@featured_jobs[0].position_name%> at <%=@featured_jobs[0].company_name%></div>
+						<div class="call-to-click">Learn more...</div>
+					</div>
+				</div>
+				<div class="tile featured-job" data-ad-url="<%=we_are_hiring_employer_path(@featured_jobs[1].employer.reference_num, :job => @featured_jobs[1].id, :anchor => Share.build_hash(Share::CHANNEL_BOARD))%>">
+					<%=image_tag(@featured_jobs[1].get_photo(1).image.standard.url(:secure => true), class: "job-img")%>
+					<div class="overlay">
+						<%= image_tag(@featured_jobs[1].logo.image.standard.url(:secure => true), class: "logo") %>
+						<div class="details"><%=@featured_jobs[1].position_name%> at <%=@featured_jobs[1].company_name%></div>
+						<div class="call-to-click">Learn more...</div>
+					</div>
+				</div>
+				<div class="tile">
+					<div class="right-corner">
+						<h2>Engineers</h2>
+						<h4>Great companies<br>want you</h4>
+						<%=link_to "Get found", register_path, :class =>"flat-button"%>
+					</div>					
+				</div>				
 			</div>
-	
-			<div class="button-wrapper">
-				<%=link_to employer_get_started_path, :class=>"flat-button", :tabindex => "55" do%>
-					<span class="caption"><span>Get Started</span><br><span class="subtext">Free trial. No credit card needed.</span></span>
-				<% end %>			
+			<div class="clearfix">
+				<div class="tile">
+					<div class="left-corner">
+						<h2>Employers</h2>
+						<h4>Target the candidates<br>you want</h4>
+						<%=link_to "Get started", employer_get_started_path, :class =>"flat-button"%>
+					</div>
+				</div>				
+				<div class="tile featured-job" data-ad-url="<%=we_are_hiring_employer_path(@featured_jobs[2].employer.reference_num, :job => @featured_jobs[2].id, :anchor => Share.build_hash(Share::CHANNEL_BOARD))%>">
+					<%=image_tag(@featured_jobs[2].get_photo(1).image.standard.url(:secure => true), class: "job-img")%>
+					<div class="overlay">
+						<%= image_tag(@featured_jobs[2].logo.image.standard.url(:secure => true), class: "logo") %>
+						<div class="details"><%=@featured_jobs[2].position_name%> at <%=@featured_jobs[2].company_name%></div>
+						<div class="call-to-click">Learn more...</div>
+					</div>
+				</div>
+				<div class="tile featured-job" data-ad-url="<%=we_are_hiring_employer_path(@featured_jobs[3].employer.reference_num, :job => @featured_jobs[3].id, :anchor => Share.build_hash(Share::CHANNEL_BOARD))%>">
+					<%=image_tag(@featured_jobs[3].get_photo(1).image.standard.url(:secure => true), class: "job-img")%>
+					<div class="overlay">
+						<%= image_tag(@featured_jobs[3].logo.image.standard.url(:secure => true), class: "logo") %>
+						<div class="details"><%=@featured_jobs[3].position_name%> at <%=@featured_jobs[3].company_name%></div>
+						<div class="call-to-click">Learn more...</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="tiles-box engineers">
+			<div class="block-title">Engineers</div>
+			<div class="clearfix">
+				<div class="tile color1">
+					<div class="padding-box">
+						<div class="tile-title">Ping and get<br>pinged</div>
+						<%=link_to "Check it out", jobs_path, :class =>"flat-button"%>
+					</div>
+				</div>
+				<div class="tile double color1 quotes-box">
+					<div class="quote-box color1">
+						<div class="padding-box">
+							<div class="given-by">Emily J.W.</div>
+							<div class="company-name">UX Designer</div>
+							<div class="quote-text">Awesome idea, great UX... I pinged and was contacted by a web designer at the company.
+								I talked to her on the phone and learned  what it's like to work there.</div>
+							<div class="next-quote"></div>
+						</div>
+						<%=image_tag(asset_path("testimonials/eng2.jpg"), class: "portret")%>
+					</div>
+					<div class="quote-box color1">
+						<div class="padding-box">
+							<div class="given-by">Jonathan M.</div>
+							<div class="company-name">Senior Sofware Engineer</div>
+							<div class="quote-text">After 4 years on the job, I was thinking about checking on new opportunities but couldn't be bothered. 
+								<%=Constants::SHORT_SITENAME%> helped me to do this without sending a resum&eacute; around.</div>
+							<div class="next-quote"></div>
+						</div>
+						<%=image_tag(asset_path("testimonials/eng1.jpg"), class: "portret")%>
+					</div>					
+				</div>
+			</div>
+			<div class="clearfix">
+				<div class="tile color1">
+					<div class="padding-box">
+						<div class="value-prop">
+							Find out which companies are worth working at.
+						</div>
+					</div>					
+				</div>
+				<div class="tile color2">
+					<div class="padding-box">
+						<div class="value-prop">
+							Talk to your fellow professionals.
+						</div>						
+					</div>					
+				</div>
+				<div class="tile color3">
+					<div class="padding-box">
+						<div class="value-prop">
+							Get invited to jobs that meet your requirements.
+						</div>								
+					</div>					
+				</div>
+			</div>
+		</div>
+		
+		<div class="tiles-box employers">
+			<div class="block-title">Employers</div>
+			<div class="clearfix">
+				<div class="tile double color1 quotes-box">
+					<div class="quote-box color1">
+						<div class="padding-box color1">
+							<div class="given-by">Keren Arazi</div>
+							<div class="company-name">SimilarWeb</div>
+							<div class="quote-text">RightJoin ads are the only ones I have ever been willing to share to my personal Facebook account. They brought in compliments, shares, and comments on how good they look.</div>
+							<div class="next-quote"></div>
+						</div>
+						<%=image_tag(asset_path("testimonials/KerenArazi.jpg"), class: "portret")%>
+					</div>					
+								
+					<div class="quote-box color1">
+						<div class="padding-box color1">
+							<div class="given-by">Daniel Zaturansky</div>
+							<div class="company-name">Powtoon</div>
+							<div class="quote-text">RightJoin helped us to extend our candidate pool quickly and easily. It proved its effectiveness right away, with sophisticated sharing tools and a tab for our web site which was very easy to add.</div>
+							<div class="next-quote"></div>
+						</div>
+						<%=image_tag(asset_path("testimonials/DanielZaturansky.jpg"), class: "portret")%>
+					</div>						
+				
+					<div class="quote-box color1">
+						<div class="padding-box color1">
+							<div class="given-by">Martin Viau</div>
+							<div class="company-name">WishWould</div>
+							<div class="quote-text">RightJoin is great because it takes an 'organic' approach to growing an organization, which is great for motivation of existing employees as well as talent acquisition.</div>
+							<div class="next-quote"></div>
+						</div>
+						<%=image_tag(asset_path("testimonials/MartinViau.jpg"), class: "portret")%>
+					</div>				
+				</div>
+				<div class="tile color2">
+					<div class="padding-box">
+						<div class="tile-title">The most beautiful<br>job ad in the world</div>
+						<%=link_to "Product tour", employer_welcome_path, :class =>"flat-button"%>
+					</div>					
+				</div>
+			</div>
+			<div class="clearfix">
+				<div class="tile color3">
+					<div class="padding-box">
+						<div class="value-prop">
+							Entice stealth candidates out of the woodwork.
+						</div>								
+					</div>					
+				</div>
+				<div class="tile color2">
+					<div class="padding-box">
+						<div class="value-prop">
+							Double your candidate pool in one third the time.
+						</div>						
+					</div>					
+				</div>
+				<div class="tile color1">
+					<div class="padding-box">
+						<div class="value-prop">
+							Get pinged by pros:<br>
+							No recruiters, no sourcing.
+						</div>							
+					</div>					
+				</div>
 			</div>
 		</div>		
 	</div>
-</div>		
-		
-<div class="full-width-stripe engineers-box">
-	<%=link_to "Engineers", jobs_path, :class =>" section-label", :tabindex => "60"%>
-	<div class="content">
-		<h1>Find out what it's like<br>to work at <em>other</em> companies</h1>
-		<h2>Talk to your fellow software developers.</h2>
-		
-		<div class="buttons-box">
-			<div class="button-wrapper">
-				<%=link_to jobs_path, :class=>"flat-button", :tabindex => "70" do%>
-					<span class="caption">Ping companies</span>
-				<% end %>
-			</div>
-	
-			<div class="button-wrapper">
-				<%=link_to register_path, :class=>"flat-button", :tabindex => "80" do%>
-					<span class="caption"><span>Get offers</span><br><span class="subtext">No resumé needed. Stay anonymous.</span></span>
-				<% end %>			
-			</div>
-		</div>		
-	</div>		
 </div>
 
 <script type="text/javascript">
-	$(window).scroll(function() {
-		if($(window).scrollTop() == 0) { 
-			$(".root-header").removeClass("opaque"); 
-		} else {
-			$(".root-header").addClass("opaque");	
-		}
-	});	
+	var engineerQuotesTimer = null;
+	var employerQuotesTimer = null;
+	
+	function cycleQuotes(quotesBoxElem) {
+		var lastQuote = $(quotesBoxElem).children('.quote-box:last');
+		lastQuote.addClass("slide-right");
+		
+		setTimeout(function(){
+			lastQuote.removeClass("slide-right");
+			$(quotesBoxElem).prepend(lastQuote.detach());
+		}, 1000);
+	}
 	
 	$(document).ready(function() {
 		$("#signin-form").validationEngine({
 	    	binded: false,
 	    	validationEventTrigger: false
 	   	});
+	   	
+	   	employerQuotesTimer = setInterval(function(){
+			cycleQuotes($(".employers .quotes-box")[0]);
+		}, 5000);
+		
+		setTimeout(function() {
+			engineerQuotesTimer = setInterval(function(){
+				cycleQuotes($(".engineers .quotes-box")[0]);
+			}, 5000);
+		}, 2000);
+	});	
+	
+	$(".featured-job").click(function(){
+		openDialogWindow($(this).data("ad-url"), 1000, 650);
+		return false;
+	});
+	
+	$(".employers .next-quote").click(function(){
+		clearTimeout(employerQuotesTimer);
+		cycleQuotes($(".employers .quotes-box")[0]);
+		return false;
+	});
+	
+	$(".engineers .next-quote").click(function(){
+		clearTimeout(engineerQuotesTimer);
+		cycleQuotes($(".engineers .quotes-box")[0]);
+		return false;
 	});	
 </script>

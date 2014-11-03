@@ -49,8 +49,8 @@ class EmployersController < ApplicationController
   
   def show
     @current_page_info = PageInfo::EMPLOYER_HOME
-    if params[:need_approvals]
-      flash_now_message(:notice, "Please review the candidate pings below, and pass them on to your team members for a chat.")  
+    if params[:need_approvals] 
+      flash_now_message(:notice, "Please review the candidate leads below, and pass them on to your team members for a chat.")  
     end
   end
   
@@ -187,7 +187,8 @@ class EmployersController < ApplicationController
     if is_localhost?
       locale = Constants::LOCALE_EN.to_sym
     else
-      locale = LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
+      locale = @sliding_session.locale_from_ip
+      locale ||= LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
     end
     
     if locale != :unknown_locale
@@ -205,7 +206,7 @@ class EmployersController < ApplicationController
         "fyistage.herokuapp.com",
         Constants::SITENAME_IL_LC,  
         "www.#{Constants::SITENAME_IL_LC}",
-        "www.#{Constants::FIVEYEARITCH_SITENAME.downcase}", 
+        "www.#{Constants::FIVEYEARITCH_SITENAME.downcase}",
         Constants::SITENAME_LC
     ]
 
@@ -306,6 +307,10 @@ class EmployersController < ApplicationController
       @job = employer.active_jobs.find_by_id(params[:job]) unless params[:job].blank?
       
       @candidate = get_employee_user_by_session_cookie
+      signed_in_employer = get_employer_user_by_session_cookie
+      
+      # does employer look at his own job ad?
+      @is_viewed_by_employer = signed_in_employer && signed_in_employer.id == employer.id
       
       # used to emphasize the ambassador's picture in the widget when seen by himself
       @ambassador = nil

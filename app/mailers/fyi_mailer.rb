@@ -3,7 +3,8 @@ class FyiMailer < ActionMailer::Base
   RJ_CRM_NAME = "Joshua"
   RJ_CRM_FULL_NAME = "Joshua Fox" 
   CRM_SIGNATURE = "All the best,<br><br>
-                  #{ RJ_CRM_NAME}"       
+                  #{ RJ_CRM_NAME}<br>
+                  #{Constants::SHORT_SITENAME} Co-founder"       
   
   
   FYI_FROM = "#{Constants::SHORT_SITENAME} <info@#{Constants::SITENAME_LC}>"
@@ -256,35 +257,6 @@ class FyiMailer < ActionMailer::Base
       return create_message to_email, subj, html_body, text_body   
   end
 
- 
-  def create_rightjoin_migration_announcement_for_candidates_email(candidate) 
-      @intended_for = :employee
-      
-      to_email = candidate.email
-      subject = "#{Constants::FIVEYEARITCH_SHORT_SITENAME} is now #{Constants::SHORT_SITENAME}"
-     
-      fn = candidate.first_name.blank? ? ""  : (candidate.first_name + ", ")
-      
-      salutation =  "Hi, #{fn}it's #{RJ_CRM_NAME} from #{Constants::FIVEYEARITCH_SHORT_SITENAME}." 
-   
-       content =
-          "It's been a while since you've heard from us. We didn't want to bother you. But now, after a lot of discussions with developers, we've come up with a new way to get them into better jobs.<br><br>"<<
-          "We're pivoting to \"peer-to-peer\" recruiting: We help developers outside a company connect with developers inside it for a chat, bypassing recruiters and HR.<br><br>" << 
-          "A new direction needs a new name. So, we're moving from #{Constants::FIVEYEARITCH_SITENAME} to #{Constants::SITENAME}. " << 
-          "The new #{Constants::SITENAME} is in closed beta, but as a long-term member you can still sign in at <a href='#{user_url(candidate, :locale => candidate.country_code)}'>your profile</a>.<br><br>" << 
-          "If you have any questions, just hit Reply.<br>"
-   
-      signature = "" + CRM_SIGNATURE
-      signature << "<br><br><br>P.S. Not interested anymore?  " << 
-          "<a href='#{unsubscribe_user_url(:locale => I18n.t(:country_code, candidate.locale), :id => candidate.id, :ref => candidate.reference_num(true))}'>Click here</a> to deactivate your account. (You can reactivate later.)"
-     
-       
-      return create_simple_text_email(subject, salutation, content, signature, to_email, PERSONAL_FROM)
-  end
-
-
-  
-
 
   def create_personal_welcome_candidate_email(user)
     subject = "Welcome to #{Constants::SHORT_SITENAME} "
@@ -297,7 +269,9 @@ class FyiMailer < ActionMailer::Base
       "Employers can review your anonymous #{Constants::SHORT_SITENAME} profile and invite you to be in touch. " <<
       "We keep you spam-free by letting employers ping you only when they have jobs that meet your requirements; we  screen  each invitation.<br><br>" <<
       "Go ahead and browse the specialized job listings, and ping the employers who interest you.<br><br>" <<
-      "Share #{Constants::SHORT_SITENAME} using the buttons at the footer of each page to help us launch the peer-to-peer recruiting revolution.<br><br>" <<
+      "We review all new profiles and vouch for the best. The goal is to let you play the field anonymously, but with the confidence that your experience gets you noticed. " << 
+      "If you think of anything else you might want to add to <a href='#{user_url(user, :locale => user.country_code)}'>your profile</a>, go ahead now before it's reviewed. <br><br>" <<  
+      "Help launch the peer-to-peer recruiting revolution by sharing #{Constants::SHORT_SITENAME} using the buttons at the footer of each page.<br><br>" <<
       "And don't hesitate to contact me with any questions.<br>"
 
     signature ="" + CRM_SIGNATURE
@@ -328,7 +302,7 @@ class FyiMailer < ActionMailer::Base
     content << "We've designed a posting that your team will  want to share, one that puts them in the center. You can point your team members at the social sharing tools, designed for peer-to-peer recruiting<br><br>" <<
         "You can add the geotargeted \"Join Us\" tab to the #{employer.company_name} site for software developers who are curious about your company.<br><br>" <<
         "You can track progress on your profile page, and we'll send you brief weekly summaries. " <<
-        "In the meantime, don't hesitate to contact me--I want to know how #{Constants::SHORT_SITENAME} can help you reach out to strong developers.<br>"
+        "In the meantime: Do you have any questions about using #{Constants::SHORT_SITENAME}?<br>"
 
     signature = ""+CRM_SIGNATURE
 
@@ -405,39 +379,54 @@ class FyiMailer < ActionMailer::Base
           return "Not hiring anymore? Go to this URL to to close all job postings and unsubscribe:\n#{unsubscribe_employer_url(:id => employer.id, :ref => employer.reference_num(true))}\n"
       end
   end
-   
- 
+  
+  def update_engineers_after_ping(info_interview)
+    subject = "Thanks for pinging"
+
+    salutation =  "Hi, #{ERB::Util.html_escape(info_interview[:first_name])}, thanks for pinging #{ERB::Util.html_escape(info_interview.job.company_name)}." 
+    
+    content =   "This email is to tell you what comes next.<br><br>" <<
+                  "Your ping is on its way to  #{ ERB::Util.html_escape(info_interview.job.company_name)}. They'll review it, and if it's a match, pass it on to a team member, " << 
+                  "who will be in touch by email. You can then get on the phone or go for a coffee, and talk about what it's like to work at #{ERB::Util.html_escape(info_interview.job.company_name) }.<br><br>" <<
+                  "The service is provided by #{Constants::SHORT_SITENAME}: the best way to check out new opportunities. <a href='#{register_url}'>Find out why.</a><br><br>" <<
+                  "And don't hesitate to contact me with any questions.<br>"
+
+      signature ="" + CRM_SIGNATURE
+  
+      return create_simple_text_email(subject, salutation, content, signature, info_interview[:email], PERSONAL_FROM)
+  end
+    
   def update_employers_about_new_contacts(employer)
     @intended_for = :employer
     contact_count = employer.contacts_count.to_i
- 
+
     subject = "Ping#{(contact_count == 1)? "" : "s"} from developers: For your review"
-      
+
     if contact_count == 1
        dev_s = "a developer is"
-    else   
+    else
        dev_s =  "#{contact_count} developers are"
-    end 
-    
+    end
+
     @msg1_h = "Hi, #{employer.first_name}, #{dev_s} pinging you and your team."
     @msg1_t = Utils.html_email_to_txt(@msg1_h)
-    
- 
-    @msg2_h = "Please review the candidate#{(contact_count == 1)? "'s" : "s'"} information and decide whether to  put a team member in touch, at your <a href='#{employer_url(employer, :locale => nil, :need_approvals=>true)}'>#{Constants::SHORT_SITENAME} dashboard</a>."  
+
+
+    @msg2_h = "Please review the candidate#{(contact_count == 1)? "'s" : "s'"} information and decide whether to  put a team member in touch, at your <a href='#{employer_url(employer, :locale => nil, :need_approvals=>true)}'>#{Constants::SHORT_SITENAME} dashboard</a>."
     @msg2_t = Utils.html_email_to_txt(@msg2_h)
-    
-     
+
+
     @msg3_h = PLEASE_REPLY
     @msg3_t = @msg3_h.clone
-    
-    @msg_footer_h = employer_unsubscribe_link(true, employer) 
+
+    @msg_footer_h = employer_unsubscribe_link(true, employer)
     @msg_footer_t = employer_unsubscribe_link(false, employer)
 
     html_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:html], :handlers => [:erb], :layout => false
     text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
- 
-    return create_message employer.email, subject, html_body, text_body       
-  end
+
+    return create_message employer.email, subject, html_body, text_body
+  end    
  
   # one comment - one email
   def update_employer_about_new_comment(comment) # only from ambassadors to employers
@@ -490,6 +479,22 @@ class FyiMailer < ActionMailer::Base
     text_body = render_to_string 'fyi_mailer/create_fyi_message', :formats => [:text], :handlers => [:erb], :layout => false
  
     return create_message ambassador.employer.email, subject, html_body, text_body       
+  end
+  
+  def create_vouched_for_candidate_email(user)
+    subject = "You're awesome, and #{Constants::SHORT_SITENAME} knows it"
+
+    salutation =  "Congratulations, #{ERB::Util.html_escape(user.first_name)},<br><br>" 
+    content =   "We review all new profiles and vouch for the best of the best. " <<
+                "Only  #{Constants::VOUCHED_ACCOUNTS_PERCENTAGE}% of reviewed members have been approved for premier status, and you're one of them! " <<
+                "The goal is to let you play the field anonymously, but with the confidence that your experience gets noticed. " <<
+                "We've added a badge to  <a href='#{user_url(user, :locale => user.country_code)}'>your profile</a> that lets employers know that you are among the best of #{Constants::SITENAME} members. " <<
+                "Get ready to get the coolest offers! <br><br>" <<
+                "And don't hesitate to contact me with any questions.<br>"
+
+      signature ="" + CRM_SIGNATURE
+  
+      return create_simple_text_email(subject, salutation, content, signature, user.email, PERSONAL_FROM)
   end
   
   def create_ambassador_reminder_message(ambassador, subject, body)

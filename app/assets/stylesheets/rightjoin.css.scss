@@ -224,6 +224,10 @@ a, .ui-dialog-content a {
   border: 1px solid #2980b9;
 }
 
+.standard-button {
+  @include inline-button(#d35400, 14px, 35px, 28px, white, 500);
+}
+
 .cancel-button {
   @include inline-button(#b3bec5, 14px, 35px, 28px, white, 500);
 }
@@ -233,7 +237,7 @@ a, .ui-dialog-content a {
 ////////////////////////////////////////////////////////
 .employer {
   .add-tag-button {
-    @include inline-button(#d35400, 14px, 35px, 15px, white, 500);
+    @include inline-button(#0999E6, 14px, 35px, 15px, white, 500);
     text-transform: none;
   }  
   
@@ -258,15 +262,6 @@ a, .ui-dialog-content a {
     
     &:hover {
       background: #0079BB;
-    }
-  }
-  
-  .content-box {
-    .buttons-box {
-      .standard-button {
-        @include inline-button(#d35400, 18px, 40px, 40px, white, normal);
-        word-spacing: 4px;
-      }
     }
   }
   
@@ -327,12 +322,10 @@ a, .ui-dialog-content a {
     
     #submit-signin {
       @include inline-button(#1BB0FF, 14px, 37px, 28px, white, 500);
+      @include box-shadow(none);
+      @include border-radius(0);
     }
   }
-  
-  .standard-button {
-    @include inline-button(#d35400, 14px, 35px, 28px, white, 500);
-  }  
   
   textarea[disabled], input[disabled][type="text"], input[disabled][type="password"], input[readonly], select[disabled], .editable-box[disabled] {
     &:focus {
@@ -406,15 +399,6 @@ a, .ui-dialog-content a {
     }
   }  
   
-  .content-box {
-    .buttons-box {
-      .standard-button {
-        @include inline-button(#11a8ab, 18px, 40px, 40px, white, normal);
-        word-spacing: 4px;
-      }
-    }
-  }  
-  
   .drop-down {
     border: 1px solid #394264;
     background: #1F253D;
@@ -472,12 +456,10 @@ a, .ui-dialog-content a {
     
     #submit-signin {
       @include inline-button(#F13755, 14px, 37px, 28px, white, 500);
+      @include box-shadow(none);
+      @include border-radius(0);
     }
   } 
-  
-  .standard-button {
-    @include inline-button(#11a8ab, 14px, 35px, 28px, white, 500);
-  }
   
   // header
   .blog-link:hover {
@@ -520,6 +502,10 @@ a, .ui-dialog-content a {
        display: inline-block;
      }
   }
+}
+
+.copyright{
+  font-size: 13px;
 }
 
 #footer-menu-box {
@@ -572,7 +558,7 @@ a, .ui-dialog-content a {
         
         &.indented {
           list-style-type: disc;
-          margin-left: 14px;
+          margin-left: 26px;
         }
       }
     }
@@ -662,7 +648,7 @@ a, .ui-dialog-content a {
       font-size: 15px;
       color: white;
       line-height: 1em;
-      padding-bottom: 5px;
+      padding-bottom: 3px;
     }
     
     .user-signin {
@@ -737,6 +723,13 @@ a, .ui-dialog-content a {
         .email {
           color: #c9d1ef;
           font-size: 16px;
+          line-height: 24px;
+          display: inline-block;
+          
+          &.crown {
+            padding-left: 30px;
+            background: transparent image-url("shared/crown-24x24.png") no-repeat center left;
+          }
         }
       }
       
@@ -1012,6 +1005,25 @@ label {
 
 .page-heading-box {
   margin-bottom: 40px;
+  
+  ul {
+    color: #888887; 
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+    margin-top: 20px;
+    padding-left: 20px;
+      
+    li {
+      display: block;
+      list-style: none;
+      font-size: 18px;
+      line-height: 1.5em;
+      padding-left: 24px;
+      background: transparent image-url("shared/green-check.png") no-repeat left center; 
+    }
+  }  
 }
 
 .content-box {
@@ -1028,6 +1040,11 @@ label {
     background: #E9F0F4;
     margin-right: -30px;
     margin-bottom: -30px;
+    
+    .standard-button {
+      @include inline-button(#d35400, 18px, 40px, 40px, white, normal);
+      word-spacing: 4px;
+    }    
     
     .cancel-button {
       @include inline-button(#b3bec5, 18px, 40px, 40px, white, normal);
@@ -1135,12 +1152,6 @@ label {
   
   #tech_stack_list {
     width: 500px;
-  }
-  
-  #description-text {
-    width: 824px;
-    height: 7em;
-    resize: none;
   }
   
   #full-description-text {
@@ -2001,7 +2012,7 @@ label {
       position: relative;
       text-align: center;
       height: 90px;
-      padding: 15px;
+      padding: 15px 0;
       background: white;
       margin-bottom: 10px;
       font-size: 60px;
@@ -2263,12 +2274,23 @@ label {
   
   .targeted-box {
     background: #8E44AD image-url("shared/candidate.png") no-repeat bottom right;
-    padding: 20px;
+    padding: 20px 70px 20px 20px;
     color: white;
     margin-bottom: 15px;
-    min-width: 360px;
-    max-width: 858px;
+    min-width: 310px;
+    max-width: 808px;
+    position: relative;
     display: inline-block;
+    
+    .crown {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      top: -12px;
+      right: -10px;
+      background: #8126A7 image-url("shared/crown-24x24.png") no-repeat center;
+      @include border-radius(50%);
+    }
     
     .targeted-position {
       font-size: 22px;
@@ -2703,10 +2725,8 @@ $tab-border-radius: 4px;
 }
 
 #user-edit {
-  .free-text,
   .professional-profiles {
-    width: 824px;
-    height: 4em;
+    height: 6em;
   }
   
   .location-options-box {
@@ -2719,6 +2739,12 @@ $tab-border-radius: 4px;
   
   .only-sign-up {
     padding-bottom: 10px;
+  }
+}
+
+#requirements-box {
+  .free-text {
+    height: 5em;
   }
   
   .aspirations-box {
@@ -2742,12 +2768,13 @@ $tab-border-radius: 4px;
   #salary-tag {
     margin: 0;
     line-height: 27px;
-  }
+  }  
   
   .salary-slider-outer-box {
     text-align: center;
     width: 462px;
-
+    color: #485C70;
+  
     .salary-slider-inner-box {
       padding-bottom: 10px;
       background: transparent image-url("shared/ruller.png") no-repeat bottom left;
@@ -2772,7 +2799,7 @@ $tab-border-radius: 4px;
         background: #119B9E !important;
       }
     }
-  }
+  }  
 }
 
 .fyi-accordion {
@@ -2839,6 +2866,7 @@ $tab-border-radius: 4px;
 
 #plans-and-pricing-table{
   color: #6B696A;
+  width: 734px;
   
   td, th {
     border: 0;
@@ -2874,27 +2902,23 @@ $tab-border-radius: 4px;
     }
     
     .basic {
-      background: #B1DB5D;
-    }
-    
-    .pro {
       background: #9CCA44;
     }
     
-    .enterprise {
+    .pro {
       background: #7BB801;
-    }    
+    }
   }
   
   tr.footer {
     font-weight: 500;
     
-    .basic, .pro, .enterprise {
+    .basic, .pro {
       cursor: pointer;
     }
   }
   
-  .basic, .pro, .enterprise {
+  .basic, .pro {
     width: 176px;
   }
   
@@ -2902,19 +2926,8 @@ $tab-border-radius: 4px;
     .feature-value {
       font-size: 35px;
       padding: 30px 0;
-    }
-    
-    .basic {
-      color: #B1DB5D;
-    }
-    
-    .pro {
-      color: #9CCA44;
-    }
-    
-    .enterprise {
       color: #7BB801;
-    }    
+    }
   }
   
   .check-mark {
@@ -2926,11 +2939,9 @@ $tab-border-radius: 4px;
 }
 
 #employee-dashboard {
-  .interviews-box, .rating-box {
-    min-height: 100px;
-  }  
+  min-height: 250px;
   
-  .interviews-box, .rating-box, .tell-friends {
+  .interviews-box, .tell-friends {
     padding: 30px;
     margin-bottom: 40px;
   }
@@ -3090,10 +3101,12 @@ $tab-border-radius: 4px;
   }
   
   .value-prop-box {
-    background: #385B83 image-url("shared/blue-bg.jpg") no-repeat center center; 
-    @include background-size (cover);
+    background-color: #2B6EBF;
+    background-image: image-url("shared/root-bg.jpg");
     padding-top: 25px;
-    color: #F0EBEF;
+    font-size: 15px;
+    color: #F5F3F4;
+    text-shadow: 0px 0px 3px rgba(25, 58, 111, 0.2);
     
     h1 {
       font-size: 46px;
@@ -3103,11 +3116,11 @@ $tab-border-radius: 4px;
     
     h2 {
       font-size: 22px;
-      color: #BCBCBE;
+      color: #CFCFCF;
     }
     
     h3 {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 500;
       color: white;
     }
@@ -3121,8 +3134,8 @@ $tab-border-radius: 4px;
       
       .bullet-box {
         position: absolute;
-        width: 360px;
-        background: transparent image-url("shared/yellow-dot.png") no-repeat left 6px; 
+        width: 370px;
+        background: transparent image-url("shared/yellow-dot.png") no-repeat left 9px; 
         padding-left: 14px;
         
         &.beautiful-ads {
@@ -3329,7 +3342,7 @@ $tab-border-radius: 4px;
   }
   
   .learn-more-box {
-    background: #385B83 image-url("shared/blue-bg.jpg") no-repeat center center; 
+    background: #2B6EBF image-url("shared/root-bg.jpg") no-repeat;    
     padding-top: 80px;
     padding-bottom: 80px; 
     text-align: center;
@@ -3345,12 +3358,12 @@ $tab-border-radius: 4px;
   }
   
   .welcome-button {
-    @include inline-button(#7AB700, 19px, 55px, 50px, white, 500);
+    @include inline-button(#FE9601, 19px, 55px, 50px, white, normal);
   }
 }
 
 #pg_index {
-  background-color: #555555;
+  background-color: #2B6EBF;
   background-image: image-url("shared/root-bg.jpg");
   background-repeat: no-repeat;
   background-position: center center;
@@ -3358,26 +3371,40 @@ $tab-border-radius: 4px;
   background-attachment: fixed;
   color: #FFF;
   
-  .logo {
-    padding-bottom: 0px;
-    background: transparent image-url("shared/rightjoin-emp.png") no-repeat top center;   
-  }  
+  .rightjoin-logo-box {
+    display: inline-block;
+    padding-top: 5px;
+
+    .tag-line {
+      text-align: right;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+    
+    .logo {
+      padding-bottom: 0px;
+      background: transparent image-url("shared/rightjoin-emp.png") no-repeat top center;   
+    }  
+  }
   
   #flash-ajax-box {
-    position: fixed;
-    top: 90px;
-    text-align: left;
+    position: absolute;
+    top: -89px;
     z-index: 999;
   }
   
+  .separator {
+    height: 1px;
+    background-color: #000;
+    @include box-shadow(0 1px #fff);
+    @include opacity(25);
+  }
+  
   .root-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: transparent image-url("shared/semi-transparent.png") repeat;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    background: transparent image-url("shared/semi-transparent-bright.png") repeat;
+    padding-top: 30px;
+    padding-bottom: 30px;
     z-index: 999;
     
     .signin-box {
@@ -3385,10 +3412,18 @@ $tab-border-radius: 4px;
       right: 0;
       top: 0;
       
+      .signin-title {
+        text-transform: uppercase;
+        font-size: 15px;
+        color: #FFF;
+        line-height: 1em;
+        padding-bottom: 3px;
+      }
+      
       .signin-input {
         width: 180px;
         padding-left: 32px;
-        border: 1px solid #1A3341;
+        border: 1px solid #054D7D;
         color: white;
         
         &:focus {
@@ -3397,136 +3432,382 @@ $tab-border-radius: 4px;
       }
       
       #email-input {
-        background: #1A3341 image-url("shared/envelop-dark.png") no-repeat 6px center !important;
+        background: #054D7D image-url("shared/envelop.png") no-repeat 6px center !important;
         
         &:-webkit-autofill, &:-webkit-autofill:focus {
-          background: #1A3341 image-url("shared/envelop-dark.png") no-repeat 6px center !important;
+          background: #054D7D image-url("shared/envelop.png") no-repeat 6px center !important;
         }
       }
       
       #pw-input {
-        background: #1A3341 image-url("shared/lock-dark.png") no-repeat 6px center !important;
+        background: #054D7D image-url("shared/lock.png") no-repeat 6px center !important;
         
         &:-webkit-autofill, &:-webkit-autofill:focus {
-          background: #1A3341 image-url("shared/lock-dark.png") no-repeat 6px center !important;
+          background: #054D7D image-url("shared/lock.png") no-repeat 6px center !important;
         }
       } 
       
       #submit-signin {
         @include inline-button(#1BB0FF, 14px, 35px, 28px, white, 500);
-      }           
+        @include box-shadow(none);
+        @include border-radius(0);
+      }
     }
-    
-    &.opaque {
-      background: #2F4B5B;
-    }
-    
+    /*
     .beta {
       position: absolute;
       background: transparent image-url("shared/beta.png") no-repeat;
       margin-top: 20px;
       width: 160px;
       height: 161px;
-    }    
+    }   */ 
   }
   
-  .employers-box, .engineers-box {
-    text-align: center;
+  h1, h2, h3, h4, .block-title, .tile-title {
+    color: white;
+    text-transform: uppercase;
+    font-family: 'Oswald', sans-serif;
+    text-rendering: optimizelegibility;
+  }
+  
+  h1 {
+    font-size: 58px;
+    letter-spacing: 2px;
+    word-spacing: -2px;
+    margin: 0;
+  }
+  
+  h2 {
+    font-size: 36px;
+    letter-spacing: 1px;
+    line-height: 32px;
+    margin-bottom: 10px;
+  }
+  
+  h3 {
+    font-size: 23px;
+    letter-spacing: 1px;
+    padding-bottom: 10px;
+  }
+  
+  h4 {
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 9px;
+  }  
+  
+  .top-box, .middle-box, .bottom-box {
+    color: white;
+  }
+  
+  .top-box {
+    padding-top: 90px;
     
-    h1 {
-      font-size: 52px;
-      text-transform: uppercase;
-      color: #fff;
-      text-shadow: 0 0 60px rgba(0,0,2,.5);
-      padding-top: 150px;
-      padding-bottom: 120px;
-      word-spacing: 3px;
+    .separator {
+      margin-top: 70px;
     }
     
-    h2 {
-      font-size: 24px;
-      color: #fff;
-      text-shadow: 1px 1px 32px rgba(0,0,2,.3);
-    }    
+    .block-title {
+      font-size: 66px;
+      line-height: 66px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      padding-bottom: 14px;
+    }
+  }
+  
+  .tiles-box {
+    margin-top: 70px;
+  }
+  
+  .tile {
+    width: 312px;
+    height: 212px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    display: inline-block;
+    float: left;
+    position: relative;
+    overflow: hidden;
     
-    .section-label {
+    &:last-child{
+      margin-right: 0;
+    }
+    
+    .right-corner {
       position: absolute;
-      text-transform: uppercase;
-      background: transparent image-url("shared/transp-black-50.png") repeat;
-      padding: 15px 25px;
-      width: 150px;
-      font-size: 22px;
       right: 0;
+      text-align: right;
+    }
+    
+    .left-corner {
+      position: absolute;
+      bottom: 0;
+    }    
+    
+    &.double {
+      width: 626px;
+    }
+    
+    .tile-title {
+      font-size: 24px;
+      line-height: 1.3em;
+      letter-spacing: 1px;
+    }
+    
+    .value-prop {
       color: white;
-      text-decoration: none;
+      font-family: 'Oswald', sans-serif;
+      text-rendering: optimizelegibility;
+      font-size: 19px;
+      line-height: 1.3em;
+      letter-spacing: 1px;
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+    }
+  }
+  
+  .quotes-box {
+    .quote-box {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      @include transition(all 1s ease-in-out); 
       
-      &:hover, &:focus {
-        text-decoration: underline;
+      &.slide-right {
+        @include translate(30%);
+        @include opacity(0);
+      }
+      
+      .given-by {
+        color: white;
+        font-family: 'Oswald', sans-serif;
+        text-rendering: optimizelegibility;
+        font-size: 24px;
+        line-height: 1em;
+        letter-spacing: 1px;
+        padding-bottom: 8px;
+      }
+      
+      .company-name {
+        color: white;
+        font-family: 'Oswald', sans-serif;
+        text-rendering: optimizelegibility;
+        font-size: 19px;
+        //letter-spacing: 1px;
+        padding-bottom: 15px;
+        @include opacity(70);
+      }
+      
+      .quote-text {
+        font-size: 15px;
+        text-align: justify;
+        line-height: 1.4em;
+        
+        &::before { 
+            content: open-quote;
+        }
+        
+        &::after { 
+            content: close-quote;
+        }        
+      }
+      
+      .portret {
+        position: absolute;
+        top: 0;
+        width: 212px;
+        height: 212px;
+      }
+      
+      .next-quote {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        cursor: pointer;
+        background: transparent image-url("shared/arrow-right.png") no-repeat center;
+        @include opacity(70);
+        
+        &:hover {
+          @include opacity(100);
+        }
+      }        
+    }
+  }
+  
+  .featured-job {
+    cursor: pointer;
+    
+    .job-img {
+      width: 100%;
+    }
+    
+    .overlay {
+      position: absolute;
+      top: 160px;
+      width: 100%;
+      height: 100%;
+      background: transparent image-url("shared/semi-transparent.png") repeat;
+      transition: top .2s ease-in-out;
+      z-index: 998;
+      
+      .logo {
+        height: 43px;
+        position: relative;
+        top: 5px;
+        left: 10px;
+        @include opacity(80);
+      }
+      
+      .details {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        color: white;
+        text-rendering: optimizelegibility;
+        font-size: 26px;
+        line-height: 1.2em;
+        letter-spacing: -1px;
+        font-weight: 500;
+      }
+      
+      .call-to-click {
+        position: absolute;
+        top: 30px;
+        right: 8px;
+        color: white;
+        text-align: right;
+        @include opacity(70);
+      }
+    }
+    
+    &:hover {
+      .overlay {
+        top: 0;
+        background: transparent image-url("shared/semi-transparent-dark.png") repeat;
+        
+        .call-to-click {
+          top: 6px;
+          color: white;
+          text-decoration: underline;
+          @include opacity(100);
+        }
+        
+        .logo {
+          @include opacity(100);
+        }        
       }
     }
   }
-  
-  .employers-box {
-    padding-top: 75px;
-    background: transparent image-url("shared/root-top-bg.png") repeat center center;
+
+  .flat-button {  
+    color: white;
+    width: 180px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 300;
+    text-decoration: none;
+    background-color: #FE9601;
+    color: #402301;
+    font-family: 'Oswald', sans-serif;
+    text-rendering: optimizelegibility;
+    display: inline-block;
+    line-height: 46px;
+    word-spacing: 1px;
+    text-transform: capitalize;
     
-    .flat-button {
-      background: #FE9601;
+    &:hover, &:focus {
+      color: white;
     }
   }
   
-  .engineers-box {
-    background: transparent image-url("shared/root-bottom-bg.png") repeat center center;
+  .padding-box {
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+  
+  .engineers {
+    .block-title, .tile-title {
+      text-align: right;
+    }    
+    
+    .color1 {
+      background-color: #7116AF;
+    }
+    
+    .color2 {
+      background-color: #4221B6;
+    }
+    
+    .color3 {
+      background-color: #1D76EE;
+    }
     
     .flat-button {
-      background: #8E44AD;
+      position: absolute;
+      bottom: 26px;
+    }
+    
+    .quote-box {
+       .padding-box {
+        margin-right: 212px;
+      }
+      
+      .portret {
+        right: 0;
+      }
     }    
   }
   
-  .buttons-box {
-    padding: 20px 0 150px;
-    
-    .button-wrapper {
-      display: inline-block;
-      margin: 0 10px;
-      
-      .flat-button {
-        color: white;
-        width: 280px;
-        height: 60px;
-        display: table;
-        cursor: pointer;
-        outline: none;
-        border: none;
-        text-align: center;
-        font-size: 19px;
-        font-weight: 500;
-        text-transform: uppercase;
-        text-decoration: none;
-        @include border-radius(4px);    
-        
-        .caption {
-          display: table-cell; 
-          vertical-align: middle; 
-          text-align: center; 
-          
-          .subtext {
-            font-size: 13px;
-            font-weight: normal;
-            text-transform: none;
-          }
-        }
-        
-        &:hover, &:focus {
-          background: #394d84;
-        }
-      }
+  .employers {
+    .color1 {
+      background-color: #D25400;
     }
+    
+    .color2 {
+      background-color: #AC143D;
+    }
+    
+    .color3 {
+      background-color: #D25400;
+    }
+    
+    .flat-button {
+      position: absolute;
+      bottom: 26px;
+      right: 20px;
+    }
+    
+    .quote-box {
+       .padding-box {
+        margin-left: 212px;
+      }
+      
+      .portret {
+        left: 0;
+      }
+    }        
   }
   
   #footer-menu-box {
-    background: #1F253D;
-    margin-top: 0;
+    margin-top: 100px;
+    background: #0B2244;
   }  
 }
 

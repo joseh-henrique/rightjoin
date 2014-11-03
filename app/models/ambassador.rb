@@ -21,7 +21,7 @@ class Ambassador < ActiveRecord::Base
   
   belongs_to :employer
   belongs_to :auth
-  has_many :shares, :dependent => :nullify
+  has_many :shares
   has_many :infointerviews, :dependent => :nullify, :foreign_key => :referred_by
   has_many :followups, :dependent => :destroy
   has_many :comments, :dependent => :destroy

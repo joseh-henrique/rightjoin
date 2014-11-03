@@ -19,7 +19,8 @@ class Infointerview < ActiveRecord::Base
   NEW = 0
   #VETTED_BY_FYI = 10
   #CLOSED_EXPIRED = 12
-  ACTIVE_LEAD = 15
+  ACTIVE_EMPLOYER_NOTIFIED = 13
+  ACTIVE_SEEN_BY_EMPLOYER = 15
   #ACTIVE_LEAD_INVOLVING_AMBASSADOR = 20
   CLOSED_BY_FYI = 100 # not in use any more??? 1 record in production still has status 100
   CLOSED_BY_EMPLOYER = 110

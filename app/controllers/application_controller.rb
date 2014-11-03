@@ -2,12 +2,22 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   include UrlHelper
   include SessionsHelper
+  before_filter :init_sliding_session
+  after_filter :write_sliding_session
   before_filter :set_default_locale
   before_filter :check_uri
   before_filter :check_secret_param
+  
+  def init_sliding_session
+      @sliding_session = SlidingSession.init_sliding_session(cookies, request)
+  end
+  
+  def write_sliding_session
+      @sliding_session.write(cookies)
+  end
  
-   def check_uri
-    #Note: To get SSL redirect,  Could do this in a 'before; filter. redirect_to :protocol => "https://" unless request.ssl?
+  def check_uri
+    
     # Should use force_ssl=true and remove the redirect below, but that is only possible after we support https in the root rightjoin.io
      new_protocol =  switch_to_https(request)
     if Rails.env.staging?
@@ -40,7 +50,7 @@ class ApplicationController < ActionController::Base
         else
           redir_path = "#{orig_path}#{param_char}from=#{host}"
         end
-        url_with_www = new_protocol + redir_host + port_str +redir_path 
+        url_with_www = new_protocol + redir_host + port_str + redir_path 
         
         redirect_to url_with_www, :status => 301
       end
@@ -82,7 +92,18 @@ class ApplicationController < ActionController::Base
     end 
     
     if locale_s.blank?
-      I18n.locale = LocationUtils::locale_by_ip(request.remote_ip)
+      if @sliding_session.locale_from_ip.nil?
+        tmp_locale = LocationUtils::locale_by_ip(request.remote_ip, :unknown_locale)
+        if tmp_locale == :unknown_locale
+          I18n.locale = Constants::LOCALE_EN.to_sym
+        else
+          I18n.locale = tmp_locale
+          @sliding_session.locale_from_ip = tmp_locale
+          Rails.logger.info "Setting session locale from IP to #{@sliding_session.locale_from_ip}"
+        end
+      else
+        I18n.locale = @sliding_session.locale_from_ip
+      end
     else
       I18n.locale = locale_s.to_sym 
     end

@@ -11,7 +11,7 @@ class Job < ActiveRecord::Base
   has_many :interviews, :dependent => :destroy
   has_many :ads, :dependent => :destroy
   has_many :infointerviews, :dependent => :destroy
-  has_many :shares, :dependent => :nullify
+  has_many :shares
   
   validates :employer_id, :presence => true
   validates :position_id, :presence => true
@@ -86,6 +86,23 @@ class Job < ActiveRecord::Base
       bounding_box = DistanceUtils::bounding_box(new_location.latitude, new_location.longitude, search_radius_in_miles)
       self.assign_attributes(bounding_box, :without_protection => true)
     end
+  end
+  
+  # for the root page
+  def self.featured_jobs(num_of_featured_jobs)
+    @featured_jobs = []
+    
+    featured_job_ids = [-1]
+    jobs_str = FyiConfiguration.fetch("featured_jobs")
+    unless jobs_str.blank?
+      featured_job_ids = jobs_str.split(",").map{|id| id.strip.to_i}
+      @featured_jobs = Job.where(:id => featured_job_ids, :status => Job::PUBLISHED).where("image_1_id is not null and logo_image_id is not null").to_a
+    end
+    
+    if @featured_jobs.count < num_of_featured_jobs
+      featured_job_ids = Job.unscoped.select("max(jobs.id) as featured_job_id").where(:status => Job::PUBLISHED).where('image_1_id is not null and logo_image_id is not null and id not in (?)', featured_job_ids).group("jobs.employer_id").order("featured_job_id desc").limit(num_of_featured_jobs - @featured_jobs.count)
+      @featured_jobs.concat Job.where(:id => featured_job_ids).to_a
+    end    
   end
   
   def effective_join_us_widget_params_map
@@ -188,7 +205,7 @@ class Job < ActiveRecord::Base
   
   def all_generated_leads_count(job_statuses = [Job::PUBLISHED, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
     Infointerview.joins(:job).where("jobs.id = ? and jobs.status in (?) and infointerviews.status in (?)", 
-                                    id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
+                                    id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_EMPLOYER_NOTIFIED, Infointerview::ACTIVE_SEEN_BY_EMPLOYER, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
   end
   
   def print_candidates(alternative_location, skill, max_count)
@@ -296,8 +313,7 @@ class Job < ActiveRecord::Base
   
   # The CSV file must have the following columns:
   # description, country-code, location, latitude, longitude, title, company, relocation, job-ad-url, kegerator, meaningful-jobs, bleeding-edge-tech, startup, open-source 
-  # TODO this method will only work after you create jennifer@rightjoin.io, since she is the "employer" for this purpose.
-  # Per current plans we are not going to use this method and it can be deleted.
+  # This method will only work after you create jennifer@rightjoin.io, since she is the "employer" for this purpose.
   def self.import_fyi_jobs(url_to_csv)
     new_jobs = []
 
@@ -401,9 +417,10 @@ class Job < ActiveRecord::Base
   end
   
   def self.jobs_with_share_statistics_by_status(*status)
-    Job.unscoped.joins("LEFT OUTER JOIN shares ON shares.job_id = jobs.id").where(status: status).group("jobs.id").select("jobs.*, count(shares.id) as shares_counter, sum(shares.click_counter) as clickback_counter, sum(shares.lead_counter) as leads_counter")
+    Job.unscoped.joins("LEFT OUTER JOIN shares ON shares.job_id = jobs.id").where(status: status).group("jobs.id").select("jobs.*, sum(shares.share_counter) as shares_counter, sum(shares.click_counter) as clickback_counter, sum(shares.lead_counter) as leads_counter")
   end
   
+  # 1-based
   def get_photo(index) 
     photo = nil
     photo_id = self.attributes["image_#{index}_id"]
@@ -428,7 +445,7 @@ class Job < ActiveRecord::Base
     
     unless self.video_url.blank?
       youtube_id = Utils.extract_youtube_id(self.video_url)
-      url = "http://img.youtube.com/vi/#{youtube_id}/mqdefault.jpg" unless youtube_id.blank? 
+      url = "https://img.youtube.com/vi/#{youtube_id}/mqdefault.jpg" unless youtube_id.blank? 
     end
     
     return url

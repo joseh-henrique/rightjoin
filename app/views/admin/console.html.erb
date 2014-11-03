@@ -6,17 +6,17 @@
 	<h3 class="standard-section-header expanded">Maintenance</h3>
 	<div class="accordion-panel"> 
 		<% #TODO Change the button color for any item that needs  admin input %>
-		<%=link_to "Events", admin_events_path, :class => "green-inline-button" %>&nbsp;
-		<%=link_to "Approve invitations", admin_invites_to_approve_path, :class => "green-inline-button" %>&nbsp;
-		<%=link_to "Positions", admin_positions_path, :class => "green-inline-button" %>&nbsp;
-		<%=link_to "Skills", admin_skills_path, :class => "green-inline-button" %>&nbsp;
+		<%=link_to "Events", admin_events_path %>&nbsp;
+		<%=link_to "Approve invitations", admin_invites_to_approve_path %>&nbsp;
+		<%=link_to "Positions", admin_positions_path %>&nbsp;
+		<%=link_to "Skills", admin_skills_path %>&nbsp;
 	</div>
 	
 	<h3 class="standard-section-header expanded">Locations</h3>
 	<div class="accordion-panel">
 	  <% Constants::COUNTRIES.each_key do |country_code|#us,uk,ca,au
 	     locale = Constants::COUNTRIES[country_code]# locale_ like en-GB %>
-	     <%=link_to "Locations [#{locale}]", admin_locations_path(:locale => locale), :class => "green-inline-button"%>&nbsp;&nbsp;
+	     <%=link_to "Locations [#{locale}]", admin_locations_path(:locale => locale)%>&nbsp;&nbsp;
 	  <% end %>	
 	</div>
 	
@@ -29,23 +29,23 @@
 				<%= text_field_tag(:csv_url, "", :autocomplete => "on", :class => "full-row-width", :spellcheck => false) %>
 			</div>
 			
-			<%= submit_tag("Import", :class => "blue-inline-button", :name => nil) %>
+			<%= submit_tag("Import", :name => nil) %>
 		<% end %>
 	</div>	
 	
 	<h3 class="standard-section-header collapsed">Diagnostics</h3>
 	<div class="accordion-panel">
 		<%unless Rails.env.production?%>
-			<%=link_to "Send welcome email to engineers", admin_welcome_engineers_path, :class => "green-inline-button" %>&nbsp;
-			<%=link_to "Send welcome email to employers", admin_welcome_employers_path, :class => "green-inline-button" %>&nbsp;<br><br>
-			<%=link_to "Send update email to engineers", admin_update_engineers_path, :class => "green-inline-button" %>&nbsp;
-			<%=link_to "Send update email to employers", admin_update_employers_path, :class => "green-inline-button" %>&nbsp;<br><br>
-			<%=link_to "Send admin update", admin_update_admin_path, :class => "green-inline-button" %>&nbsp;
-			<%=link_to "Update employers about new contacts", admin_update_employers_about_new_contacts_path, :class => "green-inline-button" %>&nbsp;
-			<%=link_to "Update employers about new comments", admin_update_employers_about_new_comments_path, :class => "green-inline-button" %>&nbsp;
+			<%=link_to "Send welcome email to engineers", admin_welcome_engineers_path %>&nbsp;
+			<%=link_to "Send welcome email to employers", admin_welcome_employers_path %>&nbsp;<br><br>
+			<%=link_to "Send update email to engineers", admin_update_engineers_path %>&nbsp;
+			<%=link_to "Send update email to employers", admin_update_employers_path %>&nbsp;<br><br>
+			<%=link_to "Send admin update", admin_update_admin_path %>&nbsp;
+			<%=link_to "Update engineers and employers about new pings", admin_send_update_about_new_pings_path %>&nbsp;
+ 			<%=link_to "Update employers about new comments", admin_update_employers_about_new_comments_path %>&nbsp;
 			<br><br>
 		<%end%>
-		<%=link_to "Inspect", admin_report_statistics_path, :class => "green-inline-button" %>&nbsp;
+		<%=link_to "Inspect", admin_report_statistics_path %>&nbsp;
 	</div>
 </div>
 

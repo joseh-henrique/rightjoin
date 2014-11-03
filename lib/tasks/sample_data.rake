@@ -1,6 +1,7 @@
 BASIC_SAMPLE = ""
 namespace :db do
   desc "Fill database with sample data for users and employers"
+  #TODO this populate task is no longer maintained. Delete it or make sure it works.
   task :populate => :environment do
      Rake::Task['db:reset'].invoke
      make_intl_location_tags
@@ -38,8 +39,8 @@ namespace :db do
     fix_position_tags_case
   end
   
-  task :make_job_description_long => :environment do
-    make_job_description_long
+  task :set_single_share_for_old_shares => :environment do
+    Share.update_all(:share_counter => 1)
   end
   
   #task :prioritize_real_jobs => :environment do
@@ -890,28 +891,6 @@ def set_free_plan_for_all_employers
   end
 end
 
-def set_published_time_for_jobs
-  Job.all.each do |job|
-    begin
-      if job.status != Job::DRAFT && job.published_at.nil?
-        job.published_at = job.created_at
-        job.save!(:validate => false)
-      end
-    rescue Exception => exc
-      puts "Failed to set_published_time_for_jobs #{exc.message}, job id = #{job.id}"
-    end
-  end
-end
-
-def make_job_description_long
-  Job.all.each do |job|
-    begin
-      job.update_attribute(:full_description, job.description)
-    rescue Exception => exc
-      puts "Failed to make_job_description_long #{exc.message}, job id = #{job.id}"
-    end
-  end  
-end
 
 def fix_position_tags_case
   ["Project Manager",

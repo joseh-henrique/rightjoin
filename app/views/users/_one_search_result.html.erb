@@ -4,7 +4,12 @@
 	</div>
 	
 	<h2>Targeted position</h2>
+	
 	<div class="targeted-box">
+		<% if user.vouched %>
+			<div class="crown" title="Endorsed by <%=Constants::SHORT_SITENAME%>"></div>
+		<% end %>
+
 		<div class="targeted-position"><%=user.wanted_position_name%></div>
 		<div class="targeted-location"><%=raw user.all_location_parts.map{|loc| h(loc)}.join("<span class='location-sep'> or </span>")%></div>
 	</div>

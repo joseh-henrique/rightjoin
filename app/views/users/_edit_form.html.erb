@@ -1,15 +1,12 @@
-<% max_salary = I18n.t(:max_salary).to_i %>
-
-<%= form_for(@user) do |f| %>  
-	<div class="standard-section-header">For your anonymous profile</div>
+<%= form_for(@user) do |f| %>
+	<div class="standard-section-header">Public profile</div>
 	<div class="section-box">
 		<div class="form-row clearfix">
 			<div class="form-column">
 				<div class="form-cell">
 					<%= label_tag(nil,  current_job_s(:employee), :class=>"mandatory") %><br>
 				  	<a class="field-tooltip" title="The job title you now have."></a>
-			 		<% current_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:current_job] : @user.current_position_name %>
-					<%= text_field_tag(:currentposition, current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Software Engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "10") %>			
+					<%= text_field_tag(:currentposition, @user.current_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Software Engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "10") %>			
 				</div>
 				<div class="form-cell">
 					<%= label_tag(nil, city_s(:employee)) %><br>
@@ -34,8 +31,7 @@
 				<div class="form-cell">
 					<%= label_tag(nil, wanted_job_s(:employee), :class=>"mandatory") %><br>
 					<a class="field-tooltip" title="The dream job you'd like to move to. To help employers find you, please use a standard job title."></a>
-					<% wanted_position_name = @user.new_record? && !@defaults.nil? ? @defaults[:wanted_job] : @user.wanted_position_name %>
-					<%= text_field_tag(:wantedposition, wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Senior Software Engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "20") %>						
+					<%= text_field_tag(:wantedposition, @user.wanted_position_name, :autocomplete => "off", :maxlength => 60, :placeholder => "e.g., Senior Software Engineer", :class=>"validate[required,custom[nonEmpty]]", :spellcheck => true, :tabindex => "20") %>						
 				</div>
 			</div>
 		</div>
@@ -70,65 +66,9 @@
 				<%= hidden_field_tag(:skills) %>
 			</div>
 		</div>
-		
-		<div class="form-row">
-			<%= label_tag(nil, "Your main aspiration for your next job") %>
-			<a class="field-tooltip" 
-		      title='Give us your top aspiration here. Use the "What you need" field to say what else you require from any job offer.'> 
-		   	</a>
-			<div class="form-row group-box aspirations-box">
-				<% User::ASPIRATIONS.each_with_index do |aspiration, index| %>
-					<div>
-						<%=radio_button_tag 'aspiration', index, @user.aspiration == index, :tabindex => "100"%>&nbsp;<%= label_tag("aspiration_#{index}", aspiration[:label], class: "radio-buttton-label") %>
-					</div>
-				<% end %>
-			</div>
-		</div>
-		
-		<div class="form-row">
-			<%= label_tag(nil, wanted_salary_s(:employee)) %>
-			<a class="field-tooltip" title="Offers must be for this <%=I18n.t(:salary_period)%> salary or higher"></a>
-			<div class="form-row group-box">
-				<% wanted_salary = @user.new_record? && !@defaults.nil? ? @defaults[:salary] : @user.wanted_salary %>
-				<%= hidden_field_tag(:wantedsalary, wanted_salary) %>
-				
-				<div class="tags-list" id="salary-tags-list">
-					<div id="salary-tag" ><span id="salarytext"></span><a id="remove-salary-tag"></a></div>	
-				</div>
-		
-				<div class="salary-slider-outer-box">
-					<div class="salary-slider-inner-box">
-						<div id="salary-slider" ></div>
-					</div>
-					<div id="salary-ruller"><%=Utils::format_currency(max_salary / 2000)%>K</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="form-row">
-			<%= label_tag(nil, job_qualifier_s(:employee ) ) %>
-			<a class="field-tooltip" title="<p>Don't be shy. Ask for anything you want.</p><p>Employers only contact you if they can meet your requirements.</p>"></a>
-			<div class="form-row group-box">
-				<%= text_field_tag(:jobqualifiertag, nil, :name => nil, :autocomplete => "off", 
-						:placeholder => "e.g., learning opportunities", :maxlength => 60, :class => "", :spellcheck => true, :tabindex => "110") %>&nbsp;&nbsp;
-				<a id="add-job-qualifier-btn" class="add-tag-button" tabindex = "120">Add&nbsp;+</a>
-				<ol id="job-qualifier-tags-list" class="tags-list"></ol>
-				<%= hidden_field_tag(:jobqualifiers) %>
-			</div>
-		</div>
-			
-		<div class="form-row clearfix">
-			<div class="form-column">
-				<div class="form-cell">
-					<%= label_tag(nil, free_text_s(:employee, true)) %>
-					<div id="free-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH%></div>
-					<%= text_area_tag(:freetext, @user.free_text, :maxlength => Constants::MAX_STRING_LENGTH, :rows => 2, :class=>"free-text", :counterId=>"free-text-counter", :tabindex => "120")%>			
-				</div>
-			</div>
-		</div>
 	</div>
-	
-	<div class="standard-section-header">Personal info (only visible to employers you contact)</div>
+
+	<div class="standard-section-header">Private <%=Constants::SHORT_SITENAME%> profile</div>
 	<div class="section-box">
 		<div class="form-row clearfix">
 			<div class="form-column">
@@ -149,7 +89,7 @@
 			<div class="form-cell">
 				<%= label_tag(nil, "Links to your professional profiles (LinkedIn, GitHub, personal site, blog, etc.)") %><br>
 				<div id="resume-text-counter" class="message-counter"><%=Constants::MAX_STRING_LENGTH * 2%></div>
-				<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :rows => 5, :class=>"professional-profiles", :counterId=>"resume-text-counter", :tabindex => "150")%>			
+				<%= text_area_tag(:resume, @user.resume, :maxlength => Constants::MAX_STRING_LENGTH * 2, :class=>"professional-profiles  fill-width", :counterId=>"resume-text-counter", :tabindex => "150")%>			
 			</div>
 		</div>
 		
@@ -163,6 +103,10 @@
 			</div>
 		</div>	
 	</div>
+	
+	<%if !@user.new_record? && !@user.ask_requirements %>
+		<%= render :partial => 'users/requirements_form', :locals => {:user => @user} %>
+	<%end%>	
 	
 	<div class="buttons-box">
 		<%if @user.new_record? %>
@@ -227,17 +171,6 @@
 		url: "<%=autocomplete_skills_path(:locale => nil)%>",
 		extraParam: "#wantedposition"
 	});
-	
-	$( "#jobqualifiertag" ).cachedautocomplete({
-		multiValue: true,
-		sequentialMatching: false,
-		url: "<%=autocomplete_jobqualifiers_path(:locale => nil)%>",
-		defaultOpts: <%=ActiveSupport::JSON.encode(suggest_commonly_used(JobQualifierTag, 8)).html_safe%>
-	}).keypress(function(e) {
-		if(e.which == 13) {
-			$( "#add-job-qualifier-btn" ).click();
-		}
-	});	
 </script>
 
 <script type="text/javascript">
@@ -257,20 +190,10 @@
         	createNewTag("#skilltag", "data-skill", "10", "#skills-tags-list", false,"<%="Know %s at #{seniority_s(UserSkill::EXPERT)} level"%>", add_more_skills_plchlder);
         	return false;
         });
-        
-		$( "#add-job-qualifier-btn" ).click(function() {
-	    	createNewTag("#jobqualifiertag", "data-job-qualifier", "1", "#job-qualifier-tags-list", false,"Job offers must include %s",  "You can add more requirements");
-	    	return false;
-	    });
     });      
 </script>
 
 <script type="text/javascript">
-	<% user_job_qualifiers = @user.new_record? && !@defaults.nil? ? @defaults[:reqirements] : @user.user_job_qualifiers.collect {|one_qualifier| one_qualifier.job_qualifier_tag.name} %>
-	<% user_job_qualifiers.each do |one_qualifier| %>
-		writeTag("<%=escape_javascript(one_qualifier).html_safe%>", "data-job-qualifier", "1", "#job-qualifier-tags-list", null, false, "<%=escape_javascript("Job offers must include #{one_qualifier}").html_safe %>");
-	<% end %>
-
 	<% @user.user_skills.each do |one_skill| %>
 		writeTag("<%=escape_javascript(one_skill.skill_tag.name).html_safe%>", "data-skill", <%=one_skill.seniority%>, "#skills-tags-list", null, false, "<%=escape_javascript("Know #{one_skill.skill_tag.name} at #{seniority_s(one_skill.seniority)} level").html_safe%>");
 	<% end %>
@@ -293,66 +216,6 @@
         	} 
 	  	});
 	});
-	  
-	/*Format number with commas or other delimiter separating thousands, millions etc. 
-	 Param nStr may be a number or
-	 a string serialization (with no delims) of a number.
-	 The number may have a decimal point or not.*/
-	function addDelimitersToNumberString(nStr, delimiter) {
-		nStr += '';  
-		x = nStr.split('.'); 
-		x1 = x[0];
-		x2 = x.length > 1 ? '.' + x[1] : '';
-		var rgx = /(\d+)(\d{3})/;
-		while (rgx.test(x1)) {
-			x1 = x1.replace(rgx, '$1' + delimiter + '$2');
-		}
-		return x1 + x2;
-	}
-   
-   
-	jQuery.fn.update_salary_text = function() {
-	    var input_ctrl = $(this[0]) // It's your element
-	    var args = arguments[0] || {};
-	    var val = args.value;
-	    if (val === undefined || val == 0) {
-	    	input_ctrl.parent().removeClass("defined-salary");
-	    	input_ctrl.parent().removeClass("onetag");
-	    	input_ctrl.parent().addClass("undefined-salary");
-	    	input_ctrl.html("I'd rather leave it open for now");
-	    } else {
-		    var val_str = val.toString();
-		    var val_with_commas = addDelimitersToNumberString(val_str, "<%=I18n.t(:thousands_delimiter)%>");
-        	var currency_unit = unescapeHTML( "<%=I18n.t(:currency_unit)%>");
-	    	input_ctrl.html("At least " + currency_unit+ val_with_commas);
-	    	input_ctrl.parent().removeClass("undefined-salary");	   
-			input_ctrl.parent().addClass("onetag");
-			input_ctrl.parent().addClass("defined-salary");
-	    }
-	};
-	
-	$(function() {
-		$( "#salary-slider" ).slider({
-			range: "min",
-			value: $("#wantedsalary").val(),
-			min: 0,
-			max: <%=max_salary%>,
-			step: <%=I18n.t(:salary_step)%>,
-			slide: function( event, ui ) {
-				var val = ui.value;
-				$( "#wantedsalary" ).val(val);
-				$( "#salarytext" ).update_salary_text({value: val});
-			}
-		});
-		$( "#salarytext" ).update_salary_text({ value: $("#wantedsalary").val()});
-	});
-
-   	$('#remove-salary-tag').click(function() {
-   		$( "#wantedsalary" ).val(0);
-   		$( "#salary-slider" ).slider("value", 0);
-		$( "#salarytext" ).update_salary_text({value: 0});
-		return false;
-	});
 	
 	function checkLocationOptionsValid() {
 		var location = $.trim($("#location").val());
@@ -374,11 +237,10 @@
 				res = false;
 			} else {
 				$("#skills").val(tagsToParams("#skills-tags-list", "data-skill"));
-				var job_qual_val =  $.trim($("#jobqualifiertag").val());
-				if (job_qual_val !=""){
-					createNewTag("#jobqualifiertag", "data-job-qualifier", "1", "#job-qualifier-tags-list", true, "Job offers must include %s","");//last param not significant since we are submitting
-				}
-				$("#jobqualifiers").val(tagsToParams("#job-qualifier-tags-list", "data-job-qualifier"));
+				
+				<%unless @user.new_record? %>
+					setRequirementFields();
+				<%end%>
 				
 				// prevent double submit
 		 		if($('#submit').attr("disabled") != "disabled") {

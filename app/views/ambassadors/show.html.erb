@@ -53,15 +53,16 @@
 					var networks_js = {};
 					<% 
 					networks = {}
-					share_channels = Constants::SHARE_CHANNELS
-					share_channels.each_with_index do |network, i|
-						networks[network] = "#{i}.#{@ambassador.id.to_s(16)}.#{((Time.now - Constants::FYI_EPOCH) / 1.hours).to_i.to_s(16)}.#{@job.id.to_s(16)}"
+					Share::DISTRIBUTION_CHANNEL_INFO.each do |network, map|
+						if map[:social_share]
+							networks[network] = Share.build_hash(network, @ambassador.id)
 					%>
-						networks_js["<%=network%>"] = "<%=networks[network]%>";
+							networks_js["<%=network%>"] = "<%=networks[network]%>";
+						<%end%>
 					<% end %>
 					
-					<% networks[Constants::SOCIAL_NETWORK_SHARE_URL] = networks[Constants::SOCIAL_NETWORK_EMAIL] %>
-					networks_js["<%=Constants::SOCIAL_NETWORK_SHARE_URL%>"] = "<%=networks[Constants::SOCIAL_NETWORK_EMAIL]%>";
+					<% networks[Share::SOCIAL_NETWORK_SHARE_URL] = networks[Share::SOCIAL_NETWORK_EMAIL] %>
+					networks_js["<%=Share::SOCIAL_NETWORK_SHARE_URL%>"] = "<%=networks[Share::SOCIAL_NETWORK_EMAIL]%>";
 				</script>
 			
 				<h1>Share the ad and get yourself some good colleagues.</h1>
@@ -78,14 +79,14 @@
 				</div>
 				
 				<div class="all-buttons-box">
-					<%networks.each do |network, setid| %>
+					<%networks.each do |network, share_hash| %>
 						<div class="share-button-box">
 
 							<% share_display_texts = @job.share_display_texts %>
 							
 							<%case network%>
-							<%when Constants::SOCIAL_NETWORK_LINKEDIN%>
-								<div class="share-button linkedin addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+							<%when Share::SOCIAL_NETWORK_LINKEDIN%>
+								<div class="share-button linkedin addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, ref: share_hash).html_safe%>"
 											addthis:title="<%=share_display_texts[:title]%>"
 											addthis:description="<%=share_display_texts[:description]%>">
 											<%# LI in fact uses title and desc as title and desc of posting%>
@@ -93,25 +94,25 @@
 										<%= image_tag "team/share/linkedin-small.png", size: "82x82", alt: "Share" %>
 									</a>
 								</div>
-							<%when Constants::SOCIAL_NETWORK_FACEBOOK%>
-								<div class="share-button facebook addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+							<%when Share::SOCIAL_NETWORK_FACEBOOK%>
+								<div class="share-button facebook addthis_toolbox addthis_default_style addthis_32x32_style" addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: share_hash)%>"
 											addthis:title="<%=share_display_texts[:title]%>"
 											addthis:description="<%=share_display_texts[:description]%>">		
 											<%# Facebook does not use this title and desc, but rather uses meta tags%>			
-									<a class="addthis_button_facebook" fb:like:href="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>">
+									<a class="addthis_button_facebook" fb:like:href="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: share_hash)%>">
 										<%= image_tag "team/share/facebook-small.png", size: "82x82", alt: "Share" %>
 									</a>
 								</div>
-							<%when Constants::SOCIAL_NETWORK_TWITTER%>
-								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+							<%when Share::SOCIAL_NETWORK_TWITTER%>
+								<div class="share-button twitter addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: share_hash)%>"
 											addthis:title="<%=share_display_texts[:short_description]%>" <%#Note that  :short_description is used for the  addthis:title field, since this is the field where the tweet actually comes from.%>
 											addthis:description="<%=share_display_texts[:title]%>"> <%#Apparently not used%>
 									<a class="addthis_button_twitter">
 										<%= image_tag "team/share/twitter-small.png", size: "82x82", alt: "Share" %>
 									</a>
 								</div>
-							<%when Constants::SOCIAL_NETWORK_GOOGLE%>
-								<div class="share-button google-plus addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)%>"
+							<%when Share::SOCIAL_NETWORK_GOOGLE%>
+								<div class="share-button google-plus addthis_toolbox addthis_default_style addthis_32x32_style"	addthis:url="<%=we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: share_hash)%>"
 											addthis:title="<%=share_display_texts[:title]%>"
 											addthis:description="<%=share_display_texts[:description]%>">
 											<%#Google does not use this title and desc, but rather uses meta tags%>	
@@ -119,12 +120,12 @@
 										<%= image_tag "team/share/google-plus-small.png", size: "82x82", alt: "Share" %>
 									</a>
 								</div>
-							<%when Constants::SOCIAL_NETWORK_EMAIL%>
+							<%when Share::SOCIAL_NETWORK_EMAIL%>
 								<div class="share-button email" title="Email">
-									<%msg_txt= "#{share_display_texts[:description]}\n\n#{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+									<%msg_txt= "#{share_display_texts[:description]}\n\n#{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: share_hash)}"%>
 									<%=mail_to("", raw(image_tag "team/share/email-small.png", size: "82x82", alt: "Share"), subject: share_display_texts[:title], body: msg_txt, :id => "invite_team_member_btn", :target => "_fyi_email")%>
 								</div>
-							<%when Constants::SOCIAL_NETWORK_SHARE_URL%>
+							<%when Share::SOCIAL_NETWORK_SHARE_URL%>
 								<div class="share-button copy-to-clipboard" >
 									<a id="copy-button" class="div-tooltip-holder" title="Copy to clipboard"><%# Tooltip here and not on the share button because zeroClipboard interferes with tooltip functionality. %>
 										<%= image_tag "team/share/clipboard-small.png", size: "82x82", alt: "Copy to clipboard" %>
@@ -134,11 +135,11 @@
 								 	$(document).ready(function(){
 								 		var text_callback = function(){
 								 			<%# copy to clipboard is counted as email%>
-								 			var evt = { "data": { "service": "<%=Constants::SOCIAL_NETWORK_EMAIL%>" }};
+								 			var evt = { "data": { "service": "<%=Share::SOCIAL_NETWORK_EMAIL%>" }};
 											onShare(evt);
 								 			
 								 			//this is a constant function
-				 				 			<%msg_txt= ERB::Util.html_escape "#{share_display_texts[:description]} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: setid)}"%>
+				 				 			<%msg_txt= ERB::Util.html_escape "#{share_display_texts[:description]} #{we_are_hiring_employer_url(@ambassador.employer.reference_num, job: @job.id, anchor: share_hash)}"%>
 								 			var ret= unescapeHTML("<%= msg_txt%>");
 			 						 		
 			 						 		return ret;
@@ -162,8 +163,10 @@
 				<script type="text/javascript">
 					function onShare(evt) {
 						setTimeout( function() {
-							$.post("<%=share_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>", { job_id: "<%=@job.id%>", network: evt.data.service, setid: networks_js[evt.data.service] } );
+							$.post("<%=share_employer_ambassador_path(@ambassador.employer, @ambassador, :locale => nil)%>", { job_id: "<%=@job.id%>", network: evt.data.service, share_hash: networks_js[evt.data.service] } );
 						}, 0 );
+						
+						trackEvent("ambassador", "shared via " + evt.data.service);
 					}
 					
 					var addthis_share = addthis_share || {}
@@ -177,7 +180,7 @@
 					});
 					
 					$("#invite_team_member_btn").click(function(){
-						var evt = { "data": { "service": "<%=Constants::SOCIAL_NETWORK_EMAIL%>" }};
+						var evt = { "data": { "service": "<%=Share::SOCIAL_NETWORK_EMAIL%>" }};
 						onShare(evt);
 					});
 					

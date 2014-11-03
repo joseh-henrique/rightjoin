@@ -1,6 +1,7 @@
 class AdminController < ApplicationController
 
   before_filter :init_employee_user, :check_admin
+  
   def check_admin
     redirect_to root_path unless current_user && current_user.admin
   end
@@ -22,7 +23,24 @@ class AdminController < ApplicationController
     flash_message(:error, e.message)
   ensure
     redirect_to admin_events_path(:days_ago => params[:days_ago])
-    end
+  end
+  
+  def vouch_candidate
+    id = params[:id]
+    user = User.find(id)
+
+    user.vouch
+    
+    new_msg = FyiMailer.create_vouched_for_candidate_email(user)
+    Utils.deliver new_msg    
+    
+    flash_message(:notice, "Vouch status updated")
+
+  rescue Exception => e
+    flash_message(:error, e.message)
+  ensure
+    redirect_to admin_events_path(:days_ago => params[:days_ago])
+  end
 
   def locations
     @locale = params[:locale]
@@ -226,7 +244,6 @@ class AdminController < ApplicationController
      end
     flash_message(:notice, "#{counter} updates were sent to employers")
   rescue Exception => e
-    puts e.backtrace
      logger.error(e)
     flash_message(:error, e.message)
   ensure
@@ -264,14 +281,21 @@ class AdminController < ApplicationController
     redirect_to admin_path
   end
 
-  def send_update_employers_about_new_contacts
-    counter = 0
+  def send_update_about_new_pings
+    counter_engineers = 0
+    Reminder.update_engineers_after_ping do |info_interview|
+      new_msg = FyiMailer.update_engineers_after_ping(info_interview)
+      Utils.deliver new_msg
+      counter_engineers += 1
+    end
+
+    counter_employers = 0
     Reminder.update_employers_about_new_contacts do |employer|
       new_msg = FyiMailer.update_employers_about_new_contacts(employer)
       Utils.deliver new_msg
-      counter += 1
+      counter_employers += 1
     end
-    flash_message(:notice, "#{counter} new-ambassador-contact emails were sent to employers")
+    flash_message(:notice, "#{counter_employers} new-ping emails were sent to employers and #{counter_engineers} to candidates")
   rescue Exception => e
     logger.error(e)
     flash_message(:error, e.message)

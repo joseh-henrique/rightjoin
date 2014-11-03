@@ -7,7 +7,7 @@
 		<%
 		all_interviews = job.interviews
 		recommended = all_interviews.select {|interview| interview.status_one_of?([Interview::RECOMMENDED])}	
-		all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER])
+		all_infointerviews_for_this_job = job.infointerviews.where(status: [Infointerview::NEW, Infointerview::ACTIVE_EMPLOYER_NOTIFIED, Infointerview::ACTIVE_SEEN_BY_EMPLOYER, Infointerview::CLOSED_BY_EMPLOYER])
 		%>
 
 		<a class="shifted-anchor" name="job<%=job.id%>"></a>
@@ -51,7 +51,7 @@
 						<% if current_user.enable_ping %>
 							<%=link_to(leads_employer_job_path(current_user, job, :locale => job.country_code), :class => "link-with-counter") do%>
 								Review leads
-								<% new_infointerviews_count = all_infointerviews_for_this_job.to_a.count { |x| x.status == Infointerview::NEW } %>
+								<% new_infointerviews_count = all_infointerviews_for_this_job.to_a.count { |x| x.status == Infointerview::NEW || x.status == Infointerview::ACTIVE_EMPLOYER_NOTIFIED } %>
 								<% if new_infointerviews_count > 0 %>
 									<span class="counter animation-common bounce">+<%=new_infointerviews_count%></span>
 								<% end %>

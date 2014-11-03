@@ -84,37 +84,31 @@ class Employer < ActiveRecord::Base
     Employer.joins(:jobs,:ambassadors).where("employers.reminder_period > ? and jobs.status = ? and ambassadors.status = ?", 0, Job::PUBLISHED, Ambassador::ACTIVE).pluck("distinct employers.id")
   end
   
-  # Returns array of Employers, where each employer object has an additional field which is not in the Employer class--employer.contacts_count.
+  def all_generated_leads_count(job_statuses = [Job::PUBLISHED, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
+    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status in (?) and infointerviews.status in (?)", 
+                                    id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_EMPLOYER_NOTIFIED, Infointerview::ACTIVE_SEEN_BY_EMPLOYER, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
+  end
+
   def self.count_infointerviews(*statuses)
     Employer.joins(:jobs => :infointerviews).select("count(infointerviews.id) as contacts_count, employers.*").where("infointerviews.status in (#{statuses.join(', ')})").group("employers.id")
   end
-  
-  def all_generated_leads_count(job_statuses = [Job::PUBLISHED, Job::CLOSED]) # all leads the employer is notified about, even for closed jobs
-    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status in (?) and infointerviews.status in (?)", 
-                                    id, job_statuses, [Infointerview::NEW, Infointerview::ACTIVE_LEAD, Infointerview::CLOSED_BY_EMPLOYER]).count # if employer closes it it's still a lead
-  end
-  
-  def last_active_leads(count)
+
+  def not_seen_yet_leads
     Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status = ? and infointerviews.status in (?)", 
-                                    id, Job::PUBLISHED, [Infointerview::NEW, Infointerview::ACTIVE_LEAD]).order("created_at DESC").limit(count)
-  end
-  
-  def new_leads
-    Infointerview.joins(:job).where("jobs.employer_id = ? and jobs.status = ? and infointerviews.status = ?", 
-                                    id, Job::PUBLISHED, Infointerview::NEW).order("infointerviews.created_at DESC")
+                                    id, Job::PUBLISHED, [Infointerview::NEW, Infointerview::ACTIVE_EMPLOYER_NOTIFIED]).order("infointerviews.created_at DESC")
   end
   
   def leads_with_unseen_comments
     Infointerview.select("infointerviews.*, count(infointerviews.id) as new_comments_count").joins(:job, :comments).where("jobs.employer_id = ? and jobs.status = ? and infointerviews.status = ? and comments.ambassador_id is not null and comments.status in (?)", 
-                          id, Job::PUBLISHED, Infointerview::ACTIVE_LEAD, [Comment::STATUS_NEW, Comment::STATUS_NOT_SEEN]).group("infointerviews.id").order("infointerviews.created_at DESC")
+                          id, Job::PUBLISHED, Infointerview::ACTIVE_SEEN_BY_EMPLOYER, [Comment::STATUS_NEW, Comment::STATUS_NOT_SEEN]).group("infointerviews.id").order("infointerviews.created_at DESC")
   end
   
   def shares_statistics
-    Share.joins(:ambassador).where("ambassadors.employer_id = ?", id).group("shares.network").select("shares.network, count(*) as shares_count, sum(shares.click_counter) as clicks_count, sum(shares.lead_counter) as leads_count")
+    Share.joins(:job).where("jobs.employer_id = ?", id).group("shares.network").select("shares.network, sum(shares.share_counter) as shares_count, sum(shares.click_counter) as clicks_count, sum(shares.lead_counter) as leads_count")
   end
   
   def active_ambassadors_with_share_statistics
-    Ambassador.joins(:employer).joins("LEFT OUTER JOIN shares ON shares.ambassador_id = ambassadors.id").where("ambassadors.status = ? and ambassadors.employer_id = ?", Ambassador::ACTIVE, id).group("ambassadors.id").select("ambassadors.*, count(shares.id) as shares_counter, sum(shares.click_counter) as clickback_counter, sum(shares.lead_counter) as leads_counter")
+    Ambassador.joins(:employer).joins("LEFT OUTER JOIN shares ON shares.ambassador_id = ambassadors.id").where("ambassadors.status = ? and ambassadors.employer_id = ?", Ambassador::ACTIVE, id).group("ambassadors.id").select("ambassadors.*, sum(shares.share_counter) as shares_counter, sum(shares.click_counter) as clickback_counter, sum(shares.lead_counter) as leads_counter")
   end
   
   def active_jobs_with_share_statistics

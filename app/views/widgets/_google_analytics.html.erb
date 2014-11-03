@@ -1,5 +1,5 @@
 <script type="text/javascript">
-<% if Rails.env == "development" %>
+<% if Rails.env == "development" || Rails.env == "staging" %>
 	function trackEvent(category, label) {
 		console.log("Analytics event [category => \"" + category + "\", label => \"" + label + "\"]");
 	}

@@ -9,13 +9,13 @@ class EmployerPlan < ActiveRecord::Base
   
   BASIC = "Basic"
   PRO = "Pro"
-  ENTERPRISE = "Enterprise"
+  ENTERPRISE = "Enterprise" # still in DB for some old customers, treated as PRO
   
   def name
     name = BASIC
     if self.tier == Constants::TIER_PRO
       name = PRO
-    elsif self.tier == Constants::TIER_ENTERPRISE
+    elsif self.tier == Constants::TIER_ENTERPRISE # still in DB for some old customers, treated as PRO
       name = ENTERPRISE
     end
     return name

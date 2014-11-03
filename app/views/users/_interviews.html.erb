@@ -18,7 +18,7 @@ active_interviews = current_user.interviews.select {|interview| interview.status
 					<div class="buttons-box">
 						<% old_infointerview = @infointerviews.find {|ii| ii.job.id == job.id } %>
 						<% if old_infointerview.nil? %>
-			    			<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+			    			<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded, :anchor => Share.build_hash(Share::CHANNEL_REVERSE_BOARD))} %>
 					    	&nbsp;or&nbsp;
 					    	
 					    	<%if job.employer.enable_ping%>

@@ -1,5 +1,5 @@
 <h1>
-	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	<%=link_to "<<", admin_path %>
 	Recommend candidates
 </h1>
 
@@ -12,7 +12,7 @@
 		<%= text_field_tag(:location, @location, :autocomplete => "off", :maxlength => 60,  :spellcheck => false, :class => "half-row-width") %>				
 		<br><br>
 
-		<%=link_to "Refine", "#", :id => "refine", :class => "blue-inline-button" %>&nbsp;
+		<%=link_to "Refine", "#", :id => "refine" %>&nbsp;
 	<% end %>
 	
 	<script type="text/javascript">
@@ -55,7 +55,7 @@
 			<%@candidates.each_with_index do |candidate, i|%>
 				<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
 					<%=html_inspect candidate%><br>
-					<%=link_to "Recommend", admin_recommend_candidate_to_job_path(:id => candidate.id, :job_id => @job.id, :skill => @skill, :location => @location), :class => "blue-inline-button" %>&nbsp;
+					<%=link_to "Recommend", admin_recommend_candidate_to_job_path(:id => candidate.id, :job_id => @job.id, :skill => @skill, :location => @location) %>&nbsp;
 				</p>
 			<%end%>
 		<%end%>

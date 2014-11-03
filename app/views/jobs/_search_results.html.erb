@@ -59,7 +59,7 @@
 						<% if job.employer.enable_ping %>
 							<% employee = get_employee_user_by_session_cookie %>
 							<% if employee.nil? %>
-					    		<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+					    		<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded, :anchor => Share.build_hash(Share::CHANNEL_BOARD))} %>
 					    		&nbsp;or&nbsp;
 					    		
 								<%=link_to "Sign in", "#", :class => "sign-in-link" %> to ping the company.
@@ -68,7 +68,7 @@
 							<% else %>
 								<% old_infointerview =  @infointerviews[job.id] %>
 								<% if old_infointerview.nil? %>
-							    	<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+							    	<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded, :anchor => Share.build_hash(Share::CHANNEL_BOARD))} %>
 							    	&nbsp;or&nbsp;
 							    	
 							    	<%= form_tag(infointerview_create_path(:employer_id => job.employer.id, :job_id => job.id, :locale => nil), :remote => true, :class=>"direct-ping-form") do |f| %>  
@@ -79,7 +79,7 @@
 								<% end %>
 							<% end %>
 						<% else %>
-							<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded)} %>
+							<%=link_to "Learn more", "#", :class=>"embedded-ad-launcher", :data => {"ad-url" => we_are_hiring_employer_path(job.employer.reference_num, :job => job.id, :mode => :embedded, :anchor => Share.build_hash(Share::CHANNEL_BOARD))} %>
 					    	&nbsp;or&nbsp;
 					    	
 							<%=link_to "Apply...", job.ad_url, :target => "_fyi_ad_target", :class=>"ping-button" %>

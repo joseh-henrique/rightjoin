@@ -37,53 +37,39 @@
 					<th></th>
 					<th class="basic"><%= EmployerPlan::BASIC%></th>
 					<th class="pro"><%= EmployerPlan::PRO%></th>
-					<th class="enterprise"><%= EmployerPlan::ENTERPRISE%></th>				
 				</tr>
 				<tr class="odd monthly-subscription">
 					<td class="feature-name">Monthly subscription</td>
 					<td class="feature-value basic"><%=Utils::monthly_price_s(Constants::TIER_BASIC)%></td>
 					<td class="feature-value pro"><%=Utils::monthly_price_s(Constants::TIER_PRO)%></td>
-					<td class="feature-value enterprise"><%=Utils::monthly_price_s(Constants::TIER_ENTERPRISE)%></td>
 				</tr>	
  				<tr class="even">
 					<td class="feature-name">Open job positions</td>
-					<td class="feature-value">1</td>
-					<td class="feature-value">2-5</td>
-					<td class="feature-value">Unlimited</td>				
-				</tr>				
-				<tr class="odd">
+					<td class="feature-value">Unlimited</td>
+					<td class="feature-value">Unlimited</td>
+				</tr>
+				<tr class="odd check-mark">
 					<td class="feature-name">&ldquo;Come Work With Us&rdquo; ad to share</td>
-					<td class="feature-value">Unlimited</td>
-					<td class="feature-value">Unlimited</td>
-					<td class="feature-value">Unlimited</td>				
-				</tr>
+					<td class="feature-value">&#10003;</td>
+					<td class="feature-value">&#10003;</td>			
+				</tr>						
 				<tr class="even check-mark">
-					<td class="feature-name">&ldquo;Join us&rdquo; tab for your site</td>
-					<td class="feature-value">&#10003;</td>
-					<td class="feature-value">&#10003;</td>
-					<td class="feature-value">&#10003;</td>				
-				</tr>				
-				<tr class="odd">
 					<td class="feature-name">Peer-to-peer recruiting tools</td>
-					<td class="feature-value">1 team member</td>
-					<td class="feature-value">Unlimited</td>
-					<td class="feature-value">Unlimited</td>				
-				</tr>
-				<tr class="even check-mark">
-					<td class="feature-name">Expert screening of all leads by <%=Constants::SHORT_SITENAME%></td>
-					<td class="feature-value"></td>
-					<td class="feature-value"></td>
+					<td class="feature-value">&#10003;</td>
 					<td class="feature-value">&#10003;</td>				
 				</tr>
 				<tr class="odd">
 					<td class="feature-name">Search and ping <%=Constants::SHORT_SITENAME%> members</td>
 					<td class="feature-value">Unlimited</td>
-					<td class="feature-value">Unlimited</td>
-					<td class="feature-value">Unlimited</td>					
-				</tr>	
+					<td class="feature-value">Unlimited</td>				
+				</tr>
 				<tr class="even check-mark">
-					<td class="feature-name">Dedicated customer success representative</td>
+					<td class="feature-name">&ldquo;Join Us&rdquo; tab for your site</td>
 					<td class="feature-value"></td>
+					<td class="feature-value">&#10003;</td>				
+				</tr>				
+				<tr class="odd check-mark">
+					<td class="feature-name">Dedicated customer success representative</td>
 					<td class="feature-value"></td>
 					<td class="feature-value">&#10003;</td>				
 				</tr>
@@ -91,14 +77,20 @@
 					<td class=""></td>
 					<% 
 					default_tier = -1 
+					verb = "Try"
 					unless @employer.current_plan.nil? 
 						default_tier = @employer.current_plan.tier
+						default_tier = Constants::TIER_PRO if @employer.current_plan.tier == Constants::TIER_ENTERPRISE
+						verb = "Choose"
 					end
 					%>
 		  			<%# Signature is radio_button_tag(name, value, checked , options = {})%>
-					<td class="basic"><%= radio_button_tag 'tier', Constants::TIER_BASIC.to_s, default_tier == Constants::TIER_BASIC, :class => "validate[required]", :tabindex => "50" %><br>Try the <%=EmployerPlan::BASIC%> plan</td>
-					<td class="pro"><%= radio_button_tag 'tier', Constants::TIER_PRO.to_s, default_tier == Constants::TIER_PRO, :class => "validate[required]", :tabindex => "60" %><br>Try the <%=EmployerPlan::PRO%> plan</td>
-					<td class="enterprise"><%= radio_button_tag 'tier', Constants::TIER_ENTERPRISE.to_s, default_tier == Constants::TIER_ENTERPRISE, :class => "validate[required]", :tabindex => "70" %><br>Try the <%=EmployerPlan::ENTERPRISE%> plan</td>
+					<td class="basic"><%= radio_button_tag 'tier', Constants::TIER_BASIC.to_s, default_tier == Constants::TIER_BASIC, :class => "validate[required]", :tabindex => "50" %>
+						<br><%=verb%> the <%=EmployerPlan::BASIC%> plan
+					</td>
+					<td class="pro"><%= radio_button_tag 'tier', Constants::TIER_PRO.to_s, default_tier == Constants::TIER_PRO, :class => "validate[required]", :tabindex => "60" %>
+						<br><%=verb%> the <%=EmployerPlan::PRO%> plan
+					</td>
 				</tr>				
 			</table>
 		</div>
@@ -156,7 +148,7 @@
 		return true;
 	});	
 	
-	$("tr.footer .basic, tr.footer .pro, tr.footer .enterprise").click(function(e) {
+	$("tr.footer .basic, tr.footer .pro").click(function(e) {
 		if(e.target == this) {
 			$(this).children("input").prop('checked',true);
 		}

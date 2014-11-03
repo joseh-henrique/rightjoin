@@ -69,7 +69,9 @@ class InfointerviewsController < ApplicationController
         infointerview.profiles = auth.profiles_to_str
       end
       
-      unless candidate.nil?
+      if candidate.nil?
+        infointerview.update_candidate_after_ping = true
+      else
         infointerview.user_id = candidate.id
         infointerview.profiles ||= candidate.resume
         infointerview.email ||= candidate.email
@@ -88,15 +90,18 @@ class InfointerviewsController < ApplicationController
         
         begin
           Reminder.create_event!(infointerview.id, Reminder::NEW_LEAD)
+          lead_attrs = {:network => @sliding_session.channel, :job_id => job.id, :ambassador_id => nil, :ip => @sliding_session.ip, :referer => @sliding_session.referer, :lead_counter => 1}
           
-          share = get_obj_id_cookie(Share, Constants::LEAD_REFERRAL_COOKIE)
-          if share && employer.id == share.job.employer_id # not necessarily the same job, but must be the same employer
-            share.increment!(:lead_counter)
-            infointerview.referred_by = share.ambassador_id
+          referred_by = Ambassador.find_by_id(@sliding_session.referred_by)
+          if referred_by && employer.id == referred_by.employer_id # not necessarily the same job, but must be the same employer
+            infointerview.referred_by = referred_by.id
             infointerview.save!
             
-            Comment.create_system_comment!(infointerview.id, "#{infointerview.first_name} was referred by #{infointerview.referred_by_ambassador.first_name} #{infointerview.referred_by_ambassador.last_name} via #{share.network.capitalize}.", share.created_at) 
+            lead_attrs[:ambassador_id] = referred_by.id
+            Comment.create_system_comment!(infointerview.id, "#{infointerview.first_name} was referred by #{referred_by.first_name} #{referred_by.last_name} via #{Share::DISTRIBUTION_CHANNEL_INFO[@sliding_session.channel][:display_name]}.") 
           end
+          
+          Share.create!(lead_attrs)
           
           # generate system comments
           was_pinged_by_company = false
@@ -166,7 +171,7 @@ class InfointerviewsController < ApplicationController
   end
   
   def reopen
-    @infointerview.status = Infointerview::ACTIVE_LEAD
+    @infointerview.status = Infointerview::ACTIVE_SEEN_BY_EMPLOYER
     @infointerview.save!
     
     Comment.create_system_comment!(@infointerview.id, "The lead was reopened.")
@@ -204,7 +209,7 @@ class InfointerviewsController < ApplicationController
   
   # seen by employer
   def set_seen
-    @infointerview.status = Infointerview::ACTIVE_LEAD
+    @infointerview.status = Infointerview::ACTIVE_SEEN_BY_EMPLOYER
     @infointerview.save!
     
     render :nothing => true, status: :ok

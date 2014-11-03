@@ -41,9 +41,9 @@
 			<div class="counter-top">
 				<span><%=shared%></span>
 				<div id="chart-shared" class="chart"></div>
-				<% shares_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})} # set up map with 0-values for all keys%>
-				<% share_info.each{|share| shares_map[share.network] = share.shares_count.to_i}  %>
-				<script type="text/javascript">load_chart("#chart-shared", [<%=shares_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
+				<% shares_map = Share::DISTRIBUTION_CHANNEL_INFO.inject({}){|r, (channel, channel_map)| channel_map[:social_share] ? r.merge!({channel => 0}) : r} # set up map with 0-values for all keys%>
+				<% share_info.each{|share| shares_map[share.network] = share.shares_count.to_i if shares_map.has_key?(share.network)}  %>
+				<script type="text/javascript">load_chart("#chart-shared", [<%=shares_map.keys.map{|label|"'#{Share::DISTRIBUTION_CHANNEL_INFO[label][:display_name]}'"}.join(",").html_safe%>], [<%=shares_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">
 				Shares
@@ -53,9 +53,9 @@
 			<div class="counter-top">
 				<span><%=clickbacks%></span>
 				<div id="chart-clickback" class="chart"></div>
-				<% clicks_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}  # set up map with 0-values for all keys %>
+				<% clicks_map = Share::DISTRIBUTION_CHANNEL_INFO.inject({}){|r, (channel, channel_map)|r.merge!({channel => 0})}  # set up map with 0-values for all keys %>
 				<% share_info.each{|share| clicks_map[share.network] = share.clicks_count.to_i} %>
-				<script type="text/javascript">load_chart("#chart-clickback", [<%=clicks_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=clicks_map.values.map{|value|value}.join(",")%>]);</script>
+				<script type="text/javascript">load_chart("#chart-clickback", [<%=clicks_map.keys.map{|label|"'#{Share::DISTRIBUTION_CHANNEL_INFO[label][:display_name]}'"}.join(",").html_safe%>], [<%=clicks_map.values.map{|value|value}.join(",")%>]);</script>
 			</div>
 			<div class="counter-bottom">  
 				Impressions
@@ -66,13 +66,11 @@
 				<% if current_user.enable_ping %>
 					<span><%=leads_all%></span>
 					<div id="chart-leads" class="chart"></div>
-					<% leads_map = Constants::SHARE_CHANNELS.inject({}){|r, channel|r.merge!({channel => 0})}   # set up map with 0-values for all keys
-					   leads_map.merge!({Constants::SOCIAL_NETWORK_OTHER => leads_all - leads_share})  # add 'other to include all shares not otherwise idenntified
-					%> 
+					<% leads_map = Share::DISTRIBUTION_CHANNEL_INFO.inject({}){|r, (channel, channel_map)|r.merge!({channel => 0})}   # set up map with 0-values for all keys %> 
 					
 					<% share_info.each{|share| leads_map[share.network] = share.leads_count.to_i} %>
 	 
-	 				<script type="text/javascript">load_chart("#chart-leads", [<%=leads_map.keys.map{|label|"'#{Constants::SHARE_CHANNEL_DISPLAY_NAMES[label]}'"}.join(",").html_safe%>], [<%=leads_map.values.map{|value|value}.join(",")%>]);</script>
+	 				<script type="text/javascript">load_chart("#chart-leads", [<%=leads_map.keys.map{|label|"'#{Share::DISTRIBUTION_CHANNEL_INFO[label][:display_name]}'"}.join(",").html_safe%>], [<%=leads_map.values.map{|value|value}.join(",")%>]);</script>
 				<% else %>
 					<span>...</span>
 				<% end %>
@@ -113,20 +111,12 @@
 				<% end %>
 				
 				<% if basic_plan %>
-		 			<% if active_jobs.count > 1 %>
+		 			<% if current_user.join_us_widget_running? %>
 		 				<li class="warning">
-							The <%=EmployerPlan::BASIC%> plan allows only one job posting. Please  
-							<%=link_to("upgrade", edit_employer_path(current_user,:anchor=>"plans-and-pricing"))%>
-							to  <%=EmployerPlan::PRO %> or  <%=EmployerPlan::ENTERPRISE %>. 
+		 					You are using the &ldquo;Join Us&rdquo; tab, a <%=EmployerPlan::PRO%> feature.
+							Please <%=link_to("upgrade", edit_employer_path(current_user,:anchor=>"plans-and-pricing"))%>
+							your account.
 						</li>
-						
-						<% if ambassadors.count > 1 %>
-							<li class="warning">
-								The <%=EmployerPlan::BASIC%> plan allows only one team member.
-								Please <%=link_to("upgrade", edit_employer_path(current_user, :anchor=>"plans-and-pricing"))%>
-								to  <%=EmployerPlan::PRO %> or <%=EmployerPlan::ENTERPRISE %>. 
-							</li>
-						<% end %>
 					<% end %>
 				<% end %>
 			</ul>
@@ -137,7 +127,7 @@
 			<div class="new-leads-box">
 				<span>New leads</span>
 				<div class="leads-list">
-					<% infointerviews = current_user.new_leads.to_a %>
+					<% infointerviews = current_user.not_seen_yet_leads.to_a %>
 					<% (0...max_leads_to_show).each do |i| %><%#show no more than X last leads%>
 						<% if infointerviews.count >= i + 1%>
 							<% infointerview = infointerviews[i] %>
@@ -216,7 +206,7 @@
 			<div class="form-row">
 				<div class="form-cell">
 					<%= label_tag(nil, "Recipient email address or a list of comma-separated addresses", :class=>"mandatory") %><br>
-					<%= text_field_tag(:invitation_recipient_email, "", :spellcheck => false, :placeholder => "abc@company.com, xyz@company.com", :class => "validate[required,funcCall[validateMultipleEmails]]") %>
+					<%= text_field_tag(:invitation_recipient_email, "", :spellcheck => false, :placeholder => "abc@example.com, xyz@example.com", :class => "validate[required,funcCall[validateMultipleEmails]]") %>
 				</div>
 			</div>		
 			

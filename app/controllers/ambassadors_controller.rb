@@ -156,14 +156,14 @@ class AmbassadorsController < ApplicationController
   end
   
   def share
-    setid = params[:setid]
     network = params[:network]
     job_id = params[:job_id]
-    raise "mising parameter" if setid.blank? || network.blank? || job_id.blank?
+    raise "mising parameter" if network.blank? || job_id.blank?
     
-    unless @ambassador.shares.where(setid: setid, job_id: job_id).any?
-      @ambassador.shares.build(:setid => setid, :network => network, :job_id => job_id)
+    unless @sliding_session.shared_job?(job_id, network)
+      @ambassador.shares.build(:network => network, :job_id => job_id, :ip => @sliding_session.ip, :referer => @sliding_session.referer, :share_counter => 1)
       @ambassador.save!
+      @sliding_session.add_shared_job(job_id, network)
     end
     
     render :nothing => true, status: :ok

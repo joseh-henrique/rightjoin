@@ -15,7 +15,7 @@ en-IL:
   salary_step: "2000"  
   salary_period: "monthly"
   monthly_tier_1_price: "29"
-  monthly_tier_2_price: "299"
+  monthly_tier_2_price: "49"
   monthly_tier_3_price: "699"
   currency_unit: "&#8362;"
   thousands_delimiter: ","

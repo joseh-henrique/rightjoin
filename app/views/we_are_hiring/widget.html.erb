@@ -74,7 +74,7 @@
  
 <% end %>
 
-<%=link_to Constants::SHORT_SITENAME, jobs_url, :id=>"rightjoin-label", :target => "_blank"%>
+<%=link_to Constants::SHORT_SITENAME, root_url, :id=>"rightjoin-label", :target => "_blank"%>
 
 <% tags = @job.tech_stack_list.split(",") %>
 <% full_plain_text = Utils.html_to_formatted_plaintext(@job.full_description) %>
@@ -151,7 +151,7 @@
 				</div>			    
 				
 				<div class="logo-location-box">
-					<% unless @job.logo.nil? %>					
+					<% unless @job.logo.nil? %>
 						<%= image_tag(@job.logo.image.standard.url(:secure => true), class: "logo") %>
 					<% end %>
 					
@@ -237,7 +237,7 @@
 				<%if @job.employer.enable_ping%>
 					<div id="funnel-step1">
 						<div class="title">Join our amazing team</div>
-						<div class="sub-title">Ping us if you think this might be for you.</div>
+						<div class="sub-title">Ping us regarding the <%=@job.position.name%> position.</div>
 						<div class="buttons-box">
 							<%= link_to "Ping...", "#", {id: 'ping-button'} %>
 						</div>
@@ -253,6 +253,7 @@
 							<div class="button-box rightjoin"><%= image_tag("widget/social/rightjoin46x46.png", :class => "provider-logo")%><div class="separator"></div><%= link_to "RightJoin", "#", {id: 'rightjoin-button', class: 'signin-button', method: :post} %></div>
 						</div>
 					</div>
+					<%= link_to "How it works", "#", {class: "question-mark-indicator blink-twice", title: "How it works", id: "how-it-works-link"}%>
 				<% else %>
 					<div class="title">Join our amazing team</div>
 					<div class="sub-title">Click the button to learn more about <%=@job.company_name%></div>
@@ -382,6 +383,8 @@
 	<div id="full-desription-box" class="popup-form-box tile bg-style4">
 		<a class="close-form" href="#"></a>
 		<div class="scrollable-wrapper">
+			<div class="title"><%=@job.position.name%> at <%=@job.company_name%></div>
+			
 			<%=@job.full_description.html_safe%>
 			
 			<% unless @job.ad_url.blank? %>
@@ -478,7 +481,7 @@
 							<%= label_tag(nil, "Choose a resum&eacute; file".html_safe, :class=>"mandatory") %><br>
 							<span id="resume-upload-fake-button">
 							    <span>Browse</span>
-							    <%= cl_image_upload_tag(:document_id, :resource_type => :raw, :tags => "resume", :html => {:class => "file-upload"}) %>
+							    <%= cl_image_upload_tag(:document_id, :resource_type => :raw, :tags => "resume", :html => {:class => "file-upload"}, :use_filename => true, :folder => "resumes") %>
 							</span>
 							<span id="resume-upload-status-msg">No file chosen</span>
 						</div>
@@ -491,6 +494,26 @@
 				
 			</div>
 		</div>	
+		
+		<div id="how-it-works-box" class="popup-form-box tile bg-style5">
+			<a class="close-form" href="#"></a>
+			<div class="more-padding">
+				<div class="title">How it works</div>
+				<ul>
+					<li>You ping <%=@job.company_name%> with a social profile or resum&eacute;.</li>  
+					<li>If it's a match, a team member (usually someone who works in your field) will email you.</li>
+					<li>Then you can get on the phone or go for a coffee, and talk about what it's like to work at <%=@job.company_name%>.</li>
+					<li>If you like what you hear, you can go ahead with the normal hiring process at <%=@job.company_name%>.</li>
+				</ul>
+			</div>
+			
+			<div id="about-right-join">
+				The service is powered by <%=link_to Constants::SITENAME, root_path, :target => "_blank"%>. 
+				<%=Constants::SHORT_SITENAME%> lets IT professionals learn about tech companies in
+				 informal peer-to-peer conversations.
+			</div>
+			<%= link_to image_tag(asset_path("widget/all_61.png")), root_path, :target => "_blank", :id => "right-join-logo" %>
+		</div>
 		
 		<div id="direct-ping-form-box">
 			<%= form_tag(infointerview_create_path(:employer_id => @job.employer.id, :job_id => @job.id, :locale => nil), :remote => true, :id=>"direct-ping-form") %>  
@@ -507,33 +530,6 @@
 <%= cloudinary_js_config %>
 
 <script type="text/javascript">
-var hash = $(location).attr('hash');
-if(hash == "") {
-	<% unless @ambassador.nil? %>
-		$("#contel-work-with-" + <%=@ambassador.id%>).remove();
-		<%title_val = "#{@ambassador.first_name} #{@ambassador.last_name} - #{@ambassador.title}"%>
-		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" title="<%=title_val%>" class="referer-link" rel="nofollow" target="_blank"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
-		$("#referer-box").html(ref_html);
-	<% end %>
-	initialLoadByTileType("avatar");
-	window.setTimeout(updateOneAvatar, 3000);
-} else {
-	setTimeout( function() {
-		$.post("<%=shares_increment_counter_path%>", { setid: hash } )
-		.done(function(data) {
-			if(data.avatar_path && data.first_name && data.last_name && data.title && data.id && data.profile_link) {
-				$("#contel-work-with-" + data.id).remove();
-				var ref_html = '<a href="' + data.profile_link + '" class="referer-link" rel="nofollow" target="_blank" title="' + escapeAttr(data.first_name) + ' ' + escapeAttr(data.last_name) + ' - ' + escapeAttr(data.title) + '"><img class="referer-img" src="' + data.avatar_path + '"></a>';
-				$("#referer-box").html(ref_html);
-			}
-		})
-		.always(function() {
-		    initialLoadByTileType("avatar");
-		    window.setTimeout(updateOneAvatar, 3000);
-		});
-	}, 0 );	
-}
-
 function swap(tile, contentElem, animate) {
 	var previousContentElemId = $(tile).data("contentElem");
 	
@@ -686,6 +682,20 @@ $("#full-description-link").click(function(event) {
 	    	$("#funnel-step2").fadeIn();
 	  	});
 		
+		trackEvent("developer", "main ping button clicked");
+		
+	    event.preventDefault(); 
+	    return false;	
+	});
+	
+	$("#learn-more-button").click(function(event) {
+		trackEvent("developer", "learn more and apply clicked");
+	    return true;	
+	});
+	
+	$("#how-it-works-link").click(function(event) {
+		$("#how-it-works-box").fadeIn();
+		
 	    event.preventDefault(); 
 	    return false;	
 	});
@@ -735,6 +745,7 @@ $("#full-description-link").click(function(event) {
 $("#description-box").addClass("clickable");
 $("#description-box").attr("title", "Click here to learn more");
 $("#description-box").click(function(event) {
+	trackEvent("developer", "widget long description");
 	window.open("<%=@job.ad_url%>"); 
     event.preventDefault(); 
     return false;
@@ -866,7 +877,7 @@ $(".photo").click(function(event){
 	});
 <% end %>
 
-$(document).ready(function(){
+$(function(){
 	initialLoadByTileType("blurb");
 	initialLoadByTileType("photo");
 	
@@ -891,6 +902,38 @@ $(document).ready(function(){
       
       $('.submit-button').prop("disabled", false);
     });
+    
+	<% if @ambassador.nil? %>
+		<% if @is_viewed_by_employer %>
+		    initialLoadByTileType("avatar");
+		    window.setTimeout(updateOneAvatar, 3000);
+		<% else %>
+			setTimeout( function() {
+				var hash = $(location).attr('hash');
+				hash = hash == "" ? window.location.getUrlParameter("ref") : hash;
+				$.post("<%=shares_log_imperession_path(@job.id)%>", { hash: hash } )
+				.done(function(data) {
+					if(data.avatar_path && data.first_name && data.last_name && data.title && data.id && data.profile_link) {
+						$("#contel-work-with-" + data.id).remove();
+						var ref_html = '<a href="' + data.profile_link + '" class="referer-link" rel="nofollow" target="_blank" title="' + escapeAttr(data.first_name) + ' ' + escapeAttr(data.last_name) + ' - ' + escapeAttr(data.title) + '"><img class="referer-img" src="' + data.avatar_path + '"></a>';
+						$("#referer-box").html(ref_html);
+					}
+				})
+				.always(function() {
+				    initialLoadByTileType("avatar");
+				    window.setTimeout(updateOneAvatar, 3000);
+				});
+			}, 0 );	
+		<% end %>		
+	<% else %>
+		$("#contel-work-with-" + <%=@ambassador.id%>).remove();
+		<%title_val = "#{@ambassador.first_name} #{@ambassador.last_name} - #{@ambassador.title}"%>
+		var ref_html = '<a href="<%=escape_javascript @ambassador.profile_link%>" title="<%=title_val%>" class="referer-link" rel="nofollow" target="_blank"><img class="referer-img" src="<%=escape_javascript @ambassador.avatar_path%>"></a>';
+		$("#referer-box").html(ref_html);
+		
+		initialLoadByTileType("avatar");
+		window.setTimeout(updateOneAvatar, 3000);
+	<% end %>
 });
 
 $(document).keyup(function(e) {

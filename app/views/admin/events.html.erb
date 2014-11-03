@@ -1,16 +1,16 @@
 <% require 'rinku' %>
 
 <h1>
-	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	<%=link_to "<<", admin_path %>
 	Review events
 </h1>
 
 <h2>
-	<%=link_to "<", admin_events_path(:days_ago => @days_ago + 1), :class => "blue-inline-button" %>&nbsp;&nbsp;
+	<%=link_to "<", admin_events_path(:days_ago => @days_ago + 1) %>&nbsp;&nbsp;
 	<%=(Date.today - @days_ago.days).strftime("%d %b, %Y")%>&nbsp;&nbsp;
 	<% if @days_ago > 0 %>
-		<%=link_to ">", admin_events_path(:days_ago => @days_ago - 1), :class => "blue-inline-button" %>&nbsp;&nbsp;
-		<%=link_to ">>", admin_events_path(:days_ago => 0), :class => "blue-inline-button" %>
+		<%=link_to ">", admin_events_path(:days_ago => @days_ago - 1) %>&nbsp;&nbsp;
+		<%=link_to ">>", admin_events_path(:days_ago => 0) %>
 	<% end %>
 </h2>
 
@@ -22,7 +22,10 @@
 			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
 				<%=html_inspect(candidate)%>
 				<%unless candidate.deleted?%>
-					<br><%=link_to "inactivate", admin_inactivate_candidate_path(:id => candidate.id, :days_ago => @days_ago), :class => "red-inline-button" %>
+					<br><%=link_to "inactivate", admin_inactivate_candidate_path(:id => candidate.id, :days_ago => @days_ago) %>
+					<%unless candidate.vouched%>
+						&nbsp;&nbsp;&nbsp;<%=link_to "Vouch", admin_vouch_candidate_path(:id => candidate.id, :days_ago => @days_ago) %>
+					<%end%>
 				<%end%>
 			</p>
 		<% end %>
@@ -47,8 +50,8 @@
 			<p class="inspect-box <%=i%2==0 ? '' : 'odd'%>">
 				<%=Rinku.auto_link(html_inspect(job), :all, 'target="_ad_window"').html_safe%>
 				<% if job.status == Job::PUBLISHED %>
-					<br><%=link_to "Recommend candidates", admin_recommend_candidates_path(:id => job.id), :class => "blue-inline-button" %>
-					&nbsp;&nbsp;<%=link_to "Close", admin_close_job_path(:id => job.id, :days_ago => @days_ago), :class => "red-inline-button" %>
+					<br><%=link_to "Recommend candidates", admin_recommend_candidates_path(:id => job.id) %>
+					&nbsp;&nbsp;<%=link_to "Close", admin_close_job_path(:id => job.id, :days_ago => @days_ago) %>
 				<% end %>
 			</p>
 		<% end %>

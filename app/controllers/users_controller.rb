@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
   include UsersControllerCommon
   
-  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :set_status, :index, :unsubscribe]
+  before_filter :strip_params, :only => [:create, :verify, :update, :forgot_pw, :change_pw, :set_status, :index, :unsubscribe, :update_requirements]
   before_filter :init_employee_user, :except => [:index]
   before_filter :init_employer_user, :only => [:index]
-  before_filter :correct_user, :only => [:show, :edit, :update, :set_status]
+  before_filter :correct_user, :only => [:show, :edit, :update, :set_status, :update_requirements]
   before_filter :add_verif_flash, :only =>[:edit]
   before_filter :add_activate_account_flash, :only =>[:show, :edit]
   before_filter :add_mandatory_fields_flash, :only =>[:show]
@@ -44,13 +44,15 @@ class UsersController < ApplicationController
       return
     end
     
-    update_listing @user # populate properties
+    @user.ask_requirements = true
+    update_listing(@user, false) # populate properties
     sign_in @user
     
     url = user_url(@user, :locale => @user.country_code)
     new_msg = FyiMailer.create_welcome_message(@user.email, @user.password, @user.locale, User.reason_to_verify, User.homepage_description, url, :employee)
     Utils.deliver(new_msg)
     
+    flash_message(:notice, "Welcome to #{Constants::SHORT_SITENAME}. What job offer is good enough for you to consider? Tell us below.") 
     redirect_to user_path(@user, :locale => @user.country_code)
 
     rescue Exception => e
@@ -94,7 +96,7 @@ class UsersController < ApplicationController
       end
       
       # populate properties      
-      update_listing current_user
+      update_listing(current_user, false)
       
       if current_user.pending?
         url = user_url(current_user, :locale => current_user.country_code)
@@ -114,6 +116,17 @@ class UsersController < ApplicationController
     
     flash_message(:error, err_flash_msg)
     redirect_to edit_user_path(current_user, :locale => current_user.country_code)
+  end
+  
+  def update_requirements   
+    update_listing(current_user, true)
+    flash_message(:notice, "Your job requirements have been saved. You can always edit them on your #{ActionController::Base.helpers.link_to("profile page", edit_user_path(current_user, :locale => current_user.country_code))}.") 
+    
+  rescue Exception => e
+    logger.error e
+    flash_message(:error, Constants::ERROR_FLASH)
+  ensure
+    redirect_to user_path(current_user, :locale => current_user.country_code)    
   end
  
   def change_pw
@@ -153,32 +166,39 @@ class UsersController < ApplicationController
  
   private
    
-    def update_listing(user)
-      location_obj = LocationTag.find_or_create_by_params(params)
-      raise ActiveRecord::RecordInvalid.new(location_obj) if location_obj && location_obj.errors.any?
-
-      currentposition_str = params["currentposition"]
-      currentposition_obj = PositionTag.find_or_create_by_name_case_insensitive(currentposition_str)
-      raise ActiveRecord::RecordInvalid.new(currentposition_obj) if currentposition_obj.errors.any?
+    def update_listing(user, reqirements_only)
+      if reqirements_only
+        user.ask_requirements = false
+      else
+        location_obj = LocationTag.find_or_create_by_params(params)
+        raise ActiveRecord::RecordInvalid.new(location_obj) if location_obj && location_obj.errors.any?
+  
+        currentposition_str = params["currentposition"]
+        currentposition_obj = PositionTag.find_or_create_by_name_case_insensitive(currentposition_str)
+        raise ActiveRecord::RecordInvalid.new(currentposition_obj) if currentposition_obj.errors.any?
+        
+        wantedposition_str = params["wantedposition"]
+        wantedposition_obj = PositionTag.find_or_create_by_name_case_insensitive(wantedposition_str)
+        raise ActiveRecord::RecordInvalid.new(wantedposition_obj) if wantedposition_obj.errors.any?
+        
+        user.current_position = currentposition_obj
+        user.wanted_position = wantedposition_obj
+        user.resume = params["resume"] 
+        user.first_name = params["firstname"]
+        user.last_name = params["lastname"]
+        user.contact_info = params["contactinfo"]
+        user.assign_all_location_attrs(location_obj, params["can_telecommute"], params["can_relocate"])
+      end
       
-      wantedposition_str = params["wantedposition"]
-      wantedposition_obj = PositionTag.find_or_create_by_name_case_insensitive(wantedposition_str)
-      raise ActiveRecord::RecordInvalid.new(wantedposition_obj) if wantedposition_obj.errors.any?
-      
-      user.current_position = currentposition_obj
-      user.wanted_position = wantedposition_obj
-      user.wanted_salary = params["wantedsalary"]
-      user.free_text = params["freetext"]
-      user.first_name = params["firstname"]
-      user.last_name = params["lastname"]
-      user.contact_info = params["contactinfo"]
-      user.resume = params["resume"]
-      user.assign_all_location_attrs(location_obj, params["can_telecommute"], params["can_relocate"])
       user.aspiration = params["aspiration"]
+      user.free_text = params["freetext"]
+      user.wanted_salary = params["wantedsalary"].to_i
       
       # Delete previous skills and job qualifiers
       unless user.new_record?
-        user.user_skills.destroy_all
+        unless reqirements_only
+          user.user_skills.destroy_all
+        end
         user.user_job_qualifiers.destroy_all
       end
 
@@ -199,19 +219,21 @@ class UsersController < ApplicationController
         end
       }
       
-      skills_hash = Hash.from_url_params(params["skills"])
-      skills_hash.each {|key, value| 
-        skill_obj = SkillTag.find_or_create_by_name(key.strip)
-        if skill_obj.errors.any?
-          flash_message(:error, Constants::ERROR_FLASH) if log_model_errors skill_obj
-        else
-          one_user_skill = UserSkill.new
-          one_user_skill.skill_tag = skill_obj
-          one_user_skill.user = user
-          one_user_skill.seniority = value.strip
-          one_user_skill.save!
-        end
-      }      
+      unless reqirements_only
+        skills_hash = Hash.from_url_params(params["skills"])
+        skills_hash.each {|key, value| 
+          skill_obj = SkillTag.find_or_create_by_name(key.strip)
+          if skill_obj.errors.any?
+            flash_message(:error, Constants::ERROR_FLASH) if log_model_errors skill_obj
+          else
+            one_user_skill = UserSkill.new
+            one_user_skill.skill_tag = skill_obj
+            one_user_skill.user = user
+            one_user_skill.seniority = value.strip
+            one_user_skill.save!
+          end
+        }
+      end    
     end
   
     def correct_user

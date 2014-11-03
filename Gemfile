@@ -34,7 +34,8 @@ group :test do
 end
 
 group :production, :staging do
-  gem "rack-timeout"  #see https://github.com/heroku/rack-timeout and http://www.neilmiddleton.com/h12s-on-heroku-wtf/
+  gem 'unicorn'
+  gem 'rack-timeout'  #see https://github.com/heroku/rack-timeout
   gem 'newrelic_rpm'
 end
 

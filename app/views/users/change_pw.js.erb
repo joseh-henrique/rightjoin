@@ -1,5 +1,8 @@
 <%if @err_msg.blank? %>
 	$("#change-pw-msg").html("<span class='success'>Password changed</span>");
+	setTimeout(function(){
+		$("#change-pw-toggleable-box").dialog("close");
+	},1000)
 <%else%>
     $("#change-pw-msg").html("<span class='error'><%=escape_javascript @err_msg %></span>");
 	$(".change_pw_form_elem").removeAttr('readonly');

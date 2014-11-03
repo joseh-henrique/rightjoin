@@ -92,6 +92,10 @@ class User < ActiveRecord::Base
     update_attribute(:num_recommended, self.num_recommended + 1)
   end
   
+  def vouch
+    update_attribute(:vouched, true)
+  end
+  
   def self.default_paginate(params, select, filter_conditions, orderby)
     array_of_selects = []
     array_of_selects << "*"
@@ -218,7 +222,7 @@ class User < ActiveRecord::Base
     requirements_str = user_job_qualifiers.collect {|req| "#{req.job_qualifier_tag.name}"}.compact.join(", ")
     
     parts = [
-    "--------- Candidate (id:#{self.id}, refid:#{reference_num}) ---------",
+    "--------- Candidate (id:#{self.id}, refid:#{reference_num}) : #{self.vouched ? 'vouched' : 'not vouched'} ---------",
     "** Created at #{self.created_at} (#{((Time.now - self.created_at)/(3600 * 24)).to_i} days ago), status = #{self.status}, sample = #{self.sample}",
     "** #{self.email} #{self.contact_info} #{self.first_name} #{self.last_name} \"#{self.locale}\"",
     "** #{self.current_position_name} => #{self.wanted_position_name} in #{self.all_location_parts.join(" / ")}",

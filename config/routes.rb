@@ -6,13 +6,14 @@ FiveYearItch::Application.routes.draw do
   match 'admin/update_employers', :to => 'admin#send_jobs_update_to_employers'
   match 'admin/welcome_employers', :to => 'admin#send_welcome_email_to_employers'
   match 'admin/welcome_engineers', :to => 'admin#send_welcome_email_to_engineers'
-  match 'admin/update_employers_about_new_contacts', :to => 'admin#send_update_employers_about_new_contacts'
+  match 'admin/send_update_about_new_pings', :to => 'admin#send_update_about_new_pings'
   match 'admin/update_employers_about_new_comments', :to => 'admin#send_update_employers_about_new_comments'
  
   match 'admin/update_admin', :to => 'admin#send_update_to_admin'
   match 'admin/events', :to => 'admin#events'
   match 'admin/invites_to_approve', :to => 'admin#invites_to_approve'
   match 'admin/candidate/:id/inactivate', :to => 'admin#inactivate_candidate', :as => :admin_inactivate_candidate
+  match 'admin/candidate/:id/vouch', :to => 'admin#vouch_candidate', :as => :admin_vouch_candidate
   match 'admin/candidate/:id/recommend', :to => 'admin#recommend_candidate_to_job', :as => :admin_recommend_candidate_to_job  
   match 'admin/invite/:id/approve', :to => 'admin#approve_invite', :as => :admin_approve_invite
   match 'admin/locations/:locale', :to => 'admin#locations', :as => :admin_locations
@@ -28,7 +29,7 @@ FiveYearItch::Application.routes.draw do
   match 'admin/', :to => 'admin#console'  
   
   # shares
-  match 'shares/increment', :to => 'shares#increment_counter', :as => :shares_increment_counter, :via => :post 
+  match 'shares/:job_id/impression', :to => 'shares#log_impression', :as => :shares_log_imperession, :via => :post 
   
   #ominauth
   match "/auth/:provider/callback" => "omniauth#callback"
@@ -95,6 +96,7 @@ FiveYearItch::Application.routes.draw do
         post 'verify'
         post 'set_status'
         post 'change_pw'
+        post 'update_requirements'
         post 'unsubscribe'
         get  'unsubscribe'
       end

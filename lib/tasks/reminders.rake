@@ -1,26 +1,7 @@
 namespace :cron do
   desc "Send reminders"
   
-  # task :remind_pending_user_response => :environment do
-    # if Time.now.monday? || Time.now.thursday?
-      # Reminder.remind_pending_user_response do |interview|
-          # new_msg = FyiMailer.create_pending_user_response_reminder_email(interview)
-          # Utils.deliver new_msg
-          # puts "Reminder sent to candidate: #{interview.user.email}"
-      # end
-      # puts "Pending-user-response reminders processed"
-    # end
-  # end
-#   
-  # task :remind_review_recommended => :environment do
-    # Reminder.remind_review_recommended do |employer, job|
-        # new_msg = FyiMailer.create_review_recommended_email(employer, job)
-        # Utils.deliver new_msg
-        # puts "Reminder sent to employer: #{employer.email}"
-    # end
-    # puts "Review recommended users reminders processed"
-  # end  
-
+ 
   task :close_expired_interviews => :environment do
      Interview.close_expired
   end
@@ -67,8 +48,8 @@ namespace :cron do
   end
   
   # call it like this: rake cron:send_admin_summary["production"]
-  # call it like this: rake cron:send_admin_summary["staging"]
-  # call it like this: bundle exec rake cron:send_admin_summary["debug"]
+  #                    rake cron:send_admin_summary["staging"]
+  #                    bundle exec rake cron:send_admin_summary["debug"]
   task :send_admin_summary, [:serv_name] => :environment do |t, args|
     Reminder.send_admin_summary do |events|
       new_msg = FyiMailer.create_admin_summary_email(args[:serv_name], events)
@@ -78,34 +59,24 @@ namespace :cron do
     puts "Admin summary email was sent."
   end
   
-  #sent every day to X people until all updated
-  task :send_rj_migration_announcement_to_engineers => :environment do
-    if Time.now < Time.new(2014,6,30)
-     puts "#{Constants::SITENAME} not yet released; not sending migration announcements"
-     return
+  task :update_about_new_pings => :environment do
+    candidates_counter = 0
+    count_not_used1 = Reminder.update_engineers_after_ping do |info_interview|
+      new_msg = FyiMailer.update_engineers_after_ping(info_interview)
+      Utils.deliver new_msg
+      candidates_counter += 1
     end
-  	count = Reminder.send_rightjoin_migration_announcement_to_engineers do |user|
-  	  begin
-  			new_msg = FyiMailer.create_rightjoin_migration_announcement_for_candidates_email(user)
-    		Utils.deliver new_msg
-      rescue Exception => e
-          puts e
-      end
-  	end
-    puts "RJ migration announcements processed" #sent: #{count}."#TODO: THis number always comes out zero 
-  end
-  
-  # send update to employers about new contact
-  task :update_employers_about_new_contacts => :environment do
-    counter=0
-    count = Reminder.update_employers_about_new_contacts do |employer|
+    puts "After-ping  updates sent to candidates: #{candidates_counter}."
+
+    employers_counter = 0
+    count_not_used2 = Reminder.update_employers_about_new_contacts do |employer|
       new_msg = FyiMailer.update_employers_about_new_contacts(employer)
       Utils.deliver new_msg
-      counter += 1
+      employers_counter += 1
     end
-    
-    puts "New contacts updates sent to employers: #{counter}."
-  end
+
+    puts "New contacts updates sent to employers: #{employers_counter}."
+  end  
   
   # send update to employers about new contact
   task :update_employers_about_new_comments => :environment do
@@ -124,20 +95,5 @@ namespace :cron do
     puts "Reminders sent to ambassadors: #{counter}."
   end  
   
-  # send updates to ambassador about new contacts
-  # Must set cron job to the time shown in Reminder.rb  (8 am Pacific)
-    # Not needed because of immediate mailing
-  # task :update_ambassador_about_new_contact => :environment do
-    # counter=0 
-    # today_s =Time.now.utc.strftime("%A")#e.g. "Friday","Tuesday"
-    # if Reminder::AMBASSADOR_SEND_DAYS.include?(today_s) 
-       # Reminder.update_ambassador_about_new_contact do |infointerview|
-          # new_msg = FyiMailer.update_ambassador_about_new_contact(infointerview)
-          # Utils.deliver new_msg
-          # counter += 1
-      # end
-#       
-      # puts "Emails sent to ambassadors: #{counter}."
-    # end
-  # end
+  
 end

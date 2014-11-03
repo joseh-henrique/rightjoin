@@ -1,31 +1,34 @@
-<div id="company-rating-box">
-	 
-	<p>Tell us what you think about the place you work now.
-		We use these ratings to make our job-matching even better.
-		Your vote is always anonymous.</p>
+<div class="content-box">
+	<div class="page-heading-box">
+		<h1>Tell us what you think about the place you work now.</h1>
+		<h2>We use these ratings to make our job-matching even better. Your vote is always anonymous.</h2>
+	</div>
 	
-	<%
-	company_rating = CompanyRating.new
-	%>
-	
-	<%= form_for(company_rating) do |f| %>  
-		<div id="rating-table">
-			<div class="rating-line even"><%= label_tag(nil, "Work-life balance", :class => "rating-label") %><div id="worklife-balance-rating" class="rating"></div><span class="rating-target" id="worklife-balance-rating-target"></span></div>
-			<div class="rating-line odd"><%= label_tag(nil, "Learning opportunitites", :class => "rating-label") %><div id="learning-opportunitites-rating" class="rating"></div><span class="rating-target" id="learning-opportunitites-rating-target"></span></div>
-			<div class="rating-line even"><%= label_tag(nil, "Career advancement", :class => "rating-label") %><div id="career-opportunitites-rating" class="rating"></div><span class="rating-target" id="career-opportunitites-rating-target"></span></div>
-			<div class="rating-line odd"><%= label_tag(nil, "Workplace perks", :class => "rating-label") %><div id="workplace-perks-rating" class="rating"></div><span class="rating-target" id="workplace-perks-rating-target"></span></div>
-			<div class="rating-line even"><%= label_tag(nil, "Relaxed culture", :class => "rating-label") %><div id="relaxed-culture-rating" class="rating"></div><span class="rating-target" id="relaxed-culture-rating-target"></span></div>
-			<div class="rating-line odd"><%= label_tag(nil, "Ability to make impact", :class => "rating-label") %><div id="impact-rating" class="rating"></div><span class="rating-target" id="impact-rating-target"></span></div>
-			<div class="rating-line even"><%= label_tag(nil, "Ace colleagues", :class => "rating-label") %><div id="ace-colleagues-rating" class="rating"></div><span class="rating-target" id="ace-colleagues-rating-target"></span></div>
+	<% company_rating = CompanyRating.new %>	
+	<%= form_for(company_rating) do |f| %>  	
+		<div class="standard-section-header">Your company rating</div>
+		<div class="section-box">	
+			<div id="rating-table">
+				<div class="rating-line even"><%= label_tag(nil, "Work-life balance", :class => "rating-label") %><div id="worklife-balance-rating" class="rating"></div><span class="rating-target" id="worklife-balance-rating-target"></span></div>
+				<div class="rating-line odd"><%= label_tag(nil, "Learning opportunitites", :class => "rating-label") %><div id="learning-opportunitites-rating" class="rating"></div><span class="rating-target" id="learning-opportunitites-rating-target"></span></div>
+				<div class="rating-line even"><%= label_tag(nil, "Career advancement", :class => "rating-label") %><div id="career-opportunitites-rating" class="rating"></div><span class="rating-target" id="career-opportunitites-rating-target"></span></div>
+				<div class="rating-line odd"><%= label_tag(nil, "Workplace perks", :class => "rating-label") %><div id="workplace-perks-rating" class="rating"></div><span class="rating-target" id="workplace-perks-rating-target"></span></div>
+				<div class="rating-line even"><%= label_tag(nil, "Relaxed culture", :class => "rating-label") %><div id="relaxed-culture-rating" class="rating"></div><span class="rating-target" id="relaxed-culture-rating-target"></span></div>
+				<div class="rating-line odd"><%= label_tag(nil, "Ability to make impact", :class => "rating-label") %><div id="impact-rating" class="rating"></div><span class="rating-target" id="impact-rating-target"></span></div>
+				<div class="rating-line even"><%= label_tag(nil, "Ace colleagues", :class => "rating-label") %><div id="ace-colleagues-rating" class="rating"></div><span class="rating-target" id="ace-colleagues-rating-target"></span></div>
+			</div>
+			
+			<div id="company-name-box">
+				<%= label_tag(:company_name, "Company name", :class=>"mandatory") %>		
+				<div>
+					<%= text_field_tag :company_name, nil, :maxlength=>250, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width" %>
+					<%= hidden_field_tag(:user_id, current_user.id) %>
+				</div>
+			</div>
 		</div>
 		
-		<div id="company-name-box">
-			<%= label_tag(:company_name, "Company name", :class=>"mandatory") %>		
-			<div>
-				<%= text_field_tag :company_name, nil, :maxlength=>250, :spellcheck =>false, :class=>"validate[required,custom[nonEmpty]] half-row-width" %>
-				<%= hidden_field_tag(:user_id, current_user.id) %>
-				&nbsp;<%= button_tag "Submit rating", :class=>"standard-button", :id => "submit-rating-btn", :name => nil %>
-			</div>
+		<div class="buttons-box">
+			<%= button_tag "Submit", :class=>"standard-button", :id => "submit-rating-btn", :name => nil %>
 		</div>
 	<% end %>
 </div>
@@ -78,15 +81,15 @@
 	  target    : '#ace-colleagues-rating-target',
 	  hints: ['There are some advantages to being the smartest one around.', 'A few sharp arrows in the quiver', 'Pretty solid', 'A few wizards to learn from', 'Intimidatingly brilliant colleagues']
 	});
-	
-    $('#submit-rating-btn').click(function() {
-    	$("#new_company_rating").validationEngine('hideAll');
+
+	$('#submit-rating-btn').click(function() {
+		$("#new_company_rating").validationEngine('hideAll');
 		var res = $("#new_company_rating").validationEngine('validate');
 		if (res) {
 			$("#new_company_rating").submit();
         	$(this).attr('disabled',true);
 		}
 		
-		return false;
-    });	
+		return false;	
+	});	
 </script>

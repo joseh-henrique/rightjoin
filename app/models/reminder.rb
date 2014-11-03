@@ -38,7 +38,7 @@ class Reminder < ActiveRecord::Base
      counter = 0
      invites = []
      Interview.unscoped.where("status = ?", Interview::APPROVED).order('user_id, created_at asc').each do |invite|
-          if counter >= max_engineer_emails 
+         if counter >= max_engineer_emails 
              logger.error "The limit of max #{max_engineer_emails} send_jobs_update_to_engineers emails exceeded! Bug or grand success???"
              break
          end
@@ -121,7 +121,6 @@ class Reminder < ActiveRecord::Base
   
   def self.send_jobs_update_to_one_employer(all_jobs, open_jobs, unused_param, block)
     begin
- 
       empr = all_jobs.first.employer
  
       block.call(empr, all_jobs, open_jobs, unused_param)
@@ -173,44 +172,49 @@ class Reminder < ActiveRecord::Base
     create_event!(nil, ADMIN_SUMMARY_SENT)
   end
   
-  # send a few every time until exhausted
-  def self.send_rightjoin_migration_announcement_to_engineers
-    num_to_send  = FyiConfiguration.fetch_with_default("max_engineer_emails", 20).to_i
-    date_migration_rj = Time.new(2014, 6, 30)
-    users = User.where("status = ? and created_at < ? and (sample = ? or sample is null)", UserConstants::VERIFIED, date_migration_rj, false).where("not exists (select * from reminders where users.id = reminders.user_id and reminders.reminder_type = ?)", Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT).order("created_at asc").limit(num_to_send)
-    users.each do |user|
-      begin
-        yield user
-        user.add_reminder!(nil, Reminder::RIGHTJOIN_MIGRATION_ANNOUNCEMENT)
-      rescue Exception => e
-        logger.error(e)
-      end
-    end
-    return users.count
+  def self.update_engineers_after_ping
+     max_engineer_emails = FyiConfiguration.fetch_with_default("max_engineer_emails", 30).to_i
+     counter = 0
+     
+     info_interviews = Infointerview.where(:update_candidate_after_ping => true)
+     info_interviews.each do |info_ivw|
+       if counter < max_engineer_emails
+         begin
+            yield info_ivw
+            counter += 1
+            info_ivw.update_attribute(:update_candidate_after_ping, false)
+          rescue Exception => e
+            logger.error(e)
+            logger.error e.backtrace.join("\n")
+          end
+       end
+     end
+     return counter
   end
-  
-  # update employers about new contacts
+
   def self.update_employers_about_new_contacts
      max_employer_emails = FyiConfiguration.fetch_with_default("max_employer_emails", 30).to_i
      counter = 0
-     
+
      ts = ActiveRecord::Base.connection.select_value("SELECT CURRENT_TIMESTAMP")
-     
-     # in the employers array below, each employer object has an additional field which is not in the Employer class, namely employer.contacts_count.
+
+     # In the employers array below, each employer object has an additional field which is not in the Employer class, namely employer.contacts_count.
      employers = Employer.count_infointerviews(Infointerview::NEW)
      employers.each do |employer|
        if counter < max_employer_emails
          begin
             yield employer
             counter += 1
-         
-            # update statuses of all infoinerviews we just reported about to ACTIVE
-            Infointerview.joins(:job => :employer).where("infointerviews.status = ? and infointerviews.created_at < ?", Infointerview::NEW, ts).where("jobs.employer_id = ?", employer.id).update_all(:status => Infointerview::ACTIVE_LEAD)
+
+            # Update statuses of all infointerviews we just reported about to ACTIVE.
+            Infointerview.joins(:job => :employer).where("infointerviews.status in (?) and infointerviews.created_at < ?", [Infointerview::NEW], ts).where("jobs.employer_id = ?", employer.id).update_all(:status => Infointerview::ACTIVE_EMPLOYER_NOTIFIED)
           rescue Exception => e
             logger.error(e)
+            logger.error e.backtrace.join("\n")
           end
        end
      end
+     return counter
   end
   
   # update employers about new comments

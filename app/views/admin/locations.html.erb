@@ -1,5 +1,5 @@
 <h1>
-	<%=link_to "<<", admin_path, :class => "blue-inline-button" %>
+	<%=link_to "<<", admin_path %>
 	Non-standard locations: <%=@locale%>
 </h1>
 
@@ -21,8 +21,8 @@
 			<%= hidden_field_tag(:lat) %>
 			<%= hidden_field_tag(:lng) %>
 
-			<%=link_to "Set coordinates", "#", :id => "set-coordinates", :class => "blue-inline-button" %>&nbsp;
-			<%=link_to "Replace with standard location", "#", :id => "swap", :class => "blue-inline-button" %>&nbsp;
+			<%=link_to "Set coordinates", "#", :id => "set-coordinates" %>&nbsp;
+			<%=link_to "Replace with standard location", "#", :id => "swap" %>&nbsp;
 		<% end %>
 		
 		<script type="text/javascript">

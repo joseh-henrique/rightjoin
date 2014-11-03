@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140815191938) do
+ActiveRecord::Schema.define(:version => 20140902143851) do
 
   create_table "ads", :force => true do |t|
     t.integer  "job_id"
@@ -159,12 +159,13 @@ ActiveRecord::Schema.define(:version => 20140815191938) do
     t.integer  "job_id"
     t.integer  "user_id"
     t.text     "profiles"
-    t.integer  "status",        :default => 0
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
+    t.integer  "status",                      :default => 0
+    t.datetime "created_at",                                     :null => false
+    t.datetime "updated_at",                                     :null => false
     t.integer  "auth_id"
     t.integer  "referred_by"
     t.string   "resume_doc_id"
+    t.boolean  "update_candidate_after_ping", :default => false
   end
 
   add_index "infointerviews", ["job_id"], :name => "index_infointerviews_on_job_id"
@@ -291,14 +292,16 @@ ActiveRecord::Schema.define(:version => 20140815191938) do
     t.integer  "click_counter", :default => 0
     t.datetime "created_at",                   :null => false
     t.datetime "updated_at",                   :null => false
-    t.string   "setid"
     t.integer  "job_id"
     t.integer  "lead_counter",  :default => 0
+    t.integer  "share_counter", :default => 0
+    t.string   "ip"
+    t.string   "referer"
   end
 
   add_index "shares", ["ambassador_id"], :name => "index_shares_on_ambassador_id"
+  add_index "shares", ["job_id"], :name => "index_shares_on_job_id"
   add_index "shares", ["network"], :name => "index_shares_on_network"
-  add_index "shares", ["setid"], :name => "index_shares_on_setid", :unique => true
 
   create_table "skill_tags", :force => true do |t|
     t.string   "name"
@@ -352,6 +355,8 @@ ActiveRecord::Schema.define(:version => 20140815191938) do
     t.boolean  "can_relocate"
     t.boolean  "can_telecommute"
     t.integer  "aspiration"
+    t.boolean  "ask_requirements",                                    :default => false
+    t.boolean  "vouched",                                             :default => false
   end
 
   add_index "users", ["eastmost"], :name => "index_users_on_eastmost"

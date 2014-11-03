@@ -16,7 +16,7 @@ en-IN:
   salary_period: "annual"
   
   monthly_tier_1_price: "549"
-  monthly_tier_2_price: "3999"
+  monthly_tier_2_price: "999"
   monthly_tier_3_price: "9999"
   currency_unit: "&#8360;" 
   thousands_delimiter: ","
